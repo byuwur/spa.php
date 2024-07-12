@@ -107,7 +107,7 @@ $(document).ready(function () {
                 console.log("Error loading content:", xhr, status, error);
                 errorPage(404, `Route "${url}" does not exist.`);
             }, complete: function () {
-                $("#spa-loader").fadeOut(500);
+                $("#spa-loader").delay(333).fadeOut(333);
             }
         });
     };
