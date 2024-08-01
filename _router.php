@@ -1,5 +1,5 @@
 <?php
-// MUST require_once $TO_HOME . "_functions.php"; and $routes/_routes.php MUST be previously defined/required
+// MUST require_once $TO_HOME . "_functions.php", $TO_HOME . "_plugin.php"; and $routes/_routes.php MUST be previously defined/required
 $uri = $_GET["uri"] ?? "/";
 while (strlen($uri) > 0 && substr($uri, 0, 1) != "/") $uri = substr($uri, 1);
 while (strlen($uri) > 1 && substr($uri, -1) == "/") $uri = substr($uri, 0, -1);
@@ -27,6 +27,7 @@ $_GET = [...$_GET, ...$routes[$uri]["GET"] ?? []];
 $_POST = [...$_POST, ...$routes[$uri]["POST"] ?? []];
 ?>
 <script>
+    localStorage.setItem("APP_ENV", "<?= $_ENV["APP_ENV"]; ?>");
     localStorage.setItem("URI", "<?= $uri; ?>");
     localStorage.setItem("URL", "<?= $url; ?>");
     localStorage.setItem("ROUTES", JSON.stringify(<?= json_encode($routes) ?>));

@@ -3,6 +3,7 @@
 $setLocalStorage = true;
 require_once "./_var.php";
 require_once $TO_HOME . "_functions.php";
+require_once $TO_HOME . "_plugin.php";
 //require_once $TO_HOME . "_config.php";
 require_once $TO_HOME . "_routes.php";
 require_once $TO_HOME . "_router.php";
