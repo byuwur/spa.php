@@ -1,6 +1,6 @@
 <?php
 // MUST require_once "/_var.php", $TO_HOME . "_functions.php", $TO_HOME . "config.php", $TO_HOME . "_routes.php";
-if (validate_value($_POST[session_name()] ?? null)) session_id($_POST[session_name()]);
+if (validate_value($_POST[session_name()] ?? null) !== null) session_id($_POST[session_name()]);
 session_start();
 function login($session = [], $regen = false)
 {
@@ -19,8 +19,8 @@ function logout()
 }
 function check_session()
 {
-    if (!validate_value($_SESSION["logintime"] ?? null)) return logout();
-    if (!validate_value($_SESSION["username"] ?? null)) return logout();
+    if (validate_value($_SESSION["logintime"]  ?? null) === null) return logout();
+    if (validate_value($_SESSION["username"]  ?? null) === null) return logout();
     if (time() - $_SESSION["logintime"] > 3600) return logout();
     return login(["logintime" => time()]);
 }

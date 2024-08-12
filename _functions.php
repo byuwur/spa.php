@@ -29,10 +29,10 @@ function make_http_request(string $url, array $get = [], array $post = [])
 }
 function validate_value($input, string $type = "")
 {
-    if (!isset($input)) return false;
-    if ($input == null) return false;
-    if ($input == "null") return false;
-    if ($input == "") return false;
+    if (!isset($input)) return null;
+    if ($input === null) return null;
+    if ($input === "null") return null;
+    if ($input === "") return null;
     $filterMap = [
         "boolean" => FILTER_VALIDATE_BOOLEAN,
         "domain" => FILTER_VALIDATE_DOMAIN,
