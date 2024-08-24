@@ -30,7 +30,9 @@ $(document).ready(function () {
 			success: function (data) {
 				document.write(data);
 				$("head").append(`<script>
-					const parseURL = ${parseURL}, routeURL = ${routeURL}, loadSPA = ${loadSPA}, getLocalStorageItems = ${getLocalStorageItems}, ROUTES = ${JSON.stringify(ROUTES)}, TO_HOME = "${TO_HOME}", HOME_PATH = "${HOME_PATH}", HISTORY_PATH = ${JSON.stringify(HISTORY_PATH)};
+					const parseURL = ${parseURL}, routeURL = ${routeURL}, loadSPA = ${loadSPA}, getLocalStorageItems = ${getLocalStorageItems},
+						ROUTES = ${JSON.stringify(ROUTES)}, TO_HOME = "${TO_HOME}", HOME_PATH = "${HOME_PATH}",
+						HISTORY_PATH = ${JSON.stringify(HISTORY_PATH)}, APP_ENV = "${APP_ENV}";
 					let _GET = ${JSON.stringify(_GET)}, _POST = ${JSON.stringify(_POST)}, HISTORY_INDEX = ${HISTORY_INDEX};
 					window.addEventListener("popstate", function (e) {
 						HISTORY_INDEX = e.state.index;
