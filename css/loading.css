@@ -1,3 +1,28 @@
+* {
+	min-width: 0;
+	/* scroll */
+	scrollbar-width: 12px;
+	scrollbar-color: #04c #fff;
+	/* anim */
+	-webkit-transition: all 0.333s ease !important;
+	-o-transition: all 0.333s ease !important;
+	-ms-transition: all 0.333s ease !important;
+	-moz-transition: all 0.333s ease !important;
+	transition: all 0.333s ease !important;
+}
+html,
+body {
+	position: relative;
+	/* font-family: "Bahnschrift"; */
+	background: #fff0;
+	font-size: 16px;
+	letter-spacing: -0.1px;
+	line-height: 1.5;
+	font-weight: 400;
+	color: #222;
+	text-overflow: ellipsis !important;
+	white-space: wrap !important;
+}
 /* BGV */
 .video-container {
 	width: 100%;
@@ -14,22 +39,25 @@
 .video-foreground {
 	background: linear-gradient(180deg, rgba(0, 0, 0, 0.75) 0%, rgba(96, 0, 0, 0.5) 100%);
 }
-/* Preloder */
-.loading {
+/* Preloader */
+#spa-loader {
 	position: fixed;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
 	top: 0;
-	left: 0;
 	bottom: 0;
+	left: 0;
 	right: 0;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
 	background: linear-gradient(180deg, rgba(96, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 100%);
-	z-index: 999;
-	-webkit-transition: ease all 0.33s;
-	-o-transition: ease all 0.33s;
-	-ms-transition: ease all 0.33s;
-	-moz-transition: ease all 0.33s;
-	transition: ease all 0.33s;
+	z-index: 9999;
 }
-.load-text {
+#spa-loader .load-text {
 	position: absolute;
 	background: #0000;
 	color: #fff;
@@ -39,8 +67,8 @@
 	text-align: center;
 	margin: 0 auto;
 }
-.load-circle-back,
-.load-circle-fore {
+#spa-loader .load-circle-back,
+#spa-loader .load-circle-fore {
 	position: absolute;
 	top: 0;
 	bottom: 0;
@@ -48,59 +76,65 @@
 	right: 0;
 	margin: auto;
 }
-.load-circle-back:after,
-.load-circle-fore:after {
+#spa-loader .load-circle-back:after,
+#spa-loader .load-circle-fore:after {
 	content: "";
 	display: block;
 	background-size: cover;
 	background-repeat: no-repeat;
 	background-position: center;
 }
-.load-circle-back {
+#spa-loader .load-circle-back {
 	height: 192px;
 	width: 192px;
 }
-.load-circle-fore {
+#spa-loader .load-circle-fore {
 	height: 120px;
 	width: 120px;
 }
-.load-circle-back:after {
+#spa-loader .load-circle-back:after {
 	height: 192px;
 	width: 192px;
-	animation: rotate-reverse 2s infinite;
+	animation: rotate 1.5s infinite;
 	background-image: url("../img/icon-back.png");
 }
-.load-circle-fore:after {
+#spa-loader .load-circle-fore:after {
 	height: 120px;
 	width: 120px;
-	animation: rotate 2s infinite;
+	animation: rotate-reverse 1.5s infinite;
 	background-image: url("../img/icon-fore.png");
 }
 @keyframes rotate {
 	0% {
 		-webkit-transform: rotate(0deg);
 		-moz-transform: rotate(0deg);
+		transform: rotate(0deg);
 	}
 	50% {
 		-webkit-transform: rotate(360deg);
 		-moz-transform: rotate(360deg);
+		transform: rotate(360deg);
 	}
 	100% {
 		-webkit-transform: rotate(720deg);
 		-moz-transform: rotate(720deg);
+		transform: rotate(720deg);
 	}
 }
 @keyframes rotate-reverse {
 	0% {
 		-webkit-transform: rotate(0deg);
 		-moz-transform: rotate(0deg);
+		transform: rotate(0deg);
 	}
 	50% {
 		-webkit-transform: rotate(-360deg);
 		-moz-transform: rotate(-360deg);
+		transform: rotate(-360deg);
 	}
 	100% {
 		-webkit-transform: rotate(-720deg);
 		-moz-transform: rotate(-720deg);
+		transform: rotate(-720deg);
 	}
 }

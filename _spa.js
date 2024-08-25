@@ -1,5 +1,5 @@
 "use strict";
-$(document).ready(function () {
+$(() => {
 	let URI = localStorage.getItem("URI"),
 		URL = localStorage.getItem("URL"),
 		_GET = JSON.parse(localStorage.getItem("_GET")),

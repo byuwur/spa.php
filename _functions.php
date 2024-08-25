@@ -126,7 +126,7 @@ function show_modal_back($state = "success", $title = "INFO.", $message = "Messa
         $("#modal_back").modal("hide");
         setTimeout(() => $("#modal_back").remove(), 999);
     }
-    $(document).ready(function () {
+    $(() => {
         ' . ($hideCancelBtn ? '$("#modal_back_back").addClass("d-none");' : '$("#modal_back_back").removeClass("d-none");') . '
         window.innerWidth < 992 ? $("#modal_back_container").addClass("modal-dialog-centered") : $("#modal_back_container").removeClass("modal-dialog-centered");
         $("#modal_back").modal("show");
