@@ -1,7 +1,8 @@
 <?php
 require_once "./_var.php";
+require_once $TO_HOME . "_common.php";
 //require_once $TO_HOME . "_functions.php";
-//require_once $TO_HOME . "_plugin.php";
+//require_once $TO_HOME . "_plugins.php";
 //require_once $TO_HOME . "_config.php";
 require_once $TO_HOME . "_routes.php";
 //require_once $TO_HOME . "_router.php";
@@ -17,7 +18,6 @@ require_once $TO_HOME . "common.php";
     </ul>
 </nav>
 <?php
-//login([], true);
-// Always output due to "/_var.php" invoking ob_start();
+// Always call due to /_var.php invoking ob_start();
 ob_end_flush();
 ?>

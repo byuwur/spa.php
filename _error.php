@@ -1,5 +1,265 @@
+<?php
+/*
+ * File: _error.php
+ * Desc: Handles server errors. Standalone.
+ * Deps: none
+ * Copyright (c) 2023 Andrés Trujillo [Mateus] byUwUr
+ */
+
+//[Mateus] byUwUr --- easy http apache/PHP error page --- 2023 v1
+$mateus_link = "https://byuwur.net";
+if (isset($_GET["lang"])) switch ($_GET["lang"]) {
+	case "es":
+	default:
+		$_back = "Volver";
+		$_sorry = "Lamentamos las molestias. ¿Qué desea hacer?";
+		$_out = "Sácame de aquí";
+		setcookie("lang", "es", time() + 31536000, "/", "", false, false);
+		echo "<html lang='es' dir='ltr'>";
+		break;
+	case "en":
+		$_back = "Go back";
+		$_sorry = "Sorry for the inconvenience. What would you like to do?";
+		$_out = "Get me out of here";
+		setcookie("lang", "en", time() + 31536000, "/", "", false, false);
+		echo "<html lang='en' dir='ltr'>";
+		break;
+}
+else if (isset($_COOKIE["lang"])) switch ($_COOKIE["lang"]) {
+	case "es":
+	default:
+		$_back = "Volver";
+		$_sorry = "Lamentamos las molestias. ¿Qué desea hacer?";
+		$_out = "Sácame de aquí";
+		setcookie("lang", "es", time() + 31536000, "/", "", false, false);
+		echo "<html lang='es' dir='ltr'>";
+		break;
+	case "en":
+		$_back = "Go back";
+		$_sorry = "Sorry for the inconvenience. What would you like to do?";
+		$_out = "Get me out of here";
+		setcookie("lang", "en", time() + 31536000, "/", "", false, false);
+		echo "<html lang='en' dir='ltr'>";
+		break;
+}
+else {
+	$_back = "Volver";
+	$_sorry = "Lamentamos las molestias. ¿Qué desea hacer?";
+	$_out = "Sácame de aquí";
+	setcookie("lang", "es", time() + 31536000, "/", "", false, false);
+	echo "<html lang='es' dir='ltr'>";
+}
+if (isset($_GET["e"])) switch ($_GET["e"]) {
+	case "404":
+		$_estringes = "no encontrado";
+		$_estringen = "page not found";
+		if (isset($_GET["lang"])) switch ($_GET["lang"]) {
+			case "es":
+			default:
+				$_emessage = "No podemos encontrar el recurso que busca.";
+				break;
+			case "en":
+				$_emessage = "We cannot find the resource you are looking for.";
+				break;
+		}
+		else if (isset($_COOKIE["lang"])) switch ($_COOKIE["lang"]) {
+			case "es":
+			default:
+				$_emessage = "No podemos encontrar el recurso que busca.";
+				break;
+			case "en":
+				$_emessage = "We cannot find the resource you are looking for.";
+				break;
+		}
+		else $_emessage = "No podemos encontrar el recurso que busca.";
+		break;
+	case "403":
+		$_estringes = "acceso prohibido";
+		$_estringen = "forbidden";
+		if (isset($_GET["lang"])) switch ($_GET["lang"]) {
+			case "es":
+			default:
+				$_emessage = "Usted no tiene permisos para acceder a este recurso.";
+				break;
+			case "en":
+				$_emessage = "You do not have permissions to access this resource.";
+				break;
+		}
+		else if (isset($_COOKIE["lang"])) switch ($_COOKIE["lang"]) {
+			case "es":
+			default:
+				$_emessage = "Usted no tiene permisos para acceder a este recurso.";
+				break;
+			case "en":
+				$_emessage = "You do not have permissions to access this resource.";
+				break;
+		}
+		else $_emessage = "Usted no tiene permisos para acceder a este recurso.";
+		break;
+	case "401":
+		$_estringes = "no autorizado";
+		$_estringen = "unauthorized";
+		if (isset($_GET["lang"])) switch ($_GET["lang"]) {
+			case "es":
+			default:
+				$_emessage = "Es necesario autenticar para obtener una respuesta.";
+				break;
+			case "en":
+				$_emessage = "Authentication is required to obtain a response.";
+				break;
+		}
+		else if (isset($_COOKIE["lang"])) switch ($_COOKIE["lang"]) {
+			case "es":
+			default:
+				$_emessage = "Es necesario autenticar para obtener una respuesta.";
+				break;
+			case "en":
+				$_emessage = "Authentication is required to obtain a response.";
+				break;
+		}
+		else $_emessage = "Es necesario autenticar para obtener una respuesta.";
+		break;
+	case "400":
+		$_estringes = "solicitud incorrecta";
+		$_estringen = "bad request";
+		if (isset($_GET["lang"])) switch ($_GET["lang"]) {
+			case "es":
+			default:
+				$_emessage = "El servidor no interpreta la solicitud por sintaxis inválida.";
+				break;
+			case "en":
+				$_emessage = "The server cannot interpret the request by invalid syntax.";
+				break;
+		}
+		else if (isset($_COOKIE["lang"])) switch ($_COOKIE["lang"]) {
+			case "es":
+			default:
+				$_emessage = "El servidor no interpreta la solicitud por sintaxis inválida.";
+				break;
+			case "en":
+				$_emessage = "The server cannot interpret the request by invalid syntax.";
+				break;
+		}
+		else $_emessage = "El servidor no interpreta la solicitud por sintaxis inválida.";
+		break;
+	case "500":
+		$_estringes = "interno del servidor";
+		$_estringen = "internal error";
+		if (isset($_GET["lang"])) switch ($_GET["lang"]) {
+			case "es":
+			default:
+				$_emessage = "El servidor está en un estado que no puede manejar.";
+				break;
+			case "en":
+				$_emessage = "The server is in a state it cannot handle.";
+				break;
+		}
+		else if (isset($_COOKIE["lang"])) switch ($_COOKIE["lang"]) {
+			case "es":
+			default:
+				$_emessage = "El servidor está en un estado que no puede manejar.";
+				break;
+			case "en":
+				$_emessage = "The server is in a state it cannot handle.";
+				break;
+		}
+		else $_emessage = "El servidor está en un estado que no puede manejar.";
+		break;
+	case "502":
+		$_estringes = "entrada incorrecta";
+		$_estringen = "bad gateway";
+		if (isset($_GET["lang"])) switch ($_GET["lang"]) {
+			case "es":
+			default:
+				$_emessage = "El servidor obtuvo una respuesta inválida.";
+				break;
+			case "en":
+				$_emessage = "The server got an invalid response.";
+				break;
+		}
+		else if (isset($_COOKIE["lang"])) switch ($_COOKIE["lang"]) {
+			case "es":
+			default:
+				$_emessage = "El servidor obtuvo una respuesta inválida.";
+				break;
+			case "en":
+				$_emessage = "The server got an invalid response.";
+				break;
+		}
+		else $_emessage = "El servidor obtuvo una respuesta inválida.";
+		break;
+	case "503":
+		$_estringes = "servicio no disponible";
+		$_estringen = "service unavailable";
+		if (isset($_GET["lang"])) switch ($_GET["lang"]) {
+			case "es":
+			default:
+				$_emessage = "El servidor no esta listo para manejar la petición.";
+				break;
+			case "en":
+				$_emessage = "The request cannot be processed on the server.";
+				break;
+		}
+		else if (isset($_COOKIE["lang"])) switch ($_COOKIE["lang"]) {
+			case "es":
+			default:
+				$_emessage = "El servidor no esta listo para manejar la petición.";
+				break;
+			case "en":
+				$_emessage = "The request cannot be processed on the server.";
+				break;
+		}
+		else $_emessage = "El servidor no esta listo para manejar la petición.";
+		break;
+	case "504":
+		$_estringes = "tiempo de espera";
+		$_estringen = "gateway timeout";
+		if (isset($_GET["lang"])) switch ($_GET["lang"]) {
+			case "es":
+			default:
+				$_emessage = "El servidor no puede obtener una respuesta a tiempo.";
+				break;
+			case "en":
+				$_emessage = "The server cannot get a response on time.";
+				break;
+		}
+		else if (isset($_COOKIE["lang"])) switch ($_COOKIE["lang"]) {
+			case "es":
+			default:
+				$_emessage = "El servidor no puede obtener una respuesta a tiempo.";
+				break;
+			case "en":
+				$_emessage = "The server cannot get a response on time.";
+				break;
+		}
+		else $_emessage = "El servidor no puede obtener una respuesta a tiempo.";
+		break;
+	default:
+		$_estringes = "algo salió mal";
+		$_estringen = "that's not right";
+		if (isset($_GET["lang"])) switch ($_GET["lang"]) {
+			case "es":
+			default:
+				$_emessage = "La petición no puede ser procesada en el servidor.";
+				break;
+			case "en":
+				$_emessage = "The request cannot be processed on the server.";
+				break;
+		}
+		else if (isset($_COOKIE["lang"])) switch ($_COOKIE["lang"]) {
+			case "es":
+			default:
+				$_emessage = "La petición no puede ser procesada en el servidor.";
+				break;
+			case "en":
+				$_emessage = "The request cannot be processed on the server.";
+				break;
+		}
+		else $_emessage = "La petición no puede ser procesada en el servidor.";
+		break;
+} ?>
 <!DOCTYPE html>
-<?php /* [Mateus] byUwUr --- easy http apache/PHP error page --- 2023 v1 */ $mateus_link="https://byuwur.net";if(isset($_GET["lang"]))switch($_GET["lang"]){case "es":default:$_back="Volver";$_sorry="Lamentamos las molestias. ¿Qué desea hacer?";$_out="Sácame de aquí";setcookie("lang","es",time()+31536000,"/","",false,false);echo "<html lang='es' dir='ltr'>";break;case "en":$_back="Go back";$_sorry="Sorry for the inconvenience. What would you like to do?";$_out="Get me out of here";setcookie("lang","en",time()+31536000,"/","",false,false);echo "<html lang='en' dir='ltr'>";break;}else if(isset($_COOKIE["lang"]))switch($_COOKIE["lang"]){case "es":default:$_back="Volver";$_sorry="Lamentamos las molestias. ¿Qué desea hacer?";$_out="Sácame de aquí";setcookie("lang","es",time()+31536000,"/","",false,false);echo "<html lang='es' dir='ltr'>";break;case "en":$_back="Go back";$_sorry="Sorry for the inconvenience. What would you like to do?";$_out="Get me out of here";setcookie("lang","en",time()+31536000,"/","",false,false);echo "<html lang='en' dir='ltr'>";break;}else{$_back="Volver";$_sorry="Lamentamos las molestias. ¿Qué desea hacer?";$_out="Sácame de aquí";setcookie("lang","es",time()+31536000,"/","",false,false);echo "<html lang='es' dir='ltr'>";}if(isset($_GET["e"]))switch($_GET["e"]){case "404":$_estringes="no encontrado";$_estringen="page not found";if(isset($_GET["lang"]))switch($_GET["lang"]){case "es":default:$_emessage="No podemos encontrar el recurso que busca.";break;case "en":$_emessage="We cannot find the resource you are looking for.";break;}else if(isset($_COOKIE["lang"]))switch($_COOKIE["lang"]){case "es":default:$_emessage="No podemos encontrar el recurso que busca.";break;case "en":$_emessage="We cannot find the resource you are looking for.";break;}else $_emessage="No podemos encontrar el recurso que busca.";break;case "403":$_estringes="acceso prohibido";$_estringen="forbidden";if(isset($_GET["lang"]))switch($_GET["lang"]){case "es":default:$_emessage="Usted no tiene permisos para acceder a este recurso.";break;case "en":$_emessage="You do not have permissions to access this resource.";break;}else if(isset($_COOKIE["lang"]))switch($_COOKIE["lang"]){case "es":default:$_emessage="Usted no tiene permisos para acceder a este recurso.";break;case "en":$_emessage="You do not have permissions to access this resource.";break;}else $_emessage="Usted no tiene permisos para acceder a este recurso.";break;case "401":$_estringes="no autorizado";$_estringen="unauthorized";if(isset($_GET["lang"]))switch($_GET["lang"]){case "es":default:$_emessage="Es necesario autenticar para obtener una respuesta.";break;case "en":$_emessage="Authentication is required to obtain a response.";break;}else if(isset($_COOKIE["lang"]))switch($_COOKIE["lang"]){case "es":default:$_emessage="Es necesario autenticar para obtener una respuesta.";break;case "en":$_emessage="Authentication is required to obtain a response.";break;}else $_emessage="Es necesario autenticar para obtener una respuesta.";break;case "400":$_estringes="solicitud incorrecta";$_estringen="bad request";if(isset($_GET["lang"]))switch($_GET["lang"]){case "es":default:$_emessage="El servidor no interpreta la solicitud por sintaxis inválida.";break;case "en":$_emessage="The server cannot interpret the request by invalid syntax.";break;}else if(isset($_COOKIE["lang"]))switch($_COOKIE["lang"]){case "es":default:$_emessage="El servidor no interpreta la solicitud por sintaxis inválida.";break;case "en":$_emessage="The server cannot interpret the request by invalid syntax.";break;}else $_emessage="El servidor no interpreta la solicitud por sintaxis inválida.";break;case "500":$_estringes="interno del servidor";$_estringen="internal error";if(isset($_GET["lang"]))switch($_GET["lang"]){case "es":default:$_emessage="El servidor está en un estado que no puede manejar.";break;case "en":$_emessage="The server is in a state it cannot handle.";break;}else if(isset($_COOKIE["lang"]))switch($_COOKIE["lang"]){case "es":default:$_emessage="El servidor está en un estado que no puede manejar.";break;case "en":$_emessage="The server is in a state it cannot handle.";break;}else $_emessage="El servidor está en un estado que no puede manejar.";break;case "502":$_estringes="entrada incorrecta";$_estringen="bad gateway";if(isset($_GET["lang"]))switch($_GET["lang"]){case "es":default:$_emessage="El servidor obtuvo una respuesta inválida.";break;case "en":$_emessage="The server got an invalid response.";break;}else if(isset($_COOKIE["lang"]))switch($_COOKIE["lang"]){case "es":default:$_emessage="El servidor obtuvo una respuesta inválida.";break;case "en":$_emessage="The server got an invalid response.";break;}else $_emessage="El servidor obtuvo una respuesta inválida.";break;case "503":$_estringes="servicio no disponible";$_estringen="service unavailable";if(isset($_GET["lang"]))switch($_GET["lang"]){case "es":default:$_emessage="El servidor no esta listo para manejar la petición.";break;case "en":$_emessage="The request cannot be processed on the server.";break;}else if(isset($_COOKIE["lang"]))switch($_COOKIE["lang"]){case "es":default:$_emessage="El servidor no esta listo para manejar la petición.";break;case "en":$_emessage="The request cannot be processed on the server.";break;}else $_emessage="El servidor no esta listo para manejar la petición.";break;case "504":$_estringes="tiempo de espera";$_estringen="gateway timeout";if(isset($_GET["lang"]))switch($_GET["lang"]){case "es":default:$_emessage="El servidor no puede obtener una respuesta a tiempo.";break;case "en":$_emessage="The server cannot get a response on time.";break;}else if(isset($_COOKIE["lang"]))switch($_COOKIE["lang"]){case "es":default:$_emessage="El servidor no puede obtener una respuesta a tiempo.";break;case "en":$_emessage="The server cannot get a response on time.";break;}else $_emessage="El servidor no puede obtener una respuesta a tiempo.";break;default:$_estringes="algo salió mal";$_estringen="that's not right";if(isset($_GET["lang"]))switch($_GET["lang"]){case "es":default:$_emessage="La petición no puede ser procesada en el servidor.";break;case "en":$_emessage="The request cannot be processed on the server.";break;}else if(isset($_COOKIE["lang"]))switch($_COOKIE["lang"]){case "es":default:$_emessage="La petición no puede ser procesada en el servidor.";break;case "en":$_emessage="The request cannot be processed on the server.";break;}else $_emessage="La petición no puede ser procesada en el servidor.";break;} ?>
+
 <head>
 	<meta charset="utf-8">
 	<title><?= $_GET["e"] . " = " . $_estringes . " - " . $_estringen; ?> | [Mateus] byUwUr</title>
@@ -19,8 +279,132 @@
 	<meta name="theme-color" content="#300" />
 	<link rel="shortcut icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACABAMAAAAxEHz4AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAAeUExURQAAAP///////////////////////////wAAAP///9TZ8SQAAAAIdFJOUwAAHEuHs8Pu/CN8IAAAAbNJREFUaN7t2T9rwlAUBfCDitDxaVvoVgdxDnTpKEKhW+uWUXDp6uY3aLaKJvZ82w5FzX3v3ReKFPxz7xTMeb+IvgzJgTtysDt4+uBh5lkkWk9UEx8YUkw5CNZ7iakEekt5mgt/vZ/YDgRw561n6QNB4l0Az/5p+r9CkFgL4DUAxh4QJDYC+AiAmQcEiUoAJL8/D0PyC3JkoiB5SUD/hQwBsprsFreDRLHf8XC9nHGAnP6ub4WJYr/j4UZUge0jACCSKPY7Hi7XAb4BAHIdKB36TABrAGhTB5jhNgVsAKCTAsa4TwEVAHRTwAwPJGufeSEAuJEJeZ2VAY3Abgw4L4B+SN5dVwAsjwWGDUD+79/A/sbDveAf/vlmMsCA0wDieQMMuFIgGAMMMMAAA84ZsKf3iwGu7FVYdOsLIPY8a4ABpwJE360LoKsmSK7ib/cF0EkD/UagnQaiDYcAkKeBUSMwSgOxlkcCrTwJxHomCUR6JgFEmi4PCJuuSwTCxrPeaiYSM7VzrfeqicRYbX3rzW4ikWm9s+iW9USpNt+i3dYTC617l/26migHSvvvNfxaYp459wOcqBZ50pQFXgAAAABJRU5ErkJggg==" />
 	<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACABAMAAAAxEHz4AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAAeUExURQAAAP///////////////////////////wAAAP///9TZ8SQAAAAIdFJOUwAAHEuHs8Pu/CN8IAAAAbNJREFUaN7t2T9rwlAUBfCDitDxaVvoVgdxDnTpKEKhW+uWUXDp6uY3aLaKJvZ82w5FzX3v3ReKFPxz7xTMeb+IvgzJgTtysDt4+uBh5lkkWk9UEx8YUkw5CNZ7iakEekt5mgt/vZ/YDgRw561n6QNB4l0Az/5p+r9CkFgL4DUAxh4QJDYC+AiAmQcEiUoAJL8/D0PyC3JkoiB5SUD/hQwBsprsFreDRLHf8XC9nHGAnP6ub4WJYr/j4UZUge0jACCSKPY7Hi7XAb4BAHIdKB36TABrAGhTB5jhNgVsAKCTAsa4TwEVAHRTwAwPJGufeSEAuJEJeZ2VAY3Abgw4L4B+SN5dVwAsjwWGDUD+79/A/sbDveAf/vlmMsCA0wDieQMMuFIgGAMMMMAAA84ZsKf3iwGu7FVYdOsLIPY8a4ABpwJE360LoKsmSK7ib/cF0EkD/UagnQaiDYcAkKeBUSMwSgOxlkcCrTwJxHomCUR6JgFEmi4PCJuuSwTCxrPeaiYSM7VzrfeqicRYbX3rzW4ikWm9s+iW9USpNt+i3dYTC617l/26migHSvvvNfxaYp459wOcqBZ50pQFXgAAAABJRU5ErkJggg==" />
-	<style>*{font-family:"Lucida Console",Courier,monospace;-webkit-transition:.25s!important;-o-transition:.25s!important;-ms-transition:.25s!important;-moz-transition:.25s!important;transition:.25s!important}body{margin:0}#body{background:linear-gradient(90deg,#311 25%,#111 100%);width:100vw;height:100vh}#cubes,#message-box{color:#fff;position:absolute;width:50vw;height:100vh;top:0}#cubes{left:5%}#message-box{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;left:45%}#message-box a{color:#fff;font-size:16px;margin:8px 0 24px}#message-box span{font-size:16px;margin-bottom:4px}#message-box h1{font-size:192px;margin:0;line-height:1}#message-box p{font-size:40px;margin:4px;line-height:1}#action-link-wrap{margin:32px 0}#action-link-wrap a{background:#600;font-size:20px;margin:0 4px;padding:12px 24px;border-radius:4px;font-weight:700;cursor:pointer;text-decoration:none;text-transform:uppercase}#action-link-wrap a:hover{background:#900}#poly1,#poly2,#poly3,#poly4,#poly5{animation:2.5s ease-in-out infinite alternate floatCubes}#poly2{animation-delay:.25s}#poly3{animation-delay:.5s}#poly4{animation-delay:.75s}#poly5{animation-delay:1s}@keyframes floatCubes{100%{transform:translateY(24px)}}@media (max-width:880px){#cubes,#message-box{width:100vw;left:0}}</style>
+	<style>
+		* {
+			font-family: "Lucida Console", Courier, monospace;
+			-webkit-transition: .25s !important;
+			-o-transition: .25s !important;
+			-ms-transition: .25s !important;
+			-moz-transition: .25s !important;
+			transition: .25s !important
+		}
+
+		body {
+			margin: 0
+		}
+
+		#body {
+			background: linear-gradient(90deg, #311 25%, #111 100%);
+			width: 100vw;
+			height: 100vh
+		}
+
+		#cubes,
+		#message-box {
+			color: #fff;
+			position: absolute;
+			width: 50vw;
+			height: 100vh;
+			top: 0
+		}
+
+		#cubes {
+			left: 5%
+		}
+
+		#message-box {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			text-align: center;
+			left: 45%
+		}
+
+		#message-box a {
+			color: #fff;
+			font-size: 16px;
+			margin: 8px 0 24px
+		}
+
+		#message-box span {
+			font-size: 16px;
+			margin-bottom: 4px
+		}
+
+		#message-box h1 {
+			font-size: 192px;
+			margin: 0;
+			line-height: 1
+		}
+
+		#message-box p {
+			font-size: 40px;
+			margin: 4px;
+			line-height: 1
+		}
+
+		#action-link-wrap {
+			margin: 32px 0
+		}
+
+		#action-link-wrap a {
+			background: #600;
+			font-size: 20px;
+			margin: 0 4px;
+			padding: 12px 24px;
+			border-radius: 4px;
+			font-weight: 700;
+			cursor: pointer;
+			text-decoration: none;
+			text-transform: uppercase
+		}
+
+		#action-link-wrap a:hover {
+			background: #900
+		}
+
+		#poly1,
+		#poly2,
+		#poly3,
+		#poly4,
+		#poly5 {
+			animation: 2.5s ease-in-out infinite alternate floatCubes
+		}
+
+		#poly2 {
+			animation-delay: .25s
+		}
+
+		#poly3 {
+			animation-delay: .5s
+		}
+
+		#poly4 {
+			animation-delay: .75s
+		}
+
+		#poly5 {
+			animation-delay: 1s
+		}
+
+		@keyframes floatCubes {
+			100% {
+				transform: translateY(24px)
+			}
+		}
+
+		@media (max-width:880px) {
+
+			#cubes,
+			#message-box {
+				width: 100vw;
+				left: 0
+			}
+		}
+	</style>
 </head>
+
 <body>
 	<div id="body">
 		<svg id="cubes" viewBox="0 0 837 1045" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
@@ -51,4 +435,5 @@
 		</div>
 	</div>
 </body>
+
 </html>

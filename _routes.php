@@ -1,12 +1,22 @@
 <?php
-// routes
+/*
+ * File: _routes.php
+ * Desc: Defines the routing map for the application, including URIs, GET/POST parameters, and associated components.
+ * Deps: none
+ * Copyright (c) 2023 Andrés Trujillo [Mateus] byUwUr
+ */
+
+// Hierarchy
 $ROOT_ROUTE = "/";
-// components
+
+// Default components to include on each route
 $ROOT_COMPONENTS = ["COMPONENT" => ["#header" => "/header.php", "#footer" => "/footer.php"]];
-// ---
+
+// Route definitions
 $routes = [
-    // "/uri" => ["URI" => "/file.php", "GET" => [..."key" => "value"...], "POST" => [..."key" => "value"...], "COMPONENT" => [..."#id" => "file.php"...]],
-    // "/" routes
+    // Format: "/uri" => ["URI" => "/file.php", "GET" => [...], "POST" => [...], "COMPONENT" => [...]]
+
+    // "/"
     $ROOT_ROUTE => ["URI" => "/main.php", ...$ROOT_COMPONENTS],
     $ROOT_ROUTE . "es" => ["URI" => "", "GET" => ["lang" => "es"], ...$ROOT_COMPONENTS],
     $ROOT_ROUTE . "en" => ["URI" => "", "GET" => ["lang" => "en"], ...$ROOT_COMPONENTS],

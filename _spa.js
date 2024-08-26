@@ -1,5 +1,13 @@
 "use strict";
+/*
+ * File: _spa.js
+ * Desc: Manages the Single Page Application (SPA) functionality, including routing, state management, and AJAX loading of content.
+ * Deps: jQuery
+ * Copyright (c) 2023 Andrés Trujillo [Mateus] byUwUr
+ */
+
 $(() => {
+	// Initializes values retrieved from localStorage and sets up environment variables.
 	let URI = localStorage.getItem("URI"),
 		URL = localStorage.getItem("URL"),
 		_GET = JSON.parse(localStorage.getItem("_GET")),
@@ -11,24 +19,40 @@ $(() => {
 		HOME_PATH = localStorage.getItem("HOME_PATH"),
 		HISTORY_PATH = [];
 	console.log("SPA load:", APP_ENV);
-	const getLocalStorageItems = function () {
+
+	/**
+	 * Updates local variables with the latest data from localStorage.
+	 */
+	function getLocalStorageItems() {
 		URI = localStorage.getItem("URI");
 		URL = localStorage.getItem("URL");
 		_GET = JSON.parse(localStorage.getItem("_GET"));
 		_POST = JSON.parse(localStorage.getItem("_POST"));
-	};
-	const historyPushState = function (url) {
+	}
+
+	/**
+	 * Pushes the current state to the browser's history stack.
+	 * @param {string} url The URL to push to the history stack.
+	 */
+	function historyPushState(url) {
 		HISTORY_INDEX++;
 		HISTORY_PATH[HISTORY_INDEX] = url;
 		history.pushState({ index: HISTORY_INDEX }, "", `${HOME_PATH}${url}`);
-	};
-	const errorPage = function (status, custom_error_message = "") {
+	}
+
+	/**
+	 * Displays an error page by sending an AJAX request to the server.
+	 * @param {int} status HTTP status code.
+	 * @param {string} custom_error_message A custom error message to display.
+	 */
+	function errorPage(status, custom_error_message = "") {
 		$.ajax({
 			url: `${HOME_PATH}/_error.php?e=${status}`,
 			type: "POST",
 			data: { custom_error_message },
 			success: function (data) {
 				document.write(data);
+				// Reinitialize necessary variables and attach event listeners for history management. (Be able to go back)
 				$("head").append(`<script>
 					const parseURL = ${parseURL}, routeURL = ${routeURL}, loadSPA = ${loadSPA}, getLocalStorageItems = ${getLocalStorageItems},
 						ROUTES = ${JSON.stringify(ROUTES)}, TO_HOME = "${TO_HOME}", HOME_PATH = "${HOME_PATH}",
@@ -47,8 +71,17 @@ $(() => {
 				return;
 			}
 		});
-	};
-	const reloadComponent = function (component, file, get, post) {
+	}
+
+	/**
+	 * Reloads a specific component to its elementID via an AJAX request.
+	 * @param {string} component The selector for the component to reload.
+	 * @param {string} file The file path to load the content from.
+	 * @param {object} get The GET parameters to pass.
+	 * @param {object} post The POST parameters to pass.
+	 */
+	function reloadComponent(component, file, get, post) {
+		// If no file is provided, clear the component's content
 		if (!file || file == "" || file == "null") return $(component).html("");
 		$.ajax({
 			url: `${HOME_PATH}${file}?${new URLSearchParams(get).toString()}`,
@@ -61,46 +94,79 @@ $(() => {
 				console.log("Error loading content:", xhr, status, error);
 			}
 		});
-	};
-	const parseURL = function (uri = "/") {
+	}
+
+	/**
+	 * Parses the given URI into a path and associated parameters.
+	 * @param {string} uri The URI to parse.
+	 * @return {object} An object containing the path and parameters.
+	 */
+	function parseURL(uri = "/") {
+		// Ensure the URI starts with a "/" and doesn't end with one
 		while (uri.length > 0 && !uri.startsWith("/")) uri = uri.substring(1);
 		while (uri.length > 1 && uri.endsWith("/")) uri = uri.substring(0, uri.length - 1);
+		// Handle URI parameters if present
 		if (!uri.includes("/$/")) return { path: uri, params: {} };
 		const [path, param] = uri.split("/$/", 2);
 		const keyValuePairs = param.split("/");
 		const params = {};
+		// Iterate over the parameters and store them as key-value pairs
 		for (let i = 0; i < keyValuePairs.length; i += 2) if (keyValuePairs[i + 1] !== undefined) params[keyValuePairs[i]] = keyValuePairs[i + 1];
+
 		return { path, params };
-	};
-	const routeURL = function (uri = "/") {
+	}
+
+	/**
+	 * Routes the given URI within the SPA, managing state and navigation.
+	 * @param {string} uri The URI to route.
+	 * @return {object} An object containing the routed path, URI, file, parameters, and components.
+	 */
+	function routeURL(uri = "/") {
+		// Parse the URI into path and parameters
 		const { path, params } = parseURL(uri);
+		// Check if the path exists in the defined routes
 		if (!Object.keys(ROUTES).includes(path) || !Object.keys(ROUTES).length) return errorPage(404, `Route "${uri}" does not exist.`);
 		localStorage.setItem("URI", path);
 		localStorage.setItem("_GET", JSON.stringify({ ..._GET, ...(ROUTES[path]?.GET ?? []), ...params }));
 		localStorage.setItem("_POST", JSON.stringify({ ..._POST, ...(ROUTES[path]?.POST ?? []) }));
 		getLocalStorageItems();
+		// Determine the final URI based on the route
 		uri = ROUTES[path]?.URI;
+		// Determine the correct URI if it's not explicitly set
 		if (uri == "") uri = _GET["uri"] ? (ROUTES[_GET["uri"]]?.URI ? ROUTES[_GET["uri"]]?.URI : ROUTES["/"]?.URI) : ROUTES["/"]?.URI;
 		else _GET["uri"] = URI;
+
 		return { path, uri, file: ROUTES[path]?.FILE, get: _GET, post: _POST, component: ROUTES[path]?.COMPONENT };
-	};
-	const loadSPA = function (url, push = true) {
+	}
+
+	/**
+	 * Loads the SPA content for the given URL, optionally pushing the state to history.
+	 * @param {string} url The URL to load.
+	 * @param {boolean} push Whether to push the state to the browser history.
+	 */
+	function loadSPA(url, push = true) {
 		$("#spa-loader").fadeIn(1);
 		$("#spa-page-content-container").html("");
 		if (push) historyPushState(url);
 		const routing = routeURL(`${url}`);
+		// If routing fails, return early
 		if (!routing) return;
 		const { path, uri, file, get, post, component } = routing;
+		// Log debug information if in development mode
 		if (APP_ENV === "DEV") {
 			console.log(`loadSPA("${url}");`);
 			console.log("routeURL(); PATH=", path, "; URI=", uri, "; FILE=", file, "; _GET=", get, "; _POST=", post, "; COMPONENT=", component);
 		}
+		// If a file is specified in the route, navigate to it directly
 		if (file) {
 			window.location = `${HOME_PATH}${path}`;
 			return;
 		}
+		// If the SPA container is missing, reload the page
 		if (!$("#spa-page-content-container").length) window.location.reload();
+		// Reload each component associated with the route
 		for (let key in component) reloadComponent(key, component[key], get, post);
+		// Retrieve the page data
 		$.ajax({
 			url: `${HOME_PATH}${uri}?${new URLSearchParams(get).toString()}`,
 			type: "POST",
@@ -110,23 +176,29 @@ $(() => {
 			},
 			error: function (xhr, status, error) {
 				console.log("Error loading content:", xhr, status, error);
+				// Display an error page if the route does not exist
 				errorPage(404, `Route "${url}" does not exist.`);
 			},
 			complete: function () {
-				$("#spa-loader").delay(333).fadeOut(333);
+				setTimeout(() => $("#spa-loader").fadeOut(333), 333);
 			}
 		});
-	};
+	}
+
+	// Handles the popstate event for navigating through browser history.
 	window.addEventListener("popstate", function (e) {
 		if (!e.state || e.state.index == undefined) return;
 		HISTORY_INDEX = e.state.index;
 		loadSPA(HISTORY_PATH[HISTORY_INDEX], false);
 	});
+
+	// Attaches click event handlers to links for SPA navigation.
 	$(document).on("click", "a:not([target='_blank']):not([href^='#']):not([href^='javascript:']):not([custom-folder='true'])", function (e) {
 		e.preventDefault();
 		loadSPA($(this).attr("href"));
 	});
-	loadSPA(`${URL}`);
+
+	// Log debug information if in development mode
 	if (APP_ENV === "DEV") {
 		console.log("URI=", URI);
 		console.log("URL=", URL);
@@ -138,4 +210,7 @@ $(() => {
 		console.log("HOME_PATH=", HOME_PATH);
 		console.log("HISTORY_PATH=", HISTORY_PATH);
 	}
+
+	// Initial load of SPA content based on the stored URL.
+	loadSPA(`${URL}`);
 });

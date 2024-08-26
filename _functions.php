@@ -1,7 +1,23 @@
 <?php
+/*
+ * File: _functions.php
+ * Desc: Declares project-wide functions for multiple purposes
+ * Deps: none
+ * Copyright (c) 2023 Andrés Trujillo [Mateus] byUwUr
+ */
+
 // --- API functions ---
+
+/** 
+ * Sends a JSON response with status, error, message, and optional data, then terminates the script.
+ * @param int $status HTTP status code.
+ * @param bool $error Indicates if the response represents an error.
+ * @param string $message Message to include in the response.
+ * @param array $data Additional data to include in the response.
+ */
 function api_respond(int $status, bool $error, string $message, array $data = [])
 {
+    http_response_code($status);
     header("Content-Type: application/json");
     $response = new stdClass();
     $response->status = $status;
@@ -12,6 +28,14 @@ function api_respond(int $status, bool $error, string $message, array $data = []
     ob_end_flush();
     exit;
 }
+
+/** 
+ * Makes an HTTP POST request to a given URL with optional GET and POST parameters.
+ * @param string $url The URL to send the request to.
+ * @param array $get GET parameters to include in the request.
+ * @param array $post POST parameters to include in the request.
+ * @return mixed The response from the request.
+ */
 function make_http_request(string $url, array $get = [], array $post = [])
 {
     session_write_close();
@@ -27,6 +51,13 @@ function make_http_request(string $url, array $get = [], array $post = [])
     session_start();
     return $requested;
 }
+
+/** 
+ * Validates a value against a specified type, returning null if the value is invalid.
+ * @param mixed $input The value to validate.
+ * @param string $type The type to validate against (e.g., boolean, email).
+ * @return mixed The validated value or null if invalid.
+ */
 function validate_value($input, string $type = "")
 {
     if (!isset($input)) return null;
@@ -45,6 +76,13 @@ function validate_value($input, string $type = "")
     ];
     return filter_var($input, $filterMap[$type] ?? FILTER_UNSAFE_RAW);
 }
+
+/** 
+ * Sanitizes a value based on the specified type, removing harmful elements.
+ * @param mixed $input The value to sanitize.
+ * @param string $type The type of sanitization to apply (e.g., email, url).
+ * @return mixed The sanitized value.
+ */
 function sanitize_value($input, string $type = "")
 {
     $input = trim($input);
@@ -60,16 +98,34 @@ function sanitize_value($input, string $type = "")
     ];
     return filter_var($input, $filterMap[$type] ?? FILTER_UNSAFE_RAW);
 }
-// --- functions ---
+
+// --- COMMON & MISC functions ---
+
+/** 
+ * Redirects the user to a specified location and terminates the script.
+ * @param string $location The URL or path to redirect to.
+ */
 function change_location(string $location)
 {
     header("Location: " . $location);
     exit;
 }
+
+/** 
+ * Logs a message to the browser's console using JavaScript.
+ * @param string $message The message to log.
+ */
 function console_log(string $message)
 {
     echo "<script>console.log('" . $message . "');</script>";
 }
+
+/** 
+ * Triggers an error page and terminates the script.
+ * @param int $status The HTTP status code to send.
+ * @param string $message The error message to display.
+ * @param string $error_file The path to the error file to include.
+ */
 function error_crash(int $status, string $message, string $error_file)
 {
     $_GET["e"] = $status;
@@ -78,16 +134,31 @@ function error_crash(int $status, string $message, string $error_file)
     ob_end_flush();
     exit;
 }
+
+/** 
+ * Suppresses all error reporting by setting error reporting level to 0 and disabling error display.
+ */
 function suppress_errors()
 {
     error_reporting(0);
     ini_set("display_errors", 0);
 }
+
+/** 
+ * Escapes HTML characters in a string to prevent XSS attacks.
+ * @param mixed $input The input to escape.
+ * @return string The escaped string, with newlines converted to <br> tags.
+ */
 function escape_html($input)
 {
     $output = htmlspecialchars($input, ENT_QUOTES, "UTF-8", false);
     return nl2br($output);
 }
+
+/** 
+ * Sends a JSON response and terminates the script.
+ * @param mixed $json The data to encode and send as JSON.
+ */
 function exit_json($json)
 {
     header("Content-Type: application/json");
@@ -95,10 +166,21 @@ function exit_json($json)
     ob_end_flush();
     exit;
 }
+
+/** 
+ * Outputs data as a JSON-encoded string.
+ * @param mixed $json The data to encode and print as JSON.
+ */
 function print_json($json)
 {
     echo json_encode($json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 }
+
+/** 
+ * Generates a random alphanumeric string of a specified length.
+ * @param int $length The length of the random string.
+ * @return string The generated random string.
+ */
 function random_string($length)
 {
     $string = "";
@@ -106,6 +188,15 @@ function random_string($length)
     for ($i = 0; $i < $length; $i++) $string .= substr($char, rand(0, strlen($char)), 1);
     return $string;
 }
+
+/** 
+ * Displays a Bootstrap modal with a customizable message and actions.
+ * @param string $state The state of the modal (e.g., success, danger, info, warning).
+ * @param string $title The title of the modal.
+ * @param string $message The message to display in the modal.
+ * @param bool $hideCancelBtn Whether to hide the cancel button.
+ * @param string $redirect The URL to redirect to when "OK" is clicked.
+ */
 function show_modal_back($state = "success", $title = "INFO.", $message = "Message.", $hideCancelBtn = false, $redirect = "javascript:destroy_modal_back();")
 {
     echo '<div id="modal_back" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel">
@@ -133,6 +224,12 @@ function show_modal_back($state = "success", $title = "INFO.", $message = "Messa
     });
     </script>';
 }
+
+/** 
+ * Returns the MIME type of a file based on its extension.
+ * @param string $filename The name of the file.
+ * @return string The MIME type of the file, or "application/octet-stream" if unknown.
+ */
 function get_mime_type($filename)
 {
     $mime = [
