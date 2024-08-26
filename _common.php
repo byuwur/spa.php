@@ -5,53 +5,34 @@
  * Deps: /_var.php
  * Copyright (c) 2023 Andrés Trujillo [Mateus] byUwUr
  */
+
 // --- LANGUAGE ---
-if (isset($_GET['lang'])) {
-    switch ($_GET['lang']) {
-        case 'es':
-        case 'en':
-            setcookie('lang', $_GET['lang'], time() + 31536000, '/', '', false, false);
-            require_once $TO_HOME . "lang/" . $_GET['lang'] . ".php";
-            echo "<html lang='" . $_GET['lang'] . "'>";
-            $lang = $_GET['lang'];
-            break;
-    }
-} else if (isset($_COOKIE['lang'])) {
-    switch ($_COOKIE['lang']) {
-        case 'es':
-        case 'en':
-            require_once $TO_HOME . "lang/" . $_COOKIE['lang'] . ".php";
-            echo "<html lang='" . $_COOKIE['lang'] . "'>";
-            $lang = $_COOKIE['lang'];
-            break;
-    }
-} else {
-    setcookie('lang', 'es', time() + 31536000, '/', '', false, false);
-    require_once $TO_HOME . "lang/es.php";
-    echo "<html lang='es'>";
-    $lang = 'es';
+$lang = isset($_GET["lang"]) ? $_GET["lang"] : (isset($_COOKIE["lang"]) ? $_COOKIE["lang"] : "es");
+switch ($lang) {
+    case "es":
+    case "en":
+        $app_lang = $lang;
+        break;
+    default:
+        $app_lang = "es";
+        break;
 }
+echo "<html lang='" . $app_lang . "' dir='ltr'>";
+setcookie("lang", $app_lang, time() + 31536000, "/", "", false, false);
+require_once $TO_HOME . "lang/" . $app_lang . ".php";
 
 // --- THEME ---
-if (isset($_GET['theme']))
-    switch ($_GET['theme']) {
-        case 'dark':
-        case 'light':
-            setcookie('theme', $_GET['theme'], time() + 31536000, '/', '', false, false);
-            $_theme = $_GET['theme'];
-            break;
-    }
-else if (isset($_COOKIE['theme']))
-    switch ($_COOKIE['theme']) {
-        case 'dark':
-        case 'light':
-            $_theme = $_COOKIE['theme'];
-            break;
-    }
-else {
-    setcookie('theme', 'dark', time() + 31536000, '/', '', false, false);
-    $_theme = "dark";
+$theme = isset($_GET["theme"]) ? $_GET["theme"] : (isset($_COOKIE["theme"]) ? $_COOKIE["theme"] : "dark");
+switch ($theme) {
+    case "dark":
+    case "light":
+        $app_theme = $theme;
+        break;
+    default:
+        $app_theme = "dark";
+        break;
 }
+setcookie("theme", $app_theme, time() + 31536000, "/", "", false, false);
 
 // --- VARIABLES ---
 $title_index = $_GET["title"] ?? 0;
