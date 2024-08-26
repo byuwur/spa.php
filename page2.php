@@ -11,7 +11,7 @@ require_once $TO_HOME . "_common.php";
 require_once $TO_HOME . "common.php";
 // --- PHP ---
 ?>
-<div class="video-foreground">
+<div class="video-foreground app-container">
     <div class="container vh-100 d-flex flex-column align-items-center justify-content-center text-white">
         <p><?= $description; ?></p>
         <p><?= $thisis . " " . $page2; ?>.</p>
