@@ -7,8 +7,23 @@
  */
 
 /**
+ * Creates a debounced function that delays the execution of the provided function (`func`)
+ * until after the specified `wait` time has elapsed since the last time the debounced function was called.
+ *
+ * @param {Function} func The function to debounce. This is the function that will be delayed in execution.
+ * @param {number} wait (Default 111) The number of milliseconds to wait before executing the `func`.
+ * @return {Function} Returns a new debounced version of the `func` that delays its execution.
+ */
+function debounce(func, wait = 250) {
+	let timeout;
+	return function () {
+		clearTimeout(timeout);
+		timeout = setTimeout(() => func.apply(this, arguments), wait);
+	};
+}
+
+/**
  * Hides and removes the front modal from the DOM after a short delay.
- * @function destroy_modal_front
  * @param {boolean} $delay Whether delays its detruction or not.
  */
 function destroy_modal_front($delay = true) {

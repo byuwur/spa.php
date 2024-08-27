@@ -2,7 +2,7 @@
 /*
  * File: common.js
  * Desc: Contains common resources that are initialized in a per-page basis instead of globally.
- * Deps: jQuery
+ * Deps: jQuery, /_functions.js
  * Copyright (c) 2023 Andrés Trujillo [Mateus] byUwUr
  */
 
@@ -40,6 +40,8 @@ if (window.jQuery)
 		$("#sidebar-toggle")
 			.off("click")
 			.on("click", function () {
+				$("#sidebar-toggle").trigger("blur");
+				$("#sidebar .overlay").css("height", "");
 				if (!$("#sidebar-toggle").hasClass("sidebar-expanded")) {
 					$("#sidebar-toggle").addClass("sidebar-expanded");
 					$("#sidebar").addClass("sidebar-expanded");
@@ -50,32 +52,38 @@ if (window.jQuery)
 					$("#sidebar").removeClass("sidebar-expanded");
 					$(".app-container").removeClass("sidebar-expanded");
 					$("#sidebar-hidden").css("display", "flex");
+					$("#sidebar").scrollTop(0);
 				}
-				$("#sidebar-toggle").trigger("blur");
 			});
 		// Expand sidebar when the hidden sidebar area is hovered
 		$("#sidebar-hidden")
 			.off("mouseenter")
 			.on("mouseenter", function () {
-				if (!$("#sidebar-toggle").hasClass("sidebar-expanded")) {
-					$("#sidebar").addClass("sidebar-expanded");
-				}
+				if (!$("#sidebar-toggle").hasClass("sidebar-expanded")) $("#sidebar").addClass("sidebar-expanded");
 			});
-
 		// Collapse sidebar when the mouse leaves the hidden sidebar area
 		$("#sidebar-hidden")
 			.off("mouseleave")
 			.on("mouseleave", function () {
-				if (!$("#sidebar-toggle").hasClass("sidebar-expanded") && !$("#sidebar").is(":hover")) {
-					$("#sidebar").removeClass("sidebar-expanded");
-				}
+				if (!$("#sidebar-toggle").hasClass("sidebar-expanded") && !$("#sidebar").is(":hover")) $("#sidebar").removeClass("sidebar-expanded");
 			});
-		// Ensure the sidebar collapses when the mouse leaves the sidebar itself
+		// Ensure the overlay inside the sidebar follows it accordingly, due to being an absolute positioned inside another
+		let sidebarScrollTop = 0;
 		$("#sidebar")
+			.off("scroll")
+			.on(
+				"scroll",
+				debounce(function () {
+					const top = Math.floor($(this).scrollTop()),
+						diff = top - sidebarScrollTop;
+					console.log(top);
+					if ($("#sidebar").hasClass("sidebar-expanded")) $("#sidebar .overlay").css("height", `${$("#sidebar .overlay").height() + diff}px`);
+					sidebarScrollTop = top;
+				})
+			)
+			// Ensure the sidebar collapses when the mouse leaves the sidebar itself
 			.off("mouseleave")
 			.on("mouseleave", function () {
-				if (!$("#sidebar-toggle").hasClass("sidebar-expanded")) {
-					$("#sidebar").removeClass("sidebar-expanded");
-				}
+				if (!$("#sidebar-toggle").hasClass("sidebar-expanded")) $("#sidebar").removeClass("sidebar-expanded");
 			});
 	});
