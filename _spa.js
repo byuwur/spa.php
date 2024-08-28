@@ -151,17 +151,19 @@ document.addEventListener("DOMContentLoaded", () => {
 			console.warn(`Component ${APP_ENV === "DEV" ? "(" + component + ")" : " "} missing. Creating and appending to the body...`);
 			$("body").append(parseQuerySelector(component));
 		}
+		// If there's a component extract the ID
+		const componentId = component.match(/#[a-zA-Z0-9-_]+/)[0];
 		// If no file is provided, clear the component's content
-		if (!file || file == "" || file == "null") return $(component).html("");
+		if (!file || file == "" || file == "null") return $(componentId).html("");
 		$.ajax({
 			url: `${HOME_PATH}${file}?${new URLSearchParams({ ...get, uri: false }).toString()}`,
 			type: "POST",
 			data: { ...post },
 			success: function (data) {
-				$(component).html(data);
+				$(componentId).html(data);
 			},
 			error: function (xhr, status, error) {
-				$(component).html("");
+				$(componentId).html("");
 				console.warn(`Error loading component: ${xhr?.status} ${status} ${error}`, APP_ENV == "DEV" ? xhr : "");
 			}
 		});
