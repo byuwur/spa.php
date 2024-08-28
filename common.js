@@ -11,10 +11,7 @@
  * It should be called whenever the content of the #spa-page-content-container changes dynamically to ensure that all components function correctly.
  */
 function initBootstrapComponents() {
-	if (!bootstrap) {
-		console.warn("Can't reload bootstrap since it ain't present.");
-		return;
-	}
+	if (window.bootstrap === undefined && typeof bootstrap === "undefined") return console.warn("Can't reload bootstrap since it ain't present.");
 	console.log("Init bootstrap components");
 	// Initialize Alert components
 	[...document.querySelectorAll(".alert")].forEach((alertEl) => bootstrap.Alert.getInstance(alertEl) ?? new bootstrap.Alert(alertEl));
@@ -136,16 +133,21 @@ function initMisc() {
 		});
 }
 
+function initReCaptcha() {
+	// Check it exists in the first place. Duh..
+	if (window.grecaptcha === undefined && typeof grecaptcha === "undefined") return;
+	console.log("Init g-reCaptcha");
+	[...document.querySelectorAll(".g-recaptcha")].forEach((captchaEl) => (grecaptcha.render ? grecaptcha.render(captchaEl) : console.warn("grecaptcha not ready...")));
+}
+
 /**
  * Initializes all components that dynamically changes within the page
  */
 function initCommon() {
-	if (!window.jQuery) {
-		console.error("Init common.js FAILED. No jQuery found.");
-		return;
-	}
+	if (window.jQuery === undefined && typeof jQuery === "undefined") return console.error("Init common.js FAILED. No jQuery found.");
 	console.log("Init common.js");
 	initBootstrapComponents();
 	initSidebar();
 	initMisc();
+	initReCaptcha();
 }

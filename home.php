@@ -25,8 +25,6 @@ require_once $TO_HOME . "_routes.php";
 require_once $TO_HOME . "_router.php";
 // Include auth management
 //require_once $TO_HOME . "_auth.php";
-// Include utility HTML
-//require_once $TO_HOME . "common.php";
 
 // --- PHP ---
 ?>
@@ -44,6 +42,7 @@ require_once $TO_HOME . "_router.php";
     <script src="<?= $HOME_PATH; ?>/_functions.js" defer></script>
     <script src="<?= $HOME_PATH; ?>/common.js" defer></script>
     <script src="<?= $HOME_PATH; ?>/_spa.js" defer></script>
+    <script src="https://www.google.com/recaptcha/api.js" defer></script>
 </head>
 
 <body>
