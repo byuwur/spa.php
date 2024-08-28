@@ -10,8 +10,7 @@
 $ROOT_ROUTE = "/";
 
 // Default components to include on each route
-//$ROOT_COMPONENTS = ["COMPONENT" => ["#header" => "/header.php", "#footer" => "/footer.php"]];
-$ROOT_COMPONENTS = ["COMPONENT" => ["#header" => "/sidebar.php", "#footer" => ""]];
+$ROOT_COMPONENTS = ["COMPONENT" => ["#spa-nav" => "/sidebar.php"]];
 
 // Route definitions
 $routes = [

@@ -42,6 +42,7 @@ require_once $TO_HOME . "_router.php";
     <script src="<?= $HOME_PATH; ?>/js/jquery-3.3.1.min.js" defer></script>
     <script src="<?= $HOME_PATH; ?>/js/bootstrap.min.js" defer></script>
     <script src="<?= $HOME_PATH; ?>/_functions.js" defer></script>
+    <script src="<?= $HOME_PATH; ?>/common.js" defer></script>
     <script src="<?= $HOME_PATH; ?>/_spa.js" defer></script>
 </head>
 
@@ -56,9 +57,8 @@ require_once $TO_HOME . "_router.php";
         <source src="<?= $HOME_PATH; ?>/img/bg.mp4" type="video/mp4" />
         <source src="<?= $HOME_PATH; ?>/img/bg.webm" type="video/webm" />
     </video>
-    <header id="header"></header>
-    <div id="spa-page-content-container"></div>
-    <footer id="footer"></footer>
+    <nav id="spa-nav"></nav>
+    <main id="spa-content"></main>
 </body>
 
 </html>

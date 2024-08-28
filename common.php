@@ -7,4 +7,3 @@
  */
 ?>
 <script src="https://www.google.com/recaptcha/api.js" defer></script>
-<script src="https://www.googletagmanager.com/gtag/js?id=UA-148227598-1" defer></script>

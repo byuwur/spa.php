@@ -146,7 +146,7 @@ $(() => {
 	 */
 	function loadSPA(url, push = true) {
 		$("#spa-loader").fadeIn(1);
-		$("#spa-page-content-container").html("");
+		$("#spa-content").html("");
 		if (push) historyPushState(url);
 		const routing = routeURL(`${url}`);
 		// If routing fails, return early
@@ -163,7 +163,7 @@ $(() => {
 			return;
 		}
 		// If the SPA container is missing, reload the page
-		if (!$("#spa-page-content-container").length) window.location.reload();
+		if (!$("#spa-content").length) window.location.reload();
 		// Reload each component associated with the route
 		for (let key in component) reloadComponent(key, component[key], get, post);
 		// Retrieve the page data
@@ -172,7 +172,7 @@ $(() => {
 			type: "POST",
 			data: { ...post },
 			success: function (data) {
-				$("#spa-page-content-container").html(data);
+				$("#spa-content").html(data);
 			},
 			error: function (xhr, status, error) {
 				console.log("Error loading content:", xhr, status, error);

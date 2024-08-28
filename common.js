@@ -17,30 +17,30 @@ function initBootstrapComponents() {
 	}
 	console.log("Init bootstrap components");
 	// Initialize Alert components
-	[...document.querySelectorAll(".alert")].forEach((alertEl) => new bootstrap.Alert(alertEl));
+	[...document.querySelectorAll(".alert")].forEach((alertEl) => bootstrap.Alert.getInstance(alertEl) ?? new bootstrap.Alert(alertEl));
 	// Initialize Carousel components
-	[...document.querySelectorAll(".carousel")].forEach((carouselEl) => new bootstrap.Carousel(carouselEl));
+	[...document.querySelectorAll(".carousel")].forEach((carouselEl) => bootstrap.Carousel.getInstance(carouselEl) ?? new bootstrap.Carousel(carouselEl));
 	// Initialize Collapse components
-	[...document.querySelectorAll(".collapse")].forEach((collapseEl) => new bootstrap.Collapse(collapseEl, { toggle: false }));
+	[...document.querySelectorAll(".collapse")].forEach((collapseEl) => bootstrap.Collapse.getInstance(collapseEl) ?? new bootstrap.Collapse(collapseEl, { toggle: false }));
 	// Initialize Dropdown components
-	[...document.querySelectorAll(".dropdown-toggle")].forEach((dropdownEl) => new bootstrap.Dropdown(dropdownEl));
+	[...document.querySelectorAll(".dropdown-toggle")].forEach((dropdownEl) => bootstrap.Dropdown.getInstance(dropdownEl) ?? new bootstrap.Dropdown(dropdownEl));
 	// Initialize Modal components
-	[...document.querySelectorAll(".modal")].forEach((modalEl) => new bootstrap.Modal(modalEl));
+	[...document.querySelectorAll(".modal")].forEach((modalEl) => bootstrap.Modal.getInstance(modalEl) ?? new bootstrap.Modal(modalEl));
 	// Initialize Offcanvas components
-	[...document.querySelectorAll(".offcanvas")].forEach((offcanvasEl) => new bootstrap.Offcanvas(offcanvasEl));
+	[...document.querySelectorAll(".offcanvas")].forEach((offcanvasEl) => bootstrap.Offcanvas.getInstance(offcanvasEl) ?? new bootstrap.Offcanvas(offcanvasEl));
 	// Initialize Tooltip components
-	[...document.querySelectorAll("[data-bs-toggle='tooltip']")].forEach((tooltipEl) => new bootstrap.Tooltip(tooltipEl, { animation: false }));
+	[...document.querySelectorAll("[data-bs-toggle='tooltip']")].forEach((tooltipEl) => bootstrap.Tooltip.getInstance(tooltipEl) ?? new bootstrap.Tooltip(tooltipEl, { animation: false }));
 	// Initialize Popover components
-	[...document.querySelectorAll("[data-bs-toggle='popover']")].forEach((popoverEl) => new bootstrap.Popover(popoverEl, { animation: false }));
+	[...document.querySelectorAll("[data-bs-toggle='popover']")].forEach((popoverEl) => bootstrap.Popover.getInstance(popoverEl) ?? new bootstrap.Popover(popoverEl, { animation: false }));
 	// Initialize ScrollSpy components
-	[...document.querySelectorAll(".scrollspy")].forEach((scrollspyEl) => new bootstrap.ScrollSpy(scrollspyEl));
+	[...document.querySelectorAll(".scrollspy")].forEach((scrollspyEl) => bootstrap.ScrollSpy.getInstance(scrollspyEl) ?? new bootstrap.ScrollSpy(scrollspyEl));
 	// Initialize Tab components
-	[...document.querySelectorAll(".nav-tabs .nav-link")].forEach((tabEl) => new bootstrap.Tab(tabEl));
+	[...document.querySelectorAll(".nav-tabs .nav-link")].forEach((tabEl) => bootstrap.Tab.getInstance(tabEl) ?? new bootstrap.Tab(tabEl));
 	// Initialize Toast components
-	[...document.querySelectorAll(".toast")].forEach((toastEl) => new bootstrap.Toast(toastEl));
+	[...document.querySelectorAll(".toast")].forEach((toastEl) => bootstrap.Toast.getInstance(toastEl) ?? new bootstrap.Toast(toastEl));
 	// Initialize Button components with aria-pressed synchronization
 	[...document.querySelectorAll(".btn")].forEach((buttonEl) => {
-		const buttonInstance = new bootstrap.Button(buttonEl);
+		const buttonInstance = bootstrap.Tooltip.getInstance(buttonEl) ?? new bootstrap.Button(buttonEl);
 		buttonEl.addEventListener("click", function () {
 			buttonEl.setAttribute("aria-pressed", buttonInstance._element.classList.contains("active"));
 		});
@@ -55,6 +55,7 @@ function initSidebar() {
 	// Check it exists in the first place. Duh..
 	if (!$("#sidebar").length) return;
 	console.log("Init <Sidebar />");
+	if (!getCookie("SidebarExpand")) setCookie("SidebarExpand", "on");
 	// Ensure the overlay inside the sidebar follows it accordingly, due to being an absolute positioned inside another
 	$("#sidebar")
 		.off("scroll")
@@ -87,12 +88,14 @@ function initSidebar() {
 				$("#sidebar").addClass("sidebar-expanded");
 				$(".app-container").addClass("sidebar-expanded");
 				$("#sidebar-hidden").css("display", "none");
+				setCookie("SidebarExpand", "on");
 			} else {
 				$("#sidebar-toggle").removeClass("sidebar-expanded");
 				$("#sidebar").removeClass("sidebar-expanded");
 				$(".app-container").removeClass("sidebar-expanded");
 				$("#sidebar-hidden").css("display", "flex");
 				$("#sidebar").scrollTop(0);
+				setCookie("SidebarExpand", "off");
 			}
 		});
 	// Expand sidebar when the hidden sidebar area is hovered
@@ -108,7 +111,7 @@ function initSidebar() {
 			if (!$("#sidebar-toggle").hasClass("sidebar-expanded") && !$("#sidebar").is(":hover")) $("#sidebar").removeClass("sidebar-expanded");
 		});
 	// Expand the sidebar automatically on larger screens (min-width: 768px)
-	if (window.matchMedia("(min-width: 768px)").matches) {
+	if (window.matchMedia("(min-width: 768px)").matches && getCookie("SidebarExpand") == "on") {
 		$("#sidebar-toggle").addClass("sidebar-expanded");
 		$("#sidebar").addClass("sidebar-expanded");
 		$(".app-container").addClass("sidebar-expanded");

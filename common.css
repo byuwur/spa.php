@@ -180,13 +180,6 @@ th {
 	-moz-transition: all 0s !important;
 	transition: all 0s !important;
 }
-.spinner-border,
-.spinner-grow {
-	position: absolute;
-	height: 24px;
-	width: 24px;
-	margin: 0 8px;
-}
 /* === BACKGROUND COLORS AND TEXTS === */
 .bg-primary {
 	background: #600 !important;
