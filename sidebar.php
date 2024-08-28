@@ -41,8 +41,8 @@ require_once $TO_HOME . "common.php";
         </div>
         <p class="m-0 p-2 border-top" style="font-size: 0.75rem;">&copy; <?= date("Y"); ?> <a href="<?= $MATEUS_LINK; ?>">[Mateus] byUwUr</a>. Derechos reservados.<br>Hecho con<i class="fas fa-heart" aria-hidden="true"></i>por <a href="<?= $MATEUS_LINK; ?>" target="_blank">[Mateus] byUwUr</a></p>
     </div>
-    <a id="sidebar-toggle" href="javascript:;" title="Alternar menú lateral"><i class="fas fa-bars"></i><span>menú</span></a>
-    <div id="sidebar-hidden">
+    <a id="sidebar-toggle" class="sidebar-toggle" href="javascript:;" title="Alternar menú lateral"><i class="fas fa-bars"></i><span>menú</span></a>
+    <div id="sidebar-hidden" class="sidebar-hidden">
         <div class="navbar-brand has-background-contain mt-auto" style="height:48px;width:48px;background-image:url('<?= $HOME_PATH; ?>/img/byuwur.png');"></div>
     </div>
 </nav>

@@ -614,7 +614,7 @@ th {
 	}
 }
 /* === PARTICLES === */
-#particles {
+.particles {
 	position: fixed;
 	width: 100%;
 	height: 100%;
@@ -682,7 +682,7 @@ th {
 	opacity: 0;
 	visibility: hidden;
 }
-#sidebar-toggle {
+.sidebar-toggle {
 	position: absolute;
 	display: flex;
 	flex-direction: column;
@@ -696,7 +696,7 @@ th {
 	padding: 0.5rem;
 	border: 1px solid #fff7;
 }
-#sidebar-hidden {
+.sidebar-hidden {
 	position: absolute;
 	display: none;
 	flex-direction: column;
@@ -710,7 +710,7 @@ th {
 	gap: 1rem;
 	opacity: 0;
 }
-.sidebar:not(.sidebar-expanded) #sidebar-hidden {
+.sidebar:not(.sidebar-expanded) .sidebar-hidden {
 	display: flex;
 	opacity: 1;
 }
@@ -736,10 +736,10 @@ th {
 	.sidebar.sidebar-expanded {
 		width: 100vw;
 	}
-	#sidebar-toggle {
+	.sidebar-toggle {
 		width: var(--sidebar-width);
 	}
-	#sidebar-hidden {
+	.sidebar-hidden {
 		width: var(--sidebar-width);
 		pointer-events: none;
 	}
