@@ -107,6 +107,7 @@ function sanitize_value($input, string $type = "")
  */
 function change_location(string $location)
 {
+    http_response_code(307);
     header("Location: " . $location);
     exit;
 }

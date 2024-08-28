@@ -6,7 +6,7 @@
  * Copyright (c) 2023 Andrés Trujillo [Mateus] byUwUr
  */
 
-document.addEventListener("DOMContentLoaded", () => {
+function initSPA() {
 	if (typeof jQuery === "undefined" && window.jQuery === undefined) return console.error("Init _spa.js FAILED. No jQuery found.");
 	// Initializes values retrieved from localStorage and sets up environment variables.
 	let URI = localStorage.getItem("URI"),
@@ -277,4 +277,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 	// Initial load of SPA content based on the stored _URL.
 	loadSPA(`${_URL}`);
-});
+}
+
+initSPA();
