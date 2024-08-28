@@ -6,6 +6,5 @@
  * Copyright (c) 2023 Andrés Trujillo [Mateus] byUwUr
  */
 ?>
-<script src="<?= $HOME_PATH; ?>/common.js" defer></script>
 <script src="https://www.google.com/recaptcha/api.js" defer></script>
 <script src="https://www.googletagmanager.com/gtag/js?id=UA-148227598-1" defer></script>

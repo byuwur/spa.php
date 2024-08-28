@@ -6,84 +6,143 @@
  * Copyright (c) 2023 Andrés Trujillo [Mateus] byUwUr
  */
 
-// Check if jQuery is loaded before running the script
-if (window.jQuery)
-	$(() => {
-		console.log("Init common.js");
-		// Smooth scroll for links with hashes in their href (excluding empty hashes)
-		$("a[href*='#']:not([href='#'])")
-			.off("click")
-			.on("click", function (event) {
-				event.preventDefault();
-				// Scroll to the target element if it exists on the same page
-				if ($(this.hash).length && location.pathname == this.pathname && location.hostname == this.hostname) {
-					$("html, body").animate({ scrollTop: $(this.hash).offset().top - 120 }, 999, "easeInOutExpo");
-				}
-				// Collapse the navbar after clicking the link
-				setTimeout(() => $(".navbar-collapse").collapse("hide"), 333);
-			});
-		// Initialize Bootstrap tooltips
-		[...document.querySelectorAll("[data-bs-toggle='tooltip']")].map((tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl, { animation: false }));
-		// Fix for Bootstrap navbar dropdowns by removing data-bs-popper attribute
-		$(".dropdown-toggle")
-			.off("click")
-			.on("click", function () {
-				$(".dropdown-menu").removeAttr("data-bs-popper");
-			});
-		// Expand the sidebar automatically on larger screens (min-width: 768px)
-		if (window.matchMedia("(min-width: 768px)").matches) {
-			$("#sidebar-toggle").addClass("sidebar-expanded");
-			$("#sidebar").addClass("sidebar-expanded");
-			$(".app-container").addClass("sidebar-expanded");
-		}
-		// Toggle sidebar expansion when the sidebar toggle button is clicked
-		$("#sidebar-toggle")
-			.off("click")
-			.on("click", function () {
-				$("#sidebar-toggle").trigger("blur");
-				$("#sidebar .overlay").css("height", "");
-				if (!$("#sidebar-toggle").hasClass("sidebar-expanded")) {
-					$("#sidebar-toggle").addClass("sidebar-expanded");
-					$("#sidebar").addClass("sidebar-expanded");
-					$(".app-container").addClass("sidebar-expanded");
-					$("#sidebar-hidden").css("display", "none");
-				} else {
-					$("#sidebar-toggle").removeClass("sidebar-expanded");
-					$("#sidebar").removeClass("sidebar-expanded");
-					$(".app-container").removeClass("sidebar-expanded");
-					$("#sidebar-hidden").css("display", "flex");
-					$("#sidebar").scrollTop(0);
-				}
-			});
-		// Expand sidebar when the hidden sidebar area is hovered
-		$("#sidebar-hidden")
-			.off("mouseenter")
-			.on("mouseenter", function () {
-				if (!$("#sidebar-toggle").hasClass("sidebar-expanded")) $("#sidebar").addClass("sidebar-expanded");
-			});
-		// Collapse sidebar when the mouse leaves the hidden sidebar area
-		$("#sidebar-hidden")
-			.off("mouseleave")
-			.on("mouseleave", function () {
-				if (!$("#sidebar-toggle").hasClass("sidebar-expanded") && !$("#sidebar").is(":hover")) $("#sidebar").removeClass("sidebar-expanded");
-			});
-		// Ensure the overlay inside the sidebar follows it accordingly, due to being an absolute positioned inside another
-		let sidebarScrollTop = 0;
-		$("#sidebar")
-			.off("scroll")
-			.on(
-				"scroll",
-				debounce(function () {
+/**
+ * Initializes all Bootstrap components within the #spa-content.
+ * It should be called whenever the content of the #spa-page-content-container changes dynamically to ensure that all components function correctly.
+ */
+function initBootstrapComponents() {
+	if (!bootstrap) {
+		console.warn("Can't reload bootstrap since it ain't present.");
+		return;
+	}
+	console.log("Init bootstrap components");
+	// Initialize Alert components
+	[...document.querySelectorAll(".alert")].forEach((alertEl) => new bootstrap.Alert(alertEl));
+	// Initialize Carousel components
+	[...document.querySelectorAll(".carousel")].forEach((carouselEl) => new bootstrap.Carousel(carouselEl));
+	// Initialize Collapse components
+	[...document.querySelectorAll(".collapse")].forEach((collapseEl) => new bootstrap.Collapse(collapseEl, { toggle: false }));
+	// Initialize Dropdown components
+	[...document.querySelectorAll(".dropdown-toggle")].forEach((dropdownEl) => new bootstrap.Dropdown(dropdownEl));
+	// Initialize Modal components
+	[...document.querySelectorAll(".modal")].forEach((modalEl) => new bootstrap.Modal(modalEl));
+	// Initialize Offcanvas components
+	[...document.querySelectorAll(".offcanvas")].forEach((offcanvasEl) => new bootstrap.Offcanvas(offcanvasEl));
+	// Initialize Tooltip components
+	[...document.querySelectorAll("[data-bs-toggle='tooltip']")].forEach((tooltipEl) => new bootstrap.Tooltip(tooltipEl, { animation: false }));
+	// Initialize Popover components
+	[...document.querySelectorAll("[data-bs-toggle='popover']")].forEach((popoverEl) => new bootstrap.Popover(popoverEl, { animation: false }));
+	// Initialize ScrollSpy components
+	[...document.querySelectorAll(".scrollspy")].forEach((scrollspyEl) => new bootstrap.ScrollSpy(scrollspyEl));
+	// Initialize Tab components
+	[...document.querySelectorAll(".nav-tabs .nav-link")].forEach((tabEl) => new bootstrap.Tab(tabEl));
+	// Initialize Toast components
+	[...document.querySelectorAll(".toast")].forEach((toastEl) => new bootstrap.Toast(toastEl));
+	// Initialize Button components with aria-pressed synchronization
+	[...document.querySelectorAll(".btn")].forEach((buttonEl) => {
+		const buttonInstance = new bootstrap.Button(buttonEl);
+		buttonEl.addEventListener("click", function () {
+			buttonEl.setAttribute("aria-pressed", buttonInstance._element.classList.contains("active"));
+		});
+	});
+	// Add more as needed, in case BS drops another class
+}
+
+/**
+ * Initializes the <Sidebar /> component in #spa-nav.
+ */
+function initSidebar() {
+	// Check it exists in the first place. Duh..
+	if (!$("#sidebar").length) return;
+	console.log("Init <Sidebar />");
+	// Ensure the overlay inside the sidebar follows it accordingly, due to being an absolute positioned inside another
+	$("#sidebar")
+		.off("scroll")
+		.on(
+			"scroll",
+			(function () {
+				let sidebarScrollTop = 0;
+				return debounce(function () {
 					const top = Math.floor($(this).scrollTop()),
 						diff = top - sidebarScrollTop;
 					console.log(top);
 					if ($("#sidebar").hasClass("sidebar-expanded")) $("#sidebar .overlay").css("height", `${$("#sidebar .overlay").height() + diff}px`);
 					sidebarScrollTop = top;
-				})
-			)
-			// Ensure the sidebar collapses when the mouse leaves the sidebar itself
-			.off("mouseleave")
-			.on("mouseleave", function () {
-				if (!$("#sidebar-toggle").hasClass("sidebar-expanded")) $("#sidebar").removeClass("sidebar-expanded");
-			});
-	});
+				});
+			})()
+		)
+		// Ensure the sidebar collapses when the mouse leaves the sidebar itself
+		.off("mouseleave")
+		.on("mouseleave", function () {
+			if (!$("#sidebar-toggle").hasClass("sidebar-expanded")) $("#sidebar").removeClass("sidebar-expanded");
+		});
+	// Toggle sidebar expansion when the sidebar toggle button is clicked
+	$("#sidebar-toggle")
+		.off("click")
+		.on("click", function () {
+			$("#sidebar-toggle").trigger("blur");
+			$("#sidebar .overlay").css("height", "");
+			if (!$("#sidebar-toggle").hasClass("sidebar-expanded")) {
+				$("#sidebar-toggle").addClass("sidebar-expanded");
+				$("#sidebar").addClass("sidebar-expanded");
+				$(".app-container").addClass("sidebar-expanded");
+				$("#sidebar-hidden").css("display", "none");
+			} else {
+				$("#sidebar-toggle").removeClass("sidebar-expanded");
+				$("#sidebar").removeClass("sidebar-expanded");
+				$(".app-container").removeClass("sidebar-expanded");
+				$("#sidebar-hidden").css("display", "flex");
+				$("#sidebar").scrollTop(0);
+			}
+		});
+	// Expand sidebar when the hidden sidebar area is hovered
+	$("#sidebar-hidden")
+		.off("mouseenter")
+		.on("mouseenter", function () {
+			if (!$("#sidebar-toggle").hasClass("sidebar-expanded")) $("#sidebar").addClass("sidebar-expanded");
+		});
+	// Collapse sidebar when the mouse leaves the hidden sidebar area
+	$("#sidebar-hidden")
+		.off("mouseleave")
+		.on("mouseleave", function () {
+			if (!$("#sidebar-toggle").hasClass("sidebar-expanded") && !$("#sidebar").is(":hover")) $("#sidebar").removeClass("sidebar-expanded");
+		});
+	// Expand the sidebar automatically on larger screens (min-width: 768px)
+	if (window.matchMedia("(min-width: 768px)").matches) {
+		$("#sidebar-toggle").addClass("sidebar-expanded");
+		$("#sidebar").addClass("sidebar-expanded");
+		$(".app-container").addClass("sidebar-expanded");
+	}
+}
+
+/**
+ * Some other initializations for common resources in the page.
+ */
+function initMisc() {
+	// Smooth scroll for links with hashes in their href (excluding empty hashes)
+	$("a[href*='#']:not([href='#'])")
+		.off("click")
+		.on("click", function (event) {
+			event.preventDefault();
+			// Scroll to the target element if it exists on the same page
+			if ($(this.hash).length && location.pathname == this.pathname && location.hostname == this.hostname) {
+				$("html, body").animate({ scrollTop: $(this.hash).offset().top - 120 }, 999, "easeInOutExpo");
+			}
+			// Collapse the navbar after clicking the link
+			setTimeout(() => $(".navbar-collapse").collapse("hide"), 333);
+		});
+}
+
+/**
+ * Initializes all components that dynamically changes within the page
+ */
+function initCommon() {
+	if (!window.jQuery) {
+		console.error("Init common.js FAILED. No jQuery found.");
+		return;
+	}
+	console.log("Init common.js");
+	initBootstrapComponents();
+	initSidebar();
+	initMisc();
+}

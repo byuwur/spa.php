@@ -18,7 +18,10 @@ require_once $TO_HOME . "common.php";
     </div>
 </div>
 <script>
-    document.title = "<?= $titles[$title_index]; ?>";
+    $(() => {
+        document.title = "<?= $titles[$title_index]; ?>";
+        initCommon();
+    });
 </script>
 <?php
 // Always call due to /_var.php invoking ob_start();
