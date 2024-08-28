@@ -11,8 +11,8 @@
  * It should be called whenever the content of the #spa-page-content-container changes dynamically to ensure that all components function correctly.
  */
 function initBootstrapComponents() {
-	if (window.bootstrap === undefined && typeof bootstrap === "undefined") return console.warn("Can't reload bootstrap since it ain't present.");
-	console.log("Init bootstrap components");
+	if (typeof bootstrap === "undefined" && window.bootstrap === undefined) return console.warn("Can't reload bootstrap since it ain't present.");
+	console.log("Init bootstrap");
 	// Initialize Alert components
 	[...document.querySelectorAll(".alert")].forEach((alertEl) => bootstrap.Alert.getInstance(alertEl) ?? new bootstrap.Alert(alertEl));
 	// Initialize Carousel components
@@ -133,9 +133,12 @@ function initMisc() {
 		});
 }
 
+/**
+ * Reloads Google ReCaptcha if present
+ */
 function initReCaptcha() {
 	// Check it exists in the first place. Duh..
-	if (window.grecaptcha === undefined && typeof grecaptcha === "undefined") return;
+	if (typeof grecaptcha === "undefined" && window.grecaptcha === undefined) return;
 	console.log("Init g-reCaptcha");
 	[...document.querySelectorAll(".g-recaptcha")].forEach((captchaEl) => (grecaptcha.render ? grecaptcha.render(captchaEl) : console.warn("grecaptcha not ready...")));
 }
@@ -144,7 +147,7 @@ function initReCaptcha() {
  * Initializes all components that dynamically changes within the page
  */
 function initCommon() {
-	if (window.jQuery === undefined && typeof jQuery === "undefined") return console.error("Init _common.js FAILED. No jQuery found.");
+	if (typeof jQuery === "undefined" && window.jQuery === undefined) return console.error("Init _common.js FAILED. No jQuery found.");
 	console.log("Init _common.js");
 	initBootstrapComponents();
 	initSidebar();
