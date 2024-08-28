@@ -36,11 +36,11 @@ require_once $TO_HOME . "_router.php";
     <link rel="icon" type="image/png" href="<?= $HOME_PATH; ?>/img/byuwur.png" />
     <link rel="stylesheet" href="<?= $HOME_PATH; ?>/css/bootstrap.min.css" />
     <link rel="stylesheet" href="<?= $HOME_PATH; ?>/css/fontawesome.min.css" />
-    <link rel="stylesheet" href="<?= $HOME_PATH; ?>/common.css" />
+    <link rel="stylesheet" href="<?= $HOME_PATH; ?>/_common.css" />
     <script src="<?= $HOME_PATH; ?>/js/jquery-3.3.1.min.js" defer></script>
     <script src="<?= $HOME_PATH; ?>/js/bootstrap.min.js" defer></script>
     <script src="<?= $HOME_PATH; ?>/_functions.js" defer></script>
-    <script src="<?= $HOME_PATH; ?>/common.js" defer></script>
+    <script src="<?= $HOME_PATH; ?>/_common.js" defer></script>
     <script src="<?= $HOME_PATH; ?>/_spa.js" defer></script>
     <script src="https://www.google.com/recaptcha/api.js" defer></script>
 </head>

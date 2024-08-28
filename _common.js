@@ -1,6 +1,6 @@
 "use strict";
 /*
- * File: common.js
+ * File: _common.js
  * Desc: Contains common resources that are initialized in a per-page basis instead of globally.
  * Deps: jQuery, /_functions.js
  * Copyright (c) 2023 Andrés Trujillo [Mateus] byUwUr
@@ -144,8 +144,8 @@ function initReCaptcha() {
  * Initializes all components that dynamically changes within the page
  */
 function initCommon() {
-	if (window.jQuery === undefined && typeof jQuery === "undefined") return console.error("Init common.js FAILED. No jQuery found.");
-	console.log("Init common.js");
+	if (window.jQuery === undefined && typeof jQuery === "undefined") return console.error("Init _common.js FAILED. No jQuery found.");
+	console.log("Init _common.js");
 	initBootstrapComponents();
 	initSidebar();
 	initMisc();

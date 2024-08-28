@@ -34,10 +34,9 @@ This project is a simple, easy-to-use framework for building single-page applica
 ### Additional Files
 
 -   **\_auth.php:** Manages basic user authentication with login, logout, and session validation.
--   **common.php:** Includes resources that can't be initialized project-wide but page-wise.
 -   **\_functions.js:** Contains general-purpose functions used across different parts of the application.
--   **common.css:** CSS file that styles common UI elements.
--   **common.js:** JavaScript file that initializes common UI elements.
+-   **\_common.css:** CSS file that styles common UI elements.
+-   **\_common.js:** JavaScript file that initializes common UI elements.
 -   **\_error.php:** File rendered when SPA throws an error.
 
 ### Public Assets
