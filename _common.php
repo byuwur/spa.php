@@ -17,7 +17,7 @@ switch ($lang) {
         $app_lang = "es";
         break;
 }
-echo "<html lang='" . $app_lang . "' dir='ltr'>";
+if (isset($setLocalStorage) && $setLocalStorage) echo "<html lang='" . $app_lang . "' dir='ltr'>";
 setcookie("lang", $app_lang, time() + 31536000, "/", "", false, false);
 require_once $TO_HOME . "lang/" . $app_lang . ".php";
 
