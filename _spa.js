@@ -74,18 +74,20 @@ function initSPA() {
 				});
 			</script>`);
 		};
-		$.ajax({
+		return $.ajax({
 			url: `${HOME_PATH}/_error.php?e=${status}`,
 			type: "POST",
 			data: { custom_error_message },
 			dataType: "text"
 		})
-			.done(function (data) {
+			.then(function (data) {
 				printError(data);
+				return data;
 			})
-			.fail(function (xhr, status, error) {
+			.catch(function (xhr, status, error) {
 				console.error(`Error (errorPage): ${xhr?.status} ${status} ${error}`, APP_ENV == "DEV" ? xhr : "");
 				printError(xhr?.responseText);
+				return null;
 			});
 	}
 
@@ -156,18 +158,20 @@ function initSPA() {
 		const componentId = component.match(/#[a-zA-Z0-9-_]+/)[0];
 		// If no file is provided, clear the component's content
 		if (!file || file == "" || file == "null") return $(componentId).html("");
-		$.ajax({
+		return $.ajax({
 			url: `${HOME_PATH}${file}?${new URLSearchParams({ ...get, uri: false }).toString()}`,
 			type: "POST",
 			data: { ...post },
 			dataType: "text"
 		})
-			.done(function (data) {
+			.then(function (data) {
 				$(componentId).html(data);
+				return data;
 			})
-			.fail(function (xhr, status, error) {
+			.catch(function (xhr, status, error) {
 				console.warn(`Error (component): ${xhr?.status} ${status} ${error}`, APP_ENV == "DEV" ? xhr : "");
 				$(componentId).html("");
+				return null;
 			});
 	}
 
@@ -247,18 +251,20 @@ function initSPA() {
 		// Reload each component associated with the route
 		for (let key in component) reloadComponent(key, component[key], get, post);
 		// Retrieve the page data
-		$.ajax({
+		return $.ajax({
 			url: `${HOME_PATH}${uri}?${new URLSearchParams(get).toString()}`,
 			type: "POST",
 			data: { ...post },
 			dataType: "text"
 		})
-			.done(function (data) {
+			.then(function (data) {
 				$("#spa-content").html(data);
+				return data;
 			})
-			.fail(function (xhr, status, error) {
+			.catch(function (xhr, status, error) {
 				console.error(`Error (SPA): ${xhr?.status} ${status} ${error}`, APP_ENV == "DEV" ? xhr : "");
 				errorPage(404, `Route "${url}" does not exist.`);
+				return null;
 			})
 			.always(function () {
 				setTimeout(() => $("#spa-loader").fadeOut(333), 333);
