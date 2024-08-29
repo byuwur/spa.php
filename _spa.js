@@ -84,8 +84,8 @@ function initSPA() {
 				printError(data);
 			})
 			.fail(function (xhr, status, error) {
+				console.error(`Error (errorPage): ${xhr?.status} ${status} ${error}`, APP_ENV == "DEV" ? xhr : "");
 				printError(xhr?.responseText);
-				console.error(`Error loading errorPage: ${xhr?.status} ${status} ${error}`, APP_ENV == "DEV" ? xhr : "");
 			});
 	}
 
@@ -166,8 +166,8 @@ function initSPA() {
 				$(componentId).html(data);
 			})
 			.fail(function (xhr, status, error) {
+				console.warn(`Error (component): ${xhr?.status} ${status} ${error}`, APP_ENV == "DEV" ? xhr : "");
 				$(componentId).html("");
-				console.warn(`Error loading component: ${xhr?.status} ${status} ${error}`, APP_ENV == "DEV" ? xhr : "");
 			});
 	}
 
@@ -257,7 +257,7 @@ function initSPA() {
 				$("#spa-content").html(data);
 			})
 			.fail(function (xhr, status, error) {
-				console.error(`Error loading SPA: ${xhr?.status} ${status} ${error}`, APP_ENV == "DEV" ? xhr : "");
+				console.error(`Error (SPA): ${xhr?.status} ${status} ${error}`, APP_ENV == "DEV" ? xhr : "");
 				errorPage(404, `Route "${url}" does not exist.`);
 			})
 			.always(function () {
