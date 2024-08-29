@@ -78,14 +78,15 @@ function initSPA() {
 			url: `${HOME_PATH}/_error.php?e=${status}`,
 			type: "POST",
 			data: { custom_error_message },
-			success: function (data) {
+			dataType: "text"
+		})
+			.done(function (data) {
 				printError(data);
-			},
-			error: function (xhr, status, error) {
+			})
+			.fail(function (xhr, status, error) {
 				printError(xhr?.responseText);
 				console.error(`Error loading errorPage: ${xhr?.status} ${status} ${error}`, APP_ENV == "DEV" ? xhr : "");
-			}
-		});
+			});
 	}
 
 	/**
@@ -159,14 +160,15 @@ function initSPA() {
 			url: `${HOME_PATH}${file}?${new URLSearchParams({ ...get, uri: false }).toString()}`,
 			type: "POST",
 			data: { ...post },
-			success: function (data) {
+			dataType: "text"
+		})
+			.done(function (data) {
 				$(componentId).html(data);
-			},
-			error: function (xhr, status, error) {
+			})
+			.fail(function (xhr, status, error) {
 				$(componentId).html("");
 				console.warn(`Error loading component: ${xhr?.status} ${status} ${error}`, APP_ENV == "DEV" ? xhr : "");
-			}
-		});
+			});
 	}
 
 	/**
@@ -249,18 +251,18 @@ function initSPA() {
 			url: `${HOME_PATH}${uri}?${new URLSearchParams(get).toString()}`,
 			type: "POST",
 			data: { ...post },
-			success: function (data) {
+			dataType: "text"
+		})
+			.done(function (data) {
 				$("#spa-content").html(data);
-			},
-			error: function (xhr, status, error) {
+			})
+			.fail(function (xhr, status, error) {
 				console.error(`Error loading SPA: ${xhr?.status} ${status} ${error}`, APP_ENV == "DEV" ? xhr : "");
-				// Display an error page if the route does not exist
 				errorPage(404, `Route "${url}" does not exist.`);
-			},
-			complete: function () {
+			})
+			.always(function () {
 				setTimeout(() => $("#spa-loader").fadeOut(333), 333);
-			}
-		});
+			});
 	}
 
 	// Handles the popstate event for navigating through browser history.
