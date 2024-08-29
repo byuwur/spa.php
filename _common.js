@@ -52,7 +52,7 @@ function initSidebar() {
 	// Check it exists in the first place. Duh..
 	if (!$("#sidebar").length) return;
 	console.log("Init <Sidebar />");
-	if (!getCookie("SidebarExpand")) setCookie("SidebarExpand", "on");
+	if (!get_cookie("SidebarExpand")) set_cookie("SidebarExpand", "on");
 	// Ensure the overlay inside the sidebar follows it accordingly, due to being an absolute positioned inside another
 	$("#sidebar")
 		.off("scroll")
@@ -85,14 +85,14 @@ function initSidebar() {
 				$("#sidebar").addClass("sidebar-expanded");
 				$(".app-container").addClass("sidebar-expanded");
 				$("#sidebar-hidden").css("display", "none");
-				setCookie("SidebarExpand", "on");
+				set_cookie("SidebarExpand", "on");
 			} else {
 				$("#sidebar-toggle").removeClass("sidebar-expanded");
 				$("#sidebar").removeClass("sidebar-expanded");
 				$(".app-container").removeClass("sidebar-expanded");
 				$("#sidebar-hidden").css("display", "flex");
 				$("#sidebar").scrollTop(0);
-				setCookie("SidebarExpand", "off");
+				set_cookie("SidebarExpand", "off");
 			}
 		});
 	// Expand sidebar when the hidden sidebar area is hovered
@@ -108,7 +108,7 @@ function initSidebar() {
 			if (!$("#sidebar-toggle").hasClass("sidebar-expanded") && !$("#sidebar").is(":hover")) $("#sidebar").removeClass("sidebar-expanded");
 		});
 	// Expand the sidebar automatically on larger screens (min-width: 768px)
-	if (window.matchMedia("(min-width: 768px)").matches && getCookie("SidebarExpand") == "on") {
+	if (window.matchMedia("(min-width: 768px)").matches && get_cookie("SidebarExpand") == "on") {
 		$("#sidebar-toggle").addClass("sidebar-expanded");
 		$("#sidebar").addClass("sidebar-expanded");
 		$(".app-container").addClass("sidebar-expanded");

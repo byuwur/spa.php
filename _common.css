@@ -239,34 +239,6 @@ th {
 .btn {
 	padding: 4px 8px;
 }
-.btn.btn.btn-primary,
-.btn.btn.btn-secondary,
-.btn.btn.btn-tertiary,
-.btn.btn.btn-quarternary,
-.btn.btn.btn-primary *,
-.btn.btn.btn-secondary *,
-.btn.btn.btn-tertiary *,
-.btn.btn.btn-quarternary * {
-	-webkit-filter: grayscale(0%);
-	-moz-filter: grayscale(0%);
-	-ms-filter: grayscale(0%);
-	-o-filter: grayscale(0%);
-	filter: grayscale(0%);
-}
-.btn.btn.btn-primary:disabled,
-.btn.btn.btn-secondary:disabled,
-.btn.btn.btn-tertiary:disabled,
-.btn.btn.btn-quarternary:disabled,
-.btn.btn.btn-primary:disabled *,
-.btn.btn.btn-secondary:disabled *,
-.btn.btn.btn-tertiary:disabled *,
-.btn.btn.btn-quarternary:disabled * {
-	-webkit-filter: grayscale(50%);
-	-moz-filter: grayscale(50%);
-	-ms-filter: grayscale(50%);
-	-o-filter: grayscale(50%);
-	filter: grayscale(50%);
-}
 .btn.btn-primary,
 .btn.btn-secondary:hover {
 	border: 1px solid #fff !important;
@@ -310,6 +282,16 @@ th {
 	color: #006 !important;
 }
 /* === INPUTS === */
+:disabled,
+:disabled * {
+	-webkit-filter: grayscale(50%) !important;
+	-moz-filter: grayscale(50%) !important;
+	-ms-filter: grayscale(50%) !important;
+	-o-filter: grayscale(50%) !important;
+	filter: grayscale(50%) !important;
+	cursor: not-allowed !important;
+	pointer-events: none !important;
+}
 .input-has-icon {
 	padding-left: 48px;
 }
