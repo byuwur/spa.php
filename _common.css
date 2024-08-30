@@ -100,6 +100,9 @@ figure {
 iframe {
 	border: 0;
 }
+img {
+	max-width: 100%;
+}
 i,
 i.fas,
 span.fas {
@@ -495,6 +498,21 @@ th {
 .tns-controls button i:before {
 	text-shadow: 3px 0 0 white, -3px 0 0 white, 0 3px 0 white, 0 -3px 0 white, 3px 3px 0 white, -3px 3px 0 white, 3px -3px 0 white, -3px -3px 0 white;
 }
+/* === SPA CONTENT === */
+#spa-content {
+	position: relative;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	background: #0000;
+	overflow: auto;
+	z-index: 9;
+}
 /* === LOADER === */
 #spa-loader {
 	position: fixed;
@@ -596,7 +614,7 @@ th {
 	}
 }
 /* === PARTICLES === */
-.particles {
+#particles {
 	position: fixed;
 	width: 100%;
 	height: 100%;
