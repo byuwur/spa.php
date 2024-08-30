@@ -43,10 +43,10 @@ function initBootstrapComponents() {
 				buttonEl.setAttribute("aria-pressed", buttonInstance._element.classList.contains("active"));
 			});
 		});
+		// Add more as needed, in case BS drops another class
 	} catch (e) {
 		console.warn("initBootstrapComponents():", e);
 	}
-	// Add more as needed, in case BS drops another class
 }
 
 /**
@@ -130,10 +130,19 @@ function initMisc() {
 			event.preventDefault();
 			// Scroll to the target element if it exists on the same page
 			if ($(this.hash).length && location.pathname == this.pathname && location.hostname == this.hostname) {
-				$("html, body").animate({ scrollTop: $(this.hash).offset().top - 120 }, 999, "easeInOutExpo");
+				$("html, body").animate({ scrollTop: $(this.hash).offset().top - 0 }, 999, "easeInOutExpo");
 			}
 			// Collapse the navbar after clicking the link
-			setTimeout(() => $(".navbar-collapse").collapse("hide"), 333);
+			setTimeout(() => {
+				$(".navbar-collapse").collapse("hide");
+				if (window.matchMedia("(max-width: 768px)").matches && $("#sidebar-toggle").hasClass("sidebar-expanded")) {
+					$("#sidebar-toggle").removeClass("sidebar-expanded");
+					$("#sidebar").removeClass("sidebar-expanded");
+					$(".app-container").removeClass("sidebar-expanded");
+					$("#sidebar-hidden").css("display", "flex");
+					$("#sidebar").scrollTop(0);
+				}
+			}, 333);
 		});
 }
 

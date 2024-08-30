@@ -510,7 +510,6 @@ th {
 	margin: 0;
 	padding: 0;
 	background: #0000;
-	overflow: auto;
 	z-index: 9;
 }
 /* === LOADER === */
