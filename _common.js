@@ -12,36 +12,40 @@
  */
 function initBootstrapComponents() {
 	if (typeof bootstrap === "undefined" && window.bootstrap === undefined) return console.warn("Can't reload bootstrap since it ain't present.");
-	console.log("Init bootstrap");
-	// Initialize Alert components
-	[...document.querySelectorAll(".alert")].forEach((alertEl) => bootstrap.Alert.getInstance(alertEl) ?? new bootstrap.Alert(alertEl));
-	// Initialize Carousel components
-	[...document.querySelectorAll(".carousel")].forEach((carouselEl) => bootstrap.Carousel.getInstance(carouselEl) ?? new bootstrap.Carousel(carouselEl));
-	// Initialize Collapse components
-	[...document.querySelectorAll(".collapse")].forEach((collapseEl) => bootstrap.Collapse.getInstance(collapseEl) ?? new bootstrap.Collapse(collapseEl, { toggle: false }));
-	// Initialize Dropdown components
-	[...document.querySelectorAll(".dropdown-toggle")].forEach((dropdownEl) => bootstrap.Dropdown.getInstance(dropdownEl) ?? new bootstrap.Dropdown(dropdownEl));
-	// Initialize Modal components
-	[...document.querySelectorAll(".modal")].forEach((modalEl) => bootstrap.Modal.getInstance(modalEl) ?? new bootstrap.Modal(modalEl));
-	// Initialize Offcanvas components
-	[...document.querySelectorAll(".offcanvas")].forEach((offcanvasEl) => bootstrap.Offcanvas.getInstance(offcanvasEl) ?? new bootstrap.Offcanvas(offcanvasEl));
-	// Initialize Tooltip components
-	[...document.querySelectorAll("[data-bs-toggle='tooltip']")].forEach((tooltipEl) => bootstrap.Tooltip.getInstance(tooltipEl) ?? new bootstrap.Tooltip(tooltipEl, { animation: false }));
-	// Initialize Popover components
-	[...document.querySelectorAll("[data-bs-toggle='popover']")].forEach((popoverEl) => bootstrap.Popover.getInstance(popoverEl) ?? new bootstrap.Popover(popoverEl, { animation: false }));
-	// Initialize ScrollSpy components
-	[...document.querySelectorAll(".scrollspy")].forEach((scrollspyEl) => bootstrap.ScrollSpy.getInstance(scrollspyEl) ?? new bootstrap.ScrollSpy(scrollspyEl));
-	// Initialize Tab components
-	[...document.querySelectorAll(".nav-tabs .nav-link")].forEach((tabEl) => bootstrap.Tab.getInstance(tabEl) ?? new bootstrap.Tab(tabEl));
-	// Initialize Toast components
-	[...document.querySelectorAll(".toast")].forEach((toastEl) => bootstrap.Toast.getInstance(toastEl) ?? new bootstrap.Toast(toastEl));
-	// Initialize Button components with aria-pressed synchronization
-	[...document.querySelectorAll(".btn")].forEach((buttonEl) => {
-		const buttonInstance = bootstrap.Tooltip.getInstance(buttonEl) ?? new bootstrap.Button(buttonEl);
-		buttonEl.addEventListener("click", function () {
-			buttonEl.setAttribute("aria-pressed", buttonInstance._element.classList.contains("active"));
+	try {
+		console.log("Init bootstrap");
+		// Initialize Alert components
+		[...document.querySelectorAll(".alert")].forEach((alertEl) => bootstrap.Alert.getInstance(alertEl) ?? new bootstrap.Alert(alertEl));
+		// Initialize Carousel components
+		[...document.querySelectorAll(".carousel")].forEach((carouselEl) => bootstrap.Carousel.getInstance(carouselEl) ?? new bootstrap.Carousel(carouselEl));
+		// Initialize Collapse components
+		[...document.querySelectorAll(".collapse")].forEach((collapseEl) => bootstrap.Collapse.getInstance(collapseEl) ?? new bootstrap.Collapse(collapseEl, { toggle: false }));
+		// Initialize Dropdown components
+		[...document.querySelectorAll(".dropdown-toggle")].forEach((dropdownEl) => bootstrap.Dropdown.getInstance(dropdownEl) ?? new bootstrap.Dropdown(dropdownEl));
+		// Initialize Modal components
+		[...document.querySelectorAll(".modal")].forEach((modalEl) => bootstrap.Modal.getInstance(modalEl) ?? new bootstrap.Modal(modalEl));
+		// Initialize Offcanvas components
+		[...document.querySelectorAll(".offcanvas")].forEach((offcanvasEl) => bootstrap.Offcanvas.getInstance(offcanvasEl) ?? new bootstrap.Offcanvas(offcanvasEl));
+		// Initialize Tooltip components
+		[...document.querySelectorAll("[data-bs-toggle='tooltip']")].forEach((tooltipEl) => bootstrap.Tooltip.getInstance(tooltipEl) ?? new bootstrap.Tooltip(tooltipEl, { animation: false }));
+		// Initialize Popover components
+		[...document.querySelectorAll("[data-bs-toggle='popover']")].forEach((popoverEl) => bootstrap.Popover.getInstance(popoverEl) ?? new bootstrap.Popover(popoverEl, { animation: false }));
+		// Initialize ScrollSpy components
+		[...document.querySelectorAll(".scrollspy")].forEach((scrollspyEl) => bootstrap.ScrollSpy.getInstance(scrollspyEl) ?? new bootstrap.ScrollSpy(scrollspyEl));
+		// Initialize Tab components
+		[...document.querySelectorAll(".nav-tabs .nav-link")].forEach((tabEl) => bootstrap.Tab.getInstance(tabEl) ?? new bootstrap.Tab(tabEl));
+		// Initialize Toast components
+		[...document.querySelectorAll(".toast")].forEach((toastEl) => bootstrap.Toast.getInstance(toastEl) ?? new bootstrap.Toast(toastEl));
+		// Initialize Button components with aria-pressed synchronization
+		[...document.querySelectorAll(".btn")].forEach((buttonEl) => {
+			const buttonInstance = bootstrap.Tooltip.getInstance(buttonEl) ?? new bootstrap.Button(buttonEl);
+			buttonEl.addEventListener("click", function () {
+				buttonEl.setAttribute("aria-pressed", buttonInstance._element.classList.contains("active"));
+			});
 		});
-	});
+	} catch (e) {
+		console.warn("initBootstrapComponents():", e);
+	}
 	// Add more as needed, in case BS drops another class
 }
 
@@ -139,8 +143,12 @@ function initMisc() {
 function initReCaptcha() {
 	// Check it exists in the first place. Duh..
 	if (typeof grecaptcha === "undefined" && window.grecaptcha === undefined) return;
-	console.log("Init g-reCaptcha");
-	[...document.querySelectorAll(".g-recaptcha")].forEach((captchaEl) => (grecaptcha.render ? grecaptcha.render(captchaEl) : console.warn("grecaptcha not ready...")));
+	try {
+		console.log("Init g-reCaptcha");
+		[...document.querySelectorAll(".g-recaptcha")].forEach((captchaEl) => (grecaptcha.render ? grecaptcha.render(captchaEl) : console.warn("grecaptcha not ready...")));
+	} catch (e) {
+		console.warn("initReCaptcha():", e);
+	}
 }
 
 /**
