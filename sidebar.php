@@ -34,8 +34,10 @@ require_once $TO_HOME . "_routes.php";
             <i class="fas fa-earth-americas"></i><span>Idiomas/Languages:</span>
         </button>
         <div id="lang-drop" class="accordion-collapse collapse bg-dark-transparent" data-bs-parent="#sidebar">
-            <a class="sidebar-option" href="<?= $ROOT_ROUTE; ?>es" title="Español"><img src="img/co.png" width="16px" height="12px" style="margin: 4px;" alt="" /> ES<i class="fas fa-angle-right ms-auto"></i></a>
-            <a class="sidebar-option" href="<?= $ROOT_ROUTE; ?>en" title="English"><img src="img/uk.png" width="16px" height="12px" style="margin: 4px;" alt="" /> EN<i class="fas fa-angle-right ms-auto"></i></a>
+            <div class="d-flex flex-row">
+                <a class="sidebar-option" href="<?= $ROOT_ROUTE; ?>es" title="Español"><img src="img/co.png" width="16px" height="12px" style="margin: 4px;" alt="" /> ES<i class="fas fa-angle-right ms-auto"></i></a>
+                <a class="sidebar-option" href="<?= $ROOT_ROUTE; ?>en" title="English"><img src="img/uk.png" width="16px" height="12px" style="margin: 4px;" alt="" /> EN<i class="fas fa-angle-right ms-auto"></i></a>
+            </div>
             <!--a class="sidebar-option" href="javascript:;"><i class="fas fa-home"></i>Home<i class="fas fa-angle-right ms-auto"></i></a-->
         </div>
         <p class="m-0 p-2 border-top" style="font-size: 0.75rem;">&copy; <?= date("Y"); ?> <a href="<?= $MATEUS_LINK; ?>">[Mateus] byUwUr</a>. Derechos reservados.<br>Hecho con<i class="fas fa-heart" aria-hidden="true"></i>por <a href="<?= $MATEUS_LINK; ?>" target="_blank">[Mateus] byUwUr</a></p>
