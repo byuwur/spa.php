@@ -410,20 +410,20 @@ th {
 }
 /* === FX === */
 .blurred {
-	-webkit-filter: blur(6px);
-	filter: blur(6px);
+	-webkit-filter: blur(0.5rem);
+	filter: blur(0.5rem);
 }
 .blurred-subtle {
-	-webkit-filter: blur(3px);
-	filter: blur(3px);
+	-webkit-backdrop-filter: blur(0.25rem);
+	backdrop-filter: blur(0.25rem);
 }
 .bg-blurred {
-	-webkit-backdrop-filter: blur(6px);
-	backdrop-filter: blur(6px);
+	-webkit-backdrop-filter: blur(0.5rem);
+	backdrop-filter: blur(0.5rem);
 }
 .bg-blurred-subtle {
-	-webkit-backdrop-filter: blur(3px);
-	backdrop-filter: blur(3px);
+	-webkit-backdrop-filter: blur(0.25rem);
+	backdrop-filter: blur(0.25rem);
 }
 /* === ICONS === */
 .fab-container {
@@ -621,16 +621,16 @@ th {
 }
 /* === BGV === */
 .video-container {
+	position: fixed;
 	width: 100%;
 	height: 100%;
-	position: fixed;
+	z-index: -999;
 	top: 0;
 	bottom: 0;
 	left: 0;
 	right: 0;
 	object-fit: cover;
-	z-index: -999;
-	filter: blur(4px);
+	filter: blur(0.25rem);
 }
 .video-foreground {
 	background: linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(32, 0, 0, 0.25) 100%);
@@ -663,7 +663,7 @@ th {
 }
 /* === SIDEBAR === */
 .sidebar {
-	position: absolute;
+	position: fixed;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
@@ -714,8 +714,8 @@ th {
 	opacity: 1;
 }
 .app-container {
-	position: absolute;
-	height: 100vh;
+	position: relative;
+	min-height: 100vh;
 	width: 100%;
 	padding: 12px 8px 12px calc(8px + var(--sidebar-width));
 	overflow-x: hidden;
@@ -809,11 +809,10 @@ th {
 .a-lang {
 	background: #000;
 	color: #fff;
-	font-size: 16px;
 	text-align: center;
 	border: 1px solid #fff;
-	margin: 4px;
-	padding: 1rem;
+	margin: 0.25rem;
+	padding: 0.5rem;
 }
 .a-lang img {
 	width: 16px;
