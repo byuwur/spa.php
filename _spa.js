@@ -152,7 +152,8 @@ function initSPA() {
 		if (!validateQuerySelector(component)) return console.warn(`Can't use Component: ${APP_ENV === "DEV" ? component : ""} isn't valid`);
 		if (!componentIdExists(component)) {
 			console.warn(`Component ${APP_ENV === "DEV" ? "(" + component + ")" : " "} missing. Creating and appending to the body...`);
-			$("body").append(parseQuerySelector(component));
+			if ($("#spa-content").length) $(parseQuerySelector(component)).insertBefore("#spa-content");
+			else $("body").append(parseQuerySelector(component));
 		}
 		// If there's a component extract the ID
 		const componentId = component.match(/#[a-zA-Z0-9-_]+/)[0];
