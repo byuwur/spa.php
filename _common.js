@@ -91,7 +91,7 @@ function initMisc() {
 		.on("click", function (event) {
 			event.preventDefault();
 			// Scroll to the target element if it exists on the same page
-			if ($(this.hash).length && location.pathname == this.pathname && location.hostname == this.hostname) $(`html, body, ${APP_CONTAINER_SELECTOR}`).animate({ scrollTop: $(this.hash).offset().top - 0 }, 999, "easeInOutExpo");
+			if ($(this.hash).length) $(`html, body, ${APP_CONTAINER_SELECTOR}`).animate({ scrollTop: $(this.hash).offset().top - 1 }, 999, "easeInOutExpo");
 			// Collapse the navbar after clicking the link
 			setTimeout(() => {
 				$(".navbar-collapse").collapse("hide");
