@@ -3,7 +3,7 @@
  * File: _functions.js
  * Desc: Contains common resources that are initialized in a per-page basis instead of globally.
  * Deps: jQuery
- * Copyright (c) 2023 Andrés Trujillo [Mateus] byUwUr
+ * Copyright (c) 2024 Andrés Trujillo [Mateus] byUwUr
  */
 
 /**

@@ -4,7 +4,7 @@
  * File: _error.php
  * Desc: Handles server errors. Standalone.
  * Deps: none
- * Copyright (c) 2023 Andrés Trujillo [Mateus] byUwUr
+ * Copyright (c) 2024 Andrés Trujillo [Mateus] byUwUr
  */
 
 // [Mateus] byUwUr --- Easy HTTP Error Page --- 2024 v3. Check out: https://github.com/byuwur/easy-server-http-error-page

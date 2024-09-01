@@ -1,7 +1,7 @@
 ### File: .htaccess
 ### Desc: Configures URL rewriting, custom error handling, proxy blocking, and access restrictions for the server.
 ### Deps: none
-### Copyright (c) 2023 Andrés Trujillo [Mateus] byUwUr
+### Copyright (c) 2024 Andrés Trujillo [Mateus] byUwUr
 
 # Disable MultiViews to avoid URL conflicts
 Options -Multiviews

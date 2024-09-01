@@ -3,7 +3,7 @@
  * File: _var.php
  * Desc: Initializes the system environment, sets up path-related variables, and optionally stores these values in the browser's localStorage. (MUST be included in every file)
  * Deps: none
- * Copyright (c) 2023 Andrés Trujillo [Mateus] byUwUr
+ * Copyright (c) 2024 Andrés Trujillo [Mateus] byUwUr
  */
 
 // Initializes the output buffer and sets up paths and environment variables.
