@@ -2,6 +2,8 @@
 
 **byUwUr's Easy PHP SPA Framework**
 
+Test it out at: [byuwur.net/\_spa.php/](https://byuwur.net/_spa.php/)
+
 ## What's this about?
 
 This project is a simple, easy-to-use framework for building single-page applications (SPAs) using PHP. It provides a structure for handling routing, modals, and basic operations required for an SPA. The framework is designed to be lightweight and easy to integrate into existing projects.
@@ -61,4 +63,4 @@ This project is a simple, easy-to-use framework for building single-page applica
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+MIT (c) Andrés Trujillo [Mateus] byUwUr
