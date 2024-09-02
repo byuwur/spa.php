@@ -39,6 +39,7 @@ $_POST = [...$_POST, ...$routes[$uri]["POST"] ?? []];
 <script>
     // Store environment and routing information in localStorage for client-side use
     localStorage.setItem("APP_ENV", "<?= $_ENV["APP_ENV"]; ?>");
+    localStorage.setItem("APP_VERSION", "<?= $_ENV["APP_VERSION"]; ?>");
     localStorage.setItem("URI", "<?= $uri; ?>");
     localStorage.setItem("URL", "<?= $url; ?>");
     localStorage.setItem("ROUTES", JSON.stringify(<?= json_encode($routes) ?>));

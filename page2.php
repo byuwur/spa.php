@@ -20,7 +20,7 @@ require_once $TO_HOME . "_common.php";
 <script>
     $(() => {
         document.title = "<?= $titles[$title_index]; ?>";
-        initCommon();
+        byCommon.init();
     });
 </script>
 <?php

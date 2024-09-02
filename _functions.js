@@ -1,7 +1,7 @@
 "use strict";
 /*
  * File: _functions.js
- * Desc: Contains common resources that are initialized in a per-page basis instead of globally.
+ * Desc: Contains common standalone functions that are used project-wide. In hopes that the function names doesn't collide with global.
  * Deps: jQuery
  * Copyright (c) 2024 Andrés Trujillo [Mateus] byUwUr
  */
@@ -41,43 +41,46 @@ function debounce(func, wait = 250) {
 
 /**
  * Hides and removes the front modal from the DOM after a short delay.
+ * @param {string} $modalId The ID of the modal element
  * @param {boolean} $delay Whether delays its detruction or not.
  */
-function destroy_modal_front($delay = true) {
-	$("#modal_front").modal("hide");
-	setTimeout(() => $("#modal_front").remove(), $delay ? 111 : 1);
+function destroy_modal_front($modalId, $delay = true) {
+	if (!$(`#${$modalId}`).length) return console.log(`Modal #${$modalId} doesn't exist...`);
+	$(`#${$modalId}`).modal("hide");
+	setTimeout(() => $(`#${$modalId}`).remove(), $delay ? 333 : 1);
 }
 
 /**
  * Displays a Bootstrap modal with a customizable message and actions.
+ * @param {string} $modalId The ID of the modal element
  * @param {string} $state The state of the modal (e.g., success, danger, info, warning).
  * @param {string} $title The title of the modal.
  * @param {string} $message The message to display in the modal.
  * @param {boolean} $hideCancelBtn Whether to hide the cancel button.
  * @param {string} $redirect The URL to redirect to when "OK" is clicked.
  */
-function show_modal_front($state = "success", $title = "INFO.", $message = "Message.", $hideCancelBtn = false, $redirect = "javascript:destroy_modal_front();") {
+function show_modal_front($modalId, $state = "success", $title = "INFO.", $message = "Message.", $hideCancelBtn = false, $redirect = `javascript:destroy_modal_front('${$modalId}');`) {
 	// If already exist, destroy it with no delay
-	if ($("#modal_front").length) destroy_modal_front(false);
+	if ($(`#${$modalId}`).length) destroy_modal_front($modalId, false);
 	// HTML structure for the modal
-	let modal_front = `<div id="modal_front" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel">
-        <div id="modal_front_container" class="modal-dialog modal-dialog-scrollable">
+	const modal_front = `<div id="${$modalId}" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel">
+        <div id="${$modalId}_container" class="modal-dialog modal-dialog-scrollable">
             <div class="modal-content">
-                <div id="modal_front_title" class="modal-header m-0 fs-5 alert alert-${$state}">${$title}</div>
-                <div id="modal_front_body" class="modal-body text-dark">${$message}</div>
+                <div id="${$modalId}_title" class="modal-header m-0 fs-5 alert alert-${$state}">${$title}</div>
+                <div id="${$modalId}_body" class="modal-body text-dark">${$message}</div>
                 <div class="modal-footer">
-                    <a id="modal_front_back" class="btn btn-dark" href="javascript:destroy_modal_front();" onclick="javascript:destroy_modal_front();">CANCEL</a>
-                    <a id="modal_front_ok" class="btn btn-success" href="${$redirect}">OK</a>
+                    <a id="${$modalId}_back" class="btn btn-dark" href="javascript:destroy_modal_front('${$modalId}');" onclick="javascript:destroy_modal_front('${$modalId}');">CANCEL</a>
+                    <a id="${$modalId}_ok" class="btn btn-success" href="${$redirect}">OK</a>
                 </div>
             </div>
         </div>
     </div>`;
 	// Append it to the <body>
 	$("body").append(modal_front);
-	$hideCancelBtn ? $("#modal_front_back").addClass("d-none") : $("#modal_front_back").removeClass("d-none");
+	$hideCancelBtn ? $(`#${$modalId}_back`).addClass("d-none") : $(`#${$modalId}_back`).removeClass("d-none");
 	// Center if window size merits and show
-	window.innerWidth < 992 ? $("#modal_front_container").addClass("modal-dialog-centered") : $("#modal_front_container").removeClass("modal-dialog-centered");
-	$("#modal_front").modal("show");
+	window.innerWidth < 992 ? $(`#${$modalId}_container`).addClass("modal-dialog-centered") : $(`#${$modalId}_container`).removeClass("modal-dialog-centered");
+	$(`#${$modalId}`).modal("show");
 }
 
 /**
@@ -127,12 +130,12 @@ function make_http_request(options) {
 	})
 		.then(function (response) {
 			if (appIsDEV) console.log(`Response (${elementId}):`, response);
-			if (loudFail && ![200, 201, 202].includes(response?.status)) return show_modal_front("danger", "ERROR", "Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + response?.message + ")</code>", true);
+			if (loudFail && ![200, 201, 202].includes(response?.status)) return show_modal_front("modal_front", "danger", "ERROR", "Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + response?.message + ")</code>", true);
 			return response?.data;
 		})
 		.catch(function (xhr, status, error) {
 			console.error(`Error (${elementId}): ${xhr?.status} ${status} ${error} "${xhr?.responseJSON?.message ?? xhr?.responseText}"`, appIsDEV ? xhr : "");
-			if (loudFail) show_modal_front("danger", "ERROR", "Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + (xhr?.responseJSON?.message ?? xhr?.responseText) + ")</code>", true);
+			if (loudFail) show_modal_front("modal_front", "danger", "ERROR", "Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + (xhr?.responseJSON?.message ?? xhr?.responseText) + ")</code>", true);
 			return null;
 		});
 }
@@ -201,13 +204,13 @@ function element_make_http_request(options) {
 			})
 				.then(function (response) {
 					if (appIsDEV) console.log(`Response (${elementId}):`, response);
-					if (loudFail && ![200, 201, 202].includes(response?.status)) return show_modal_front("danger", "ERROR", "Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + response?.message + ")</code>", true);
+					if (loudFail && ![200, 201, 202].includes(response?.status)) return show_modal_front("modal_front", "danger", "ERROR", "Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + response?.message + ")</code>", true);
 					doneFn(response?.data);
 					return response?.data;
 				})
 				.catch(function (xhr, status, error) {
 					console.error(`Error (${elementId}): ${xhr?.status} ${status} ${error} "${xhr?.responseJSON?.message ?? xhr?.responseText}"`, appIsDEV ? xhr : "");
-					if (loudFail) show_modal_front("danger", "ERROR", "Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + (xhr?.responseJSON?.message ?? xhr?.responseText) + ")</code>", true);
+					if (loudFail) show_modal_front("modal_front", "danger", "ERROR", "Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + (xhr?.responseJSON?.message ?? xhr?.responseText) + ")</code>", true);
 					failFn();
 					return null;
 				})
