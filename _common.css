@@ -1,5 +1,6 @@
 :root {
 	--sidebar-width: 5rem;
+	--sidebar-height: 4.5rem;
 	--sidebar-expanded-width: 20rem;
 	--primary-color: #600;
 	--secondary-color: #003;
@@ -123,10 +124,10 @@ i.select-icon {
 	z-index: 9;
 }
 i.input-icon {
-	left: 24px;
+	left: 1.5rem;
 }
 i.select-icon {
-	right: 24px;
+	right: 1.5rem;
 }
 a {
 	color: var(--primary-color);
@@ -134,7 +135,7 @@ a {
 }
 a:hover {
 	text-decoration: underline !important;
-	color: #fff !important;
+	color: #04c !important;
 	outline: none !important;
 	text-shadow: none !important;
 }
@@ -156,27 +157,27 @@ h6,
 }
 h1,
 .h1 {
-	font-size: 36px;
+	font-size: 2.25rem;
 }
 h2,
 .h2 {
-	font-size: 32px;
+	font-size: 1.875rem;
 }
 h3,
 .h3 {
-	font-size: 24px;
+	font-size: 1.5rem;
 }
 h4,
 .h4 {
-	font-size: 20px;
+	font-size: 1.125rem;
 }
 h5,
 .h5 {
-	font-size: 18px;
+	font-size: 1rem;
 }
 h6,
 .h6 {
-	font-size: 16px;
+	font-size: 0.875rem;
 }
 td,
 th {
@@ -656,8 +657,7 @@ th {
 }
 .bywr-accordion .accordion-button {
 	background: #0000;
-	border-top: 1px solid var(--light-transparent);
-	border-bottom: 1px solid var(--light-transparent);
+	border: 1px solid var(--light-transparent);
 }
 .bywr-accordion .accordion-button:not(.collapsed) {
 	background: #fff3;
@@ -670,8 +670,7 @@ th {
 	flex-grow: 1;
 	align-items: center;
 	padding: 0.75rem;
-	border-top: 1px solid var(--light-transparent);
-	border-bottom: 1px solid var(--light-transparent);
+	border: 1px solid var(--light-transparent);
 }
 .p-2o5 {
 	padding: 0.75rem;
@@ -702,13 +701,14 @@ th {
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	height: 72px;
+	height: var(--sidebar-height);
 	width: var(--sidebar-width);
 	background: #000;
 	top: 1px;
 	right: 0;
 	padding: 0.5rem;
 	border: 1px solid var(--light-transparent);
+	outline: 1px solid var(--light-transparent);
 }
 .sidebar-hidden {
 	position: absolute;
@@ -717,7 +717,7 @@ th {
 	align-items: center;
 	justify-content: center;
 	width: var(--sidebar-width);
-	top: 72px;
+	top: var(--sidebar-height);
 	bottom: 0;
 	right: 0;
 	padding: 0.5rem;
@@ -732,39 +732,51 @@ th {
 	position: relative;
 	min-height: 100vh;
 	width: 100%;
-	padding: 12px 8px 12px calc(8px + var(--sidebar-width));
+	padding: 0.75rem 0.5rem 0.75rem calc(0.5rem + var(--sidebar-width));
 	overflow-x: hidden;
 	overflow-y: auto;
 	z-index: 9;
 }
 .app-container.sidebar-expanded {
-	padding-left: calc(8px + var(--sidebar-expanded-width));
+	padding-left: calc(0.5rem + var(--sidebar-expanded-width));
 }
-@media (max-width: 767.98px) {
-	:root {
-		--sidebar-width: 4rem;
-	}
-	.sidebar {
-		width: var(--sidebar-width);
-	}
+@media (max-width: 768px) {
 	.sidebar.sidebar-expanded {
 		width: 100vw;
 	}
-	.sidebar-toggle {
-		width: var(--sidebar-width);
-	}
-	.sidebar-hidden {
-		width: var(--sidebar-width);
-		pointer-events: none;
-	}
 	.app-container {
-		padding: 8px 8px 8px calc(8px + var(--sidebar-width));
+		padding: 0.5rem 0.5rem 0.5rem calc(0.5rem + var(--sidebar-width));
 	}
 	.app-container.sidebar-expanded {
-		padding-left: 8px;
+		padding-left: 0.5rem;
+	}
+	.sidebar-hidden {
+		pointer-events: none;
 	}
 }
-/* == APP CONTAINER/CONTENT === */
+@media (max-width: 576px) {
+	.sidebar {
+		height: var(--sidebar-height);
+		width: 100vw;
+	}
+	.sidebar.sidebar-expanded {
+		height: 100vh;
+	}
+	.sidebar:not(.sidebar-expanded) .sidebar-content {
+		opacity: 1;
+		visibility: visible;
+	}
+	.app-container {
+		padding: calc(0.5rem + var(--sidebar-width)) 0.5rem 0.5rem 0.5rem;
+	}
+	.app-container.sidebar-expanded {
+		padding-top: 0.5rem;
+	}
+	.sidebar:not(.sidebar-expanded) .sidebar-hidden {
+		display: none;
+	}
+}
+/* == APP CONTAINER CONTENT === */
 .app-content {
 	position: relative;
 	background: linear-gradient(to bottom, #fefefe 0%, #fff 100%);
