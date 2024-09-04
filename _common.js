@@ -100,7 +100,10 @@
 			.on("click", function (event) {
 				event.preventDefault();
 				// Scroll to the target element if it exists on the same page
-				if ($(this.hash).length) $(`html, body, ${byCommon.APP_CONTAINER_SELECTOR}`).animate({ scrollTop: $(this.hash).offset().top - 120 }, 999, "easeInOutExpo");
+				if ($(this.hash).length)
+					$(`html, body, ${byCommon.APP_CONTAINER_SELECTOR}`)
+						.stop()
+						.animate({ scrollTop: $(this.hash).offset().top - 120 }, 999, "easeInOutExpo");
 				// Collapse the navbar after clicking the link
 				setTimeout(() => {
 					$(".navbar-collapse").collapse("hide");
