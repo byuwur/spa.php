@@ -37,19 +37,10 @@
 		// Ensure the overlay inside the sidebar follows it accordingly, due to being an absolute positioned inside another
 		jqSidebar
 			.off("scroll")
-			.on(
-				"scroll",
-				(function () {
-					let sidebarScrollTop = 0;
-					return debounce(function () {
-						const top = Math.floor($(this).scrollTop()),
-							diff = top - sidebarScrollTop;
-						console.log(top);
-						if (jqSidebar.hasClass("sidebar-expanded")) $(`${byCommon.SIDEBAR_ID} .overlay`).css("height", `${$(`${byCommon.SIDEBAR_ID} .overlay`).height() + diff}px`);
-						sidebarScrollTop = top;
-					});
-				})()
-			)
+			.on("scroll", function () {
+				const overlay = $(this).find(".overlay");
+				if ($(overlay).length) $(overlay).height(`${this.scrollHeight}px`);
+			})
 			// Ensure the sidebar collapses when the mouse leaves the sidebar itself
 			.off("mouseleave")
 			.on("mouseleave", function () {
