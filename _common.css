@@ -3,7 +3,7 @@
 	--sidebar-height: 4.5rem;
 	--sidebar-expanded-width: 20rem;
 	--primary-color: #600;
-	--secondary-color: #003;
+	--secondary-color: #123;
 	--gray-color: #666;
 	--dark-gray-color: #333;
 	--light-color: #eee;
@@ -13,15 +13,15 @@
 }
 /* === SELECTION === */
 ::selection {
-	background-color: var(--secondary-color);
+	background-color: #018;
 	color: #fff;
 }
 ::-webkit-selection {
-	background-color: var(--secondary-color);
+	background-color: #018;
 	color: #fff;
 }
 ::-moz-selection {
-	background-color: var(--secondary-color);
+	background-color: #018;
 	color: #fff;
 }
 /* === PLACEHOLDER === */
