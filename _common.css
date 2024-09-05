@@ -65,11 +65,11 @@
 	scrollbar-width: 12px;
 	scrollbar-color: #04c #fff;
 	/* anim */
-	-webkit-transition: all 0.333s ease !important;
-	-o-transition: all 0.333s ease !important;
-	-ms-transition: all 0.333s ease !important;
-	-moz-transition: all 0.333s ease !important;
-	transition: all 0.333s ease !important;
+	-webkit-transition: all 0.3s ease !important;
+	-o-transition: all 0.3s ease !important;
+	-ms-transition: all 0.3s ease !important;
+	-moz-transition: all 0.3s ease !important;
+	transition: all 0.3s ease !important;
 }
 /* @media (prefers-reduced-motion: reduce) {
 	* {
