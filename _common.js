@@ -102,7 +102,6 @@
 						$(byCommon.SIDERBAR_TOGGLE_ID).removeClass("sidebar-expanded");
 						$(byCommon.SIDEBAR_ID).removeClass("sidebar-expanded");
 						$(byCommon.APP_CONTAINER_SELECTOR).removeClass("sidebar-expanded");
-						$(byCommon.SIDEBAR_HIDDEN_ID).css("display", "flex");
 						$(byCommon.SIDEBAR_ID).scrollTop(0);
 					}
 				}, 333);
