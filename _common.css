@@ -840,6 +840,7 @@ th {
 	border: 1px solid var(--light-color);
 	margin: 0.25rem;
 	padding: 0.5rem;
+	white-space: nowrap;
 }
 .a-lang img {
 	width: 16px;
