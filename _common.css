@@ -767,7 +767,7 @@ th {
 		visibility: visible;
 	}
 	.app-container {
-		padding: calc(0.5rem + var(--sidebar-width)) 0.5rem 0.5rem 0.5rem;
+		padding: var(--sidebar-width) 0.5rem 0.5rem 0.5rem;
 	}
 	.app-container.sidebar-expanded {
 		padding-top: 0.5rem;
