@@ -172,9 +172,9 @@
 	byCommon.init = function () {
 		if (typeof jQuery === "undefined" && window.jQuery === undefined) return console.error("Init _common.js FAILED. No jQuery found.");
 		console.log("Init _common.js");
-		byCommon.initSidebar();
-		byCommon.initBootstrap();
 		byCommon.initCaptcha();
 		byCommon.initMisc();
+		byCommon.initBootstrap();
+		byCommon.initSidebar();
 	};
 })(typeof window !== "undefined" ? window : this);
