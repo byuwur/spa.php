@@ -46,8 +46,8 @@ function logout()
  */
 function check_session()
 {
-    if (validate_value($_SESSION["logintime"]  ?? null) === null) return logout();
-    if (validate_value($_SESSION["username"]  ?? null) === null) return logout();
+    if (validate_value($_SESSION["logintime"] ?? null) === null) return logout();
+    if (validate_value($_SESSION["username"] ?? null) === null) return logout();
     if (time() - $_SESSION["logintime"] > 3600) return logout();
     return login(["logintime" => time()]);
 }
