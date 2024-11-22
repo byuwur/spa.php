@@ -27,13 +27,16 @@
 	byCommon.initSidebar = function () {
 		// Check it exists in the first place. Duh..
 		const jqSidebar = $(byCommon.SIDEBAR_ID);
-		if (!jqSidebar.length) return;
+		if (!jqSidebar.length) return console.warn("Can't load Sidebar if element ain't present.");
 		console.log("Init <Sidebar />");
 		if (!get_cookie("SidebarExpand")) set_cookie("SidebarExpand", "on");
 		// Init the rest of the elements
 		const jqSidebarToggle = $(byCommon.SIDERBAR_TOGGLE_ID);
+		if (!jqSidebarToggle.length) console.warn(`Can't load Sidebar Element: "jqSidebarToggle". It doesn't exist.`);
 		const jqSidebarHidden = $(byCommon.SIDEBAR_HIDDEN_ID);
+		if (!jqSidebarHidden.length) console.warn(`Can't load Sidebar Element: "jqSidebarHidden". It doesn't exist.`);
 		const jqAppContainer = $(byCommon.APP_CONTAINER_SELECTOR);
+		if (!jqAppContainer.length) console.warn(`Can't load Sidebar Element: "jqAppContainer". It doesn't exist.`);
 		// Ensure the overlay inside the sidebar follows it accordingly, due to being an absolute positioned inside another
 		jqSidebar
 			.off("scroll")
@@ -114,7 +117,7 @@
 	 * It should be called whenever the content of the #spa-page-content-container changes dynamically to ensure that all components function correctly.
 	 */
 	byCommon.initBootstrap = function () {
-		if (typeof bootstrap === "undefined" && window.bootstrap === undefined) return console.warn("Can't reload bootstrap since it ain't present.");
+		if (typeof bootstrap === "undefined" && window.bootstrap === undefined) return console.warn("Can't load Bootstrap if script ain't present.");
 		try {
 			// Initialize Alert components
 			[...document.querySelectorAll(".alert")].forEach((alertEl) => bootstrap.Alert.getInstance(alertEl) ?? new bootstrap.Alert(alertEl));
@@ -157,7 +160,7 @@
 	 */
 	byCommon.initCaptcha = function () {
 		// Check it exists in the first place. Duh..
-		if (typeof grecaptcha === "undefined" && window.grecaptcha === undefined) return;
+		if (typeof grecaptcha === "undefined" && window.grecaptcha === undefined) return console.warn("Can't load reCaptcha if script ain't present.");
 		try {
 			[...document.querySelectorAll(".g-recaptcha")].forEach((captchaEl) => (grecaptcha.render ? grecaptcha.render(captchaEl) : console.warn("grecaptcha not ready...")));
 			console.log("Init captcha");
@@ -171,10 +174,12 @@
 	 */
 	byCommon.init = function () {
 		if (typeof jQuery === "undefined" && window.jQuery === undefined) return console.error("Init _common.js FAILED. No jQuery found.");
-		console.log("Init _common.js");
-		byCommon.initCaptcha();
-		byCommon.initMisc();
-		byCommon.initBootstrap();
-		byCommon.initSidebar();
+		$(() => {
+			console.log("Init _common.js");
+			byCommon.initCaptcha();
+			byCommon.initMisc();
+			byCommon.initBootstrap();
+			byCommon.initSidebar();
+		});
 	};
 })(typeof window !== "undefined" ? window : this);
