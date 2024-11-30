@@ -43,7 +43,7 @@ function make_http_request(string $url, array $get = [], array $post = [])
     $req = curl_init();
     curl_setopt($req, CURLOPT_URL, $url . "?" . http_build_query($get));
     curl_setopt($req, CURLOPT_POST, 1);
-    curl_setopt($req, CURLOPT_POSTFIELDS, $post);
+    curl_setopt($req, CURLOPT_POSTFIELDS, http_build_query($post));
     curl_setopt($req, CURLOPT_RETURNTRANSFER, true);
     $requested = curl_exec($req);
     if (curl_errno($req)) echo "<script>console.error(\"CURL ERROR: " . curl_error($req) . "\");</script>";
