@@ -101,6 +101,32 @@ function sanitize_value($input, string $type = "")
 
 // --- COMMON & MISC functions ---
 
+/**
+ * Normalizes a string by removing non-alphanumeric characters, double spaces and converting to lowercase.
+ * @param string $str The string to normalize.
+ * @param string $mode Characters mode: uppercase, lowercase or leave it.
+ * @param array $valid Special characters allowed in the string.
+ * @return string The normalized string.
+ */
+function normalize_string(string $str, string $mode = "", array $valid = [])
+{
+    $str = preg_replace("/[^a-zA-Z0-9 " . implode("", $valid) . "]/", "", $str); // Remove non-alphanumeric characters except spaces
+    $str = preg_replace("/\s+/", " ", $str); // Replace multiple spaces with a single space
+    $str = trim($str); // Trim leading and trailing spaces
+    switch (strtolower($mode)) {
+        case "low":
+        case "lower":
+        case "lowercase":
+            return strtolower($str); // Convert to lowercase
+        case "up":
+        case "upper":
+        case "uppercase":
+            return strtoupper($str); // Convert to uppercase
+        default:
+            return $str;
+    }
+}
+
 /** 
  * Redirects the user to a specified location and terminates the script.
  * @param string $location The URL or path to redirect to.
