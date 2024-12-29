@@ -23,7 +23,7 @@ function login($session = [], $regen = false)
 {
     if ($regen) session_regenerate_id(true);
     setcookie(session_name(), session_id(), time() + 3600, '/', '', true, true);
-    $_SESSION = array_merge($_SESSION, $session);
+    $_SESSION = [...$_SESSION, ...$session];
     return true;
 }
 
