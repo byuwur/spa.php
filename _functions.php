@@ -38,15 +38,25 @@ function api_respond(int $status, bool $error, string $message, array $data = []
  */
 function make_http_request(string $url, array $get = [], array $post = [])
 {
+    if (!validate_value($url, "url")) return console_error("CURL ERROR: Invalid URL.");
+    global $SYSTEM_ROOT;
     session_write_close();
-    $post[session_name()] = session_id();
     $req = curl_init();
-    curl_setopt($req, CURLOPT_URL, $url . "?" . http_build_query($get));
+    $post[session_name()] = session_id();
+    if (count($get)) $url = $url .  "?" . http_build_query($get);
+    curl_setopt($req, CURLOPT_URL, $url);
     curl_setopt($req, CURLOPT_POST, 1);
     curl_setopt($req, CURLOPT_POSTFIELDS, http_build_query($post));
+    curl_setopt($req, CURLOPT_VERBOSE, true);
     curl_setopt($req, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($req, CURLOPT_CAINFO, $SYSTEM_ROOT . "/cacert.pem");
     $requested = curl_exec($req);
-    if (curl_errno($req)) echo "<script>console.error(\"CURL ERROR: " . curl_error($req) . "\");</script>";
+    if (curl_errno($req)) {
+        console_error("CURL HTTP2 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req) . " = Switching to HTTP1.1");
+        curl_setopt($req, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+        $requested = curl_exec($req);
+    }
+    if (curl_errno($req)) console_error("CURL HTTP1.1 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req));
     curl_close($req);
     session_start();
     return $requested;
@@ -148,6 +158,24 @@ function console_log(string $message)
 }
 
 /** 
+ * Logs a warning message to the browser's console using JavaScript.
+ * @param string $message The message to log.
+ */
+function console_warn(string $message)
+{
+    echo "<script>console.warn('" . $message . "');</script>";
+}
+
+/** 
+ * Logs an error message to the browser's console using JavaScript.
+ * @param string $message The message to log.
+ */
+function console_error(string $message)
+{
+    echo "<script>console.error('" . $message . "');</script>";
+}
+
+/** 
  * Triggers an error page and terminates the script.
  * @param int $status The HTTP status code to send.
  * @param string $message The error message to display.
@@ -155,6 +183,7 @@ function console_log(string $message)
  */
 function error_crash(int $status, string $message, string $error_file)
 {
+    console_warn("App crashed (" . $status . "): " . $message);
     $_GET["e"] = $status;
     $_POST["custom_error_message"] = $message;
     require_once $error_file;
