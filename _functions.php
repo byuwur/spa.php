@@ -109,6 +109,25 @@ function sanitize_value($input, string $type = "")
     return filter_var($input, $filterMap[$type] ?? FILTER_UNSAFE_RAW);
 }
 
+/**
+ * Validates if an array contains ALL the specified keys (strict) or AT LEAST ONE of the (relaxed)
+ * @param array $array The associative array to validate
+ * @param array $required The list of keys to validate
+ * @param bool $strict Condition to check if ALL or AT LEAST ONE of them must be valid
+ * @return array The invalid fields. If length's zero (0) then conditions are fulfilled.
+ */
+function validate_keys(array $array, array $required, bool $strict = true)
+{
+    $invalid = [];
+    foreach ($required as $key) {
+        $value = $array[$key] ?? null;
+        if (validate_value($value) === null)
+            $invalid[] = $key;
+    }
+    if ($strict) return $invalid;
+    return count($invalid) < count($required) ? [] : $invalid;
+}
+
 // --- COMMON & MISC functions ---
 
 /**
