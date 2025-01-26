@@ -63,67 +63,89 @@ function make_http_request(string $url, array $get = [], array $post = [])
 }
 
 /** 
- * Validates a value against a specified type, returning null if the value is invalid.
+ * Validates a value against a specified type and sanitizes it accordingly, returning NULL if the value is invalid.
  * @param mixed $input The value to validate.
- * @param string $type The type to validate against (e.g., boolean, email).
+ * @param string $type The type to validate against. Defaults to "string".
+ * Valid types are "string", "int", "float", "boolean", "regex", "date", "json", "uuid", "domain", "email", "ip", "mac", "url".
+ * @param array $options Assoc. array of options. Valid keys are:
+ * "min"(int|float) & "max"(int|float) for "int" or "float" types.
+ * "pattern"(regexp) for "regex" type.
+ * "allowed_tags"(string[]) for strip_tags.
  * @return mixed The validated value or null if invalid.
  */
-function validate_value($input, string $type = "")
+function validate_value($input, string $type = "string", array $options = [])
 {
-    if (!isset($input)) return null;
-    if ($input === null) return null;
-    if ($input === "null") return null;
-    if ($input === "") return null;
-    $filterMap = [
+    if (
+        !isset($input) ||
+        $input === null ||
+        $input === "null" ||
+        $input === ""
+    ) return null;
+    $VALIDATE_MAP = [
         "boolean" => FILTER_VALIDATE_BOOLEAN,
-        "domain" => FILTER_VALIDATE_DOMAIN,
         "email" => FILTER_VALIDATE_EMAIL,
         "float" => FILTER_VALIDATE_FLOAT,
         "int" => FILTER_VALIDATE_INT,
+        "url" => FILTER_VALIDATE_URL,
         "ip" => FILTER_VALIDATE_IP,
-        "mac" => FILTER_VALIDATE_MAC,
-        "url" => FILTER_VALIDATE_URL
+        "domain" => FILTER_VALIDATE_DOMAIN,
+        "mac" => FILTER_VALIDATE_MAC
     ];
-    return filter_var($input, $filterMap[$type] ?? FILTER_UNSAFE_RAW);
-}
-
-/** 
- * Sanitizes a value based on the specified type, removing harmful elements.
- * @param mixed $input The value to sanitize.
- * @param string $type The type of sanitization to apply (e.g., email, url).
- * @return mixed The sanitized value.
- */
-function sanitize_value($input, string $type = "")
-{
     $input = trim($input);
-    $input = strip_tags($input);
+    $input = strip_tags($input, $options["allowed_tags"] ?? []);
     $input = htmlspecialchars($input);
-    $filterMap = [
+    if (isset($options["allowed_tags"]) && is_array($options["allowed_tags"]))
+        foreach ($options["allowed_tags"] as $tag)
+            $input = str_replace(
+                ["&lt;" . $tag . "&gt;", "&lt;/" . $tag . "&gt;", "&lt;" . $tag . "/&gt;"],
+                ["<" . $tag . ">", "</" . $tag . ">", "<" . $tag . "/>"],
+                $input
+            );
+    $input = filter_var($input, $VALIDATE_MAP[$type] ?? FILTER_UNSAFE_RAW, FILTER_NULL_ON_FAILURE);
+    if ($input === null) return null;
+    $SANITIZE_MAP = [
         "email" => FILTER_SANITIZE_EMAIL,
-        "encoded" => FILTER_SANITIZE_ENCODED,
         "float" => FILTER_SANITIZE_NUMBER_FLOAT,
         "int" => FILTER_SANITIZE_NUMBER_INT,
-        "special_chars" => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
-        "url" => FILTER_SANITIZE_URL
+        "url" => FILTER_SANITIZE_URL,
+        "encoded" => FILTER_SANITIZE_ENCODED
     ];
-    return filter_var($input, $filterMap[$type] ?? FILTER_UNSAFE_RAW);
+    $input = filter_var($input, $SANITIZE_MAP[$type] ?? FILTER_UNSAFE_RAW, FILTER_NULL_ON_FAILURE);
+    if ($input === null) return null;
+    if (in_array($type, ["int", "float"], true)) {
+        if (isset($options["min"]) && $input < $options["min"]) return null;
+        if (isset($options["max"]) && $input > $options["max"]) return null;
+        return $input;
+    }
+    switch ($type) {
+        case "string":
+        default:
+            return is_string($input) ? $input : null;
+        case "regex":
+            return preg_match($options["pattern"] ?? "", $input) ? $input : null;
+        case "date":
+            return strtotime($input) !== false ? $input : null;
+        case "json":
+            json_decode($input);
+            return json_last_error() === JSON_ERROR_NONE ? $input : null;
+        case "uuid":
+            return preg_match("/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i", $input) ? $input : null;
+    }
 }
 
 /**
- * Validates if an array contains ALL the specified keys (strict) or AT LEAST ONE of the (relaxed)
+ * Validates if an array contains ALL the specified keys (strict) or AT LEAST ONE of the (relaxed) and returns the array of invalid keys.
  * @param array $array The associative array to validate
- * @param array $required The list of keys to validate
+ * @param array $required Assoc. array of keys to validate with its type [$key => $type]
  * @param bool $strict Condition to check if ALL or AT LEAST ONE of them must be valid
  * @return array The invalid fields. If length's zero (0) then conditions are fulfilled.
  */
 function validate_keys(array $array, array $required, bool $strict = true)
 {
     $invalid = [];
-    foreach ($required as $key) {
-        $value = $array[$key] ?? null;
-        if (validate_value($value) === null)
+    foreach ($required as $key => $type)
+        if (validate_value($array[$key] ?? null, $type ?? "string") === null)
             $invalid[] = $key;
-    }
     if ($strict) return $invalid;
     return count($invalid) < count($required) ? [] : $invalid;
 }
