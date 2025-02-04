@@ -135,9 +135,9 @@ function validate_value($input, string $type = "string", array $options = [])
 
 /**
  * Validates if an array contains ALL the specified keys (strict) or AT LEAST ONE of the (relaxed) and returns the array of invalid keys.
- * @param array $array The associative array to validate
- * @param array $required Assoc. array of keys to validate with its type [$key => $type]
- * @param bool $strict Condition to check if ALL or AT LEAST ONE of them must be valid
+ * @param array $array The associative array to validate.
+ * @param array $required Assoc. array of keys to validate with its type [$key => $type].
+ * @param bool $strict Condition to check if ALL (strict) or AT LEAST ONE (relaxed) of them must be valid.
  * @return array The invalid fields. If length's zero (0) then conditions are fulfilled.
  */
 function validate_keys(array $array, array $required, bool $strict = true)
@@ -148,6 +148,27 @@ function validate_keys(array $array, array $required, bool $strict = true)
             $invalid[] = $key;
     if ($strict) return $invalid;
     return count($invalid) < count($required) ? [] : $invalid;
+}
+
+/**
+ * Validates if an array contains ALL the specified keys (strict) or AT LEAST ONE of the (relaxed) and returns the array of invalid keys.
+ * Depending whether you choose to crash so API responds or just return the error message.
+ * @param string $method Query method used on validation.
+ * @param array $array The associative array to validate.
+ * @param array $required Assoc. array of keys to validate with its type [$key => $type].
+ * @param bool $strict Condition to check if ALL (strict) or AT LEAST ONE (relaxed) of them must be valid.
+ * @param bool $crash Condition to check if the app crashes or just returns the error string.
+ * @return array The invalid fields. If length's zero (0) then conditions are fulfilled.
+ */
+function api_validate_keys(string $method, array $array, array $required, bool $strict = true, bool $crash = true)
+{
+    $invalid = validate_keys($array, $required, $strict);
+    if (count($invalid)) {
+        $err = "Parámetros inválidos: (" . $method . ")";
+        if ($_ENV["APP_ENV"] === "DEV") $err .= " [Missing fields " . implode(", ", $invalid) . "]";
+        if ($crash) api_respond(400, true, $err);
+        else return $err;
+    }
 }
 
 // --- COMMON & MISC functions ---
