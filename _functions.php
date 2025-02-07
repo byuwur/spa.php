@@ -171,6 +171,20 @@ function api_validate_keys(string $method, array $array, array $required, bool $
     }
 }
 
+/**
+ * Checks an array of objects and returns the list of all the keys present in all the elements of the array.
+ * @param array $array The array of objects to be checked
+ * @return array The list of common keys in all the elements of the array.
+ */
+function common_keys(array $array)
+{
+    if (empty($array) || !count($array)) return [];
+    $common = array_keys(reset($array));
+    foreach ($array as $item)
+        $common = array_intersect($common, array_keys($item));
+    return array_values($common);
+}
+
 // --- COMMON & MISC functions ---
 
 /**
