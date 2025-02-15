@@ -43,7 +43,7 @@ $titles = [
     "SPA " . $page2 . " | byUwUr"
 ];
 
-$MATEUS_LINK = "https://byuwur.net";
+$MATEUS_LINK = "https://byuwur.co";
 
 $DNI_TYPES = [
     1 => "Número único de identificación personal (NUIP)",

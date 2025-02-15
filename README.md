@@ -2,7 +2,7 @@
 
 **byUwUr's Easy PHP SPA Framework**
 
-Test it out at: [byuwur.net/\_spa.php/](https://byuwur.net/_spa.php/)
+Test it out at: [byuwur.co/\_spa.php/](https://byuwur.co/_spa.php/)
 
 ## What's this about?
 

@@ -8,7 +8,7 @@
  */
 
 // [Mateus] byUwUr --- Easy HTTP Error Page --- 2024 v3. Check out: https://github.com/byuwur/easy-server-http-error-page
-$mateus_link = "https://byuwur.net";
+$mateus_link = "https://byuwur.co";
 $lang = isset($_GET["lang"]) ? $_GET["lang"] : (isset($_COOKIE["lang"]) ? $_COOKIE["lang"] : "es");
 echo "<html lang='" . $lang . "' dir='ltr'>";
 setcookie("lang", $lang, time() + 31536000, "/", "", false, false);
@@ -152,8 +152,8 @@ switch ($err) {
     <title>ERROR <?= $_GET["e"]; ?></title>
     <meta property="og:title" content="[Mateus] byUwUr" />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://byuwur.net/img/icon.png" />
-    <meta property="og:url" content="https://byuwur.net" />
+    <meta property="og:image" content="https://byuwur.co/img/icon.png" />
+    <meta property="og:url" content="https://byuwur.co" />
     <meta property="og:site_name" content="byuwur.dev" />
     <meta property="og:description" content="Mateus' portfolio." />
     <meta http-equiv="Content-Language" content="es,en" />
