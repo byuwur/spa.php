@@ -3,7 +3,7 @@
  * File: _spa.js
  * Desc: Manages the Single Page Application (SPA) functionality, including routing, state management, and AJAX loading of content.
  * Deps: jQuery
- * Copyright (c) 2024 Andrés Trujillo [Mateus] byUwUr
+ * Copyright (c) 2025 Andrés Trujillo [Mateus] byUwUr
  */
 
 /**

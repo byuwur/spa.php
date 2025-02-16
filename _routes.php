@@ -3,7 +3,7 @@
  * File: _routes.php
  * Desc: Defines the routing map for the application, including URIs, GET/POST parameters, and associated components.
  * Deps: none
- * Copyright (c) 2024 Andrés Trujillo [Mateus] byUwUr
+ * Copyright (c) 2025 Andrés Trujillo [Mateus] byUwUr
  */
 
 // Hierarchy

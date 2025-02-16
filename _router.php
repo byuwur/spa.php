@@ -3,7 +3,7 @@
  * File: _router.php
  * Desc: Processes and routes incoming URIs based on predefined routes, handling URL parameters and errors. If a matching file is found, it serves the file with appropriate headers; otherwise, it prepares the environment for client-side routing.
  * Deps: $TO_HOME . "_functions.php", $TO_HOME . "_plugin.php"; $routes OR $TO_HOME . "_routes.php" MUST be previously defined/called.
- * Copyright (c) 2024 Andrés Trujillo [Mateus] byUwUr
+ * Copyright (c) 2025 Andrés Trujillo [Mateus] byUwUr
  */
 
 // The rule must be previously configured in .htaccess or nginx.conf

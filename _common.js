@@ -3,7 +3,7 @@
  * File: _common.js
  * Desc: Contains common resources and functions that are initialized in a per-page basis instead of globally and can be used project-wide.
  * Deps: jQuery, /_functions.js
- * Copyright (c) 2024 Andrés Trujillo [Mateus] byUwUr
+ * Copyright (c) 2025 Andrés Trujillo [Mateus] byUwUr
  */
 
 /**

@@ -3,7 +3,7 @@
  * File: _auth.php
  * Desc: Handles user auth and session management
  * Deps: /_var.php, $TO_HOME . "_functions.php", $TO_HOME . "_config.php", $TO_HOME . "_routes.php";
- * Copyright (c) 2024 Andrés Trujillo [Mateus] byUwUr
+ * Copyright (c) 2025 Andrés Trujillo [Mateus] byUwUr
  */
 
 // At start it always checks if a session_name is provided through query params;

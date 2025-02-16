@@ -3,7 +3,7 @@
  * File: _functions.php
  * Desc: Declares project-wide functions for multiple purposes
  * Deps: none
- * Copyright (c) 2024 Andrés Trujillo [Mateus] byUwUr
+ * Copyright (c) 2025 Andrés Trujillo [Mateus] byUwUr
  */
 
 // --- API functions ---

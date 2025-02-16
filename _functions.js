@@ -3,7 +3,7 @@
  * File: _functions.js
  * Desc: Contains common standalone functions that are used project-wide. In hopes that the function names doesn't collide with global.
  * Deps: jQuery
- * Copyright (c) 2024 Andrés Trujillo [Mateus] byUwUr
+ * Copyright (c) 2025 Andrés Trujillo [Mateus] byUwUr
  */
 
 /**
