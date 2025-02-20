@@ -16,9 +16,9 @@
 	global.byCommon = global.byCommon || {};
 	const byCommon = global.byCommon;
 	// Common selectors
-	byCommon.SIDEBAR_ID = "#sidebar";
-	byCommon.SIDERBAR_TOGGLE_ID = "#sidebar-toggle";
-	byCommon.SIDEBAR_HIDDEN_ID = "#sidebar-hidden";
+	byCommon.SIDEBAR_ID = "#bywr-sidebar";
+	byCommon.SIDERBAR_TOGGLE_ID = "#bywr-sidebar-toggle";
+	byCommon.SIDEBAR_HIDDEN_ID = "#bywr-sidebar-hidden";
 	byCommon.APP_CONTAINER_SELECTOR = ".app-container";
 
 	/**
@@ -47,40 +47,40 @@
 			// Ensure the sidebar collapses when the mouse leaves the sidebar itself
 			.off("mouseleave")
 			.on("mouseleave", function () {
-				if (!jqSidebarToggle.hasClass("sidebar-expanded")) jqSidebar.removeClass("sidebar-expanded");
+				if (!jqSidebarToggle.hasClass("bywr-sidebar-expanded")) jqSidebar.removeClass("bywr-sidebar-expanded");
 			});
 		// Toggle sidebar expansion when the sidebar toggle button is clicked
 		jqSidebarToggle.off("click").on("click", function () {
 			jqSidebarToggle.trigger("blur");
-			$("#sidebar .overlay").css("height", "");
-			if (!jqSidebarToggle.hasClass("sidebar-expanded")) {
-				jqSidebarToggle.addClass("sidebar-expanded");
-				jqSidebar.addClass("sidebar-expanded");
-				jqAppContainer.addClass("sidebar-expanded");
+			$("#bywr-sidebar .overlay").css("height", "");
+			if (!jqSidebarToggle.hasClass("bywr-sidebar-expanded")) {
+				jqSidebarToggle.addClass("bywr-sidebar-expanded");
+				jqSidebar.addClass("bywr-sidebar-expanded");
+				jqAppContainer.addClass("bywr-sidebar-expanded");
 				set_cookie("SidebarExpand", "on");
 			} else {
-				jqSidebarToggle.removeClass("sidebar-expanded");
-				jqSidebar.removeClass("sidebar-expanded");
-				jqAppContainer.removeClass("sidebar-expanded");
+				jqSidebarToggle.removeClass("bywr-sidebar-expanded");
+				jqSidebar.removeClass("bywr-sidebar-expanded");
+				jqAppContainer.removeClass("bywr-sidebar-expanded");
 				jqSidebar.scrollTop(0);
 				set_cookie("SidebarExpand", "off");
 			}
 		});
 		// Expand sidebar when the hidden sidebar area is hovered
 		jqSidebarHidden.off("mouseenter").on("mouseenter", function () {
-			$("#sidebar .overlay").css("height", "");
-			if (!jqSidebarToggle.hasClass("sidebar-expanded")) jqSidebar.addClass("sidebar-expanded");
+			$("#bywr-sidebar .overlay").css("height", "");
+			if (!jqSidebarToggle.hasClass("bywr-sidebar-expanded")) jqSidebar.addClass("bywr-sidebar-expanded");
 		});
 		// Collapse sidebar when the mouse leaves the hidden sidebar area
 		jqSidebarHidden.off("mouseleave").on("mouseleave", function () {
-			$("#sidebar .overlay").css("height", "");
-			if (!jqSidebarToggle.hasClass("sidebar-expanded") && !jqSidebar.is(":hover")) jqSidebar.removeClass("sidebar-expanded");
+			$("#bywr-sidebar .overlay").css("height", "");
+			if (!jqSidebarToggle.hasClass("bywr-sidebar-expanded") && !jqSidebar.is(":hover")) jqSidebar.removeClass("bywr-sidebar-expanded");
 		});
 		// Expand the sidebar automatically on larger screens (min-width: 768px)
 		if (window.innerWidth > 768 && get_cookie("SidebarExpand") == "on") {
-			jqSidebarToggle.addClass("sidebar-expanded");
-			jqSidebar.addClass("sidebar-expanded");
-			jqAppContainer.addClass("sidebar-expanded");
+			jqSidebarToggle.addClass("bywr-sidebar-expanded");
+			jqSidebar.addClass("bywr-sidebar-expanded");
+			jqAppContainer.addClass("bywr-sidebar-expanded");
 		}
 	};
 
@@ -101,10 +101,10 @@
 				// Collapse the navbar after clicking the link
 				setTimeout(() => {
 					$(".navbar-collapse").collapse("hide");
-					if (window.innerWidth < 768 && $(byCommon.SIDERBAR_TOGGLE_ID).hasClass("sidebar-expanded")) {
-						$(byCommon.SIDERBAR_TOGGLE_ID).removeClass("sidebar-expanded");
-						$(byCommon.SIDEBAR_ID).removeClass("sidebar-expanded");
-						$(byCommon.APP_CONTAINER_SELECTOR).removeClass("sidebar-expanded");
+					if (window.innerWidth < 768 && $(byCommon.SIDERBAR_TOGGLE_ID).hasClass("bywr-sidebar-expanded")) {
+						$(byCommon.SIDERBAR_TOGGLE_ID).removeClass("bywr-sidebar-expanded");
+						$(byCommon.SIDEBAR_ID).removeClass("bywr-sidebar-expanded");
+						$(byCommon.APP_CONTAINER_SELECTOR).removeClass("bywr-sidebar-expanded");
 						$(byCommon.SIDEBAR_ID).scrollTop(0);
 					}
 				}, 333);
