@@ -672,7 +672,7 @@ th {
 }
 .bywr-accordion .accordion-button,
 .bywr-accordion .bywr-sidebar-option {
-	border-width: 1px 0;
+	border-width: 0 0 1px 0;
 	border-style: solid;
 	border-color: var(--light-transparent);
 }
@@ -708,7 +708,7 @@ th {
 	height: var(--sidebar-height);
 	width: var(--sidebar-width);
 	background: #000;
-	top: 1px;
+	top: 0;
 	right: 0;
 	padding: 0.5rem;
 	border: 1px solid var(--light-transparent);
