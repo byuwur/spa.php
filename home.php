@@ -37,7 +37,7 @@ require_once $TO_HOME . "_router.php";
     <link rel="stylesheet" href="<?= $HOME_PATH; ?>/css/bootstrap.min.css" />
     <link rel="stylesheet" href="<?= $HOME_PATH; ?>/css/fontawesome.min.css" />
     <link rel="stylesheet" href="<?= $HOME_PATH; ?>/_common.css" />
-    <script src="<?= $HOME_PATH; ?>/js/jquery-3.3.1.min.js" defer></script>
+    <script src="<?= $HOME_PATH; ?>/js/jquery.min.js" defer></script>
     <script src="<?= $HOME_PATH; ?>/js/bootstrap.min.js" defer></script>
     <script src="<?= $HOME_PATH; ?>/_functions.js" defer></script>
     <script src="<?= $HOME_PATH; ?>/_common.js" defer></script>
