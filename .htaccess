@@ -43,6 +43,6 @@ RewriteRule ^(.*)$ - [F]
 RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK)
 RewriteRule .* - [F]
 # Forbid access to specific file types (e.g., source control files, config files)
-<FilesMatch "^(.*\.)?(git|gitignore|gitmodules|example|rb|inc|ht|env|md|json|lock|htaccess|ini|log|conf|pem|sql|txt|bak|old)$">
+<FilesMatch "^(.*\.)?(git|gitignore|gitmodules|example|sh|rb|inc|ht|env|md|json|lock|htaccess|ini|log|conf|pem|sql|txt|bak|old)$">
     Require all denied
 </FilesMatch>
