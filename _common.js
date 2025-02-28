@@ -182,4 +182,78 @@
 			byCommon.initSidebar();
 		});
 	};
+
+	// --- ACCESSIBILITY ---
+
+	/**
+	 * Accessibility: Toggle
+	 */
+	byCommon.fontSize = 16;
+	byCommon.accessibilityElement = $("html");
+	/**
+	 * Accessibility: Toggle
+	 */
+	byCommon.accessibilityToggle = function () {
+		$("#bywr-accessibility-buttons").toggleClass("hide");
+	};
+	/**
+	 * Accessibility: Text Size
+	 */
+	byCommon.accessibilityText = function (mode = "") {
+		switch (mode) {
+			case "plus":
+				if (byCommon.fontSize <= 80) byCommon.fontSize += 2;
+				break;
+			case "minus":
+				if (byCommon.fontSize >= 8) byCommon.fontSize -= 2;
+				break;
+			default:
+				byCommon.fontSize = 16;
+				break;
+		}
+		byCommon.accessibilityElement.css("font-size", `${byCommon.fontSize}px`);
+		$("body").css("font-size", `${byCommon.fontSize}px`);
+	};
+	/**
+	 * Accessibility: No Motion
+	 */
+	byCommon.accessibilityMotion = function () {
+		byCommon.accessibilityElement.toggleClass("no-motion");
+	};
+	/**
+	 * Accessibility: Dyslexia
+	 */
+	byCommon.accessibilityDyslexia = function () {
+		//byCommon.accessibilityElement.toggleClass("dyslexia");
+		$("body").toggleClass("dyslexia");
+	};
+	/**
+	 * Accessibility: Word spacing
+	 */
+	byCommon.accessibilityWordSpacing = function () {
+		//byCommon.accessibilityElement.toggleClass("word-spacing");
+		$("body").toggleClass("word-spacing");
+	};
+	/**
+	 * Accessibility: Highlight Links
+	 */
+	byCommon.accessibilityHighlightLinks = function () {
+		byCommon.accessibilityElement.toggleClass("highlight-links");
+	};
+	/**
+	 * Accessibility: High contrast
+	 */
+	byCommon.accessibilityHighContrast = function (mode = "high-contrast") {
+		if (byCommon.accessibilityElement.hasClass(mode)) {
+			byCommon.accessibilityElement.removeClass(mode);
+			return;
+		}
+		byCommon.accessibilityElement.removeClass("protanopia");
+		byCommon.accessibilityElement.removeClass("deuteranopia");
+		byCommon.accessibilityElement.removeClass("tritanopia");
+		byCommon.accessibilityElement.removeClass("monochropia");
+		byCommon.accessibilityElement.removeClass("invertchropia");
+		byCommon.accessibilityElement.removeClass("high-contrast");
+		byCommon.accessibilityElement.addClass(mode);
+	};
 })(typeof window !== "undefined" ? window : this);

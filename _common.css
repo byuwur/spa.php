@@ -59,27 +59,22 @@
 	font-family: "Bahnschrift";
 	src: url("./css/webfonts/bahnschrift.ttf") format("truetype");
 }
+@font-face {
+	font-family: "Open Dyslexic";
+	src: url("./css/webfonts/open_dyslexic.woff2") format("woff2");
+}
 * {
 	min-width: 0;
 	/* scroll */
 	scrollbar-width: 12px;
 	scrollbar-color: #04c #fff;
 	/* anim */
-	-webkit-transition: all 0.3s ease !important;
-	-o-transition: all 0.3s ease !important;
-	-ms-transition: all 0.3s ease !important;
-	-moz-transition: all 0.3s ease !important;
-	transition: all 0.3s ease !important;
+	-webkit-transition: opacity 0.3s ease, height 0.3s ease, width 0.3s ease, transform 0.3s ease, margin 0.3s ease, padding 0.3s ease, background-color 0.3s ease !important;
+	-o-transition: opacity 0.3s ease, height 0.3s ease, width 0.3s ease, transform 0.3s ease, margin 0.3s ease, padding 0.3s ease, background-color 0.3s ease !important;
+	-ms-transition: opacity 0.3s ease, height 0.3s ease, width 0.3s ease, transform 0.3s ease, margin 0.3s ease, padding 0.3s ease, background-color 0.3s ease !important;
+	-moz-transition: opacity 0.3s ease, height 0.3s ease, width 0.3s ease, transform 0.3s ease, margin 0.3s ease, padding 0.3s ease, background-color 0.3s ease !important;
+	transition: opacity 0.3s ease, height 0.3s ease, width 0.3s ease, transform 0.3s ease, margin 0.3s ease, padding 0.3s ease, background-color 0.3s ease !important;
 }
-/* @media (prefers-reduced-motion: reduce) {
-	* {
-		-webkit-transition: all 0s ease !important;
-		-o-transition: all 0s ease !important;
-		-ms-transition: all 0s ease !important;
-		-moz-transition: all 0s ease !important;
-		transition: all 0s ease !important;
-	}
-} */
 html,
 body {
 	position: relative;
@@ -850,4 +845,96 @@ th {
 	width: 16px;
 	height: 12px;
 	margin-bottom: 4px;
+}
+/* --- ACCESSIBILITY --- */
+#bywr-accessibility {
+	position: fixed;
+	top: 5vh;
+	right: 0;
+}
+#bywr-accessibility,
+#bywr-accessibility-buttons {
+	display: flex;
+	flex-direction: column;
+	align-items: end;
+	flex-wrap: wrap;
+	gap: 0.25rem;
+	z-index: 99;
+	transform-origin: right;
+}
+#bywr-accessibility-buttons {
+	max-height: 90vh;
+}
+@media screen and (max-width: 576px) {
+	#bywr-accessibility {
+		top: 12.5vh;
+	}
+	#bywr-accessibility-buttons {
+		max-height: 85vh;
+	}
+}
+#bywr-accessibility a {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 3rem;
+	width: 3rem;
+	padding: 1.5rem 0;
+	background-color: #009;
+	color: #fff;
+	border-radius: 0;
+	text-align: center;
+	font-size: 1.5rem;
+}
+#bywr-accessibility a:hover {
+	background-color: #00d;
+	color: #eee !important;
+}
+#bywr-accessibility-buttons.hide {
+	transform: scaleX(0);
+}
+.no-motion * {
+	-webkit-transition: none !important;
+	-o-transition: none !important;
+	-ms-transition: none !important;
+	-moz-transition: none !important;
+	transition: none !important;
+}
+.dyslexia {
+	font-family: "Open Dyslexic" !important;
+}
+.word-spacing {
+	letter-spacing: 0.125rem !important;
+}
+.highlight-links a {
+	border: 2px solid #7777 !important;
+}
+.protanopia {
+	filter: sepia(100%) saturate(70%) hue-rotate(-17deg);
+}
+.deuteranopia {
+	filter: sepia(100%) saturate(70%) hue-rotate(-42deg);
+}
+.tritanopia {
+	filter: sepia(100%) saturate(60%) hue-rotate(180deg);
+}
+.monochropia {
+	filter: grayscale(100%);
+}
+.invertchropia {
+	filter: invert(100%);
+}
+.high-contrast {
+	filter: contrast(200%) brightness(125%) !important;
+	background-color: black !important;
+	color: yellow !important;
+}
+.high-contrast > a,
+.high-contrast > button,
+.high-contrast > input,
+.high-contrast > select {
+	background-color: yellow !important;
+	color: black !important;
+	text-decoration: underline !important;
+	border: 2px solid white !important;
 }

@@ -38,6 +38,7 @@ require_once $TO_HOME . "_router.php";
     <link rel="stylesheet" href="<?= $HOME_PATH; ?>/css/fontawesome.min.css" />
     <link rel="stylesheet" href="<?= $HOME_PATH; ?>/_common.css" />
     <script src="<?= $HOME_PATH; ?>/js/jquery.min.js" defer></script>
+    <script src="<?= $HOME_PATH; ?>/js/popper.min.js" defer></script>
     <script src="<?= $HOME_PATH; ?>/js/bootstrap.min.js" defer></script>
     <script src="<?= $HOME_PATH; ?>/_functions.js" defer></script>
     <script src="<?= $HOME_PATH; ?>/_common.js" defer></script>
@@ -51,6 +52,52 @@ require_once $TO_HOME . "_router.php";
         <div class="load-circle-back"></div>
         <div class="load-circle-fore"></div>
         <div class="load-text"><?= $load; ?></div>
+    </div>
+    <div id="bywr-accessibility">
+        <a href="javascript:byCommon.accessibilityToggle();" data-bs-toggle="tooltip" data-bs-title="Accesibilidad" title="Accesibilidad">
+            <i class="fas fa-universal-access"></i>
+        </a>
+        <div id="bywr-accessibility-buttons" class="hide">
+            <a href="javascript:byCommon.accessibilityText('plus');" data-bs-toggle="tooltip" data-bs-title="Aumentar tamaño de texto" title="Aumentar tamaño de texto">
+                <i class="fas fa-magnifying-glass-plus"></i>
+            </a>
+            <a href="javascript:byCommon.accessibilityText();" data-bs-toggle="tooltip" data-bs-title="Reiniciar tamaño de texto" title="Reiniciar tamaño de texto">
+                <i class="fas fa-magnifying-glass"></i>
+            </a>
+            <a href="javascript:byCommon.accessibilityText('minus');" data-bs-toggle="tooltip" data-bs-title="Disminuir tamaño de texto" title="Disminuir tamaño de texto">
+                <i class="fas fa-magnifying-glass-minus"></i>
+            </a>
+            <a href="javascript:byCommon.accessibilityMotion();" data-bs-toggle="tooltip" data-bs-title="Alternar animaciones" title="Alternar animaciones">
+                <i class="fas fa-wind"></i>
+            </a>
+            <a href="javascript:byCommon.accessibilityDyslexia();" data-bs-toggle="tooltip" data-bs-title="Apto para dislexia" title="Apto para dislexia">
+                <i class="fas fa-font"></i>
+            </a>
+            <a href="javascript:byCommon.accessibilityWordSpacing();" data-bs-toggle="tooltip" data-bs-title="Texto espaciado" title="Texto espaciado">
+                <i class="fas fa-text-width"></i>
+            </a>
+            <a href="javascript:byCommon.accessibilityHighlightLinks();" data-bs-toggle="tooltip" data-bs-title="Resaltar enlaces" title="Resaltar enlaces">
+                <i class="fas fa-link"></i>
+            </a>
+            <a href="javascript:byCommon.accessibilityHighContrast();" data-bs-toggle="tooltip" data-bs-title="Alto contraste" title="Alto contraste">
+                <i class="fas fa-circle-half-stroke"></i>
+            </a>
+            <a href="javascript:byCommon.accessibilityHighContrast('invertchropia');" data-bs-toggle="tooltip" data-bs-title="Invertir colores" title="Invertir colores">
+                <i class="fas fa-droplet"></i>
+            </a>
+            <a href="javascript:byCommon.accessibilityHighContrast('monochropia');" data-bs-toggle="tooltip" data-bs-title="Escala de grises" title="Escala de grises">
+                <i class="fas fa-droplet-slash"></i>
+            </a>
+            <a href="javascript:byCommon.accessibilityHighContrast('protanopia');" data-bs-toggle="tooltip" data-bs-title="Protanopia" title="Protanopia">
+                <i class="fas fa-eye"></i>
+            </a>
+            <a href="javascript:byCommon.accessibilityHighContrast('deuteranopia');" data-bs-toggle="tooltip" data-bs-title="Deuteranopia" title="Deuteranopia">
+                <i class="fas fa-eye-slash"></i>
+            </a>
+            <a href="javascript:byCommon.accessibilityHighContrast('tritanopia');" data-bs-toggle="tooltip" data-bs-title="Tritanopia" title="Tritanopia">
+                <i class="fas fa-eye-low-vision"></i>
+            </a>
+        </div>
     </div>
     <video class="video-container" muted loop autoplay>
         <source src="<?= $HOME_PATH; ?>/img/bg.mp4" type="video/mp4" />
