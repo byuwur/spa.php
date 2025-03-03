@@ -101,7 +101,7 @@ require_once $TO_HOME . "_router.php";
             </a>
         </div>
     </div>
-    <video class="video-container" muted loop autoplay>
+    <video class="video-container" muted loop autoplay playsinline>
         <source src="<?= $HOME_PATH; ?>/img/bg.mp4" type="video/mp4" />
         <source src="<?= $HOME_PATH; ?>/img/bg.webm" type="video/webm" />
     </video>
