@@ -36,6 +36,7 @@ require_once $TO_HOME . "_router.php";
     <link rel="icon" type="image/png" href="<?= $HOME_PATH; ?>/img/byuwur.png" />
     <link rel="stylesheet" href="<?= $HOME_PATH; ?>/css/fontawesome.min.css" />
     <link rel="stylesheet" href="<?= $HOME_PATH; ?>/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="<?= $HOME_PATH; ?>/css/dropzone.min.css" />
     <link rel="stylesheet" href="<?= $HOME_PATH; ?>/css/select2.min.css" />
     <link rel="stylesheet" href="<?= $HOME_PATH; ?>/css/swiper.min.css" />
     <link rel="stylesheet" href="<?= $HOME_PATH; ?>/css/shards.css" />
@@ -44,6 +45,7 @@ require_once $TO_HOME . "_router.php";
     <script src="<?= $HOME_PATH; ?>/js/jquery-ui.min.js" defer></script>
     <script src="<?= $HOME_PATH; ?>/js/popper.min.js" defer></script>
     <script src="<?= $HOME_PATH; ?>/js/bootstrap.min.js" defer></script>
+    <script src="<?= $HOME_PATH; ?>/js/dropzone.min.js" defer></script>
     <script src="<?= $HOME_PATH; ?>/js/select2.full.min.js" defer></script>
     <script src="<?= $HOME_PATH; ?>/js/swiper.min.js" defer></script>
     <script src="<?= $HOME_PATH; ?>/js/shards.min.js" defer></script>
