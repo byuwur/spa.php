@@ -34,6 +34,7 @@ require_once $TO_HOME . "_router.php";
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <title>SPA.PHP | byUwUr</title>
     <link rel="icon" type="image/png" href="<?= $HOME_PATH; ?>/img/byuwur.png" />
+    <link rel="stylesheet" href="<?= $HOME_PATH; ?>/css/animate.min.css" />
     <link rel="stylesheet" href="<?= $HOME_PATH; ?>/css/fontawesome.min.css" />
     <link rel="stylesheet" href="<?= $HOME_PATH; ?>/css/dropzone.min.css" />
     <link rel="stylesheet" href="<?= $HOME_PATH; ?>/css/select2.min.css" />
@@ -41,6 +42,7 @@ require_once $TO_HOME . "_router.php";
     <link rel="stylesheet" href="<?= $HOME_PATH; ?>/css/shards.css" />
     <link rel="stylesheet" href="<?= $HOME_PATH; ?>/css/bootstrap.min.css" />
     <link rel="stylesheet" href="<?= $HOME_PATH; ?>/_common.css" />
+    <script src="<?= $HOME_PATH; ?>/js/cookies.min.js" defer></script>
     <script src="<?= $HOME_PATH; ?>/js/jquery.min.js" defer></script>
     <script src="<?= $HOME_PATH; ?>/js/jquery-ui.min.js" defer></script>
     <script src="<?= $HOME_PATH; ?>/js/popper.min.js" defer></script>
@@ -115,6 +117,7 @@ require_once $TO_HOME . "_router.php";
         <source src="<?= $HOME_PATH; ?>/img/bg.mp4" type="video/mp4" />
         <source src="<?= $HOME_PATH; ?>/img/bg.webm" type="video/webm" />
     </video>
+    <div id="particles"></div>
     <nav id="spa-nav"></nav>
     <main id="spa-content"></main>
 </body>

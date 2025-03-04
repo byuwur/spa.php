@@ -88,6 +88,10 @@
 	 * Some other initializations for common resources in the page.
 	 */
 	byCommon.initMisc = function () {
+		const cookie_lang = get_cookie("lang"),
+			cookie_theme = get_cookie("theme");
+		if (cookie_lang) localStorage.setItem("APP_LANG", cookie_lang);
+		if (cookie_theme) localStorage.setItem("APP_THEME", cookie_theme);
 		// Smooth scroll for links with hashes in their href (excluding empty hashes)
 		$("a[href*='#']:not([href='#'])")
 			.off("click")
@@ -109,6 +113,15 @@
 					}
 				}, 333);
 			});
+		if (!cookieconsent) console.warn("Can't load cookieconsent if script ain't exist.");
+		cookieconsent.run({
+			notice_banner_type: "simple",
+			consent_type: "express",
+			palette: localStorage.getItem("APP_THEME") ?? "dark",
+			language: localStorage.getItem("APP_LANG") ?? "es",
+			website_name: "[Mateus] byUwUr",
+			change_preferences_selector: "#cookiePrefs"
+		});
 		console.log("Init misc");
 	};
 
