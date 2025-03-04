@@ -13,8 +13,8 @@ require_once $TO_HOME . "_common.php";
 <div class="video-foreground app-container">
     <div class="container vh-100 d-flex flex-column align-items-center justify-content-center text-white">
         <p><?= $description; ?></p>
-        <p><?= $thisis . " " . $page1; ?>.</p>
-        <p><?= $page1 . ": "; ?><b><i>"<?= $page1_desc; ?>"</i></b></p>
+        <p><?= $thisis . " " . $page; ?>.</p>
+        <p><?= $page . ": "; ?><b><i>"<?= $page_desc; ?>"</i></b></p>
     </div>
 </div>
 <script>

@@ -19,11 +19,8 @@ require_once $TO_HOME . "_routes.php";
         <a class="bywr-sidebar-option" href="<?= $ROOT_ROUTE . $_home; ?>">
             <i class="fas fa-home"></i><span><?= $home; ?></span><i class="fas fa-angle-right ms-auto"></i>
         </a>
-        <a class="bywr-sidebar-option" href="<?= $ROOT_ROUTE . $_page1; ?>">
-            <i class="fas fa-dice-one"></i><span><?= $page1; ?></span><i class="fas fa-angle-right ms-auto"></i>
-        </a>
-        <a class="bywr-sidebar-option" href="<?= $ROOT_ROUTE . $_page2; ?>">
-            <i class="fas fa-dice-two"></i><span><?= $page2; ?></span><i class="fas fa-angle-right ms-auto"></i>
+        <a class="bywr-sidebar-option" href="<?= $ROOT_ROUTE . $_page; ?>">
+            <i class="fas fa-dice-one"></i><span><?= $page; ?></span><i class="fas fa-angle-right ms-auto"></i>
         </a>
         <a class="bywr-sidebar-option" href="<?= $ROOT_ROUTE; ?>error">
             <i class="fas fa-bug"></i><span>Error</span><i class="fas fa-angle-right ms-auto"></i>

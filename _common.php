@@ -39,8 +39,7 @@ $title_index = $_GET["title"] ?? 0;
 
 $titles = [
     "SPA " . $home . " | byUwUr",
-    "SPA " . $page1 . " | byUwUr",
-    "SPA " . $page2 . " | byUwUr"
+    "SPA " . $page . " | byUwUr"
 ];
 
 $MATEUS_LINK = "https://byuwur.co";

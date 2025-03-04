@@ -17,13 +17,11 @@ $routes = [
     // Format: "/uri" => ["URI" => "/file.php", "GET" => [...], "POST" => [...], "COMPONENT" => [...]]
 
     // "/"
-    $ROOT_ROUTE => ["URI" => "/main.php", ...$ROOT_COMPONENTS],
+    $ROOT_ROUTE => ["URI" => "/main.example.php", ...$ROOT_COMPONENTS],
     $ROOT_ROUTE . "es" => ["URI" => "", "GET" => ["lang" => "es"], ...$ROOT_COMPONENTS],
     $ROOT_ROUTE . "en" => ["URI" => "", "GET" => ["lang" => "en"], ...$ROOT_COMPONENTS],
-    $ROOT_ROUTE . "inicio" => ["URI" => "/main.php", "GET" => ["lang" => "es"], ...$ROOT_COMPONENTS],
-    $ROOT_ROUTE . "home" => ["URI" => "/main.php", "GET" => ["lang" => "en"], ...$ROOT_COMPONENTS],
-    $ROOT_ROUTE . "pagina1" => ["URI" => "/page1.php", "GET" => ["lang" => "es"], ...$ROOT_COMPONENTS],
-    $ROOT_ROUTE . "page1" => ["URI" => "/page1.php", "GET" => ["lang" => "en"], ...$ROOT_COMPONENTS],
-    $ROOT_ROUTE . "pagina2" => ["URI" => "/page2.php", "GET" => ["lang" => "es"], ...$ROOT_COMPONENTS],
-    $ROOT_ROUTE . "page2" => ["URI" => "/page2.php", "GET" => ["lang" => "en"], ...$ROOT_COMPONENTS],
+    $ROOT_ROUTE . "inicio" => ["URI" => "/main.example.php", "GET" => ["lang" => "es"], ...$ROOT_COMPONENTS],
+    $ROOT_ROUTE . "home" => ["URI" => "/main.example.php", "GET" => ["lang" => "en"], ...$ROOT_COMPONENTS],
+    $ROOT_ROUTE . "pagina" => ["URI" => "/page.example.php", "GET" => ["lang" => "es"], ...$ROOT_COMPONENTS],
+    $ROOT_ROUTE . "page" => ["URI" => "/page.example.php", "GET" => ["lang" => "en"], ...$ROOT_COMPONENTS],
 ];
