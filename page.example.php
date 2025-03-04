@@ -1,5 +1,5 @@
 <?php
-$_GET["title"] = 1;
+$_GET["title"] = "page";
 require_once "./_var.php";
 require_once $TO_HOME . "_common.php";
 //require_once $TO_HOME . "_functions.php";

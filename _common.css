@@ -8,12 +8,12 @@
 	--dark-gray-color: #333;
 	--light-color: #eee;
 	--light-transparent: #fff7;
-    --light-clear: #fff3;
-    --light-opaque: #fffb;
+	--light-clear: #fff3;
+	--light-opaque: #fffb;
 	--dark-color: #111;
 	--dark-transparent: #0007;
-    --dark-clear: #0003;
-    --dark-opaque: #000b;
+	--dark-clear: #0003;
+	--dark-opaque: #000b;
 }
 /* === SELECTION === */
 ::selection {
@@ -218,7 +218,7 @@ th {
 .bg-light-clear {
 	background: var(--light-clear);
 }
-.bg-dark-cleac {
+.bg-dark-clear {
 	background: var(--dark-clear);
 }
 .bg-light-opaque {
@@ -460,9 +460,9 @@ th {
 	backdrop-filter: blur(0.125rem);
 }
 .no-blur {
-    -webkit-filter: blur(0) !important;
+	-webkit-filter: blur(0) !important;
 	filter: blur(0) !important;
-    -webkit-backdrop-filter: blur(0) !important;
+	-webkit-backdrop-filter: blur(0) !important;
 	backdrop-filter: blur(0) !important;
 }
 /* === ICONS === */
@@ -658,6 +658,20 @@ th {
 	width: 100%;
 	height: 100%;
 	z-index: 0;
+}
+@keyframes loader-dash {
+	0% {
+		stroke-dasharray: 1, 200;
+		stroke-dashoffset: 0;
+	}
+	50% {
+		stroke-dasharray: 89, 200;
+		stroke-dashoffset: -35px;
+	}
+	100% {
+		stroke-dasharray: 89, 200;
+		stroke-dashoffset: -136px;
+	}
 }
 /* === BGV === */
 .video-container {
@@ -922,8 +936,8 @@ th {
 }
 #bywr-accessibility-buttons.hide {
 	transform: scaleX(0);
-    width: 0;
-    height: 0;
+	width: 0;
+	height: 0;
 }
 .no-motion * {
 	-webkit-transition: none !important;

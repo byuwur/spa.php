@@ -44,6 +44,8 @@ require_once $TO_HOME . "_router.php";
     <script src="<?= $HOME_PATH; ?>/js/jquery.min.js" defer></script>
     <script src="<?= $HOME_PATH; ?>/js/jquery-ui.min.js" defer></script>
     <script src="<?= $HOME_PATH; ?>/js/popper.min.js" defer></script>
+    <script src="<?= $HOME_PATH; ?>/js/particles.min.js" defer></script>
+    <script src="<?= $HOME_PATH; ?>/js/typed.min.js" defer></script>
     <script src="<?= $HOME_PATH; ?>/js/dropzone.min.js" defer></script>
     <script src="<?= $HOME_PATH; ?>/js/select2.full.min.js" defer></script>
     <script src="<?= $HOME_PATH; ?>/js/swiper.min.js" defer></script>
@@ -53,6 +55,7 @@ require_once $TO_HOME . "_router.php";
     <script src="<?= $HOME_PATH; ?>/_common.js" defer></script>
     <script src="<?= $HOME_PATH; ?>/_spa.js" defer></script>
     <script src="https://www.google.com/recaptcha/api.js" defer></script>
+    <!-- Add your overrides below -->
 </head>
 
 <body>

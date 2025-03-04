@@ -130,7 +130,8 @@ function make_http_request(options) {
 	})
 		.then(function (response) {
 			if (appIsDEV) console.log(`Response (${elementId}):`, response);
-			if (loudFail && ![200, 201, 202].includes(response?.status)) return show_modal_front("modal_front", "danger", "ERROR", "Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + response?.message + ")</code>", true);
+			if (loudFail && ![200, 201, 202].includes(response?.status))
+				return show_modal_front("modal_front", "danger", "ERROR", "Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + response?.message + ")</code>", true);
 			return response?.data;
 		})
 		.catch(function (xhr, status, error) {
@@ -204,7 +205,8 @@ function element_make_http_request(options) {
 			})
 				.then(function (response) {
 					if (appIsDEV) console.log(`Response (${elementId}):`, response);
-					if (loudFail && ![200, 201, 202].includes(response?.status)) return show_modal_front("modal_front", "danger", "ERROR", "Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + response?.message + ")</code>", true);
+					if (loudFail && ![200, 201, 202].includes(response?.status))
+						return show_modal_front("modal_front", "danger", "ERROR", "Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + response?.message + ")</code>", true);
 					doneFn(response?.data);
 					return response?.data;
 				})

@@ -38,13 +38,15 @@ setcookie("theme", $app_theme, time() + 31536000, "/", "", false, false);
 $title_index = $_GET["title"] ?? 0;
 
 $titles = [
-    "SPA " . $home . " | byUwUr",
-    "SPA " . $page . " | byUwUr"
+    0 => "SPA.PHP | byUwUr",
+    "home" => "SPA " . $home . " | byUwUr",
+    "page" => "SPA " . $page . " | byUwUr"
 ];
 
 $MATEUS_LINK = "https://byuwur.co";
 
 $DNI_TYPES = [
+    0 => "Inválido",
     1 => "Número único de identificación personal (NUIP)",
     2 => "Registro civil (RC)",
     3 => "Tarjeta de identidad (TI)",
@@ -52,6 +54,17 @@ $DNI_TYPES = [
     5 => "Cédula de extranjería (CE)",
     6 => "Pasaporte (PS)",
     9 => "Otro..."
+];
+
+$DNI_TYPES_SM = [
+    0 => "[Inválido]",
+    1 => "[NUIP]",
+    2 => "[RC]",
+    3 => "[TI]",
+    4 => "[CC]",
+    5 => "[CE]",
+    6 => "[PS]",
+    9 => "[...]"
 ];
 
 $BLOOD_TYPES = ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"];
