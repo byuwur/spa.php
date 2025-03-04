@@ -8,8 +8,12 @@
 	--dark-gray-color: #333;
 	--light-color: #eee;
 	--light-transparent: #fff7;
+    --light-clear: #fff3;
+    --light-opaque: #fffb;
 	--dark-color: #111;
 	--dark-transparent: #0007;
+    --dark-clear: #0003;
+    --dark-opaque: #000b;
 }
 /* === SELECTION === */
 ::selection {
@@ -193,7 +197,7 @@ th {
 .bg-secondary {
 	background: var(--secondary-color) !important;
 }
-.bg-dark {
+.bg-black {
 	background: #000 !important;
 }
 .bg-white {
@@ -210,6 +214,18 @@ th {
 }
 .bg-dark-transparent {
 	background: var(--dark-transparent);
+}
+.bg-light-clear {
+	background: var(--light-clear);
+}
+.bg-dark-cleac {
+	background: var(--dark-clear);
+}
+.bg-light-opaque {
+	background: var(--light-opaque);
+}
+.bg-dark-opaque {
+	background: var(--dark-opaque);
 }
 .text-dark-shadow {
 	text-shadow: 0px 0px 5px var(--dark-transparent), 2px 0px 5px var(--dark-transparent), -2px 0px 5px var(--dark-transparent), 0px 2px 5px var(--dark-transparent), 0px -2px 5px var(--dark-transparent);
@@ -427,6 +443,10 @@ th {
 	-webkit-filter: blur(0.25rem);
 	filter: blur(0.25rem);
 }
+.blurred-subtlest {
+	-webkit-filter: blur(0.125rem);
+	filter: blur(0.125rem);
+}
 .bg-blurred {
 	-webkit-backdrop-filter: blur(0.5rem);
 	backdrop-filter: blur(0.5rem);
@@ -434,6 +454,16 @@ th {
 .bg-blurred-subtle {
 	-webkit-backdrop-filter: blur(0.25rem);
 	backdrop-filter: blur(0.25rem);
+}
+.bg-blurred-subtlest {
+	-webkit-backdrop-filter: blur(0.125rem);
+	backdrop-filter: blur(0.125rem);
+}
+.no-blur {
+    -webkit-filter: blur(0) !important;
+	filter: blur(0) !important;
+    -webkit-backdrop-filter: blur(0) !important;
+	backdrop-filter: blur(0) !important;
 }
 /* === ICONS === */
 .fab-container {
@@ -892,6 +922,8 @@ th {
 }
 #bywr-accessibility-buttons.hide {
 	transform: scaleX(0);
+    width: 0;
+    height: 0;
 }
 .no-motion * {
 	-webkit-transition: none !important;
