@@ -44,7 +44,7 @@ function logout()
  * Validates the session based on login time and username, logging the user out if invalid or expired.
  * @return bool True if the session is valid, false if the user is logged out.
  */
-function check_session()
+function session_check()
 {
     if (validate_value($_SESSION["logintime"] ?? null) === null) return logout();
     if (validate_value($_SESSION["username"] ?? null) === null) return logout();
