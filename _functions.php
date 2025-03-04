@@ -185,6 +185,326 @@ function common_keys(array $array)
     return array_values($common);
 }
 
+/**
+ * Builds a SQL query string based on the specified method, columns, table, fields, conditions, and other parameters.
+ * This function dynamically constructs SQL queries for CRUD operations (Create, Read, Update, Delete) with optional JOINs and conditions.
+ *
+ * @param string $method The type of SQL operation: [C]REATE, [R]EAD, [U]PDATE, [D]ELETE.
+ * @param string $columns The columns to be selected in the operation.
+ * @param string $table The name of the table to perform the operation on.
+ * @param array $fields The VALID fields to include in the INSERT or UPDATE operations.
+ * @param array $conditions The conditions to apply in the WHERE clause. (i.e. $_GET)
+ * @param string $end Additional SQL syntax to append at the end of the query (e.g., ORDER BY, LIMIT).
+ * @param array $valid A mapping of valid fields, their types, and columns for validation against the provided fields and conditions. e.g. {column, type, condition}
+ * @param array $params Custom conditions that involve more complex logic (optional - not recommended due to performance).
+ * @param array $nested Custom conditions that involve more complex logic (optional - not recommended due to performance).
+ * @param array $joins An array of JOINs to be included in the query (optional - not recommended due to performance).
+ * @return stdClass An object containing the built query string, joins, fields, conditions, parameter types, and parameter values.
+ */
+function build_sql_query(string $method, string $columns, string $table, array $fields, array $conditions, string $end, array $valid, array $params = [], array $nested = [], array $joins = [])
+{
+    // Initialize the return object with default properties
+    $return = new stdClass();
+    $return->query = "";
+    $return->joins = [];
+    $return->fields = [];
+    $return->conditions = [];
+    $return->param_types = "";
+    $return->param_values = [];
+    // Determine the validity of the SQL method
+    if (!in_array($method, ["C", "R", "U", "D"])) return $return;
+    // Process JOINs based on valid fields and provided joins
+    foreach ($valid as $valid_key => $valid_value) {
+        foreach ($joins as $join) {
+            if (!isset($join["join_columns"])) continue;
+            if (array_key_exists($valid_key, $join["join_columns"]))
+                $return->joins[] = $join["join_type"] . " " . $join["join_table"] . " ON " . $valid[$valid_key]["column"] . " " . $join["join_columns"][$valid_key]["condition"] . " " . $join["join_table"] . "." . $join["join_columns"][$valid_key]["custom"];
+        }
+    }
+    // Process fields for INSERT or UPDATE operations
+    if ($method == "C" || $method == "U") $common_fields = common_keys($params);
+    foreach ($valid as $valid_key => $valid_value) {
+        if ($method == "R" || $method == "D") break; // Skip if the method is READ or DELETE
+        if (in_array($valid_key, $fields) && in_array($valid_key, $common_fields)) {
+            $return->fields[] = $valid_value["column"];
+            $return->param_types .= $valid_value["type"];
+        }
+    }
+    // Process conditions for WHERE clauses
+    foreach ($valid as $valid_key => $valid_value) {
+        if ($method == "C") break; // Skip if the method is CREATE
+        if (array_key_exists($valid_key, $conditions)) {
+            if (array_key_exists($valid_key, $nested)) continue; // Skip if the condition is custom
+            if (isset($valid_value["condition"])) {
+                switch (normalize_string($valid_value["condition"], "low")) { // Handle conditions
+                    case "equal":
+                    default:
+                        $return->conditions[] =  $valid_value["column"] . " = ?";
+                        $return->param_types .= $valid_value["type"];
+                        $return->param_values[] = $conditions[$valid_key];
+                        break;
+                    case "is null":
+                        $return->conditions[] = $valid_value["column"] . " IS NULL";
+                        break;
+                    case "is not null":
+                        $return->conditions[] = $valid_value["column"] . " IS NOT NULL";
+                        break;
+                    case "not equal":
+                    case "!=":
+                    case "<>":
+                        $return->conditions[] = $valid_value["column"] . " != ?";
+                        $return->param_types .= $valid_value["type"];
+                        $return->param_values[] = $conditions[$valid_key];
+                        break;
+                    case "gt":
+                    case "greater":
+                    case ">":
+                        $return->conditions[] = $valid_value["column"] . " > ?";
+                        $return->param_types .= $valid_value["type"];
+                        $return->param_values[] = $conditions[$valid_key];
+                        break;
+                    case "lt":
+                    case "less":
+                    case "<":
+                        $return->conditions[] = $valid_value["column"] . " < ?";
+                        $return->param_types .= $valid_value["type"];
+                        $return->param_values[] = $conditions[$valid_key];
+                        break;
+                    case "goq":
+                    case "greater or equal":
+                    case ">=":
+                        $return->conditions[] = $valid_value["column"] . " >= ?";
+                        $return->param_types .= $valid_value["type"];
+                        $return->param_values[] = $conditions[$valid_key];
+                        break;
+                    case "loq":
+                    case "less or equal":
+                    case "<=":
+                        $return->conditions[] = $valid_value["column"] . " <= ?";
+                        $return->param_types .= $valid_value["type"];
+                        $return->param_values[] = $conditions[$valid_key];
+                        break;
+                    case "in":
+                        if (!isset($conditions[$valid_key]) || !is_array($conditions[$valid_key])) break;
+                        $placeholders = implode(", ", array_fill(0, count($conditions[$valid_key]), "?"));
+                        $return->conditions[] = $valid_value["column"] . " IN (" . $placeholders . ")";
+                        $return->param_types .= str_repeat($valid_value["type"], count($conditions[$valid_key]));
+                        $return->param_values = [...$return->param_values, ...$conditions[$valid_key]];
+                        break;
+                    case "not in":
+                        if (!isset($conditions[$valid_key]) || !is_array($conditions[$valid_key])) break;
+                        $placeholders = implode(", ", array_fill(0, count($conditions[$valid_key]), "?"));
+                        $return->conditions[] = $valid_value["column"] . " IN (" . $placeholders . ")";
+                        $return->param_types .= str_repeat($valid_value["type"], count($conditions[$valid_key]));
+                        $return->param_values = [...$return->param_values, ...$conditions[$valid_key]];
+                        break;
+                    case "between":
+                        if (!isset($conditions[$valid_key . "_from"]) || !isset($conditions[$valid_key . "_to"])) break;
+                        $return->conditions[] = $valid_value["column"] . " BETWEEN ? AND ?";
+                        $return->param_types .= $valid_value["type"] . $valid_value["type"]; // Add double conditions value for betweens
+                        $return->param_values[] = $conditions[$valid_key . "_from"];
+                        $return->param_values[] = $conditions[$valid_key . "_to"];
+                        break;
+                    case "like":
+                        $return->conditions[] =  $valid_value["column"] . " LIKE ?";
+                        $return->param_types .= $valid_value["type"];
+                        $return->param_values[] = $conditions[$valid_key];
+                        break;
+                    case "starts with":
+                        $return->conditions[] = $valid_value["column"] . " LIKE ?";
+                        $return->param_types .= $valid_value["type"];
+                        $return->param_values[] = $conditions[$valid_key] . '%'; // Add wildcard at the end
+                        break;
+                    case "ends with":
+                        $return->conditions[] = $valid_value["column"] . " LIKE ?";
+                        $return->param_types .= $valid_value["type"];
+                        $return->param_values[] = '%' . $conditions[$valid_key]; // Add wildcard at the beginning
+                        break;
+                    case "contains":
+                        $return->conditions[] = $valid_value["column"] . " LIKE ?";
+                        $return->param_types .= $valid_value["type"];
+                        $return->param_values[] = '%' . $conditions[$valid_key] . '%'; // Add wildcards at both ends
+                        break;
+                    case "between symmetric":
+                    case "symmetric":
+                        if (!isset($conditions[$valid_key . "_from"]) || !isset($conditions[$valid_key . "_to"])) break;
+                        $return->conditions[] = $valid_value["column"] . " BETWEEN SYMMETRIC ? AND ?";
+                        $return->param_types .= $valid_value["type"] . $valid_value["type"];
+                        $return->param_values[] = $conditions[$valid_key . "_from"];
+                        $return->param_values[] = $conditions[$valid_key . "_to"];
+                        break;
+                    case "match":
+                        if (!isset($conditions[$valid_key])) break;
+                        $return->conditions[] = "MATCH(" . $valid_value["column"] . ") AGAINST(?)";
+                        $return->param_types .= $valid_value["type"];
+                        $return->param_values[] = $conditions[$valid_key];
+                        break;
+                    case "regex":
+                    case "regexp":
+                        if (!isset($conditions[$valid_key]) || !is_string($conditions[$valid_key])) break;
+                        $return->conditions[] = $valid_value["column"] . " REGEXP ?";
+                        $return->param_types .= $valid_value["type"];
+                        $return->param_values[] = $conditions[$valid_key];
+                        break;
+                }
+            } else {
+                $return->conditions[] =  $valid_value["column"] . " = ?";
+                $return->param_types .= $valid_value["type"];
+                $return->param_values[] = $conditions[$valid_key]; // Add condition value
+            }
+        }
+    }
+    // Process custom conditions
+    foreach ($valid as $valid_key => $valid_value) {
+        if ($method == "C") break; // Skip if the method is CREATE
+        if (array_key_exists($valid_key, $nested))
+            $return->conditions[] = $valid_value["column"] . " " . $nested[$valid_key]["condition"] . " " . $nested[$valid_key]["custom"];
+    }
+    // Build the SQL query string based on the method
+    switch ($method) {
+        case "C": // CREATE
+            $return->query .= "INSERT INTO " . $table;
+            if (!empty($return->fields)) $return->query .= " (" . implode(", ", $return->fields) . ") VALUES";
+            else $return->query .= " VALUES";
+            if (count($return->fields)) $return->query .= " (" . str_repeat("?, ", count($return->fields) - 1) . "?)";
+            else $return->query .= " (" . str_repeat("?, ", count($valid) - 1) . "?)";
+            break;
+        case "R": // READ
+            $return->query .= "SELECT " . $columns . " FROM " . $table;
+            if (!empty($return->joins)) $return->query .= " " . implode(" ", $return->joins);
+            if (!empty($return->conditions)) $return->query .= " WHERE " . implode(" AND ", $return->conditions);
+            $return->query .= $end;
+            break;
+        case "U": // UPDATE
+            $return->query .= "UPDATE " . $table;
+            if (!empty($return->joins)) $return->query .= " " . implode(" ", $return->joins);
+            if (!empty($return->fields)) $return->query .= " SET " . implode(" = ?, ", $return->fields) . " = ?";
+            if (!empty($return->conditions)) $return->query .= " WHERE " . implode(" AND ", $return->conditions);
+            break;
+        case "D": // DELETE
+            $return->query .= "DELETE FROM " . $table;
+            if (!empty($return->joins)) $return->query .= " " . implode(" ", $return->joins);
+            if (!empty($return->conditions)) $return->query .= " WHERE " . implode(" AND ", $return->conditions);
+            break;
+    }
+    // Return the built query and related data
+    return $return;
+}
+
+/**
+ * Executes a prepared SQL query using the provided mysqli connection, handling different types of SQL operations (CRUD).
+ * It supports both single and batch execution of queries with dynamic binding of parameters.
+ *
+ * @param mysqli $mysqli The MySQLi connection object used to execute the query.
+ * @param string $query The SQL query string to be executed.
+ * @param string $param_types A string that defines the types of the parameters in the query (e.g., 'ssi' for string, string, integer).
+ * @param array $param_values An array of values corresponding to the parameters defined in $param_types.
+ * @param array $fields The fields involved in the query, particularly used for INSERT and UPDATE operations.
+ * @param array $param_data An array of data arrays to be used in batch operations (for INSERT/UPDATE).
+ * @param array $valid A mapping of valid fields for validation against the provided fields and conditions.
+ * @return stdClass An object containing the status, error flag, error number, message, and result data (if any).
+ */
+function execute_sql_query($mysqli, string $query, string $param_types = "", array $param_values = [], array $fields = [], array $param_data = [], array $valid = [])
+{
+    // Initialize the return object with default values
+    $return = new stdClass();
+    $return->status = 200;
+    $return->error = false;
+    $return->errno = 0;
+    $return->message = "";
+    $return->data = [];
+
+    // Determine the SQL method based on the query string
+    if (stripos($query, "INSERT") === 0) $method = "C"; // Create
+    if (stripos($query, "SELECT") === 0) $method = "R"; // Read
+    if (stripos($query, "UPDATE") === 0) $method = "U"; // Update
+    if (stripos($query, "DELETE") === 0) $method = "D"; // Delete
+
+    try {
+        // Prepare the SQL statement
+        $sql = $mysqli->prepare($query);
+        if (!$sql) throw new Exception("Invalid query.", 400);
+        // Handle batch execution for INSERT and UPDATE operations
+        if ($method != "R" && $method != "D" && strlen($param_types) && count($param_data)) {
+            $successes = 0;
+            $errors = 0;
+            $qMsg = "";
+            // Loop the $_POST["data"] for: only first in updates, all iterations for inserts
+            foreach ($param_data as $i => $data) {
+                // Updates only need the first data index
+                if ($method == "U" && $i != 0) break;
+                // Reset. Errors add first then substract if sucessful
+                $errors++;
+                $fields_data = [];
+                // Bind the valid fields for the current data set
+                foreach ($fields as $field) if (array_key_exists($field, $data) && array_key_exists($field, $valid)) $fields_data[] = $data[$field];
+                $sql->bind_param($param_types, ...$fields_data, ...$param_values);
+
+                try {
+                    if ($sql->execute()) {
+                        if ($sql->affected_rows > -1) {
+                            if ($method == "U" && $sql->affected_rows == 0) $qMsg .= $i . "= Query failed: 999 => Row not updated probably due to no coincidence." . PHP_EOL;
+                            else {
+                                $errors--;
+                                $successes++;
+                                $qMsg .= $i . "= Query successful." . ($_ENV["APP_ENV"] === "DEV" ? "(" . $sql->affected_rows . " rows)" : "") . PHP_EOL;
+                            }
+                        } else $qMsg .= $i . "= Query failed: " . ($_ENV["APP_ENV"] === "DEV" ? $mysqli->errno . " = " . $mysqli->error : "") . PHP_EOL;
+                    } else $qMsg .= $i . "= Query failed: " . ($_ENV["APP_ENV"] === "DEV" ? $mysqli->errno . " = " . $mysqli->error : "") . PHP_EOL;
+                } catch (Exception $e) {
+                    $qMsg .= $i . "= Query failed: " . ($_ENV["APP_ENV"] === "DEV" ? $mysqli->errno . " = " . $mysqli->error : "") . PHP_EOL;
+                }
+            }
+            // Determine the status and error flags based on the number of successes and errors
+            if ($errors) {
+                $return->status = 207;
+                $return->message .= "Queries executed with errors." . PHP_EOL;
+            }
+            if (!$successes) {
+                $return->status = 400;
+                $return->error = true;
+            }
+            $return->message .= $qMsg;
+        }
+        // Handle single execution for READ and DELETE operations
+        if ($method != "C" && $method != "U") {
+            if (strlen($param_types)) $sql->bind_param($param_types, ...$param_values);
+            try {
+                if ($sql->execute()) {
+                    if ($method == "D") {
+                        if ($sql->affected_rows == -1) throw new Exception("Query failed" . ($_ENV["APP_ENV"] === "DEV" ? ": " . $mysqli->errno . " = " . $mysqli->error : ""));
+                        if ($sql->affected_rows == 0) throw new Exception("Query failed: 999 => Row not updated probably due to no coincidence.");
+                        if ($sql->affected_rows > 0) $return->message = "Query successful." . ($_ENV["APP_ENV"] === "DEV" ? "(" . $sql->affected_rows . " rows)" : "");
+                    }
+                    if ($method == "R") {
+                        if ($res = $sql->get_result()) {
+                            if ($res->num_rows) {
+                                $return->message = "Query successful.";
+                                while ($row = $res->fetch_assoc()) $return->data[] = $row;
+                            } else throw new Exception("No data found.");
+                        } else throw new Exception("Query failed" . ($_ENV["APP_ENV"] === "DEV" ? ": " . $mysqli->errno . " = " . $mysqli->error : ""));
+                    }
+                } else throw new Exception("Query failed" . ($_ENV["APP_ENV"] === "DEV" ? ": " . $mysqli->errno . " = " . $mysqli->error : ""));
+            } catch (Exception $e) {
+                $return->status = 400;
+                $return->error = true;
+                $return->errno = $e->getCode();
+                $return->message = $_ENV["APP_ENV"] === "DEV" ? $e->getMessage() : "Something went wrong in query execution.";
+            }
+        }
+        // Close the SQL statement
+        $sql->close();
+    } catch (Exception $e) {
+        // Handle errors during query preparation
+        $return->status = 400;
+        $return->error = true;
+        $return->errno = $e->getCode();
+        $return->message = $_ENV["APP_ENV"] === "DEV" ? $e->getMessage() : "Something went wrong in query preparation.";
+    }
+    // Return the result object with status, message, and data
+    return $return;
+}
+
 // --- COMMON & MISC functions ---
 
 /**
