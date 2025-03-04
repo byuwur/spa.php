@@ -1,14 +1,14 @@
 # Environment
-.env
-*.env
 *.env*
 # Uploads
 assets/
+uploads/
 # Plugins
 vendor/
 plugin/
 plugins/
 node_modules/
+modules/
 # Builds
 dist/
 build/
