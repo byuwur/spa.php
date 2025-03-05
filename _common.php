@@ -33,6 +33,7 @@ switch ($theme) {
 }
 setcookie("theme", $app_theme, time() + 31536000, "/", "", false, false);
 
+// --- LOCAL STORAGE ---
 if (isset($setLocalStorage) && $setLocalStorage) {
 ?>
     <html lang="<?= $app_lang; ?>" dir="ltr">
@@ -44,11 +45,20 @@ if (isset($setLocalStorage) && $setLocalStorage) {
 }
 
 // --- VARIABLES ---
-$title_index = $_GET["title"] ?? 0;
+if (file_exists($TO_HOME . "lang/" . $app_lang . ".php")) {
+    require_once $TO_HOME . "lang/" . $app_lang . ".php";
+    $titles = [
+        0 => "SPA.PHP | byUwUr",
+        "home" => "SPA " . $home . " | byUwUr",
+        "page" => "SPA " . $page . " | byUwUr"
+    ];
+} else {
+    $titles = [
+        0 => "SPA.PHP | byUwUr"
+    ];
+}
 
-$titles = [
-    0 => "SPA.PHP | byUwUr"
-];
+$title_index = $_GET["title"] ?? 0;
 
 $MATEUS_LINK = "https://byuwur.co";
 
