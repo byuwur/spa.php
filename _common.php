@@ -18,7 +18,6 @@ switch ($lang) {
         break;
 }
 setcookie("lang", $app_lang, time() + 31536000, "/", "", false, false);
-if (file_exists($TO_HOME . "lang/" . $app_lang . ".php")) require_once $TO_HOME . "lang/" . $app_lang . ".php";
 
 // --- THEME ---
 $theme = isset($_GET["theme"]) ? $_GET["theme"] : (isset($_COOKIE["theme"]) ? $_COOKIE["theme"] : "dark");
