@@ -674,6 +674,38 @@ th {
 	}
 }
 /* === BGV === */
+.side-video {
+	position: fixed;
+	opacity: 0.125;
+	width: 80vw;
+	height: 80vh;
+	z-index: 0;
+	top: 10vh;
+	left: -40vw;
+	filter: blur(0.5rem);
+	background-image: url("./img/logo.png");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
+	animation: float 5s infinite;
+}
+@keyframes float {
+	0% {
+		-webkit-transform: translateY(12px);
+		-moz-transform: translateY(12px);
+		transform: translateY(12px);
+	}
+	50% {
+		-webkit-transform: translateY(-12px);
+		-moz-transform: translateY(-12px);
+		transform: translateY(-12px);
+	}
+	100% {
+		-webkit-transform: translateY(12px);
+		-moz-transform: translateY(12px);
+		transform: translateY(12px);
+	}
+}
 .video-container {
 	position: fixed;
 	width: 100%;
