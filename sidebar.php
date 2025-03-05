@@ -8,6 +8,7 @@ require_once $TO_HOME . "_routes.php";
 //require_once $TO_HOME . "_router.php";
 //require_once $TO_HOME . "_auth.php";
 // --- PHP ---
+require_once $TO_HOME . "lang/" . $app_lang . ".php";
 ?>
 <nav id="bywr-sidebar" class="bywr-sidebar accordion bywr-accordion bg-dark-transparent bg-blurred text-white">
     <div class="overlay"></div>

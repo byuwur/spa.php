@@ -88,10 +88,6 @@
 	 * Some other initializations for common resources in the page.
 	 */
 	byCommon.initMisc = function () {
-		const cookie_lang = get_cookie("lang"),
-			cookie_theme = get_cookie("theme");
-		if (cookie_lang) localStorage.setItem("APP_LANG", cookie_lang);
-		if (cookie_theme) localStorage.setItem("APP_THEME", cookie_theme);
 		// Smooth scroll for links with hashes in their href (excluding empty hashes)
 		$("a[href*='#']:not([href='#'])")
 			.off("click")

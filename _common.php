@@ -17,7 +17,6 @@ switch ($lang) {
         $app_lang = "es";
         break;
 }
-if (isset($setLocalStorage) && $setLocalStorage) echo "<html lang='" . $app_lang . "' dir='ltr'>";
 setcookie("lang", $app_lang, time() + 31536000, "/", "", false, false);
 //require_once $TO_HOME . "lang/" . $app_lang . ".php";
 
@@ -34,13 +33,21 @@ switch ($theme) {
 }
 setcookie("theme", $app_theme, time() + 31536000, "/", "", false, false);
 
+if (isset($setLocalStorage) && $setLocalStorage) {
+?>
+    <html lang="<?= $app_lang; ?>" dir="ltr">
+    <script>
+        localStorage.setItem("APP_LANG", "<?= $app_lang; ?>");
+        localStorage.setItem("APP_THEME", "<?= $app_theme; ?>");
+    </script>
+<?php
+}
+
 // --- VARIABLES ---
 $title_index = $_GET["title"] ?? 0;
 
 $titles = [
-    0 => "SPA.PHP | byUwUr",
-    "home" => "SPA " . $home . " | byUwUr",
-    "page" => "SPA " . $page . " | byUwUr"
+    0 => "SPA.PHP | byUwUr"
 ];
 
 $MATEUS_LINK = "https://byuwur.co";
