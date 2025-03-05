@@ -8,7 +8,7 @@ Test it out at: [byuwur.co/spa.php/](https://byuwur.co/spa.php/)
 
 This project is a simple, easy-to-use framework for building single-page applications (SPAs) using PHP. It provides a structure for handling routing, modals, and basic operations required for an SPA. The framework is designed to be lightweight and easy to integrate into existing projects.
 
-**[NEW!]** Try use this repository as a git submodule. Easier than a package, because sometimes you don't need a package.
+**[NEW!]** Try use this repository as a git submodule: See how it's used at [github.com/byuwur/byuwur.github.io](https://github.com/byuwur/byuwur.github.io). Easier than a package, because sometimes you don't need a package.
 
 ## What does it do?
 
