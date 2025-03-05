@@ -66,6 +66,11 @@ This project is a simple, easy-to-use framework for building single-page applica
 3. Add custom functionality by creating new PHP files and adding them to the routes.
 4. Navigate. Suit yourself.
 
+## Some other things I've made and used here
+
+-   [easy-server-http-error-page](https://github.com/byuwur/easy-server-http-error-page) - Custom error page with server configurations.
+-   [easy-sidebar-bootstrap](https://github.com/byuwur/easy-sidebar-bootstrap) - Sidebar component using Bootstrap and jQuery.
+
 ## License
 
 MIT (c) Andrés Trujillo [Mateus] byUwUr
