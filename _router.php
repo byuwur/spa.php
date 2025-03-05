@@ -35,10 +35,12 @@ if (array_key_exists($uri, $routes) && isset($routes[$uri]["FILE"])) {
 // Merge additional GET and POST parameters from the routes array
 $_GET = [...$_GET, ...$routes[$uri]["GET"] ?? []];
 $_POST = [...$_POST, ...$routes[$uri]["POST"] ?? []];
+// Check if we're on localhost for DEVbugging
+$NOTENV_APP_ENV = $_SERVER["HTTP_HOST"] === "localhost" ? "DEV" : "PROD";
 ?>
 <script>
     // Store environment and routing information in localStorage for client-side use
-    localStorage.setItem("APP_ENV", "<?= $_ENV["APP_ENV"] ?? "PROD"; ?>");
+    localStorage.setItem("APP_ENV", "<?= $_ENV["APP_ENV"] ?? $NOTENV_APP_ENV; ?>");
     localStorage.setItem("APP_VERSION", "<?= $_ENV["APP_VERSION"] ?? "0.1by"; ?>");
     localStorage.setItem("URI", "<?= $uri; ?>");
     localStorage.setItem("URL", "<?= $url; ?>");
