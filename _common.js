@@ -20,6 +20,7 @@
 	byCommon.SIDERBAR_TOGGLE_ID = "#bywr-sidebar-toggle";
 	byCommon.SIDEBAR_HIDDEN_ID = "#bywr-sidebar-hidden";
 	byCommon.APP_CONTAINER_SELECTOR = ".app-container";
+	byCommon.PARTICLES_CONTAINER_ID = "particles";
 
 	/**
 	 * Initializes the <Sidebar /> component in #spa-nav.
@@ -119,6 +120,23 @@
 				change_preferences_selector: "#cookiePrefs"
 			});
 		else console.warn("Can't load cookieconsent if script ain't exist.");
+		if (window.particlesJS && $(`#${byCommon.PARTICLES_CONTAINER_ID}`).length)
+			window.particlesJS(byCommon.PARTICLES_CONTAINER_ID, {
+				particles: {
+					number: { value: 32, density: { enable: false, value_area: 0 } },
+					shape: { type: "polygon", stroke: { width: 0, color: "#777777" }, polygon: { nb_sides: 3 } },
+					opacity: { value: 0.25 },
+					size: { value: 2 },
+					line_linked: { enable: true, distance: 192, color: "#777777", opacity: 0.5, width: 1 },
+					move: { enable: true, speed: 1, direction: "right", random: false, straight: false, out_mode: "out", bounce: false, attract: { enable: false } }
+				},
+				interactivity: {
+					detect_on: "window",
+					events: { onhover: { enable: true, mode: "grab" }, onclick: { enable: false } },
+					modes: { grab: { distance: 256, line_linked: { opacity: 0.5 } } }
+				}
+			});
+
 		console.log("Init misc");
 	};
 
