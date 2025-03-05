@@ -109,15 +109,16 @@
 					}
 				}, 333);
 			});
-		if (!cookieconsent) console.warn("Can't load cookieconsent if script ain't exist.");
-		cookieconsent.run({
-			notice_banner_type: "simple",
-			consent_type: "express",
-			palette: localStorage.getItem("APP_THEME") ?? "dark",
-			language: localStorage.getItem("APP_LANG") ?? "es",
-			website_name: "[Mateus] byUwUr",
-			change_preferences_selector: "#cookiePrefs"
-		});
+		if (window.cookieconsent)
+			window.cookieconsent.run({
+				notice_banner_type: "simple",
+				consent_type: "express",
+				palette: localStorage.getItem("APP_THEME") ?? "dark",
+				language: localStorage.getItem("APP_LANG") ?? "es",
+				website_name: "[Mateus] byUwUr",
+				change_preferences_selector: "#cookiePrefs"
+			});
+		else console.warn("Can't load cookieconsent if script ain't exist.");
 		console.log("Init misc");
 	};
 
