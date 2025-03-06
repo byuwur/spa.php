@@ -6,6 +6,12 @@
  * Copyright (c) 2025 Andrés Trujillo [Mateus] byUwUr
  */
 
+/*
+Please consider if you require_once THIS file,
+it isn't going to access the vendor/autoload from SPA.php
+but the one on the root of your project due to _var.php
+*/
 require_once $TO_HOME . "vendor/autoload.php";
+// It also expects you to have the dotenv package, because why wouldn't you have it
 $dotenv = Dotenv\Dotenv::createImmutable($TO_HOME);
 $dotenv->load();
