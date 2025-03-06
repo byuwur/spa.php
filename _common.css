@@ -925,7 +925,7 @@ th {
 /* --- ACCESSIBILITY --- */
 #bywr-accessibility {
 	position: fixed;
-	top: 5vh;
+	top: 12.5vh;
 	right: 0;
 }
 #bywr-accessibility,
@@ -943,7 +943,7 @@ th {
 }
 @media screen and (max-width: 576px) {
 	#bywr-accessibility {
-		top: 12.5vh;
+		top: 17.5vh;
 	}
 	#bywr-accessibility-buttons {
 		max-height: 85vh;
