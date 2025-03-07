@@ -480,61 +480,75 @@ th {
 	font-size: 2rem;
 }
 /* === CAROUSELS === */
-.tns-outer {
-	position: relative;
+.swiper {
+	--swiper-navigation-color: #fff;
+	--swiper-pagination-color: #fff;
 }
-.tns-nav {
-	position: absolute;
-	left: 15%;
-	right: 15%;
-	bottom: 5%;
-	width: auto;
+.swiper-slide {
 	text-align: center;
-	z-index: 101;
-}
-.tns-nav button {
-	width: 16px;
-	height: 16px;
-	margin: 4px;
-	border: 2px solid var(--light-color);
-	border-radius: 50%;
-	background: var(--secondary-color);
-}
-.tns-nav button.tns-nav-active {
-	background: var(--primary-color);
-}
-.tns-controls {
-	position: absolute;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	left: 10%;
-	right: 10%;
-	bottom: 5%;
-	width: auto;
-	text-align: center;
-	z-index: 99;
-}
-.tns-controls button {
+	font-size: 18px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	font-size: 32px;
-	width: 32px;
-	height: 32px;
-	margin: 0;
-	padding: 0;
-	border: 0;
-	background: transparent;
 }
-.tns-controls button * {
-	color: var(--secondary-color) !important;
+.swiper_thumbs {
+	height: 10vh;
+	padding: 10px 0;
 }
-.tns-controls button:hover * {
-	color: var(--primary-color) !important;
+.swiper_thumbs .swiper-slide {
+	opacity: 0.5;
 }
-.tns-controls button i:before {
-	text-shadow: 3px 0 0 #fff, -3px 0 0 #fff, 0 3px 0 #fff, 0 -3px 0 #fff, 3px 3px 0 #fff, -3px 3px 0 #fff, 3px -3px 0 #fff, -3px -3px 0 #fff;
+.swiper_thumbs .swiper-slide-thumb-active {
+	opacity: 1;
+}
+.swiper-button-next,
+.swiper-button-prev {
+	top: 0;
+	height: 105%;
+	width: 3rem;
+}
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+	text-decoration: none !important;
+}
+.swiper-pagination {
+	background: -moz-linear-gradient(0deg, #0006 0%, #0000 75%);
+	background: -webkit-linear-gradient(0deg, #0006 0%, #0000 75%);
+	background: -o-linear-gradient(0deg, #0006 0%, #0000 75%);
+	background: -ms-linear-gradient(0deg, #0006 0%, #0000 75%);
+	background: linear-gradient(0deg, #0006 0%, #0000 75%);
+	bottom: 0 !important;
+	height: 3rem;
+}
+.swiper-button-prev {
+	background: -moz-linear-gradient(90deg, color-mix(in srgb, var(--secondary-color) 25%, transparent) 0%, #0000 75%);
+	background: -webkit-linear-gradient(90deg, color-mix(in srgb, var(--secondary-color) 25%, transparent) 0%, #0000 75%);
+	background: -o-linear-gradient(90deg, color-mix(in srgb, var(--secondary-color) 25%, transparent) 0%, #0000 75%);
+	background: -ms-linear-gradient(90deg, color-mix(in srgb, var(--secondary-color) 25%, transparent) 0%, #0000 75%);
+	background: linear-gradient(90deg, color-mix(in srgb, var(--secondary-color) 25%, transparent) 0%, #0000 75%);
+	left: 0;
+}
+.swiper-button-prev:hover {
+	background: -moz-linear-gradient(90deg, color-mix(in srgb, var(--secondary-color) 50%, transparent) 0%, #0000 75%);
+	background: -webkit-linear-gradient(90deg, color-mix(in srgb, var(--secondary-color) 50%, transparent) 0%, #0000 75%);
+	background: -o-linear-gradient(90deg, color-mix(in srgb, var(--secondary-color) 50%, transparent) 0%, #0000 75%);
+	background: -ms-linear-gradient(90deg, color-mix(in srgb, var(--secondary-color) 50%, transparent) 0%, #0000 75%);
+	background: linear-gradient(90deg, color-mix(in srgb, var(--secondary-color) 50%, transparent) 0%, #0000 75%);
+}
+.swiper-button-next {
+	background: -moz-linear-gradient(90deg, #0000 25%, color-mix(in srgb, var(--secondary-color) 25%, transparent) 100%);
+	background: -webkit-linear-gradient(90deg, #0000 25%, color-mix(in srgb, var(--secondary-color) 25%, transparent) 100%);
+	background: -o-linear-gradient(90deg, #0000 25%, color-mix(in srgb, var(--secondary-color) 25%, transparent) 100%);
+	background: -ms-linear-gradient(90deg, #0000 25%, color-mix(in srgb, var(--secondary-color) 25%, transparent) 100%);
+	background: linear-gradient(90deg, #0000 25%, color-mix(in srgb, var(--secondary-color) 25%, transparent) 100%);
+	right: 0;
+}
+.swiper-button-next:hover {
+	background: -moz-linear-gradient(90deg, #0000 25%, color-mix(in srgb, var(--secondary-color) 50%, transparent) 100%);
+	background: -webkit-linear-gradient(90deg, #0000 25%, color-mix(in srgb, var(--secondary-color) 50%, transparent) 100%);
+	background: -o-linear-gradient(90deg, #0000 25%, color-mix(in srgb, var(--secondary-color) 50%, transparent) 100%);
+	background: -ms-linear-gradient(90deg, #0000 25%, color-mix(in srgb, var(--secondary-color) 50%, transparent) 100%);
+	background: linear-gradient(90deg, #0000 25%, color-mix(in srgb, var(--secondary-color) 50%, transparent) 100%);
 }
 /* === SPA CONTENT === */
 #spa-content {
