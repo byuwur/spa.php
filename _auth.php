@@ -6,10 +6,24 @@
  * Copyright (c) 2025 Andrés Trujillo [Mateus] byUwUr
  */
 
+// Set the cookie params for the session, keep it secure
+$has_session_set_cookie = session_set_cookie_params([
+    'lifetime' => 3600,
+    'path' => '/',
+    'domain' => '',
+    'secure' => true,
+    'httponly' => true,
+    'samesite' => 'Strict'
+]);
+// Crash if cookie cannot be configured
+if (!$has_session_set_cookie) api_respond(500, true, "Session crash.");
 // At start it always checks if a session_name is provided through query params;
 // This case applies when you want to manipulate an specific session on the server. Proceed with caution
 // if that's the case, set that session_id accordingly
-if (validate_value($_POST[session_name()] ?? null) !== null) session_id($_POST[session_name()]);
+if (
+    session_status() === PHP_SESSION_NONE &&
+    validate_value($_POST[session_name()] ?? null) !== null
+) session_id($_POST[session_name()]);
 // Then start it to use it
 session_start();
 
@@ -22,7 +36,7 @@ session_start();
 function login($session = [], $regen = false)
 {
     if ($regen) session_regenerate_id(true);
-    setcookie(session_name(), session_id(), time() + 3600, '/', '', true, true);
+    //setcookie(session_name(), session_id(), time() + 3600, '/', '', true, true);
     $_SESSION = [...$_SESSION, ...$session];
     return true;
 }
@@ -33,10 +47,14 @@ function login($session = [], $regen = false)
  */
 function logout()
 {
+    if (session_status() != PHP_SESSION_ACTIVE) return false;
+    $session_file = session_save_path() . "/sess_" . session_id();
     $_SESSION = [];
     session_unset();
+    session_gc();
     session_destroy();
     setcookie(session_name(), '', time() - 600, '/', '', true, true);
+    if (file_exists($session_file)) @unlink($session_file);
     return false;
 }
 
