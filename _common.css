@@ -318,7 +318,7 @@ th {
 .btn.btn-tertiary:hover,
 .btn.btn-quarternary,
 .btn.btn-quarternary:hover {
-	text-shadow: 0 0 white !important;
+	text-shadow: 0 0 #0000 !important;
 }
 /* === INPUTS === */
 :disabled,
