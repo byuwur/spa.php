@@ -483,17 +483,36 @@ th {
 .swiper {
 	--swiper-navigation-color: #fff;
 	--swiper-pagination-color: #fff;
+	height: 70vh;
 }
 .swiper-slide {
-	text-align: center;
-	font-size: 18px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	text-align: center;
+	font-size: 1rem;
+}
+.swiper-title-t,
+.swiper-title-b,
+.swiper-title-l,
+.swiper-title-r {
+	position: absolute;
+}
+.swiper-title-t {
+	top: 0;
+}
+.swiper-title-b {
+	bottom: 0;
+}
+.swiper-title-l {
+	left: 0;
+}
+.swiper-title-r {
+	right: 0;
 }
 .swiper_thumbs {
 	height: 10vh;
-	padding: 10px 0;
+	padding: 0.5rem 0;
 }
 .swiper_thumbs .swiper-slide {
 	opacity: 0.5;
