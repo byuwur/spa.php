@@ -54,21 +54,6 @@
 	 * @param {string} custom_error_message A custom error message to display.
 	 */
 	bySPA.errorPage = function (status, custom_error_message = "") {
-		const printError = (data) => {
-			document.documentElement.innerHTML = data;
-			// Reinitialize necessary variables and attach event listeners for history management. (Be able to go back)
-			$("head").append(`<script>
-                    let _GET = ${JSON.stringify(bySPA._GET)}, _POST = ${JSON.stringify(bySPA._POST)}, HISTORY_INDEX = ${bySPA.HISTORY_INDEX};
-                    const ROUTES = ${JSON.stringify(bySPA.ROUTES)}, TO_HOME = "${bySPA.TO_HOME}", HOME_PATH = "${bySPA.HOME_PATH}",
-                        HISTORY_PATH = ${JSON.stringify(bySPA.HISTORY_PATH)}, APP_ENV = "${bySPA.APP_ENV}",
-                        parseURL = ${bySPA.parseURL}, routeURL = ${bySPA.routeURL}, load = ${bySPA.load}, getLocalStorageItems = ${bySPA.getLocalStorageItems};
-                    window.addEventListener("popstate", function (e) {
-                        if (APP_ENV === 'DEV') console.log('errorPage=history.back()');
-                        HISTORY_INDEX = e.state.index;
-                        load(HISTORY_PATH[HISTORY_INDEX], false);
-                    });
-                </script>`);
-		};
 		return $.ajax({
 			url: `${bySPA.HOME_PATH}/_error.php?e=${status}`,
 			type: "POST",
@@ -76,7 +61,8 @@
 			dataType: "text"
 		})
 			.then(function (data) {
-				printError(data);
+				document.documentElement.innerHTML = data;
+				$("head").append(`<script>window.addEventListener("popstate", function (e) { window.location.reload(); });</script>`);
 				return data;
 			})
 			.catch(function (xhr, status, error) {

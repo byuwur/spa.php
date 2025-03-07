@@ -68,7 +68,7 @@ This project is a simple, easy-to-use framework for building single-page applica
 
 ## Some other things I've made and used here
 
--   [easy-server-http-error-page](https://github.com/byuwur/easy-server-http-error-page) - Custom error page with server configurations.
+-   [easy-http-error](https://github.com/byuwur/easy-http-error) - Custom error page with server configurations.
 -   [easy-sidebar-bootstrap](https://github.com/byuwur/easy-sidebar-bootstrap) - Sidebar component using Bootstrap and jQuery.
 
 ## License

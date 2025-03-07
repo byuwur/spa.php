@@ -7,7 +7,7 @@
  * Copyright (c) 2025 Andrés Trujillo [Mateus] byUwUr
  */
 
-// [Mateus] byUwUr --- Easy HTTP Error Page --- 2024 v3. Check out: https://github.com/byuwur/easy-server-http-error-page
+// [Mateus] byUwUr --- Easy HTTP Error Page --- 2025 v5. Check out: https://github.com/byuwur/easy-http-error
 $mateus_link = "https://byuwur.co";
 $lang = isset($_GET["lang"]) ? $_GET["lang"] : (isset($_COOKIE["lang"]) ? $_COOKIE["lang"] : "es");
 echo "<html lang='" . $lang . "' dir='ltr'>";
@@ -16,13 +16,11 @@ switch ($lang) {
     case "es":
     default:
         $_back = "Volver";
-        $_sorry = "Lamentamos las molestias. ¿Qué desea hacer?";
-        $_out = "Sácame de aquí";
+        $_sorry = "Lamentamos las molestias.";
         break;
     case "en":
         $_back = "Go back";
-        $_sorry = "Sorry for the inconvenience. What would you like to do?";
-        $_out = "Get me out of here";
+        $_sorry = "Sorry for the inconvenience.";
         break;
 }
 $err = isset($_GET["e"]) ? $_GET["e"] : "999";
@@ -290,9 +288,15 @@ switch ($err) {
             }
         }
     </style>
+    <script>
+        window.addEventListener("popstate", function(e) {
+            window.location.reload();
+        });
+    </script>
 </head>
 
 <body>
+    <!-- [Mateus] byUwUr --- Easy HTTP Error Page --- 2025 v5. Check out: https://github.com/byuwur/easy-http-error -->
     <div id="body">
         <svg id="cubes" viewBox="0 0 837 1045" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
             <g id="page1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
@@ -316,7 +320,6 @@ switch ($err) {
             <span><?= $_sorry; ?></span>
             <div id="action-link-wrap">
                 <a onclick="history.back(-1)"><?= $_back; ?></a>
-                <a href="./"><?= $_out; ?></a>
             </div>
             <span><?= isset($_POST["custom_error_message"]) ? "System error:<br>" . $_POST["custom_error_message"] : ""; ?></span>
         </div>
