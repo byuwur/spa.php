@@ -55,7 +55,7 @@
 	 */
 	bySPA.errorPage = function (status, custom_error_message = "") {
 		const printError = (data) => {
-			document.write(data);
+			document.documentElement.innerHTML = data;
 			// Reinitialize necessary variables and attach event listeners for history management. (Be able to go back)
 			$("head").append(`<script>
                     let _GET = ${JSON.stringify(bySPA._GET)}, _POST = ${JSON.stringify(bySPA._POST)}, HISTORY_INDEX = ${bySPA.HISTORY_INDEX};
