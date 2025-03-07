@@ -73,11 +73,11 @@
 	scrollbar-width: 12px;
 	scrollbar-color: #04c #fff;
 	/* anim */
-	-webkit-transition: opacity 0.3s ease, height 0.3s ease, width 0.3s ease, transform 0.3s ease, margin 0.3s ease, padding 0.3s ease, background-color 0.3s ease !important;
-	-o-transition: opacity 0.3s ease, height 0.3s ease, width 0.3s ease, transform 0.3s ease, margin 0.3s ease, padding 0.3s ease, background-color 0.3s ease !important;
-	-ms-transition: opacity 0.3s ease, height 0.3s ease, width 0.3s ease, transform 0.3s ease, margin 0.3s ease, padding 0.3s ease, background-color 0.3s ease !important;
-	-moz-transition: opacity 0.3s ease, height 0.3s ease, width 0.3s ease, transform 0.3s ease, margin 0.3s ease, padding 0.3s ease, background-color 0.3s ease !important;
-	transition: opacity 0.3s ease, height 0.3s ease, width 0.3s ease, transform 0.3s ease, margin 0.3s ease, padding 0.3s ease, background-color 0.3s ease !important;
+	-webkit-transition: opacity 0.3s ease, height 0.3s ease, width 0.3s ease, transform 0.3s ease, margin 0.3s ease, padding 0.3s ease, background-color 0.3s ease, filter 0.3s ease !important;
+	-o-transition: opacity 0.3s ease, height 0.3s ease, width 0.3s ease, transform 0.3s ease, margin 0.3s ease, padding 0.3s ease, background-color 0.3s ease, filter 0.3s ease !important;
+	-ms-transition: opacity 0.3s ease, height 0.3s ease, width 0.3s ease, transform 0.3s ease, margin 0.3s ease, padding 0.3s ease, background-color 0.3s ease, filter 0.3s ease !important;
+	-moz-transition: opacity 0.3s ease, height 0.3s ease, width 0.3s ease, transform 0.3s ease, margin 0.3s ease, padding 0.3s ease, background-color 0.3s ease, filter 0.3s ease !important;
+	transition: opacity 0.3s ease, height 0.3s ease, width 0.3s ease, transform 0.3s ease, margin 0.3s ease, padding 0.3s ease, background-color 0.3s ease, filter 0.3s ease !important;
 }
 html,
 body {
