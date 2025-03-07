@@ -26,7 +26,7 @@ switch ($lang) {
         break;
 }
 $err = isset($_GET["e"]) ? $_GET["e"] : "999";
-http_response_code($err);
+//http_response_code($err);
 switch ($err) {
     case "404":
         $_estringes = "no encontrado";
