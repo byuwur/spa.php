@@ -287,7 +287,7 @@
 			if (bySPA.APP_ENV === "DEV") console.log("HISTORY_INDEX=", bySPA.HISTORY_INDEX, "; HISTORY_PATH=", bySPA.HISTORY_PATH);
 		});
 		// Attaches click event handlers to links for SPA navigation.
-		$(document).on("click", "a:not([target='_blank']):not([href^='#']):not([href^='javascript:']):not([custom-folder='true'])", function (e) {
+		$(document).on("click", "a:not([target='_blank']):not([href^='#']):not([href^='javascript:']):not([custom-folder='true']):not([href*='://'])", function (e) {
 			e.preventDefault();
 			bySPA.load($(this).attr("href"));
 		});
