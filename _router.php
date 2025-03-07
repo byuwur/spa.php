@@ -2,7 +2,7 @@
 /* 
  * File: _router.php
  * Desc: Processes and routes incoming URIs based on predefined routes, handling URL parameters and errors. If a matching file is found, it serves the file with appropriate headers; otherwise, it prepares the environment for client-side routing.
- * Deps: $TO_HOME . "_functions.php", $TO_HOME . "_plugin.php"; $routes OR $TO_HOME . "_routes.php" MUST be previously defined/called.
+ * Deps: /_var.php, $TO_HOME . "_functions.php", $TO_HOME . "_plugin.php"; $routes OR $TO_HOME . "_routes.php" MUST be previously defined/called.
  * Copyright (c) 2025 Andrés Trujillo [Mateus] byUwUr
  */
 
@@ -23,8 +23,10 @@ if (strpos($uri, "/\$/") !== false) {
             $_GET[$param_key_value[$i]] = $param_key_value[$i + 1];
 }
 // Check if the URI exists in the routes array; if not, return a 404 error
-if (!array_key_exists($uri, $routes) || (!isset($routes[$uri]["URI"]) && !isset($routes[$uri]["FILE"])))
-    error_crash(404, "Route \"" . $uri . "\" does not exist.", "_error.php");
+if (!array_key_exists($uri, $routes) || (!isset($routes[$uri]["URI"]) && !isset($routes[$uri]["FILE"]))) {
+    $_error = file_exists($TO_HOME . "spa.php/_error.php") ? $TO_HOME . "spa.php/_error.php" : $TO_HOME . "_error.php";
+    error_crash(404, "Route \"" . $uri . "\" does not exist.", $_error);
+}
 // If the URI is associated with a file, serve the file with appropriate headers
 if (array_key_exists($uri, $routes) && isset($routes[$uri]["FILE"])) {
     header("Content-Type: " . get_mime_type($routes[$uri]["FILE"]));

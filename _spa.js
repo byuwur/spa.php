@@ -29,6 +29,18 @@
 	bySPA.HISTORY_PATH = [];
 
 	/**
+	 * Verifies the existence of a file.
+	 * @param {string} file The file to check.
+	 * @return {boolean} Validity of the file existence
+	 */
+	bySPA.fileExists = function (file) {
+		const xhr = new XMLHttpRequest();
+		xhr.open("HEAD", file, false);
+		xhr.send();
+		return xhr.status >= 200 && xhr.status <= 299;
+	};
+
+	/**
 	 * Updates local variables with the latest data from localStorage.
 	 */
 	bySPA.getLocalStorageItems = function () {
@@ -54,8 +66,9 @@
 	 * @param {string} custom_error_message A custom error message to display.
 	 */
 	bySPA.errorPage = function (status, custom_error_message = "") {
+		const _error = bySPA.fileExists(`${bySPA.HOME_PATH}/spa.php/_error.php`) ? `${bySPA.HOME_PATH}/spa.php/_error.php` : `${bySPA.HOME_PATH}/_error.php`;
 		return $.ajax({
-			url: `${bySPA.HOME_PATH}/_error.php?e=${status}`,
+			url: `${_error}?e=${status}`,
 			type: "POST",
 			data: { custom_error_message },
 			dataType: "text"
@@ -67,6 +80,8 @@
 			})
 			.catch(function (xhr, status, error) {
 				console.error(`Error (errorPage): ${xhr?.status} ${status} ${error}`, bySPA.APP_ENV == "DEV" ? xhr : "");
+				document.documentElement.innerHTML = xhr.responseText;
+				$("head").append(`<script>window.addEventListener("popstate", function (e) { window.location.reload(); });</script>`);
 				return null;
 			});
 	};

@@ -22,6 +22,17 @@ ErrorDocument 500 /_error.php?e=500
 ErrorDocument 502 /_error.php?e=502
 ErrorDocument 503 /_error.php?e=503
 ErrorDocument 504 /_error.php?e=504
+#---
+# If you have SPA.php as a SUBMODULE: UNCOMMENT THESE. Delete the previous.
+#ErrorDocument 404 /spa.php/_error.php?e=404
+#ErrorDocument 403 /spa.php/_error.php?e=403
+#ErrorDocument 401 /spa.php/_error.php?e=401
+#ErrorDocument 400 /spa.php/_error.php?e=400
+#ErrorDocument 500 /spa.php/_error.php?e=500
+#ErrorDocument 502 /spa.php/_error.php?e=502
+#ErrorDocument 503 /spa.php/_error.php?e=503
+#ErrorDocument 504 /spa.php/_error.php?e=504
+#---
 # Block requests from most types of proxies
 RewriteCond %{HTTP:HTTP_VIA} !^$ [OR]
 RewriteCond %{HTTP:HTTP_X_FORWARDED_FOR} !^$ [OR]
