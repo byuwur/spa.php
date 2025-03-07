@@ -145,7 +145,7 @@
 	 * It should be called whenever the content of the #spa-page-content-container changes dynamically to ensure that all components function correctly.
 	 */
 	byCommon.initBootstrap = function () {
-		if (typeof bootstrap === "undefined" && window.bootstrap === undefined) return console.warn("Can't load Bootstrap if script ain't present.");
+		if (typeof bootstrap === "undefined" && !window.bootstrap) return console.warn("Can't load Bootstrap if script ain't present.");
 		try {
 			// Initialize Alert components
 			[...document.querySelectorAll(".alert")].forEach((alertEl) => bootstrap.Alert.getInstance(alertEl) ?? new bootstrap.Alert(alertEl));
@@ -188,7 +188,7 @@
 	 */
 	byCommon.initCaptcha = function () {
 		// Check it exists in the first place. Duh..
-		if (typeof grecaptcha === "undefined" && window.grecaptcha === undefined) return console.warn("Can't load reCaptcha if script ain't present.");
+		if (typeof grecaptcha === "undefined" && !window.grecaptcha) return console.warn("Can't load reCaptcha if script ain't present.");
 		try {
 			[...document.querySelectorAll(".g-recaptcha")].forEach((captchaEl) => (grecaptcha.render ? grecaptcha.render(captchaEl) : console.warn("grecaptcha not ready...")));
 			console.log("Init captcha");
@@ -201,7 +201,7 @@
 	 * Initializes all components that dynamically changes within the page
 	 */
 	byCommon.init = function () {
-		if (typeof jQuery === "undefined" && window.jQuery === undefined) return console.error("Init _common.js FAILED. No jQuery found.");
+		if (typeof jQuery === "undefined" && !window.jQuery) return console.error("Init _common.js FAILED. No jQuery found.");
 		$(() => {
 			console.log("Init _common.js");
 			byCommon.initCaptcha();
@@ -212,12 +212,8 @@
 	};
 
 	// --- ACCESSIBILITY ---
-
-	/**
-	 * Accessibility: Toggle
-	 */
 	byCommon.fontSize = 16;
-	byCommon.accessibilityElement = $("html");
+	byCommon.accessibilityElement = "html";
 	/**
 	 * Accessibility: Toggle
 	 */
@@ -239,49 +235,49 @@
 				byCommon.fontSize = 16;
 				break;
 		}
-		byCommon.accessibilityElement.css("font-size", `${byCommon.fontSize}px`);
+		$(byCommon.accessibilityElement).css("font-size", `${byCommon.fontSize}px`);
 		$("body").css("font-size", `${byCommon.fontSize}px`);
 	};
 	/**
 	 * Accessibility: No Motion
 	 */
 	byCommon.accessibilityMotion = function () {
-		byCommon.accessibilityElement.toggleClass("no-motion");
+		$(byCommon.accessibilityElement).toggleClass("no-motion");
 	};
 	/**
 	 * Accessibility: Dyslexia
 	 */
 	byCommon.accessibilityDyslexia = function () {
-		//byCommon.accessibilityElement.toggleClass("dyslexia");
+		//$(byCommon.accessibilityElement).toggleClass("dyslexia");
 		$("body").toggleClass("dyslexia");
 	};
 	/**
 	 * Accessibility: Word spacing
 	 */
 	byCommon.accessibilityWordSpacing = function () {
-		//byCommon.accessibilityElement.toggleClass("word-spacing");
+		//$(byCommon.accessibilityElement).toggleClass("word-spacing");
 		$("body").toggleClass("word-spacing");
 	};
 	/**
 	 * Accessibility: Highlight Links
 	 */
 	byCommon.accessibilityHighlightLinks = function () {
-		byCommon.accessibilityElement.toggleClass("highlight-links");
+		$(byCommon.accessibilityElement).toggleClass("highlight-links");
 	};
 	/**
 	 * Accessibility: High contrast
 	 */
 	byCommon.accessibilityHighContrast = function (mode = "high-contrast") {
-		if (byCommon.accessibilityElement.hasClass(mode)) {
-			byCommon.accessibilityElement.removeClass(mode);
+		if ($(byCommon.accessibilityElement).hasClass(mode)) {
+			$(byCommon.accessibilityElement).removeClass(mode);
 			return;
 		}
-		byCommon.accessibilityElement.removeClass("protanopia");
-		byCommon.accessibilityElement.removeClass("deuteranopia");
-		byCommon.accessibilityElement.removeClass("tritanopia");
-		byCommon.accessibilityElement.removeClass("monochropia");
-		byCommon.accessibilityElement.removeClass("invertchropia");
-		byCommon.accessibilityElement.removeClass("high-contrast");
-		byCommon.accessibilityElement.addClass(mode);
+		$(byCommon.accessibilityElement).removeClass("protanopia");
+		$(byCommon.accessibilityElement).removeClass("deuteranopia");
+		$(byCommon.accessibilityElement).removeClass("tritanopia");
+		$(byCommon.accessibilityElement).removeClass("monochropia");
+		$(byCommon.accessibilityElement).removeClass("invertchropia");
+		$(byCommon.accessibilityElement).removeClass("high-contrast");
+		$(byCommon.accessibilityElement).addClass(mode);
 	};
 })(typeof window !== "undefined" ? window : this);
