@@ -304,6 +304,16 @@ th {
 .btn.btn-tertiary:hover * {
 	color: var(--secondary-color) !important;
 }
+.btn.btn-primary,
+.btn.btn-primary:hover,
+.btn.btn-secondary,
+.btn.btn-secondary:hover,
+.btn.btn-tertiary,
+.btn.btn-tertiary:hover,
+.btn.btn-quarternary,
+.btn.btn-quarternary:hover {
+    text-shadow: 0 0 white !important;
+}
 /* === INPUTS === */
 :disabled,
 :disabled * {
@@ -484,6 +494,17 @@ th {
 	--swiper-navigation-color: #fff;
 	--swiper-pagination-color: #fff;
 	height: 70vh;
+}
+@media screen and (max-width: 576px) {
+	.swiper_16-9 {
+		height: 33vh;
+	}
+	.swiper_4-3 {
+		height: 50vh;
+	}
+	.swiper_1-1 {
+		height: 66vh;
+	}
 }
 .swiper-slide {
 	display: flex;
