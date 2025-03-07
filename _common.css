@@ -499,7 +499,7 @@ th {
 .swiper {
 	--swiper-navigation-color: #fff;
 	--swiper-pagination-color: #fff;
-	height: 70vh;
+	--swiper-navigation-background: color-mix(in srgb, var(--secondary-color) 50%, transparent);
 }
 @media screen and (max-width: 576px) {
 	.swiper_16-9 {
@@ -558,43 +558,35 @@ th {
 	text-decoration: none !important;
 }
 .swiper-pagination {
-	background: -moz-linear-gradient(0deg, #0006 0%, #0000 75%);
-	background: -webkit-linear-gradient(0deg, #0006 0%, #0000 75%);
-	background: -o-linear-gradient(0deg, #0006 0%, #0000 75%);
-	background: -ms-linear-gradient(0deg, #0006 0%, #0000 75%);
-	background: linear-gradient(0deg, #0006 0%, #0000 75%);
+	background: -moz-linear-gradient(0deg, #0006 0%, #0000 100%);
+	background: -webkit-linear-gradient(0deg, #0006 0%, #0000 100%);
+	background: -o-linear-gradient(0deg, #0006 0%, #0000 100%);
+	background: -ms-linear-gradient(0deg, #0006 0%, #0000 100%);
+	background: linear-gradient(0deg, #0006 0%, #0000 100%);
 	bottom: 0 !important;
 	height: 3rem;
 }
-.swiper-button-prev {
-	background: -moz-linear-gradient(90deg, color-mix(in srgb, var(--secondary-color) 25%, transparent) 0%, #0000 75%);
-	background: -webkit-linear-gradient(90deg, color-mix(in srgb, var(--secondary-color) 25%, transparent) 0%, #0000 75%);
-	background: -o-linear-gradient(90deg, color-mix(in srgb, var(--secondary-color) 25%, transparent) 0%, #0000 75%);
-	background: -ms-linear-gradient(90deg, color-mix(in srgb, var(--secondary-color) 25%, transparent) 0%, #0000 75%);
-	background: linear-gradient(90deg, color-mix(in srgb, var(--secondary-color) 25%, transparent) 0%, #0000 75%);
+.swiper-button-prev,
+.swiper-button-prev:hover {
+	background: -moz-linear-gradient(90deg, var(--swiper-navigation-background) 0%, #0000 100%);
+	background: -webkit-linear-gradient(90deg, var(--swiper-navigation-background) 0%, #0000 100%);
+	background: -o-linear-gradient(90deg, var(--swiper-navigation-background) 0%, #0000 100%);
+	background: -ms-linear-gradient(90deg, var(--swiper-navigation-background) 0%, #0000 100%);
+	background: linear-gradient(90deg, var(--swiper-navigation-background) 0%, #0000 100%);
 	left: 0;
 }
-.swiper-button-prev:hover {
-	background: -moz-linear-gradient(90deg, color-mix(in srgb, var(--secondary-color) 50%, transparent) 0%, #0000 75%);
-	background: -webkit-linear-gradient(90deg, color-mix(in srgb, var(--secondary-color) 50%, transparent) 0%, #0000 75%);
-	background: -o-linear-gradient(90deg, color-mix(in srgb, var(--secondary-color) 50%, transparent) 0%, #0000 75%);
-	background: -ms-linear-gradient(90deg, color-mix(in srgb, var(--secondary-color) 50%, transparent) 0%, #0000 75%);
-	background: linear-gradient(90deg, color-mix(in srgb, var(--secondary-color) 50%, transparent) 0%, #0000 75%);
-}
-.swiper-button-next {
-	background: -moz-linear-gradient(90deg, #0000 25%, color-mix(in srgb, var(--secondary-color) 25%, transparent) 100%);
-	background: -webkit-linear-gradient(90deg, #0000 25%, color-mix(in srgb, var(--secondary-color) 25%, transparent) 100%);
-	background: -o-linear-gradient(90deg, #0000 25%, color-mix(in srgb, var(--secondary-color) 25%, transparent) 100%);
-	background: -ms-linear-gradient(90deg, #0000 25%, color-mix(in srgb, var(--secondary-color) 25%, transparent) 100%);
-	background: linear-gradient(90deg, #0000 25%, color-mix(in srgb, var(--secondary-color) 25%, transparent) 100%);
-	right: 0;
-}
+.swiper-button-next,
 .swiper-button-next:hover {
-	background: -moz-linear-gradient(90deg, #0000 25%, color-mix(in srgb, var(--secondary-color) 50%, transparent) 100%);
-	background: -webkit-linear-gradient(90deg, #0000 25%, color-mix(in srgb, var(--secondary-color) 50%, transparent) 100%);
-	background: -o-linear-gradient(90deg, #0000 25%, color-mix(in srgb, var(--secondary-color) 50%, transparent) 100%);
-	background: -ms-linear-gradient(90deg, #0000 25%, color-mix(in srgb, var(--secondary-color) 50%, transparent) 100%);
-	background: linear-gradient(90deg, #0000 25%, color-mix(in srgb, var(--secondary-color) 50%, transparent) 100%);
+    background: -moz-linear-gradient(90deg, #0000 0%, var(--swiper-navigation-background) 100%);
+    background: -webkit-linear-gradient(90deg, #0000 0%, var(--swiper-navigation-background) 100%);
+    background: -o-linear-gradient(90deg, #0000 0%, var(--swiper-navigation-background) 100%);
+    background: -ms-linear-gradient(90deg, #0000 0%, var(--swiper-navigation-background) 100%);
+    background: linear-gradient(90deg, #0000 0%, var(--swiper-navigation-background) 100%);
+    right: 0;
+}
+.swiper-button-prev:hover,
+.swiper-button-next:hover {
+	--swiper-navigation-background: color-mix(in srgb, var(--secondary-color) 75%, transparent);
 }
 /* === SPA CONTENT === */
 #spa-content {
