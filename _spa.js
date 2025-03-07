@@ -81,7 +81,6 @@
 			})
 			.catch(function (xhr, status, error) {
 				console.error(`Error (errorPage): ${xhr?.status} ${status} ${error}`, bySPA.APP_ENV == "DEV" ? xhr : "");
-				printError(xhr?.responseText);
 				return null;
 			});
 	};
@@ -153,7 +152,7 @@
 		// If there's a component, extract the ID
 		const componentId = component.match(/#[a-zA-Z0-9-_]+/)[0];
 		// If no file is provided, clear the component's content
-		if (!file || file == "" || file == "null") return $(componentId).html("");
+		if (!file || file == "null") return $(componentId).html("");
 		return $.ajax({
 			url: `${bySPA.HOME_PATH}${file}?${new URLSearchParams({ ...get, uri: false }).toString()}`,
 			type: "POST",
@@ -199,7 +198,7 @@
 		// Parse the URI into path and parameters
 		const { path, params } = bySPA.parseURL(uri);
 		// Check if the path exists in the defined routes
-		if (!Object.keys(bySPA.ROUTES).includes(path) || !Object.keys(bySPA.ROUTES).length) return bySPA.errorPage(404, `Route "${uri}" does not exist.`);
+		if (!Object.keys(bySPA.ROUTES).includes(path)) return bySPA.errorPage(404, `Route "${uri}" does not exist.`);
 		localStorage.setItem("URI", path);
 		localStorage.setItem("_GET", JSON.stringify({ ...bySPA._GET, ...(bySPA.ROUTES[path]?.GET ?? []), ...params }));
 		localStorage.setItem("_POST", JSON.stringify({ ...bySPA._POST, ...(bySPA.ROUTES[path]?.POST ?? []) }));
@@ -235,7 +234,7 @@
 		// If the SPA container is missing, create the element
 		if (!$("#spa-content").length) {
 			// Checks for reloadComponent to continue, if not: reload completely
-			if (!bySPA.reloadComponent || typeof reloadComponent === "undefined") return window.location.reload();
+			if (!bySPA.reloadComponent) return window.location.reload();
 			console.warn("Main Component (main#spa-content) missing. Creating and appending to the body...");
 			$("body").append(
 				$("<main>", {
@@ -247,7 +246,7 @@
 		for (let key in component) bySPA.reloadComponent(key, component[key], get, post);
 		// Retrieve the page data
 		return $.ajax({
-			url: `${bySPA.HOME_PATH}${uri}?${new URLSearchParams(get).toString()}`,
+			url: `${bySPA.HOME_PATH}${uri ?? "/null"}?${new URLSearchParams(get).toString()}`,
 			type: "POST",
 			data: { ...post },
 			dataType: "text"
@@ -258,7 +257,6 @@
 			})
 			.catch(function (xhr, status, error) {
 				console.error(`Error (SPA): ${xhr?.status} ${status} ${error}`, bySPA.APP_ENV == "DEV" ? xhr : "");
-				bySPA.errorPage(404, `Route "${url}" does not exist.`);
 				return null;
 			})
 			.always(function () {
@@ -267,7 +265,7 @@
 	};
 
 	bySPA.init = function () {
-		if (typeof jQuery === "undefined" && window.jQuery === undefined) return console.error("Init _spa.js FAILED. No jQuery found.");
+		if (typeof jQuery === "undefined" && !window.jQuery) return console.error("Init _spa.js FAILED. No jQuery found.");
 		// Log debug information if in development mode
 		if (bySPA.APP_ENV === "DEV") {
 			console.log("APP_VERSION=", bySPA.APP_VERSION);
@@ -283,7 +281,7 @@
 		}
 		// Handles the popstate event for navigating through browser history.
 		window.addEventListener("popstate", function (e) {
-			if (!e.state || e.state.index == undefined) return;
+			if (!e.state) return;
 			bySPA.HISTORY_INDEX = e.state.index;
 			bySPA.load(bySPA.HISTORY_PATH[bySPA.HISTORY_INDEX], false);
 			if (bySPA.APP_ENV === "DEV") console.log("HISTORY_INDEX=", bySPA.HISTORY_INDEX, "; HISTORY_PATH=", bySPA.HISTORY_PATH);
