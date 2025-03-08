@@ -538,20 +538,20 @@ th {
 	right: 0;
 }
 .swiper_thumbs {
-	height: 10vh;
+	height: 10vh !important;
 	padding: 0.5rem 0;
 }
 .swiper_thumbs .swiper-slide {
-	opacity: 0.5;
+	opacity: 0.5 !important;
 }
 .swiper_thumbs .swiper-slide-thumb-active {
-	opacity: 1;
+	opacity: 1 !important;
 }
 .swiper-button-next,
 .swiper-button-prev {
-	top: 0;
-	height: 105%;
-	width: 3rem;
+	top: 0 !important;
+	height: 105% !important;
+	width: 3rem !important;
 }
 .swiper-button-next:hover,
 .swiper-button-prev:hover {
@@ -577,12 +577,12 @@ th {
 }
 .swiper-button-next,
 .swiper-button-next:hover {
-    background: -moz-linear-gradient(90deg, #0000 0%, var(--swiper-navigation-background) 100%);
-    background: -webkit-linear-gradient(90deg, #0000 0%, var(--swiper-navigation-background) 100%);
-    background: -o-linear-gradient(90deg, #0000 0%, var(--swiper-navigation-background) 100%);
-    background: -ms-linear-gradient(90deg, #0000 0%, var(--swiper-navigation-background) 100%);
-    background: linear-gradient(90deg, #0000 0%, var(--swiper-navigation-background) 100%);
-    right: 0;
+	background: -moz-linear-gradient(90deg, #0000 0%, var(--swiper-navigation-background) 100%);
+	background: -webkit-linear-gradient(90deg, #0000 0%, var(--swiper-navigation-background) 100%);
+	background: -o-linear-gradient(90deg, #0000 0%, var(--swiper-navigation-background) 100%);
+	background: -ms-linear-gradient(90deg, #0000 0%, var(--swiper-navigation-background) 100%);
+	background: linear-gradient(90deg, #0000 0%, var(--swiper-navigation-background) 100%);
+	right: 0;
 }
 .swiper-button-prev:hover,
 .swiper-button-next:hover {
