@@ -1,6 +1,8 @@
 # byuwur/spa.php
 
-**byUwUr's Easy PHP SPA Framework**
+**byUwUr's Easy PHP SPA**
+
+~ SPA made easy, with love, and PHP. ~
 
 Test it out at: [byuwur.co/spa.php/](https://byuwur.co/spa.php/)
 
