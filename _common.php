@@ -7,7 +7,9 @@
  */
 
 // --- LANGUAGE ---
-$lang = isset($_GET["lang"]) ? $_GET["lang"] : (isset($_COOKIE["lang"]) ? $_COOKIE["lang"] : "es");
+$lang = substr($_SERVER["HTTP_ACCEPT_LANGUAGE"] ?? "es", 0, 2);
+if (isset($_COOKIE["lang"])) $lang = $_COOKIE["lang"];
+if (isset($_GET["lang"])) $lang = $_GET["lang"];
 switch ($lang) {
     case "es":
     case "en":
@@ -20,7 +22,9 @@ switch ($lang) {
 setcookie("lang", $app_lang, time() + 31536000, "/", "", false, false);
 
 // --- THEME ---
-$theme = isset($_GET["theme"]) ? $_GET["theme"] : (isset($_COOKIE["theme"]) ? $_COOKIE["theme"] : "dark");
+$theme = "dark";
+if (isset($_COOKIE["theme"])) $theme = $_COOKIE["theme"];
+if (isset($_GET["theme"])) $theme = $_GET["theme"];
 switch ($theme) {
     case "dark":
     case "light":
