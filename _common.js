@@ -170,6 +170,22 @@
 	};
 
 	/**
+	 * Reloads Google Page Translator if present
+	 */
+	byCommon.initTranslate = function () {
+		if (typeof google === "undefined") return console.warn("initTranslate(): google object doesn't exist.");
+		if (typeof google.translate === "undefined" && !window.google.translate) return console.warn("Can't load Google Translate if script ain't present.");
+		const TRANSLATE_CONTAINER_ID = "g-translate";
+		if (!$(`#${TRANSLATE_CONTAINER_ID}`).length) return console.warn(`Can't find Google Translate container (#${TRANSLATE_CONTAINER_ID})`);
+		try {
+			google.translate.TranslateElement({ pageLanguage: "en" }, TRANSLATE_CONTAINER_ID);
+			console.log("Init Google Translate");
+		} catch (e) {
+			console.warn("initTranslate():", e);
+		}
+	};
+
+	/**
 	 * Reloads Cookie Consent if present
 	 */
 	byCommon.initCookieConsent = function () {
@@ -231,6 +247,7 @@
 			byCommon.initSidebar();
 			byCommon.initCookieConsent();
 			byCommon.initParticles();
+			//byCommon.initTranslate(); //// Callback invoked in ?cb= on <script>
 		});
 	};
 

@@ -48,6 +48,7 @@ require_once $TO_HOME . "common.php";
     <meta name="theme-color" content="#300" />
     <link rel="icon" type="image/png" href="<?= $HOME_PATH; ?>/img/byuwur.png" />
     <link rel="apple-touch-icon" href="<?= $HOME_PATH; ?>/img/byuwur.png" />
+    <!-- Remove per your needs -->
     <link rel="stylesheet" href="<?= $HOME_PATH; ?>/css/animate.min.css" />
     <link rel="stylesheet" href="<?= $HOME_PATH; ?>/css/fontawesome.min.css" />
     <link rel="stylesheet" href="<?= $HOME_PATH; ?>/css/jquery-ui.min.css" />
@@ -74,6 +75,7 @@ require_once $TO_HOME . "common.php";
     <script src="<?= $HOME_PATH; ?>/_common.js" defer></script>
     <script src="<?= $HOME_PATH; ?>/_spa.js" defer></script>
     <script src="https://www.google.com/recaptcha/api.js" defer></script>
+    <script src="https://translate.google.com/translate_a/element.js?cb=byCommon.initTranslate" defer></script>
     <!-- Add your overrides below -->
 </head>
 
@@ -139,6 +141,7 @@ require_once $TO_HOME . "common.php";
         <source src="<?= $HOME_PATH; ?>/img/bg.webm" type="video/webm" />
     </video>
     <div id="particles"></div>
+    <div id="g-translate"></div>
     <nav id="spa-nav"></nav>
     <main id="spa-content"></main>
 </body>

@@ -702,6 +702,15 @@ th {
 		transform: rotate(-720deg);
 	}
 }
+/* === TRANSLATE === */
+#g-translate {
+	position: fixed;
+	bottom: 0;
+    right: 0;
+    background: #eee;
+    padding: 0 4px;
+    z-index: 11;
+}
 /* === PARTICLES === */
 #particles {
 	position: fixed;
