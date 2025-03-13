@@ -20,7 +20,6 @@
 	byCommon.SIDERBAR_TOGGLE_ID = "#bywr-sidebar-toggle";
 	byCommon.SIDEBAR_HIDDEN_ID = "#bywr-sidebar-hidden";
 	byCommon.APP_CONTAINER_SELECTOR = ".app-container";
-	byCommon.PARTICLES_CONTAINER_ID = "particles";
 
 	/**
 	 * Initializes the <Sidebar /> component in #spa-nav.
@@ -110,33 +109,6 @@
 					}
 				}, 333);
 			});
-		if (window.cookieconsent)
-			window.cookieconsent.run({
-				notice_banner_type: "simple",
-				consent_type: "express",
-				palette: localStorage.getItem("APP_THEME") ?? "dark",
-				language: localStorage.getItem("APP_LANG") ?? "es",
-				website_name: "[Mateus] byUwUr",
-				change_preferences_selector: "#cookiePrefs"
-			});
-		else console.warn("Can't load cookieconsent if script ain't exist.");
-		if (window.particlesJS && $(`#${byCommon.PARTICLES_CONTAINER_ID}`).length)
-			window.particlesJS(byCommon.PARTICLES_CONTAINER_ID, {
-				particles: {
-					number: { value: 32, density: { enable: false, value_area: 0 } },
-					shape: { type: "polygon", stroke: { width: 0, color: "#777777" }, polygon: { nb_sides: 3 } },
-					opacity: { value: 0.25 },
-					size: { value: 2 },
-					line_linked: { enable: true, distance: 192, color: "#777777", opacity: 0.5, width: 1 },
-					move: { enable: true, speed: 1, direction: "right", random: false, straight: false, out_mode: "out", bounce: false, attract: { enable: false } }
-				},
-				interactivity: {
-					detect_on: "window",
-					events: { onhover: { enable: true, mode: "grab" }, onclick: { enable: false } },
-					modes: { grab: { distance: 256, line_linked: { opacity: 0.5 } } }
-				}
-			});
-
 		console.log("Init misc");
 	};
 
@@ -198,6 +170,55 @@
 	};
 
 	/**
+	 * Reloads Cookie Consent if present
+	 */
+	byCommon.initCookieConsent = function () {
+		if (typeof cookieconsent === "undefined" && !window.cookieconsent) return console.warn("Can't load CookieConsent if script ain't present.");
+		try {
+			cookieconsent.run({
+				notice_banner_type: "simple",
+				consent_type: "express",
+				palette: localStorage.getItem("APP_THEME") ?? "dark",
+				language: localStorage.getItem("APP_LANG") ?? "es",
+				website_name: "[Mateus] byUwUr",
+				change_preferences_selector: "#cookiePrefs"
+			});
+			console.log("Init CookieConsent");
+		} catch (e) {
+			console.warn("initCookieConsent():", e);
+		}
+	};
+
+	/**
+	 * Reloads Particles if present
+	 */
+	byCommon.initParticles = function () {
+		if (typeof particlesJS === "undefined" && !window.particlesJS) return console.warn("Can't load Particles if script ain't present.");
+		const PARTICLES_CONTAINER_ID = "particles";
+		if (!$(`#${PARTICLES_CONTAINER_ID}`).length) return console.warn(`Can't find Particles.JS container (#${PARTICLES_CONTAINER_ID})`);
+		try {
+			particlesJS(PARTICLES_CONTAINER_ID, {
+				particles: {
+					number: { value: 32, density: { enable: false, value_area: 0 } },
+					shape: { type: "polygon", stroke: { width: 0, color: "#777777" }, polygon: { nb_sides: 3 } },
+					opacity: { value: 0.25 },
+					size: { value: 2 },
+					line_linked: { enable: true, distance: 192, color: "#777777", opacity: 0.5, width: 1 },
+					move: { enable: true, speed: 1, direction: "right", random: false, straight: false, out_mode: "out", bounce: false, attract: { enable: false } }
+				},
+				interactivity: {
+					detect_on: "window",
+					events: { onhover: { enable: true, mode: "grab" }, onclick: { enable: false } },
+					modes: { grab: { distance: 256, line_linked: { opacity: 0.5 } } }
+				}
+			});
+			console.log("Init Particles.JS");
+		} catch (e) {
+			console.warn("initParticles():", e);
+		}
+	};
+
+	/**
 	 * Initializes all components that dynamically changes within the page
 	 */
 	byCommon.init = function () {
@@ -208,76 +229,45 @@
 			byCommon.initMisc();
 			byCommon.initBootstrap();
 			byCommon.initSidebar();
+			byCommon.initCookieConsent();
+			byCommon.initParticles();
 		});
 	};
 
-	// --- ACCESSIBILITY ---
+	/**
+	 * * --- ACCESSIBILITY --- *
+	 */
 	byCommon.fontSize = 16;
-	byCommon.accessibilityElement = "html";
-	/**
-	 * Accessibility: Toggle
-	 */
-	byCommon.accessibilityToggle = function () {
-		$("#bywr-accessibility-buttons").toggleClass("hide");
-	};
-	/**
-	 * Accessibility: Text Size
-	 */
-	byCommon.accessibilityText = function (mode = "") {
+	byCommon.accessibilityToggle = () => $("#bywr-accessibility-buttons").toggleClass("hide");
+	byCommon.accessibilityText = (mode = "") => {
 		switch (mode) {
 			case "plus":
+			case "mas":
 				if (byCommon.fontSize <= 80) byCommon.fontSize += 2;
 				break;
 			case "minus":
+			case "menos":
 				if (byCommon.fontSize >= 8) byCommon.fontSize -= 2;
 				break;
 			default:
 				byCommon.fontSize = 16;
 				break;
 		}
-		$(byCommon.accessibilityElement).css("font-size", `${byCommon.fontSize}px`);
+		$("html").css("font-size", `${byCommon.fontSize}px`);
 		$("body").css("font-size", `${byCommon.fontSize}px`);
 	};
-	/**
-	 * Accessibility: No Motion
-	 */
-	byCommon.accessibilityMotion = function () {
-		$(byCommon.accessibilityElement).toggleClass("no-motion");
-	};
-	/**
-	 * Accessibility: Dyslexia
-	 */
-	byCommon.accessibilityDyslexia = function () {
-		//$(byCommon.accessibilityElement).toggleClass("dyslexia");
-		$("body").toggleClass("dyslexia");
-	};
-	/**
-	 * Accessibility: Word spacing
-	 */
-	byCommon.accessibilityWordSpacing = function () {
-		//$(byCommon.accessibilityElement).toggleClass("word-spacing");
-		$("body").toggleClass("word-spacing");
-	};
-	/**
-	 * Accessibility: Highlight Links
-	 */
-	byCommon.accessibilityHighlightLinks = function () {
-		$(byCommon.accessibilityElement).toggleClass("highlight-links");
-	};
-	/**
-	 * Accessibility: High contrast
-	 */
-	byCommon.accessibilityHighContrast = function (mode = "high-contrast") {
-		if ($(byCommon.accessibilityElement).hasClass(mode)) {
-			$(byCommon.accessibilityElement).removeClass(mode);
-			return;
-		}
-		$(byCommon.accessibilityElement).removeClass("protanopia");
-		$(byCommon.accessibilityElement).removeClass("deuteranopia");
-		$(byCommon.accessibilityElement).removeClass("tritanopia");
-		$(byCommon.accessibilityElement).removeClass("monochropia");
-		$(byCommon.accessibilityElement).removeClass("invertchropia");
-		$(byCommon.accessibilityElement).removeClass("high-contrast");
-		$(byCommon.accessibilityElement).addClass(mode);
+	byCommon.accessibilityMotion = () => $("html").toggleClass("no-motion");
+	byCommon.accessibilityDyslexia = () => $("body").toggleClass("dyslexia");
+	byCommon.accessibilityWordSpacing = () => $("body").toggleClass("word-spacing");
+	byCommon.accessibilityHighlightLinks = () => $("html").toggleClass("highlight-links");
+	byCommon.accessibilityHighContrast = (mode = "high-contrast") => {
+		if ($("html").hasClass(mode)) return $("html").removeClass(mode);
+		$("html").removeClass("protanopia");
+		$("html").removeClass("deuteranopia");
+		$("html").removeClass("tritanopia");
+		$("html").removeClass("monochropia");
+		$("html").removeClass("invertchropia");
+		$("html").removeClass("high-contrast");
+		$("html").addClass(mode);
 	};
 })(typeof window !== "undefined" ? window : this);
