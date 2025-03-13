@@ -54,6 +54,7 @@ require_once $TO_HOME . "common.php";
     <link rel="stylesheet" href="<?= $HOME_PATH; ?>/css/shards.css" />
     <link rel="stylesheet" href="<?= $HOME_PATH; ?>/css/bootstrap.min.css" />
     <link rel="stylesheet" href="<?= $HOME_PATH; ?>/css/swiper.min.css" />
+    <link rel="stylesheet" href="<?= $HOME_PATH; ?>/css/video.min.css" />
     <link rel="stylesheet" href="<?= $HOME_PATH; ?>/css/select2.min.css" />
     <link rel="stylesheet" href="<?= $HOME_PATH; ?>/css/dropzone.min.css" />
     <link rel="stylesheet" href="<?= $HOME_PATH; ?>/_common.css" />
@@ -63,6 +64,7 @@ require_once $TO_HOME . "common.php";
     <script src="<?= $HOME_PATH; ?>/js/shards.min.js" defer></script>
     <script src="<?= $HOME_PATH; ?>/js/bootstrap.min.js" defer></script>
     <script src="<?= $HOME_PATH; ?>/js/swiper.min.js" defer></script>
+    <script src="<?= $HOME_PATH; ?>/js/video.min.js" defer></script>
     <script src="<?= $HOME_PATH; ?>/js/select2.full.min.js" defer></script>
     <script src="<?= $HOME_PATH; ?>/js/dropzone.min.js" defer></script>
     <script src="<?= $HOME_PATH; ?>/js/typed.min.js" defer></script>
