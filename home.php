@@ -138,7 +138,6 @@ require_once $TO_HOME . "common.php";
     </div>
     <video class="video-container" muted loop autoplay playsinline>
         <source src="<?= $HOME_PATH; ?>/img/bg.mp4" type="video/mp4" />
-        <source src="<?= $HOME_PATH; ?>/img/bg.webm" type="video/webm" />
     </video>
     <div id="particles"></div>
     <div id="g-translate"></div>
