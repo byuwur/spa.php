@@ -63,6 +63,34 @@ function make_http_request(string $url, array $get = [], array $post = [])
 }
 
 /** 
+ * Makes an HTTP CURL request to a given URL to check if responds correctly (200 - 299).
+ * @param string $url The URL to send the request to.
+ * @return boolean The resource existence.
+ */
+function remote_file_exists(string $url)
+{
+    if (!validate_value($url, "url")) return console_error("CURL ERROR: Invalid URL.");
+    global $SYSTEM_ROOT;
+    $req = curl_init();
+    curl_setopt($req, CURLOPT_URL, $url);
+    curl_setopt($req, CURLOPT_NOBODY, true);
+    curl_setopt($req, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($req, CURLOPT_VERBOSE, true);
+    curl_setopt($req, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($req, CURLOPT_CAINFO, $SYSTEM_ROOT . "/cacert.pem");
+    curl_exec($req);
+    if (curl_errno($req)) {
+        console_error("CURL HTTP2 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req) . " = Switching to HTTP1.1");
+        curl_setopt($req, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+        curl_exec($req);
+    }
+    if (curl_errno($req)) console_error("CURL HTTP1.1 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req));
+    $http_code = curl_getinfo($req, CURLINFO_RESPONSE_CODE);
+    curl_close($req);
+    return $http_code >= 200 && $http_code <= 299;
+}
+
+/** 
  * Validates a value against a specified type and sanitizes it accordingly, returning NULL if the value is invalid.
  * @param mixed $input The value to validate.
  * @param string $type The type to validate against. Defaults to "string".
