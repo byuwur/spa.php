@@ -252,6 +252,31 @@
 	};
 
 	/**
+	 * * --- VIDEO --- *
+	 */
+	byCommon.VIDEO_COMMON_OPTIONS = {
+		controls: true,
+		autoplay: true,
+		preload: "auto",
+		fluid: true,
+		playbackRates: [0.5, 1, 1.5, 2],
+		controlBar: {
+			currentTimeDisplay: true,
+			timeDivider: true,
+			durationDisplay: true,
+			remainingTimeDisplay: true,
+			progressControl: true,
+			fullscreenToggle: true,
+			pictureInPictureToggle: true,
+			playbackRateMenuButton: true,
+			chaptersButton: true,
+			volumePanel: {
+				inline: false
+			}
+		}
+	};
+
+	/**
 	 * * --- ACCESSIBILITY --- *
 	 */
 	byCommon.fontSize = 16;

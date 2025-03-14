@@ -20,7 +20,7 @@ require_once $TO_HOME . "common.php";
             <hr class="w-100" />
             <p>Video Demo:</p>
         </div>
-        <video id="subtitle-sample" class="video-js w-100" poster="<?= $HOME_PATH; ?>/img/video/sample.jpg" controls playsinline>
+        <video id="bywr-video-player" class="video-js w-100" poster="<?= $HOME_PATH; ?>/img/video/sample.jpg" controls playsinline>
             <source src="<?= $HOME_PATH; ?>/img/video/sample.mp4" type="video/mp4" />
             <track src="<?= $HOME_PATH; ?>/img/video/sample.en.vtt" kind="captions" srclang="en" label="English" default />
             <track src="<?= $HOME_PATH; ?>/img/video/sample.es.vtt" kind="captions" srclang="es" label="Español" />
@@ -31,28 +31,9 @@ require_once $TO_HOME . "common.php";
     $(() => {
         document.title = "<?= $titles[$title_index]; ?>";
         byCommon.init();
-
-        const byVideoPlayer = videojs("subtitle-sample", {
-            controls: true,
-            autoplay: false,
-            preload: 'auto',
-            fluid: true,
-            playbackRates: [0.5, 1, 1.5, 2],
-            controlBar: {
-                currentTimeDisplay: true,
-                timeDivider: true,
-                durationDisplay: true,
-                remainingTimeDisplay: true,
-                progressControl: true,
-                fullscreenToggle: true,
-                pictureInPictureToggle: true,
-                playbackRateMenuButton: true,
-                chaptersButton: true,
-                volumePanel: {
-                    inline: false
-                },
-            }
-        });
+        let byVideoPlayer = videojs.getPlayer("bywr-video-player");
+        if (byVideoPlayer) byVideoPlayer.dispose();
+        byVideoPlayer = videojs("bywr-video-player", byCommon.VIDEO_COMMON_OPTIONS);
     });
 </script>
 <?php
