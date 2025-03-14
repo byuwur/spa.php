@@ -14,6 +14,19 @@
 	--dark-transparent: #0007;
 	--dark-clear: #0003;
 	--dark-opaque: #000b;
+	--transparent: #0000;
+	--bywr-red: #600;
+	--bywr-red-transparent: #6007;
+	--bywr-red-clear: #6003;
+	--bywr-red-opaque: #600b;
+	--bywr-red-light: #900;
+	--bywr-red-light-transparent: #9007;
+	--bywr-red-light-clear: #9003;
+	--bywr-red-light-opaque: #900b;
+	--bywr-red-dark: #300;
+	--bywr-red-dark-transparent: #3007;
+	--bywr-red-dark-clear: #3003;
+	--bywr-red-dark-opaque: #300b;
 }
 /* === SELECTION === */
 ::selection {
@@ -318,7 +331,7 @@ th {
 .btn.btn-tertiary:hover,
 .btn.btn-quarternary,
 .btn.btn-quarternary:hover {
-	text-shadow: 0 0 #0000 !important;
+	text-shadow: 0 0 var(--transparent) !important;
 }
 /* === INPUTS === */
 :disabled,
@@ -558,30 +571,30 @@ th {
 	text-decoration: none !important;
 }
 .swiper-pagination {
-	background: -moz-linear-gradient(0deg, #0006 0%, #0000 100%);
-	background: -webkit-linear-gradient(0deg, #0006 0%, #0000 100%);
-	background: -o-linear-gradient(0deg, #0006 0%, #0000 100%);
-	background: -ms-linear-gradient(0deg, #0006 0%, #0000 100%);
-	background: linear-gradient(0deg, #0006 0%, #0000 100%);
+	background: -moz-linear-gradient(0deg, #0006 0%, var(--transparent) 100%);
+	background: -webkit-linear-gradient(0deg, #0006 0%, var(--transparent) 100%);
+	background: -o-linear-gradient(0deg, #0006 0%, var(--transparent) 100%);
+	background: -ms-linear-gradient(0deg, #0006 0%, var(--transparent) 100%);
+	background: linear-gradient(0deg, #0006 0%, var(--transparent) 100%);
 	bottom: 0 !important;
 	height: 3rem;
 }
 .swiper-button-prev,
 .swiper-button-prev:hover {
-	background: -moz-linear-gradient(90deg, var(--swiper-navigation-background) 0%, #0000 100%);
-	background: -webkit-linear-gradient(90deg, var(--swiper-navigation-background) 0%, #0000 100%);
-	background: -o-linear-gradient(90deg, var(--swiper-navigation-background) 0%, #0000 100%);
-	background: -ms-linear-gradient(90deg, var(--swiper-navigation-background) 0%, #0000 100%);
-	background: linear-gradient(90deg, var(--swiper-navigation-background) 0%, #0000 100%);
+	background: -moz-linear-gradient(90deg, var(--swiper-navigation-background) 0%, var(--transparent) 100%);
+	background: -webkit-linear-gradient(90deg, var(--swiper-navigation-background) 0%, var(--transparent) 100%);
+	background: -o-linear-gradient(90deg, var(--swiper-navigation-background) 0%, var(--transparent) 100%);
+	background: -ms-linear-gradient(90deg, var(--swiper-navigation-background) 0%, var(--transparent) 100%);
+	background: linear-gradient(90deg, var(--swiper-navigation-background) 0%, var(--transparent) 100%);
 	left: 0;
 }
 .swiper-button-next,
 .swiper-button-next:hover {
-	background: -moz-linear-gradient(90deg, #0000 0%, var(--swiper-navigation-background) 100%);
-	background: -webkit-linear-gradient(90deg, #0000 0%, var(--swiper-navigation-background) 100%);
-	background: -o-linear-gradient(90deg, #0000 0%, var(--swiper-navigation-background) 100%);
-	background: -ms-linear-gradient(90deg, #0000 0%, var(--swiper-navigation-background) 100%);
-	background: linear-gradient(90deg, #0000 0%, var(--swiper-navigation-background) 100%);
+	background: -moz-linear-gradient(90deg, var(--transparent) 0%, var(--swiper-navigation-background) 100%);
+	background: -webkit-linear-gradient(90deg, var(--transparent) 0%, var(--swiper-navigation-background) 100%);
+	background: -o-linear-gradient(90deg, var(--transparent) 0%, var(--swiper-navigation-background) 100%);
+	background: -ms-linear-gradient(90deg, var(--transparent) 0%, var(--swiper-navigation-background) 100%);
+	background: linear-gradient(90deg, var(--transparent) 0%, var(--swiper-navigation-background) 100%);
 	right: 0;
 }
 .swiper-button-prev:hover,
@@ -599,7 +612,7 @@ th {
 	height: 100%;
 	margin: 0;
 	padding: 0;
-	background: #0000;
+	background: var(--transparent);
 	z-index: 9;
 }
 /* === LOADER === */
@@ -623,7 +636,7 @@ th {
 }
 #spa-loader .load-text {
 	position: absolute;
-	background: #0000;
+	background: var(--transparent);
 	color: #fff;
 	bottom: 10%;
 	left: 0;
@@ -782,11 +795,11 @@ th {
 }
 /* === ACCORDIONS === */
 .bywr-accordion .accordion-item {
-	background: #0000;
+	background: var(--transparent);
 	border: 0;
 }
 .bywr-accordion .accordion-button {
-	background: #0000;
+	background: var(--transparent);
 }
 .bywr-accordion .accordion-button:not(.collapsed) {
 	background: #fff3;
