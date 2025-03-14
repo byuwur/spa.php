@@ -719,10 +719,26 @@ th {
 #g-translate {
 	position: fixed;
 	bottom: 0;
-    right: 0;
-    background: #eee;
-    padding: 0 4px;
-    z-index: 11;
+	right: 0;
+	background: #eee;
+	padding: 0 4px;
+	z-index: 11;
+}
+/* === VIDEO.js === */
+.video-js > * {
+	color: #fff !important;
+	font-size: 0.75rem !important;
+	background: var(--bywr-red-dark-opaque) !important;
+	-webkit-backdrop-filter: blur(0.125rem) !important;
+	backdrop-filter: blur(0.125rem) !important;
+}
+.vjs-text-track-display {
+	background: var(--transparent) !important;
+	-webkit-backdrop-filter: none !important;
+	backdrop-filter: none !important;
+}
+.vjs-modal-dialog {
+	height: 75% !important;
 }
 /* === PARTICLES === */
 #particles {
