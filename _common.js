@@ -264,15 +264,25 @@
 			currentTimeDisplay: true,
 			timeDivider: true,
 			durationDisplay: true,
-			remainingTimeDisplay: true,
+			remainingTimeDisplay: false,
 			progressControl: true,
 			fullscreenToggle: true,
 			pictureInPictureToggle: true,
 			playbackRateMenuButton: true,
-			chaptersButton: true,
-			volumePanel: {
-				inline: false
-			}
+			chaptersButton: true
+		}
+	};
+
+	byCommon.initVideo = function (elementId, optionsOverride = {}) {
+		if (typeof videojs === "undefined" && !window.videojs) return console.warn("Can't load Video.JS if script ain't present.");
+		if (!$(`#${elementId}`).length) return console.warn(`Can't find Video.JS container (#${elementId})`);
+		try {
+			let byVideoPlayer = videojs.getPlayer(elementId);
+			if (byVideoPlayer) byVideoPlayer.dispose();
+			byVideoPlayer = videojs(elementId, { ...byCommon.VIDEO_COMMON_OPTIONS, ...optionsOverride });
+			console.log(`Init Video.JS("#${elementId}")`);
+		} catch (e) {
+			console.warn("initVideo():", e);
 		}
 	};
 
