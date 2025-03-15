@@ -24,4 +24,5 @@ $routes = [
     $ROOT_ROUTE . "home" => ["URI" => "/main.example.php", "GET" => ["lang" => "en"], ...$ROOT_COMPONENTS],
     $ROOT_ROUTE . "pagina" => ["URI" => "/page.example.php", "GET" => ["lang" => "es"], ...$ROOT_COMPONENTS],
     $ROOT_ROUTE . "page" => ["URI" => "/page.example.php", "GET" => ["lang" => "en"], ...$ROOT_COMPONENTS],
+    $ROOT_ROUTE . "video" => ["URI" => "/video.example.php", "GET" => [], ...$ROOT_COMPONENTS],
 ];

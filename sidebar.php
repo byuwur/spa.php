@@ -18,13 +18,16 @@ require_once $TO_HOME . "lang/" . $app_lang . ".php";
             <span class="ms-2 me-4 pe-5">byuwur/spa.php</span>
         </div>
         <a class="bywr-sidebar-option" href="<?= $ROOT_ROUTE . $_home; ?>">
-            <i class="fas fa-home"></i><span><?= $home; ?></span><i class="fas fa-angle-right ms-auto"></i>
+            <i class="fas fa-home"></i> <span><?= $home; ?></span><i class="fas fa-angle-right ms-auto"></i>
         </a>
         <a class="bywr-sidebar-option" href="<?= $ROOT_ROUTE . $_page; ?>">
-            <i class="fas fa-dice-one"></i><span><?= $page; ?></span><i class="fas fa-angle-right ms-auto"></i>
+            <i class="fas fa-dice-one"></i> <span><?= $page; ?></span><i class="fas fa-angle-right ms-auto"></i>
+        </a>
+        <a class="bywr-sidebar-option" href="<?= $ROOT_ROUTE . $_video; ?>">
+            <i class="fas fa-video"></i> <span><?= $video; ?></span><i class="fas fa-angle-right ms-auto"></i>
         </a>
         <a class="bywr-sidebar-option" href="<?= $ROOT_ROUTE; ?>error">
-            <i class="fas fa-bug"></i><span>Error</span><i class="fas fa-angle-right ms-auto"></i>
+            <i class="fas fa-bug"></i> <span>Error</span><i class="fas fa-angle-right ms-auto"></i>
         </a>
     </div>
     <div class="bywr-sidebar-content accordion-item flex-grow-0">
