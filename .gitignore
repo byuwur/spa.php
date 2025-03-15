@@ -24,3 +24,5 @@ Thumbs.db
 *.log
 *.tmp
 *.temp
+# Multimedia
+*.mp4
