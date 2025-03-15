@@ -39,7 +39,7 @@ function api_respond(int $status, bool $error, string $message, array $data = []
 function make_http_request(string $url, array $get = [], array $post = [])
 {
     if (!validate_value($url, "url")) return console_error("CURL ERROR: Invalid URL.");
-    global $SYSTEM_ROOT;
+    global $TO_HOME, $SYSTEM_ROOT;
     session_write_close();
     $req = curl_init();
     $post[session_name()] = session_id();
@@ -49,7 +49,8 @@ function make_http_request(string $url, array $get = [], array $post = [])
     curl_setopt($req, CURLOPT_POSTFIELDS, http_build_query($post));
     curl_setopt($req, CURLOPT_VERBOSE, true);
     curl_setopt($req, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($req, CURLOPT_CAINFO, $SYSTEM_ROOT . "/cacert.pem");
+    $cert_file = file_exists($TO_HOME . "spa.php/cacert.pem") ? $SYSTEM_ROOT . "/spa.php/cacert.pem" : $SYSTEM_ROOT . "/cacert.pem";
+    curl_setopt($req, CURLOPT_CAINFO, $cert_file);
     $requested = curl_exec($req);
     if (curl_errno($req)) {
         console_error("CURL HTTP2 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req) . " = Switching to HTTP1.1");
@@ -70,14 +71,15 @@ function make_http_request(string $url, array $get = [], array $post = [])
 function remote_file_exists(string $url)
 {
     if (!validate_value($url, "url")) return console_error("CURL ERROR: Invalid URL.");
-    global $SYSTEM_ROOT;
+    global $TO_HOME, $SYSTEM_ROOT;
     $req = curl_init();
     curl_setopt($req, CURLOPT_URL, $url);
     curl_setopt($req, CURLOPT_NOBODY, true);
     curl_setopt($req, CURLOPT_FOLLOWLOCATION, true);
     curl_setopt($req, CURLOPT_VERBOSE, true);
     curl_setopt($req, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($req, CURLOPT_CAINFO, $SYSTEM_ROOT . "/cacert.pem");
+    $cert_file = file_exists($TO_HOME . "spa.php/cacert.pem") ? $SYSTEM_ROOT . "/spa.php/cacert.pem" : $SYSTEM_ROOT . "/cacert.pem";
+    curl_setopt($req, CURLOPT_CAINFO, $cert_file);
     curl_exec($req);
     if (curl_errno($req)) {
         console_error("CURL HTTP2 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req) . " = Switching to HTTP1.1");
