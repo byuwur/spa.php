@@ -732,6 +732,23 @@ th {
 	-webkit-backdrop-filter: blur(0.125rem) !important;
 	backdrop-filter: blur(0.125rem) !important;
 }
+.vjs-current-time,
+.vjs-duration,
+.vjs-time-divider {
+	display: flex !important;
+	align-items: center !important;
+	font-size: 0.875rem !important;
+	line-height: 1rem !important;
+	padding-left: 0.25rem !important;
+	padding-right: 0.25rem !important;
+	min-width: 0 !important;
+}
+.vjs-big-play-button {
+	font-size: 2rem !important;
+}
+.vjs-menu li {
+	text-transform: capitalize !important;
+}
 .vjs-text-track-display {
 	background: var(--transparent) !important;
 	-webkit-backdrop-filter: none !important;
