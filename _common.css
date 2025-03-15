@@ -155,6 +155,9 @@ a:hover {
 	text-decoration: underline !important;
 	color: #69f !important;
 }
+.link {
+	text-decoration: underline !important;
+}
 h1,
 h2,
 h3,
@@ -391,7 +394,7 @@ th {
 	overflow-x: hidden;
 	overflow-y: auto;
 }
-@media screen and (min-width: 992px) {
+@media (min-width: 992px) {
 	.dropdown-menu {
 		max-height: 50vh;
 		max-width: 500px;
@@ -514,7 +517,7 @@ th {
 	--swiper-pagination-color: #fff;
 	--swiper-navigation-background: color-mix(in srgb, var(--secondary-color) 50%, transparent);
 }
-@media screen and (max-width: 576px) {
+@media (max-width: 576px) {
 	.swiper_16-9 {
 		height: 33vh;
 	}
@@ -729,7 +732,6 @@ th {
 	color: #fff !important;
 	font-size: 0.75rem !important;
 	background: var(--bywr-red-dark-opaque) !important;
-	-webkit-backdrop-filter: blur(0.125rem) !important;
 	backdrop-filter: blur(0.125rem) !important;
 }
 .vjs-current-time,
@@ -741,7 +743,14 @@ th {
 	line-height: 1rem !important;
 	padding-left: 0.25rem !important;
 	padding-right: 0.25rem !important;
+}
+.vjs-control-bar > * {
 	min-width: 0 !important;
+}
+@media (max-width: 576px) {
+	.vjs-control {
+		width: 2rem !important;
+	}
 }
 .vjs-big-play-button {
 	font-size: 2rem !important;
@@ -751,7 +760,6 @@ th {
 }
 .vjs-text-track-display {
 	background: var(--transparent) !important;
-	-webkit-backdrop-filter: none !important;
 	backdrop-filter: none !important;
 }
 .vjs-modal-dialog {
@@ -1046,7 +1054,7 @@ th {
 #bywr-accessibility-buttons {
 	max-height: 90vh;
 }
-@media screen and (max-width: 576px) {
+@media (max-width: 576px) {
 	#bywr-accessibility {
 		top: 17.5vh;
 	}
