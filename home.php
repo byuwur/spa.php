@@ -27,7 +27,7 @@ require_once $TO_HOME . "_router.php";
 //require_once $TO_HOME . "_auth.php";
 
 // --- PHP ---
-require_once $TO_HOME . "common.php";
+require_once $TO_HOME . "common.example.php";
 ?>
 
 <head>

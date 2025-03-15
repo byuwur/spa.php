@@ -9,7 +9,7 @@ require_once $TO_HOME . "_routes.php";
 //require_once $TO_HOME . "_router.php";
 //require_once $TO_HOME . "_auth.php";
 // --- PHP ---
-require_once $TO_HOME . "common.php";
+require_once $TO_HOME . "common.example.php";
 ?>
 <div class="video-foreground app-container">
     <div class="container vh-100 d-flex flex-column align-items-center justify-content-center">
@@ -18,7 +18,7 @@ require_once $TO_HOME . "common.php";
             <p><?= $thisis . " " . $home; ?>.</p>
             <p><?= $home . ": "; ?><b><i>"<?= $home_desc; ?>"</i></b></p>
             <hr class="w-100" />
-            <a href="<?= $ROOT_ROUTE . "video"; ?>"><?= $video; ?></a>
+            <a href="<?= $ROOT_ROUTE . "video"; ?>" class="link"><?= $video; ?></a>
         </div>
     </div>
 </div>
