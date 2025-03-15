@@ -275,12 +275,53 @@
 
 	byCommon.initVideo = function (elementId, optionsOverride = {}) {
 		if (typeof videojs === "undefined" && !window.videojs) return console.warn("Can't load Video.JS if script ain't present.");
-		if (!$(`#${elementId}`).length) return console.warn(`Can't find Video.JS container (#${elementId})`);
+		const VIDEO_CONTAINER = $(`#${elementId}`);
+		if (!VIDEO_CONTAINER.length) return console.warn(`Can't find Video.JS container (#${elementId})`);
 		try {
 			let byVideoPlayer = videojs.getPlayer(elementId);
 			if (byVideoPlayer) byVideoPlayer.dispose();
 			byVideoPlayer = videojs(elementId, { ...byCommon.VIDEO_COMMON_OPTIONS, ...optionsOverride });
 			console.log(`Init Video.JS("#${elementId}")`);
+			// Bind keyboard shortcuts
+			$(document).on("keydown", function (e) {
+				if (!VIDEO_CONTAINER.is(":focus")) return; // Ignore if player is not focused
+				if ($(":focus").is("input, textarea")) return; // Ignore if input is focused
+				// Params
+				const actions = {
+						0: () => byVideoPlayer.currentTime(0), // Go to Start
+						" ": () => (byVideoPlayer.paused() ? byVideoPlayer.play() : byVideoPlayer.pause()), // Spacebar
+						k: () => (byVideoPlayer.paused() ? byVideoPlayer.play() : byVideoPlayer.pause()),
+						arrowup: () => byVideoPlayer.volume(Math.min(1, volume + 0.1)), // Volume Up
+						arrowdown: () => byVideoPlayer.volume(Math.max(0, volume - 0.1)), // Volume Down
+						arrowleft: () => byVideoPlayer.currentTime(time - 5), // Seek -5s
+						arrowright: () => byVideoPlayer.currentTime(time + 5), // Seek +5s
+						j: () => byVideoPlayer.currentTime(time - 10), // Seek -10s
+						l: () => byVideoPlayer.currentTime(time + 10), // Seek +10s
+						m: () => byVideoPlayer.muted(!byVideoPlayer.muted()), // Mute
+						f: () => (byVideoPlayer.isFullscreen() ? byVideoPlayer.exitFullscreen() : byVideoPlayer.requestFullscreen()) // Fullscreen
+					},
+					key = e.key.toLowerCase(),
+					time = byVideoPlayer.currentTime(),
+					duration = byVideoPlayer.duration(),
+					volume = byVideoPlayer.volume();
+				// Number (1-9) jump to its percentage
+				if (!isNaN(key) && key > 0) {
+					e.preventDefault();
+					byVideoPlayer.currentTime(((key * 10) / 100) * duration);
+				}
+				// Execute action
+				if (actions[key]) {
+					e.preventDefault();
+					actions[key]();
+				}
+			});
+			// Initialize Tooltip components for shortcuts if bootstrap exists
+			if (typeof bootstrap != "undefined" && window.bootstrap) {
+				$(".vjs-play-control").attr({ "data-bs-toggle": "tooltip", "data-bs-title": "Play/Pause (K)" });
+				$(".vjs-volume-panel").attr({ "data-bs-toggle": "tooltip", "data-bs-title": "Mute (M)" });
+				$(".vjs-fullscreen-control").attr({ "data-bs-toggle": "tooltip", "data-bs-title": "Fullscreen (F)" });
+				[...document.querySelectorAll("[data-bs-toggle='tooltip']")].forEach((tooltipEl) => bootstrap.Tooltip.getInstance(tooltipEl) ?? new bootstrap.Tooltip(tooltipEl, { animation: false }));
+			}
 		} catch (e) {
 			console.warn("initVideo():", e);
 		}
