@@ -3,8 +3,8 @@
 ### Deps: none
 ### Copyright (c) 2025 Andrés Trujillo [Mateus] byUwUr
 
-# Disable MultiViews to avoid URL conflicts
-Options -Multiviews
+# Disable MultiViews to avoid URL conflicts && Directory Listing
+Options -Multiviews -Indexes
 # Enable URL rewriting
 RewriteEngine On
 # Rewrite non-existing files or directories to home.php with a query parameter
@@ -53,7 +53,30 @@ RewriteRule ^(.*)$ - [F]
 # Block TRACE and TRACK HTTP methods
 RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK)
 RewriteRule .* - [F]
-# Forbid access to specific file types (e.g., source control files, config files)
-<FilesMatch "^(.*\.)?(git|gitignore|gitmodules|example|sh|rb|inc|ht|env|md|json|lock|htaccess|ini|log|conf|pem|sql|txt|bak|old)$">
+# Forbid access to specific file types
+<FilesMatch "^(.*\.)?(git|gitignore|gitmodules|example|sh|rb|inc|ht|env|md|json|lock|htaccess|ini|log|conf|con|pem|sql|txt|bak|old)$">
     Require all denied
 </FilesMatch>
+# Block access to hidden files and folders starting with a dot
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+# MIME Sniffing && XSS
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>
+# === Prevent PHP Exec === [You might need to add this into the respective folder's .htaccess. e.g.: (uploads/, assets/)]
+# Disable PHP execution in this folder, but allow file access
+#<IfModule mod_php.c>
+#    php_flag engine off
+#</IfModule>
+#<IfModule mod_mime.c>
+#    RemoveHandler .php .phtml .php3 .php4 .php5 .php7 .php8
+#    AddType text/plain .php .phtml .php3 .php4 .php5 .php7 .php8
+#</IfModule>
+# If you have PHP-FPM enabled, deny the access as a fall back
+#<FilesMatch "\.(php|phtml|php3|php4|php5|php7|php8)$">
+#    Require all denied
+#</FilesMatch>
+# === Prevent PHP Exec ===
