@@ -66,7 +66,7 @@
 	 * @param {string} custom_error_message A custom error message to display.
 	 */
 	bySPA.errorPage = function (status, custom_error_message = "") {
-		const _error = bySPA.fileExists(`${bySPA.HOME_PATH}/spa.php/_error.php`) ? `${bySPA.HOME_PATH}/spa.php/_error.php` : `${bySPA.HOME_PATH}/_error.php`;
+		const _error = bySPA.fileExists(`${bySPA.HOME_PATH}/_error.php`) ? `${bySPA.HOME_PATH}/_error.php` : `${bySPA.HOME_PATH}/spa.php/_error.php`;
 		return $.ajax({
 			url: `${_error}?e=${status}`,
 			type: "POST",

@@ -23,10 +23,8 @@ if (strpos($uri, "/\$/") !== false) {
             $_GET[$param_key_value[$i]] = $param_key_value[$i + 1];
 }
 // Check if the URI exists in the routes array; if not, return a 404 error
-if (!array_key_exists($uri, $routes) || (!isset($routes[$uri]["URI"]) && !isset($routes[$uri]["FILE"]))) {
-    $_error = file_exists($TO_HOME . "spa.php/_error.php") ? $TO_HOME . "spa.php/_error.php" : $TO_HOME . "_error.php";
-    error_crash(404, "Route \"" . $uri . "\" does not exist.", $_error);
-}
+if (!array_key_exists($uri, $routes) || (!isset($routes[$uri]["URI"]) && !isset($routes[$uri]["FILE"])))
+    error_crash(404, "Route \"" . $uri . "\" does not exist.");
 // If the URI is associated with a file, serve the file with appropriate headers
 if (array_key_exists($uri, $routes) && isset($routes[$uri]["FILE"])) {
     header("Content-Type: " . get_mime_type($routes[$uri]["FILE"]));

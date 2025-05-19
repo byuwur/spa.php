@@ -607,11 +607,15 @@ function console_error(string $message)
  * @param string $message The error message to display.
  * @param string $error_file The path to the error file to include.
  */
-function error_crash(int $status, string $message, string $error_file)
+function error_crash(int $status, string $message, string $error_file = null)
 {
+    global $TO_HOME;
+    if (!$error_file || !file_exists($error_file))
+        $error_file = file_exists($TO_HOME . "_error.php") ? $TO_HOME . "_error.php" : $TO_HOME . "spa.php/_error.php";
     console_warn("App crashed (" . $status . "): " . $message);
     $_GET["e"] = $status;
     $_POST["custom_error_message"] = $message;
+    http_response_code($status);
     require_once $error_file;
     ob_end_flush();
     exit;
