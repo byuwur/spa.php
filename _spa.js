@@ -258,6 +258,8 @@
 			})
 			.catch(function (xhr, status, error) {
 				console.error(`Error (SPA): ${xhr?.status} ${status} ${error}`, bySPA.APP_ENV == "DEV" ? xhr : "");
+				document.documentElement.innerHTML = xhr.responseText;
+				$("head").append(`<script>window.addEventListener("popstate", function (e) { window.location.reload(); });</script>`);
 				return null;
 			})
 			.always(function () {
