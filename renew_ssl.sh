@@ -8,11 +8,27 @@ fi
 
 echo ""
 echo "[RENEW] SSL certificate for Bitnami LAMP with Certbot:"
-echo "=== script start ==="
+echo "=== SCRIPT START ==="
 echo ""
 
-read -p "Enter your domain: " DOMAIN
-WILDCARD="*.$DOMAIN"
+# Source .bashrc to load any existing DOMAIN/WILDCARD variables
+if [ -f "$HOME/.bashrc" ]; then
+    source "$HOME/.bashrc"
+fi
+
+# Prompt only if DOMAIN is not already set
+if [ -z "$DOMAIN" ]; then
+    read -p "Enter your domain: " DOMAIN
+    echo "export DOMAIN=\"$DOMAIN\"" >> "$HOME/.bashrc"
+    echo "export WILDCARD=\"*.$DOMAIN\"" >> "$HOME/.bashrc"
+fi
+
+# Set WILDCARD if not already exported (in case DOMAIN was set manually but WILDCARD was not)
+if [ -z "$WILDCARD" ]; then
+    WILDCARD="*.$DOMAIN"
+    echo "export WILDCARD=\"$WILDCARD\"" >> "$HOME/.bashrc"
+fi
+
 echo ""
 
 echo "Using DOMAIN   = $DOMAIN"
@@ -66,10 +82,26 @@ case $USER_INSTANCE in
         sudo ln -sf /etc/letsencrypt/live/$DOMAIN/privkey.pem /opt/bitnami/apache2/conf/server.key
         sudo ln -sf /etc/letsencrypt/live/$DOMAIN/fullchain.pem /opt/bitnami/apache2/conf/server.crt
         ;;
+    0)
+        echo ""
+        echo "Option 0: TRY ALL"
+        sudo mv /opt/bitnami/apache/conf/bitnami/certs/server.crt /opt/bitnami/apache/conf/bitnami/certs/server.crt.old
+        sudo mv /opt/bitnami/apache/conf/bitnami/certs/server.key /opt/bitnami/apache/conf/bitnami/certs/server.key.old
+        sudo ln -s /etc/letsencrypt/live/$DOMAIN/privkey.pem /opt/bitnami/apache/conf/bitnami/certs/server.key
+        sudo ln -s /etc/letsencrypt/live/$DOMAIN/fullchain.pem /opt/bitnami/apache/conf/bitnami/certs/server.crt
+        sudo mv /opt/bitnami/apache2/conf/bitnami/certs/server.crt /opt/bitnami/apache2/conf/bitnami/certs/server.crt.old
+        sudo mv /opt/bitnami/apache2/conf/bitnami/certs/server.key /opt/bitnami/apache2/conf/bitnami/certs/server.key.old
+        sudo ln -sf /etc/letsencrypt/live/$DOMAIN/privkey.pem /opt/bitnami/apache2/conf/bitnami/certs/server.key
+        sudo ln -sf /etc/letsencrypt/live/$DOMAIN/fullchain.pem /opt/bitnami/apache2/conf/bitnami/certs/server.crt
+        sudo mv /opt/bitnami/apache2/conf/server.crt /opt/bitnami/apache2/conf/server.crt.old
+        sudo mv /opt/bitnami/apache2/conf/server.key /opt/bitnami/apache2/conf/server.key.old
+        sudo ln -sf /etc/letsencrypt/live/$DOMAIN/privkey.pem /opt/bitnami/apache2/conf/server.key
+        sudo ln -sf /etc/letsencrypt/live/$DOMAIN/fullchain.pem /opt/bitnami/apache2/conf/server.crt
+        ;;
 esac
 
 echo ""
 sudo /opt/bitnami/ctlscript.sh start
 
 echo ""
-echo "=== script end ==="
+echo "=== SCRIPT END ==="
