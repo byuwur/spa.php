@@ -15,8 +15,8 @@
 	--dark-clear: #0003;
 	--dark-opaque: #000b;
 	--transparent: #0000;
-    --light-links: #fff;
-    --dark-links: #003;
+	--light-links: #fff;
+	--dark-links: #003;
 	--bywr-red: #600;
 	--bywr-red-transparent: #6007;
 	--bywr-red-clear: #6003;
@@ -441,6 +441,30 @@ th {
 	background-size: contain;
 	background-repeat: no-repeat;
 	background-position: center center;
+}
+.bg-pos-top-left {
+	background-position: top left;
+}
+.bg-pos-top-right {
+	background-position: top right;
+}
+.bg-pos-bottom-left {
+	background-position: bottom left;
+}
+.bg-pos-bottom-right {
+	background-position: bottom right;
+}
+.bg-pos-top {
+	background-position: top;
+}
+.bg-pos-bottom {
+	background-position: bottom;
+}
+.bg-pos-left {
+	background-position: left;
+}
+.bg-pos-right {
+	background-position: right;
 }
 .has-overlay {
 	position: relative;
