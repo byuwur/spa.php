@@ -401,14 +401,17 @@ th {
 	border-radius: 0.5rem;
 	border: none;
 	box-shadow: none;
-	overflow-x: hidden;
-	overflow-y: auto;
 }
 @media (min-width: 992px) {
 	.dropdown-menu {
 		max-height: 50vh;
 		max-width: 500px;
 	}
+}
+.navbar-nav,
+.dropdown-menu {
+	overflow-x: hidden;
+	overflow-y: auto;
 }
 .nav-item {
 	padding: 0.25rem !important;
@@ -424,13 +427,18 @@ th {
 		margin-top: 1rem !important;
 	}
 	.nav-item,
-	.nav-link {
-		padding: 1rem 0.125rem !important;
+	.nav-link,
+	.dropdown-menu {
 		width: 100%;
+	}
+	.nav-item {
+		padding: 0.5rem 0.25rem !important;
+	}
+	.nav-link {
+		padding: 0.5rem 0.5rem !important;
 	}
 	.dropdown-menu {
 		position: relative !important;
-		width: 100%;
 		margin-left: 0;
 	}
 }
