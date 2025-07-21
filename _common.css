@@ -544,7 +544,7 @@ th {
 	position: fixed;
 	bottom: 16px;
 	right: 16px;
-	z-index: 999;
+	z-index: 99;
 }
 .fab-container a {
 	margin: 0.125rem 0;
@@ -662,7 +662,7 @@ th {
 }
 #spa-nav,
 #spa-foot {
-	z-index: 9999;
+	z-index: 101;
 }
 #spa-nav {
 	top: 0;
@@ -783,7 +783,7 @@ th {
 	right: 0;
 	background: #eee;
 	padding: 0 4px;
-	z-index: 11;
+	z-index: 9;
 }
 /* === VIDEO.js === */
 .video-js > * {
@@ -881,7 +881,7 @@ th {
 	position: fixed;
 	width: 100%;
 	height: 100%;
-	z-index: -999;
+	z-index: -101;
 	top: 0;
 	bottom: 0;
 	left: 0;
@@ -1049,7 +1049,7 @@ th {
 	bottom: 0;
 	left: 0;
 	right: 0;
-	z-index: -99;
+	z-index: -9;
 	border: 1px solid #ccc;
 }
 .app-content:before {
@@ -1106,7 +1106,7 @@ th {
 	align-items: end;
 	flex-wrap: wrap;
 	gap: 0.25rem;
-	z-index: 9999;
+	z-index: 1001;
 	transform-origin: right;
 }
 #bywr-accessibility-buttons {
