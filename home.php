@@ -143,6 +143,7 @@ require_once $TO_HOME . "common.example.php";
     <div id="g-translate"></div>
     <nav id="spa-nav"></nav>
     <main id="spa-content"></main>
+    <footer id="spa-foot"></footer>
 </body>
 
 </html>
