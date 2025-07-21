@@ -423,8 +423,9 @@ th {
 		overflow-y: auto;
 		margin-top: 1rem !important;
 	}
-	.nav-item {
-		padding: 1rem 0.25rem !important;
+	.nav-item,
+	.nav-link {
+		padding: 1rem 0.125rem !important;
 		width: 100%;
 	}
 	.dropdown-menu {
@@ -446,30 +447,34 @@ th {
 	background-repeat: no-repeat;
 	background-position: center center;
 }
+.background-absolute {
+	position: absolute !important;
+}
 .bg-pos-top-left {
-	background-position: top left;
+	background-position: top left !important;
 }
 .bg-pos-top-right {
-	background-position: top right;
+	background-position: top right !important;
 }
 .bg-pos-bottom-left {
-	background-position: bottom left;
+	background-position: bottom left !important;
 }
 .bg-pos-bottom-right {
-	background-position: bottom right;
+	background-position: bottom right !important;
 }
 .bg-pos-top {
-	background-position: top;
+	background-position: top !important;
 }
 .bg-pos-bottom {
-	background-position: bottom;
+	background-position: bottom !important;
 }
 .bg-pos-left {
-	background-position: left;
+	background-position: left !important;
 }
 .bg-pos-right {
-	background-position: right;
+	background-position: right !important;
 }
+.has-background,
 .has-overlay {
 	position: relative;
 	z-index: 0;
