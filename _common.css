@@ -223,6 +223,9 @@ th {
 .bg-secondary {
 	background: var(--secondary-color) !important;
 }
+.bg-tertiary {
+	background: var(--tertiary-color) !important;
+}
 .bg-black {
 	background: #000 !important;
 }
@@ -278,6 +281,22 @@ th {
 .text-secondary,
 .text-secondary * {
 	color: var(--secondary-color) !important;
+}
+.text-tertiary,
+.text-tertiary * {
+	color: var(--tertiary-color) !important;
+}
+.text-primary-color,
+.text-primary-color * {
+	color: var(--text-primary-color) !important;
+}
+.text-secondary-color,
+.text-secondary-color * {
+	color: var(--text-secondary-color) !important;
+}
+.text-tertiary-color,
+.text-tertiary-color * {
+	color: var(--text-tertiary-color) !important;
 }
 .light-links a:hover {
 	color: var(--light-links) !important;
@@ -506,7 +525,10 @@ th {
 	background: var(--primary-color);
 }
 .overlay-secondary {
-	background: var(--secondary-color);
+    background: var(--secondary-color);
+}
+.overlay-tertiary {
+    background: var(--tertiary-color);
 }
 /* === FX === */
 .blurred {
