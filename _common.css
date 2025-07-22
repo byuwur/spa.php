@@ -256,11 +256,29 @@ th {
 .bg-dark-opaque {
 	background: var(--dark-opaque);
 }
-.text-dark-shadow {
+.text-dark-shadow,
+.text-dark-shadow * {
 	text-shadow: 0px 0px 5px var(--dark-transparent), 2px 0px 5px var(--dark-transparent), -2px 0px 5px var(--dark-transparent), 0px 2px 5px var(--dark-transparent), 0px -2px 5px var(--dark-transparent);
 }
-.text-light-shadow {
+.text-darker-shadow,
+.text-darker-shadow * {
+	text-shadow: 0px 0px 5px var(--dark-color), 2px 0px 5px var(--dark-color), -2px 0px 5px var(--dark-color), 0px 2px 5px var(--dark-color), 0px -2px 5px var(--dark-color);
+}
+.text-darkest-shadow,
+.text-darkest-shadow * {
+	text-shadow: 0px 0px 5px var(--dark-color), 5px 0px 5px var(--dark-color), -5px 0px 5px var(--dark-color), 0px 5px 5px var(--dark-color), 0px -5px 5px var(--dark-color);
+}
+.text-light-shadow,
+.text-light-shadow * {
 	text-shadow: 0px 0px 5px var(--light-transparent), 2px 0px 5px var(--light-transparent), -2px 0px 5px var(--light-transparent), 0px 2px 5px var(--light-transparent), 0px -2px 5px var(--light-transparent);
+}
+.text-lighter-shadow,
+.text-lighter-shadow * {
+	text-shadow: 0px 0px 5px var(--light-color), 2px 0px 5px var(--light-color), -2px 0px 5px var(--light-color), 0px 2px 5px var(--light-color), 0px -2px 5px var(--light-color);
+}
+.text-lightest-shadow,
+.text-lightest-shadow * {
+	text-shadow: 0px 0px 5px var(--light-color), 5px 0px 5px var(--light-color), -5px 0px 5px var(--light-color), 0px 5px 5px var(--light-color), 0px -5px 5px var(--light-color);
 }
 .text-white,
 .text-white * {
