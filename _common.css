@@ -322,6 +322,34 @@ th {
 .dark-links a:hover {
 	color: var(--dark-links) !important;
 }
+.text-smallest,
+.text-smallest * {
+	font-size: 0.25rem;
+}
+.text-smaller,
+.text-smaller * {
+	font-size: 0.5rem;
+}
+.text-small,
+.text-small * {
+	font-size: 0.75rem;
+}
+.text-medium,
+.text-medium * {
+	font-size: 1rem;
+}
+.text-large,
+.text-large * {
+	font-size: 2.5rem;
+}
+.text-larger,
+.text-larger * {
+	font-size: 3.75rem;
+}
+.text-largest,
+.text-largest * {
+	font-size: 5rem;
+}
 .hidden {
 	display: none;
 	visibility: hidden;
@@ -543,10 +571,10 @@ th {
 	background: var(--primary-color);
 }
 .overlay-secondary {
-    background: var(--secondary-color);
+	background: var(--secondary-color);
 }
 .overlay-tertiary {
-    background: var(--tertiary-color);
+	background: var(--tertiary-color);
 }
 /* === FX === */
 .blurred {
