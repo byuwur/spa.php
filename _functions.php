@@ -607,7 +607,7 @@ function console_error(string $message)
  * @param string $message The error message to display.
  * @param string $error_file The path to the error file to include.
  */
-function error_crash(int $status, string $message, string $error_file = null)
+function error_crash(int $status, string $message, ?string $error_file = null)
 {
     global $TO_HOME;
     if (!$error_file || !file_exists($error_file))
