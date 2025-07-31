@@ -18,7 +18,7 @@ require_once $TO_HOME . "common.example.php";
             <p><?= $thisis . " " . $home; ?>.</p>
             <p><?= $home . ": "; ?><b><i>"<?= $home_desc; ?>"</i></b></p>
             <hr class="w-100" />
-            <a href="<?= $ROOT_ROUTE . "video"; ?>" class="link"><?= $video; ?></a>
+            <a href="<?= "{$ROUTE_ROOT}{$ROUTE_VIDEO}"; ?>" class="link"><?= $video; ?></a>
         </div>
     </div>
 </div>

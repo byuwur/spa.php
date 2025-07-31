@@ -17,16 +17,16 @@ require_once $TO_HOME . "lang/" . $app_lang . ".php";
             <div class="navbar-brand has-background-contain" style="height:48px;width:48px;background-image:url('<?= $HOME_PATH; ?>/img/byuwur.png');"></div>
             <span class="ms-2 me-4 pe-5">byuwur/spa.php</span>
         </div>
-        <a class="bywr-sidebar-option" href="<?= $ROOT_ROUTE . $_home; ?>">
+        <a class="bywr-sidebar-option" href="<?= "{$ROUTE_ROOT}{$ROUTE_HOME}"; ?>">
             <i class="fas fa-home"></i> <span><?= $home; ?></span><i class="fas fa-angle-right ms-auto"></i>
         </a>
-        <a class="bywr-sidebar-option" href="<?= $ROOT_ROUTE . $_page; ?>">
+        <a class="bywr-sidebar-option" href="<?= "{$ROUTE_ROOT}{$ROUTE_PAGE}"; ?>">
             <i class="fas fa-dice-one"></i> <span><?= $page; ?></span><i class="fas fa-angle-right ms-auto"></i>
         </a>
-        <a class="bywr-sidebar-option" href="<?= $ROOT_ROUTE . $_video; ?>">
+        <a class="bywr-sidebar-option" href="<?= "{$ROUTE_ROOT}{$ROUTE_VIDEO}"; ?>">
             <i class="fas fa-video"></i> <span><?= $video; ?></span><i class="fas fa-angle-right ms-auto"></i>
         </a>
-        <a class="bywr-sidebar-option" href="<?= $ROOT_ROUTE; ?>error">
+        <a class="bywr-sidebar-option" href="<?= "{$ROUTE_ROOT}{$ROUTE_ERROR}"; ?>">
             <i class="fas fa-bug"></i> <span>Error</span><i class="fas fa-angle-right ms-auto"></i>
         </a>
     </div>
@@ -36,8 +36,8 @@ require_once $TO_HOME . "lang/" . $app_lang . ".php";
         </button>
         <div id="lang-drop" class="accordion-collapse collapse bg-dark-transparent" data-bs-parent="#bywr-sidebar">
             <div class="d-flex flex-row">
-                <a class="bywr-sidebar-option" href="<?= $ROOT_ROUTE; ?>es" title="Español"><img src="img/co.png" width="16px" height="12px" style="margin: 4px;" alt="" /> ES<i class="fas fa-angle-right ms-auto"></i></a>
-                <a class="bywr-sidebar-option" href="<?= $ROOT_ROUTE; ?>en" title="English"><img src="img/uk.png" width="16px" height="12px" style="margin: 4px;" alt="" /> EN<i class="fas fa-angle-right ms-auto"></i></a>
+                <a class="bywr-sidebar-option" href="<?= "{$ROUTE_ROOT}{$ROUTE_ES}"; ?>" title="Español"><img src="img/co.png" width="16px" height="12px" style="margin: 4px;" alt="" /> ES<i class="fas fa-angle-right ms-auto"></i></a>
+                <a class="bywr-sidebar-option" href="<?= "{$ROUTE_ROOT}{$ROUTE_EN}"; ?>" title="English"><img src="img/uk.png" width="16px" height="12px" style="margin: 4px;" alt="" /> EN<i class="fas fa-angle-right ms-auto"></i></a>
             </div>
             <!--a class="bywr-sidebar-option" href="javascript:;"><i class="fas fa-home"></i>Home<i class="fas fa-angle-right ms-auto"></i></a-->
         </div>
