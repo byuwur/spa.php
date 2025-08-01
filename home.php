@@ -46,34 +46,34 @@ require_once "{$TO_HOME}/common.example.php";
     <meta name="copyright" content="[Mateus] byUwUr" />
     <!--meta name="robots" content="index, follow" /> <!-- Decommented to get indexed -->
     <meta name="theme-color" content="#300" />
-    <link rel="icon" type="image/png" href="<?= $HOME_PATH ?>/img/byuwur.png" />
-    <link rel="apple-touch-icon" href="<?= $HOME_PATH ?>/img/byuwur.png" />
+    <link rel="icon" type="image/png" href="<?= "{$HOME_PATH}/img/byuwur.png" ?>" />
+    <link rel="apple-touch-icon" href="<?= "{$HOME_PATH}/img/byuwur.png" ?>" />
     <!-- Remove per your needs -->
-    <link rel="stylesheet" href="<?= $HOME_PATH ?>/css/animate.min.css" />
-    <link rel="stylesheet" href="<?= $HOME_PATH ?>/css/fontawesome.min.css" />
-    <link rel="stylesheet" href="<?= $HOME_PATH ?>/css/jquery-ui.min.css" />
-    <link rel="stylesheet" href="<?= $HOME_PATH ?>/css/shards.css" />
-    <link rel="stylesheet" href="<?= $HOME_PATH ?>/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="<?= $HOME_PATH ?>/css/swiper.min.css" />
-    <link rel="stylesheet" href="<?= $HOME_PATH ?>/css/video.min.css" />
-    <link rel="stylesheet" href="<?= $HOME_PATH ?>/css/select2.min.css" />
-    <link rel="stylesheet" href="<?= $HOME_PATH ?>/css/dropzone.min.css" />
-    <link rel="stylesheet" href="<?= $HOME_PATH ?>/_common.css" />
-    <script src="<?= $HOME_PATH ?>/js/jquery.min.js" defer></script>
-    <script src="<?= $HOME_PATH ?>/js/jquery-ui.min.js" defer></script>
-    <script src="<?= $HOME_PATH ?>/js/popper.min.js" defer></script>
-    <script src="<?= $HOME_PATH ?>/js/shards.min.js" defer></script>
-    <script src="<?= $HOME_PATH ?>/js/bootstrap.min.js" defer></script>
-    <script src="<?= $HOME_PATH ?>/js/swiper.min.js" defer></script>
-    <script src="<?= $HOME_PATH ?>/js/video.min.js" defer></script>
-    <script src="<?= $HOME_PATH ?>/js/select2.full.min.js" defer></script>
-    <script src="<?= $HOME_PATH ?>/js/dropzone.min.js" defer></script>
-    <script src="<?= $HOME_PATH ?>/js/typed.min.js" defer></script>
-    <script src="<?= $HOME_PATH ?>/js/particles.min.js" defer></script>
-    <script src="<?= $HOME_PATH ?>/js/cookies.min.js" defer></script>
-    <script src="<?= $HOME_PATH ?>/_functions.js" defer></script>
-    <script src="<?= $HOME_PATH ?>/_common.js" defer></script>
-    <script src="<?= $HOME_PATH ?>/_spa.js" defer></script>
+    <link rel="stylesheet" href="<?= "{$HOME_PATH}/css/animate.min.css" ?>" />
+    <link rel="stylesheet" href="<?= "{$HOME_PATH}/css/fontawesome.min.css" ?>" />
+    <link rel="stylesheet" href="<?= "{$HOME_PATH}/css/jquery-ui.min.css" ?>" />
+    <link rel="stylesheet" href="<?= "{$HOME_PATH}/css/shards.css" ?>" />
+    <link rel="stylesheet" href="<?= "{$HOME_PATH}/css/bootstrap.min.css" ?>" />
+    <link rel="stylesheet" href="<?= "{$HOME_PATH}/css/swiper.min.css" ?>" />
+    <link rel="stylesheet" href="<?= "{$HOME_PATH}/css/video.min.css" ?>" />
+    <link rel="stylesheet" href="<?= "{$HOME_PATH}/css/select2.min.css" ?>" />
+    <link rel="stylesheet" href="<?= "{$HOME_PATH}/css/dropzone.min.css" ?>" />
+    <link rel="stylesheet" href="<?= "{$HOME_PATH}/_common.css" ?>" />
+    <script src="<?= "{$HOME_PATH}/js/jquery.min.js" ?>" defer></script>
+    <script src="<?= "{$HOME_PATH}/js/jquery-ui.min.js" ?>" defer></script>
+    <script src="<?= "{$HOME_PATH}/js/popper.min.js" ?>" defer></script>
+    <script src="<?= "{$HOME_PATH}/js/shards.min.js" ?>" defer></script>
+    <script src="<?= "{$HOME_PATH}/js/bootstrap.min.js" ?>" defer></script>
+    <script src="<?= "{$HOME_PATH}/js/swiper.min.js" ?>" defer></script>
+    <script src="<?= "{$HOME_PATH}/js/video.min.js" ?>" defer></script>
+    <script src="<?= "{$HOME_PATH}/js/select2.full.min.js" ?>" defer></script>
+    <script src="<?= "{$HOME_PATH}/js/dropzone.min.js" ?>" defer></script>
+    <script src="<?= "{$HOME_PATH}/js/typed.min.js" ?>" defer></script>
+    <script src="<?= "{$HOME_PATH}/js/particles.min.js" ?>" defer></script>
+    <script src="<?= "{$HOME_PATH}/js/cookies.min.js" ?>" defer></script>
+    <script src="<?= "{$HOME_PATH}/_functions.js" ?>" defer></script>
+    <script src="<?= "{$HOME_PATH}/_common.js" ?>" defer></script>
+    <script src="<?= "{$HOME_PATH}/_spa.js" ?>" defer></script>
     <script src="https://www.google.com/recaptcha/api.js" defer></script>
     <script src="https://translate.google.com/translate_a/element.js?cb=byCommon.initTranslate" defer></script>
     <!-- Add your overrides below -->
@@ -137,7 +137,7 @@ require_once "{$TO_HOME}/common.example.php";
         </div>
     </div>
     <video class="video-container" muted loop autoplay playsinline>
-        <source src="<?= $HOME_PATH ?>/img/bg.mp4" type="video/mp4" />
+        <source src="<?= "{$HOME_PATH}/img/bg.mp4" ?>" type="video/mp4" />
     </video>
     <div id="particles"></div>
     <div id="g-translate"></div>

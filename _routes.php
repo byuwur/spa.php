@@ -15,7 +15,7 @@ $ROUTE_HOME_EN = "home";
 $ROUTE_PAGE_EN = "page";
 $ROUTE_VIDEO = "video";
 
-switch ($app_lang) {
+switch ($APP_LANG) {
     case "es":
     default:
         $ROUTE_HOME = "inicio";
@@ -45,11 +45,11 @@ $routes = [
 
     // "/"
     "{$ROUTE_ROOT}" => ["URI" => "/main.example.php", ...$ROOT_COMPONENTS],
-    "{$ROUTE_ROOT}{$ROUTE_ES}" => ["URI" => "", "GET" => ["lang" => "es"], ...$ROOT_COMPONENTS],
-    "{$ROUTE_ROOT}{$ROUTE_EN}" => ["URI" => "", "GET" => ["lang" => "en"], ...$ROOT_COMPONENTS],
-    "{$ROUTE_ROOT}{$ROUTE_HOME_ES}" => ["URI" => "/main.example.php", "GET" => ["lang" => "es"], ...$ROOT_COMPONENTS],
-    "{$ROUTE_ROOT}{$ROUTE_HOME_EN}" => ["URI" => "/main.example.php", "GET" => ["lang" => "en"], ...$ROOT_COMPONENTS],
-    "{$ROUTE_ROOT}{$ROUTE_PAGE_ES}" => ["URI" => "/page.example.php", "GET" => ["lang" => "es"], ...$ROOT_COMPONENTS],
-    "{$ROUTE_ROOT}{$ROUTE_PAGE_EN}" => ["URI" => "/page.example.php", "GET" => ["lang" => "en"], ...$ROOT_COMPONENTS],
-    "{$ROUTE_ROOT}{$ROUTE_VIDEO}" => ["URI" => "/video.example.php", "GET" => [], ...$ROOT_COMPONENTS],
+    "/{$ROUTE_ES}" => ["URI" => "", "GET" => ["lang" => "es"], ...$ROOT_COMPONENTS],
+    "/{$ROUTE_EN}" => ["URI" => "", "GET" => ["lang" => "en"], ...$ROOT_COMPONENTS],
+    "/{$ROUTE_HOME_ES}" => ["URI" => "/main.example.php", "GET" => ["lang" => "es"], ...$ROOT_COMPONENTS],
+    "/{$ROUTE_HOME_EN}" => ["URI" => "/main.example.php", "GET" => ["lang" => "en"], ...$ROOT_COMPONENTS],
+    "/{$ROUTE_PAGE_ES}" => ["URI" => "/page.example.php", "GET" => ["lang" => "es"], ...$ROOT_COMPONENTS],
+    "/{$ROUTE_PAGE_EN}" => ["URI" => "/page.example.php", "GET" => ["lang" => "en"], ...$ROOT_COMPONENTS],
+    "/{$ROUTE_VIDEO}" => ["URI" => "/video.example.php", "GET" => [], ...$ROOT_COMPONENTS],
 ];

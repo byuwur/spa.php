@@ -13,13 +13,13 @@ if (isset($_GET["lang"])) $lang = $_GET["lang"];
 switch ($lang) {
     case "es":
     case "en":
-        $app_lang = $lang;
+        $APP_LANG = $lang;
         break;
     default:
-        $app_lang = "es";
+        $APP_LANG = "es";
         break;
 }
-setcookie("lang", $app_lang, time() + 31536000, "/", "", false, false);
+setcookie("lang", $APP_LANG, time() + 31536000, "/", "", false, false);
 
 // --- THEME ---
 $theme = "dark";
@@ -28,21 +28,21 @@ if (isset($_GET["theme"])) $theme = $_GET["theme"];
 switch ($theme) {
     case "dark":
     case "light":
-        $app_theme = $theme;
+        $APP_THEME = $theme;
         break;
     default:
-        $app_theme = "dark";
+        $APP_THEME = "dark";
         break;
 }
-setcookie("theme", $app_theme, time() + 31536000, "/", "", false, false);
+setcookie("theme", $APP_THEME, time() + 31536000, "/", "", false, false);
 
 // --- LOCAL STORAGE ---
 if (isset($setLocalStorage) && $setLocalStorage) {
 ?>
-    <html lang="<?= $app_lang ?>" dir="ltr">
+    <html lang="<?= $APP_LANG ?>" dir="ltr">
     <script>
-        localStorage.setItem("APP_LANG", "<?= $app_lang ?>");
-        localStorage.setItem("APP_THEME", "<?= $app_theme ?>");
+        localStorage.setItem("APP_LANG", "<?= $APP_LANG ?>");
+        localStorage.setItem("APP_THEME", "<?= $APP_THEME ?>");
     </script>
 <?php
 }
