@@ -39,10 +39,10 @@ setcookie("theme", $app_theme, time() + 31536000, "/", "", false, false);
 // --- LOCAL STORAGE ---
 if (isset($setLocalStorage) && $setLocalStorage) {
 ?>
-    <html lang="<?= $app_lang; ?>" dir="ltr">
+    <html lang="<?= $app_lang ?>" dir="ltr">
     <script>
-        localStorage.setItem("APP_LANG", "<?= $app_lang; ?>");
-        localStorage.setItem("APP_THEME", "<?= $app_theme; ?>");
+        localStorage.setItem("APP_LANG", "<?= $app_lang ?>");
+        localStorage.setItem("APP_THEME", "<?= $app_theme ?>");
     </script>
 <?php
 }

@@ -1,12 +1,11 @@
 <?php
 require_once "../_var.php";
-require_once $TO_HOME . "_functions.php";
-require_once $TO_HOME . "vendor/autoload.php";
+require_once "{$TO_HOME}/_functions.php";
+require_once "{$TO_HOME}/vendor/autoload.php";
 $dotenv = Dotenv\Dotenv::createImmutable($TO_HOME);
 $dotenv->load();
 //$mysqli = new mysqli("localhost", "root", "", "testing", "3306");
 //if ($mysqli->connect_errno) die("Connection failed: " . $mysqli->connect_errno . " = " . $mysqli->connect_error);
-require_once $TO_HOME . "_functions.php";
 // $_GET is used as the WHERE clause
 $_GET["id"] = 1;
 $_GET["name"] = 2;

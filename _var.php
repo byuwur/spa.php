@@ -23,10 +23,10 @@ $HOME_PATH = $PATH_DIFF ? implode("/", array_slice(explode("/", $THIS_PATH), 0, 
 // Store the calculated paths in the browser's localStorage
 if (isset($setLocalStorage) && $setLocalStorage) { ?>
     <script>
-        localStorage.setItem("PROTOCOL", "<?= $PROTOCOL; ?>");
-        localStorage.setItem("PATH_DIFF", "<?= $PATH_DIFF; ?>");
-        localStorage.setItem("TO_HOME", "<?= $TO_HOME; ?>");
-        localStorage.setItem("THIS_PATH", "<?= $THIS_PATH; ?>");
-        localStorage.setItem("HOME_PATH", "<?= $HOME_PATH; ?>");
+        localStorage.setItem("PROTOCOL", "<?= $PROTOCOL ?>");
+        localStorage.setItem("PATH_DIFF", "<?= $PATH_DIFF ?>");
+        localStorage.setItem("TO_HOME", "<?= $TO_HOME ?>");
+        localStorage.setItem("THIS_PATH", "<?= $THIS_PATH ?>");
+        localStorage.setItem("HOME_PATH", "<?= $HOME_PATH ?>");
     </script>
 <?php }

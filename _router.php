@@ -2,7 +2,7 @@
 /* 
  * File: _router.php
  * Desc: Processes and routes incoming URIs based on predefined routes, handling URL parameters and errors. If a matching file is found, it serves the file with appropriate headers; otherwise, it prepares the environment for client-side routing.
- * Deps: /_var.php, $TO_HOME . "_functions.php", $TO_HOME . "_plugin.php"; $routes OR $TO_HOME . "_routes.php" MUST be previously defined/called.
+ * Deps: /_var.php, "{$TO_HOME}/_functions.php", "{$TO_HOME}/_plugin.php"; $routes OR "{$TO_HOME}/_routes.php" MUST be previously defined/called.
  * Copyright (c) 2025 Andrés Trujillo [Mateus] byUwUr
  */
 
@@ -24,7 +24,7 @@ if (strpos($uri, "/\$/") !== false) {
 }
 // Check if the URI exists in the routes array; if not, return a 404 error
 if (!array_key_exists($uri, $routes) || (!isset($routes[$uri]["URI"]) && !isset($routes[$uri]["FILE"])))
-    error_crash(404, "Route \"" . $uri . "\" does not exist.");
+    error_crash(404, "Route \"{$uri}\" does not exist.");
 // If the URI is associated with a file, serve the file with appropriate headers
 if (array_key_exists($uri, $routes) && isset($routes[$uri]["FILE"])) {
     header("Content-Type: " . get_mime_type($routes[$uri]["FILE"]));
@@ -40,10 +40,10 @@ $NOTENV_APP_ENV = $_SERVER["HTTP_HOST"] === "localhost" ? "DEV" : "PROD";
 ?>
 <script>
     // Store environment and routing information in localStorage for client-side use
-    localStorage.setItem("APP_ENV", "<?= $_ENV["APP_ENV"] ?? $NOTENV_APP_ENV; ?>");
-    localStorage.setItem("APP_VERSION", "<?= $_ENV["APP_VERSION"] ?? "0.1by"; ?>");
-    localStorage.setItem("URI", "<?= $uri; ?>");
-    localStorage.setItem("URL", "<?= $url; ?>");
+    localStorage.setItem("APP_ENV", "<?= $_ENV["APP_ENV"] ?? $NOTENV_APP_ENV ?>");
+    localStorage.setItem("APP_VERSION", "<?= $_ENV["APP_VERSION"] ?? "0.1by" ?>");
+    localStorage.setItem("URI", "<?= $uri ?>");
+    localStorage.setItem("URL", "<?= $url ?>");
     localStorage.setItem("ROUTES", JSON.stringify(<?= json_encode($routes) ?>));
     localStorage.setItem("_GET", JSON.stringify(<?= json_encode($_GET) ?>));
     localStorage.setItem("_POST", JSON.stringify(<?= json_encode($_POST) ?>));

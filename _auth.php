@@ -2,18 +2,18 @@
 /*
  * File: _auth.php
  * Desc: Handles user auth and session management
- * Deps: /_var.php, $TO_HOME . "_functions.php", $TO_HOME . "_config.php", $TO_HOME . "_routes.php";
+ * Deps: /_var.php, "{$TO_HOME}/_functions.php", "{$TO_HOME}/_config.php", "{$TO_HOME}/_routes.php";
  * Copyright (c) 2025 Andrés Trujillo [Mateus] byUwUr
  */
 
 // Set the cookie params for the session, keep it secure
 $has_session_set_cookie = session_set_cookie_params([
-    'lifetime' => 3600,
-    'path' => '/',
-    'domain' => '',
-    'secure' => true,
-    'httponly' => true,
-    'samesite' => 'Strict'
+    "lifetime" => 3600,
+    "path" => "/",
+    "domain" => "",
+    "secure" => true,
+    "httponly" => true,
+    "samesite" => "Strict"
 ]);
 // Crash if cookie cannot be configured
 if (!$has_session_set_cookie) api_respond(500, true, "Session crash.");
@@ -36,7 +36,7 @@ session_start();
 function login($session = [], $regen = false)
 {
     if ($regen) session_regenerate_id(true);
-    //setcookie(session_name(), session_id(), time() + 3600, '/', '', true, true);
+    //setcookie(session_name(), session_id(), time() + 3600, "/", "", true, true);
     $_SESSION = [...$_SESSION, ...$session];
     return true;
 }
@@ -53,7 +53,7 @@ function logout()
     session_unset();
     session_gc();
     session_destroy();
-    setcookie(session_name(), '', time() - 600, '/', '', true, true);
+    setcookie(session_name(), "", time() - 600, "/", "", true, true);
     if (file_exists($session_file)) @unlink($session_file);
     return false;
 }

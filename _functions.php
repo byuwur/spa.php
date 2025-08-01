@@ -49,7 +49,7 @@ function make_http_request(string $url, array $get = [], array $post = [])
     curl_setopt($req, CURLOPT_POSTFIELDS, http_build_query($post));
     curl_setopt($req, CURLOPT_VERBOSE, true);
     curl_setopt($req, CURLOPT_RETURNTRANSFER, true);
-    $cert_file = file_exists($TO_HOME . "spa.php/cacert.pem") ? $SYSTEM_ROOT . "/spa.php/cacert.pem" : $SYSTEM_ROOT . "/cacert.pem";
+    $cert_file = file_exists("{$TO_HOME}/spa.php/cacert.pem") ? "{$SYSTEM_ROOT}/spa.php/cacert.pem" : "{$SYSTEM_ROOT}/cacert.pem";
     curl_setopt($req, CURLOPT_CAINFO, $cert_file);
     $requested = curl_exec($req);
     if (curl_errno($req)) {
@@ -78,7 +78,7 @@ function remote_file_exists(string $url)
     curl_setopt($req, CURLOPT_FOLLOWLOCATION, true);
     curl_setopt($req, CURLOPT_VERBOSE, true);
     curl_setopt($req, CURLOPT_RETURNTRANSFER, true);
-    $cert_file = file_exists($TO_HOME . "spa.php/cacert.pem") ? $SYSTEM_ROOT . "/spa.php/cacert.pem" : $SYSTEM_ROOT . "/cacert.pem";
+    $cert_file = file_exists("{$TO_HOME}/spa.php/cacert.pem") ? "{$SYSTEM_ROOT}/spa.php/cacert.pem" : "{$SYSTEM_ROOT}/cacert.pem";
     curl_setopt($req, CURLOPT_CAINFO, $cert_file);
     curl_exec($req);
     if (curl_errno($req)) {
@@ -127,8 +127,8 @@ function validate_value($input, string $type = "string", array $options = [])
     if (isset($options["allowed_tags"]) && is_array($options["allowed_tags"]))
         foreach ($options["allowed_tags"] as $tag)
             $input = str_replace(
-                ["&lt;" . $tag . "&gt;", "&lt;/" . $tag . "&gt;", "&lt;" . $tag . "/&gt;"],
-                ["<" . $tag . ">", "</" . $tag . ">", "<" . $tag . "/>"],
+                ["&lt;{$tag}&gt;", "&lt;/{$tag}&gt;", "&lt;{$tag}/&gt;"],
+                ["<{$tag}>", "</{$tag}>", "<{$tag}/>"],
                 $input
             );
     $input = filter_var($input, $VALIDATE_MAP[$type] ?? FILTER_UNSAFE_RAW, FILTER_NULL_ON_FAILURE);
@@ -248,7 +248,7 @@ function build_sql_query(string $method, string $columns, string $table, array $
         foreach ($joins as $join) {
             if (!isset($join["join_columns"])) continue;
             if (array_key_exists($valid_key, $join["join_columns"]))
-                $return->joins[] = $join["join_type"] . " " . $join["join_table"] . " ON " . $valid[$valid_key]["column"] . " " . $join["join_columns"][$valid_key]["condition"] . " " . $join["join_table"] . "." . $join["join_columns"][$valid_key]["custom"];
+                $return->joins[] = "{$join["join_type"]} {$join["join_table"]} ON {$valid[$valid_key]["column"]} {$join["join_columns"][$valid_key]["condition"]} {$join["join_table"]}.{$join["join_columns"][$valid_key]["custom"]}";
         }
     }
     // Process fields for INSERT or UPDATE operations
@@ -269,116 +269,116 @@ function build_sql_query(string $method, string $columns, string $table, array $
                 switch (normalize_string($valid_value["condition"], "low")) { // Handle conditions
                     case "equal":
                     default:
-                        $return->conditions[] =  $valid_value["column"] . " = ?";
+                        $return->conditions[] =  "{$valid_value["column"]} = ?";
                         $return->param_types .= $valid_value["type"];
                         $return->param_values[] = $conditions[$valid_key];
                         break;
                     case "is null":
-                        $return->conditions[] = $valid_value["column"] . " IS NULL";
+                        $return->conditions[] = "{$valid_value["column"]} IS NULL";
                         break;
                     case "is not null":
-                        $return->conditions[] = $valid_value["column"] . " IS NOT NULL";
+                        $return->conditions[] = "{$valid_value["column"]} IS NOT NULL";
                         break;
                     case "not equal":
                     case "!=":
                     case "<>":
-                        $return->conditions[] = $valid_value["column"] . " != ?";
+                        $return->conditions[] = "{$valid_value["column"]} != ?";
                         $return->param_types .= $valid_value["type"];
                         $return->param_values[] = $conditions[$valid_key];
                         break;
                     case "gt":
                     case "greater":
                     case ">":
-                        $return->conditions[] = $valid_value["column"] . " > ?";
+                        $return->conditions[] = "{$valid_value["column"]} > ?";
                         $return->param_types .= $valid_value["type"];
                         $return->param_values[] = $conditions[$valid_key];
                         break;
                     case "lt":
                     case "less":
                     case "<":
-                        $return->conditions[] = $valid_value["column"] . " < ?";
+                        $return->conditions[] = "{$valid_value["column"]} < ?";
                         $return->param_types .= $valid_value["type"];
                         $return->param_values[] = $conditions[$valid_key];
                         break;
                     case "goq":
                     case "greater or equal":
                     case ">=":
-                        $return->conditions[] = $valid_value["column"] . " >= ?";
+                        $return->conditions[] = "{$valid_value["column"]} >= ?";
                         $return->param_types .= $valid_value["type"];
                         $return->param_values[] = $conditions[$valid_key];
                         break;
                     case "loq":
                     case "less or equal":
                     case "<=":
-                        $return->conditions[] = $valid_value["column"] . " <= ?";
+                        $return->conditions[] = "{$valid_value["column"]} <= ?";
                         $return->param_types .= $valid_value["type"];
                         $return->param_values[] = $conditions[$valid_key];
                         break;
                     case "in":
                         if (!isset($conditions[$valid_key]) || !is_array($conditions[$valid_key])) break;
                         $placeholders = implode(", ", array_fill(0, count($conditions[$valid_key]), "?"));
-                        $return->conditions[] = $valid_value["column"] . " IN (" . $placeholders . ")";
+                        $return->conditions[] = "{$valid_value["column"]} IN ({$placeholders})";
                         $return->param_types .= str_repeat($valid_value["type"], count($conditions[$valid_key]));
                         $return->param_values = [...$return->param_values, ...$conditions[$valid_key]];
                         break;
                     case "not in":
                         if (!isset($conditions[$valid_key]) || !is_array($conditions[$valid_key])) break;
                         $placeholders = implode(", ", array_fill(0, count($conditions[$valid_key]), "?"));
-                        $return->conditions[] = $valid_value["column"] . " IN (" . $placeholders . ")";
+                        $return->conditions[] = "{$valid_value["column"]} IN ({$placeholders})";
                         $return->param_types .= str_repeat($valid_value["type"], count($conditions[$valid_key]));
                         $return->param_values = [...$return->param_values, ...$conditions[$valid_key]];
                         break;
                     case "between":
-                        if (!isset($conditions[$valid_key . "_from"]) || !isset($conditions[$valid_key . "_to"])) break;
-                        $return->conditions[] = $valid_value["column"] . " BETWEEN ? AND ?";
-                        $return->param_types .= $valid_value["type"] . $valid_value["type"]; // Add double conditions value for betweens
-                        $return->param_values[] = $conditions[$valid_key . "_from"];
-                        $return->param_values[] = $conditions[$valid_key . "_to"];
+                        if (!isset($conditions["{$valid_key}_from"]) || !isset($conditions["{$valid_key}_to"])) break;
+                        $return->conditions[] = "{$valid_value["column"]} BETWEEN ? AND ?";
+                        $return->param_types .= "{$valid_value["type"]}{$valid_value["type"]}"; // Add double conditions value for betweens
+                        $return->param_values[] = $conditions["{$valid_key}_from"];
+                        $return->param_values[] = $conditions["{$valid_key}_to"];
                         break;
                     case "like":
-                        $return->conditions[] =  $valid_value["column"] . " LIKE ?";
+                        $return->conditions[] =  "{$valid_value["column"]} LIKE ?";
                         $return->param_types .= $valid_value["type"];
                         $return->param_values[] = $conditions[$valid_key];
                         break;
                     case "starts with":
-                        $return->conditions[] = $valid_value["column"] . " LIKE ?";
+                        $return->conditions[] = "{$valid_value["column"]} LIKE ?";
                         $return->param_types .= $valid_value["type"];
-                        $return->param_values[] = $conditions[$valid_key] . '%'; // Add wildcard at the end
+                        $return->param_values[] = "{$conditions[$valid_key]}%"; // Add wildcard at the end
                         break;
                     case "ends with":
-                        $return->conditions[] = $valid_value["column"] . " LIKE ?";
+                        $return->conditions[] = "{$valid_value["column"]} LIKE ?";
                         $return->param_types .= $valid_value["type"];
-                        $return->param_values[] = '%' . $conditions[$valid_key]; // Add wildcard at the beginning
+                        $return->param_values[] = "%{$conditions[$valid_key]}"; // Add wildcard at the beginning
                         break;
                     case "contains":
-                        $return->conditions[] = $valid_value["column"] . " LIKE ?";
+                        $return->conditions[] = "{$valid_value["column"]} LIKE ?";
                         $return->param_types .= $valid_value["type"];
-                        $return->param_values[] = '%' . $conditions[$valid_key] . '%'; // Add wildcards at both ends
+                        $return->param_values[] = "%{$conditions[$valid_key]}%"; // Add wildcards at both ends
                         break;
                     case "between symmetric":
                     case "symmetric":
-                        if (!isset($conditions[$valid_key . "_from"]) || !isset($conditions[$valid_key . "_to"])) break;
-                        $return->conditions[] = $valid_value["column"] . " BETWEEN SYMMETRIC ? AND ?";
-                        $return->param_types .= $valid_value["type"] . $valid_value["type"];
-                        $return->param_values[] = $conditions[$valid_key . "_from"];
-                        $return->param_values[] = $conditions[$valid_key . "_to"];
+                        if (!isset($conditions["{$valid_key}_from"]) || !isset($conditions["{$valid_key}_to"])) break;
+                        $return->conditions[] = "{$valid_value["column"]} BETWEEN SYMMETRIC ? AND ?";
+                        $return->param_types .= "{$valid_value["type"]}{$valid_value["type"]}";
+                        $return->param_values[] = $conditions["{$valid_key}_from"];
+                        $return->param_values[] = $conditions["{$valid_key}_to"];
                         break;
                     case "match":
                         if (!isset($conditions[$valid_key])) break;
-                        $return->conditions[] = "MATCH(" . $valid_value["column"] . ") AGAINST(?)";
+                        $return->conditions[] = "MATCH({$valid_value["column"]}) AGAINST(?)";
                         $return->param_types .= $valid_value["type"];
                         $return->param_values[] = $conditions[$valid_key];
                         break;
                     case "regex":
                     case "regexp":
                         if (!isset($conditions[$valid_key]) || !is_string($conditions[$valid_key])) break;
-                        $return->conditions[] = $valid_value["column"] . " REGEXP ?";
+                        $return->conditions[] = "{$valid_value["column"]} REGEXP ?";
                         $return->param_types .= $valid_value["type"];
                         $return->param_values[] = $conditions[$valid_key];
                         break;
                 }
             } else {
-                $return->conditions[] =  $valid_value["column"] . " = ?";
+                $return->conditions[] =  "{$valid_value["column"]} = ?";
                 $return->param_types .= $valid_value["type"];
                 $return->param_values[] = $conditions[$valid_key]; // Add condition value
             }
@@ -388,31 +388,31 @@ function build_sql_query(string $method, string $columns, string $table, array $
     foreach ($valid as $valid_key => $valid_value) {
         if ($method == "C") break; // Skip if the method is CREATE
         if (array_key_exists($valid_key, $nested))
-            $return->conditions[] = $valid_value["column"] . " " . $nested[$valid_key]["condition"] . " " . $nested[$valid_key]["custom"];
+            $return->conditions[] = "{$valid_value["column"]} {$nested[$valid_key]["condition"]} {$nested[$valid_key]["custom"]}";
     }
     // Build the SQL query string based on the method
     switch ($method) {
         case "C": // CREATE
-            $return->query .= "INSERT INTO " . $table;
+            $return->query = "INSERT INTO {$table}";
             if (!empty($return->fields)) $return->query .= " (" . implode(", ", $return->fields) . ") VALUES";
             else $return->query .= " VALUES";
             if (count($return->fields)) $return->query .= " (" . str_repeat("?, ", count($return->fields) - 1) . "?)";
             else $return->query .= " (" . str_repeat("?, ", count($valid) - 1) . "?)";
             break;
         case "R": // READ
-            $return->query .= "SELECT " . $columns . " FROM " . $table;
+            $return->query = "SELECT {$columns} FROM {$table}";
             if (!empty($return->joins)) $return->query .= " " . implode(" ", $return->joins);
             if (!empty($return->conditions)) $return->query .= " WHERE " . implode(" AND ", $return->conditions);
-            $return->query .= $end;
+            $return->query .= " {$end}";
             break;
         case "U": // UPDATE
-            $return->query .= "UPDATE " . $table;
+            $return->query = "UPDATE {$table}";
             if (!empty($return->joins)) $return->query .= " " . implode(" ", $return->joins);
             if (!empty($return->fields)) $return->query .= " SET " . implode(" = ?, ", $return->fields) . " = ?";
             if (!empty($return->conditions)) $return->query .= " WHERE " . implode(" AND ", $return->conditions);
             break;
         case "D": // DELETE
-            $return->query .= "DELETE FROM " . $table;
+            $return->query = "DELETE FROM {$table}";
             if (!empty($return->joins)) $return->query .= " " . implode(" ", $return->joins);
             if (!empty($return->conditions)) $return->query .= " WHERE " . implode(" AND ", $return->conditions);
             break;
@@ -473,16 +473,16 @@ function execute_sql_query($mysqli, string $query, string $param_types = "", arr
                 try {
                     if ($sql->execute()) {
                         if ($sql->affected_rows > -1) {
-                            if ($method == "U" && $sql->affected_rows == 0) $qMsg .= $i . "= Query failed: 999 => Row not updated probably due to no coincidence." . PHP_EOL;
+                            if ($method == "U" && $sql->affected_rows == 0) $qMsg .= "{$i}= Query failed: 999 => Row not updated probably due to no coincidence." . PHP_EOL;
                             else {
                                 $errors--;
                                 $successes++;
-                                $qMsg .= $i . "= Query successful." . ($_ENV["APP_ENV"] === "DEV" ? "(" . $sql->affected_rows . " rows)" : "") . PHP_EOL;
+                                $qMsg .= "{$i}= Query successful. " . ($_ENV["APP_ENV"] === "DEV" ? "({$sql->affected_rows} rows)" : "") . PHP_EOL;
                             }
-                        } else $qMsg .= $i . "= Query failed: " . ($_ENV["APP_ENV"] === "DEV" ? $mysqli->errno . " = " . $mysqli->error : "") . PHP_EOL;
-                    } else $qMsg .= $i . "= Query failed: " . ($_ENV["APP_ENV"] === "DEV" ? $mysqli->errno . " = " . $mysqli->error : "") . PHP_EOL;
+                        } else $qMsg .= "{$i}= Query failed: " . ($_ENV["APP_ENV"] === "DEV" ? "{$mysqli->errno} = {$mysqli->error}" : "") . PHP_EOL;
+                    } else $qMsg .= "{$i}= Query failed: " . ($_ENV["APP_ENV"] === "DEV" ? "{$mysqli->errno} = {$mysqli->error}" : "") . PHP_EOL;
                 } catch (Exception $e) {
-                    $qMsg .= $i . "= Query failed: " . ($_ENV["APP_ENV"] === "DEV" ? $mysqli->errno . " = " . $mysqli->error : "") . PHP_EOL;
+                    $qMsg .= "{$i}= Query failed: " . ($_ENV["APP_ENV"] === "DEV" ? "{$mysqli->errno} = {$mysqli->error}" : "") . PHP_EOL;
                 }
             }
             // Determine the status and error flags based on the number of successes and errors
@@ -502,9 +502,9 @@ function execute_sql_query($mysqli, string $query, string $param_types = "", arr
             try {
                 if ($sql->execute()) {
                     if ($method == "D") {
-                        if ($sql->affected_rows == -1) throw new Exception("Query failed" . ($_ENV["APP_ENV"] === "DEV" ? ": " . $mysqli->errno . " = " . $mysqli->error : ""));
+                        if ($sql->affected_rows == -1) throw new Exception("Query failed" . ($_ENV["APP_ENV"] === "DEV" ? ": {$mysqli->errno} = {$mysqli->error}" : ""));
                         if ($sql->affected_rows == 0) throw new Exception("Query failed: 999 => Row not updated probably due to no coincidence.");
-                        if ($sql->affected_rows > 0) $return->message = "Query successful." . ($_ENV["APP_ENV"] === "DEV" ? "(" . $sql->affected_rows . " rows)" : "");
+                        if ($sql->affected_rows > 0) $return->message = "Query successful. " . ($_ENV["APP_ENV"] === "DEV" ? "({$sql->affected_rows} rows)" : "");
                     }
                     if ($method == "R") {
                         if ($res = $sql->get_result()) {
@@ -512,9 +512,9 @@ function execute_sql_query($mysqli, string $query, string $param_types = "", arr
                                 $return->message = "Query successful.";
                                 while ($row = $res->fetch_assoc()) $return->data[] = $row;
                             } else throw new Exception("No data found.");
-                        } else throw new Exception("Query failed" . ($_ENV["APP_ENV"] === "DEV" ? ": " . $mysqli->errno . " = " . $mysqli->error : ""));
+                        } else throw new Exception("Query failed" . ($_ENV["APP_ENV"] === "DEV" ? ": {$mysqli->errno} = {$mysqli->error}" : ""));
                     }
-                } else throw new Exception("Query failed" . ($_ENV["APP_ENV"] === "DEV" ? ": " . $mysqli->errno . " = " . $mysqli->error : ""));
+                } else throw new Exception("Query failed" . ($_ENV["APP_ENV"] === "DEV" ? ": {$mysqli->errno} = {$mysqli->error}" : ""));
             } catch (Exception $e) {
                 $return->status = 400;
                 $return->error = true;
@@ -570,7 +570,7 @@ function normalize_string(string $str, string $mode = "", array $valid = [])
 function change_location(string $location)
 {
     http_response_code(307);
-    header("Location: " . $location);
+    header("Location: {$location}");
     exit;
 }
 
@@ -580,7 +580,7 @@ function change_location(string $location)
  */
 function console_log(string $message)
 {
-    echo "<script>console.log('" . $message . "');</script>";
+    echo "<script>console.log('{$message}');</script>";
 }
 
 /** 
@@ -589,7 +589,7 @@ function console_log(string $message)
  */
 function console_warn(string $message)
 {
-    echo "<script>console.warn('" . $message . "');</script>";
+    echo "<script>console.warn('{$message}');</script>";
 }
 
 /** 
@@ -598,7 +598,7 @@ function console_warn(string $message)
  */
 function console_error(string $message)
 {
-    echo "<script>console.error('" . $message . "');</script>";
+    echo "<script>console.error('{$message}');</script>";
 }
 
 /** 
@@ -611,8 +611,8 @@ function error_crash(int $status, string $message, ?string $error_file = null)
 {
     global $TO_HOME;
     if (!$error_file || !file_exists($error_file))
-        $error_file = file_exists($TO_HOME . "_error.php") ? $TO_HOME . "_error.php" : $TO_HOME . "spa.php/_error.php";
-    console_warn("App crashed (" . $status . "): " . $message);
+        $error_file = file_exists("{$TO_HOME}/_error.php") ? "{$TO_HOME}/_error.php" : "{$TO_HOME}/spa.php/_error.php";
+    console_warn("App crashed ({$status}): {$message}");
     $_GET["e"] = $status;
     $_POST["custom_error_message"] = $message;
     http_response_code($status);

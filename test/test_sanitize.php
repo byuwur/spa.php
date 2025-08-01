@@ -1,6 +1,6 @@
 <?php
 require_once "../_var.php";
-require_once $TO_HOME . "_functions.php";
+require_once "{$TO_HOME}/_functions.php";
 $_GET = ["field1" => "test", "field2" => "testing", "field3" => 1];
 $_POST = [
     "data" => [

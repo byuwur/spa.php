@@ -2,7 +2,7 @@
 /*
  * File: _config.php
  * Desc: Handles connections and exceptions: databases or services. 
- * Deps: /_var.php, $TO_HOME . "_functions.php", $TO_HOME . "_plugin.php";
+ * Deps: /_var.php, "{$TO_HOME}/_functions.php", "{$TO_HOME}/_plugin.php";
  * Copyright (c) 2025 Andrés Trujillo [Mateus] byUwUr
  */
 
