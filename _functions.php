@@ -34,9 +34,10 @@ function api_respond(int $status, bool $error, string $message, array $data = []
  * @param string $url The URL to send the request to.
  * @param array $get GET parameters to include in the request.
  * @param array $post POST parameters to include in the request.
+ * @param bool $json_decode Whether to try to decode the JSON response.
  * @return mixed The response from the request.
  */
-function make_http_request(string $url, array $get = [], array $post = [])
+function make_http_request(string $url, array $get = [], array $post = [], bool $json_decode = false)
 {
     if (!validate_value($url, "url")) return console_error("CURL ERROR: Invalid URL.");
     global $TO_HOME, $SYSTEM_ROOT;
@@ -51,16 +52,20 @@ function make_http_request(string $url, array $get = [], array $post = [])
     curl_setopt($req, CURLOPT_RETURNTRANSFER, true);
     $cert_file = file_exists("{$TO_HOME}/spa.php/cacert.pem") ? "{$SYSTEM_ROOT}/spa.php/cacert.pem" : "{$SYSTEM_ROOT}/cacert.pem";
     curl_setopt($req, CURLOPT_CAINFO, $cert_file);
-    $requested = curl_exec($req);
+    $response = curl_exec($req);
     if (curl_errno($req)) {
         console_error("CURL HTTP2 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req) . " = Switching to HTTP1.1");
         curl_setopt($req, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
-        $requested = curl_exec($req);
+        $response = curl_exec($req);
     }
     if (curl_errno($req)) console_error("CURL HTTP1.1 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req));
     curl_close($req);
     session_start();
-    return $requested;
+    if (!$json_decode) return $response;
+    $json_decoded = json_decode($response, true);
+    if (json_last_error() === JSON_ERROR_NONE) return $json_decoded;
+    console_warn("Request ({$url}) couldn't be JSON decoded.");
+    return $response;
 }
 
 /** 
