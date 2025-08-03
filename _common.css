@@ -258,6 +258,10 @@ th {
 .bg-dark-opaque {
 	background: var(--dark-opaque);
 }
+.text-no-shadow,
+.text-no-shadow * {
+	text-shadow: 0 0 var(--transparent) !important;
+}
 .text-dark-shadow,
 .text-dark-shadow * {
 	text-shadow: 0px 0px 5px var(--dark-transparent), 2px 0px 5px var(--dark-transparent), -2px 0px 5px var(--dark-transparent), 0px 2px 5px var(--dark-transparent), 0px -2px 5px var(--dark-transparent);
