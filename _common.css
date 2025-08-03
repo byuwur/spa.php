@@ -408,7 +408,15 @@ th {
 .btn.btn-tertiary,
 .btn.btn-tertiary:hover,
 .btn.btn-quarternary,
-.btn.btn-quarternary:hover {
+.btn.btn-quarternary:hover,
+.btn.btn-primary *,
+.btn.btn-primary:hover *,
+.btn.btn-secondary *,
+.btn.btn-secondary:hover *,
+.btn.btn-tertiary *,
+.btn.btn-tertiary:hover *,
+.btn.btn-quarternary *,
+.btn.btn-quarternary:hover * {
 	text-shadow: 0 0 var(--transparent) !important;
 }
 /* === INPUTS === */
