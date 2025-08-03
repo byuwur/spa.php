@@ -155,11 +155,13 @@ i.select-icon {
 }
 a {
 	color: var(--primary-color);
-	text-decoration: none;
+	text-decoration: none !important;
 }
-a:hover {
+a:hover,
+a:hover * {
 	text-decoration: underline !important;
 	color: #69f !important;
+	text-shadow: 0 0 var(--transparent) !important;
 }
 .link {
 	text-decoration: underline !important;
