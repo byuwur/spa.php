@@ -25,6 +25,6 @@ require_once "{$TO_HOME}/common.example.php";
     });
 </script>
 <?php
-// Always call due to /_var.php invoking ob_start();
-ob_end_flush();
+// Progressive output by calling ob_flush(); flush();
+while (ob_get_level() > 0) ob_end_flush();
 ?>
