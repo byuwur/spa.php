@@ -28,6 +28,7 @@ require_once "{$TO_HOME}/_router.php";
 
 // --- PHP ---
 require_once "{$TO_HOME}/common.example.php";
+//enable_progressive_rendering();
 ?>
 
 <head>
@@ -148,6 +149,5 @@ require_once "{$TO_HOME}/common.example.php";
 
 </html>
 <?php
-// Progressive output by calling ob_flush(); flush();
 while (ob_get_level() > 0) ob_end_flush();
 ?>

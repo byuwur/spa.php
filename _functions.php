@@ -14,8 +14,9 @@
  * @param bool $error Indicates if the response represents an error.
  * @param string $message Message to include in the response.
  * @param array $data Additional data to include in the response.
+ * @return void
  */
-function api_respond(int $status, bool $error, string $message, array $data = [])
+function api_respond(int $status, bool $error, string $message, array $data = []): void
 {
     http_response_code($status);
     header("Content-Type: application/json");
@@ -40,10 +41,13 @@ function api_respond(int $status, bool $error, string $message, array $data = []
 function make_http_request(string $url, array $get = [], array $post = [], bool $json_decode = false)
 {
     if (!validate_value($url, "url")) return console_error("CURL ERROR: Invalid URL.");
-    global $TO_HOME, $SYSTEM_ROOT;
-    session_write_close();
+    global $TO_HOME, $SYSTEM_ROOT, $HOME_PATH;
+    $is_local_req = str_starts_with($url, $HOME_PATH);
+    if ($is_local_req) {
+        if (session_status() != PHP_SESSION_NONE) session_write_close();
+        $post[session_name()] = session_id();
+    }
     $req = curl_init();
-    $post[session_name()] = session_id();
     if (count($get)) $url = $url .  "?" . http_build_query($get);
     curl_setopt($req, CURLOPT_URL, $url);
     curl_setopt($req, CURLOPT_POST, 1);
@@ -60,7 +64,7 @@ function make_http_request(string $url, array $get = [], array $post = [], bool 
     }
     if (curl_errno($req)) console_error("CURL HTTP1.1 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req));
     curl_close($req);
-    session_start();
+    if ($is_local_req && session_status() == PHP_SESSION_NONE) session_start();
     if (!$json_decode) return $response;
     $json_decoded = json_decode($response, true);
     if (json_last_error() === JSON_ERROR_NONE) return $json_decoded;
@@ -71,11 +75,14 @@ function make_http_request(string $url, array $get = [], array $post = [], bool 
 /** 
  * Makes an HTTP CURL request to a given URL to check if responds correctly (200 - 299).
  * @param string $url The URL to send the request to.
- * @return boolean The resource existence.
+ * @return bool The resource existence.
  */
-function remote_file_exists(string $url)
+function remote_file_exists(string $url): bool
 {
-    if (!validate_value($url, "url")) return console_error("CURL ERROR: Invalid URL.");
+    if (!validate_value($url, "url")) {
+        console_error("CURL ERROR: Invalid URL.");
+        return false;
+    }
     global $TO_HOME, $SYSTEM_ROOT;
     $req = curl_init();
     curl_setopt($req, CURLOPT_URL, $url);
@@ -175,7 +182,7 @@ function validate_value($input, string $type = "string", array $options = [])
  * @param bool $strict Condition to check if ALL (strict) or AT LEAST ONE (relaxed) of them must be valid.
  * @return array The invalid fields. If length's zero (0) then conditions are fulfilled.
  */
-function validate_keys(array $array, array $required, bool $strict = true)
+function validate_keys(array $array, array $required, bool $strict = true): array
 {
     $invalid = [];
     foreach ($required as $key => $type)
@@ -193,9 +200,9 @@ function validate_keys(array $array, array $required, bool $strict = true)
  * @param array $required Assoc. array of keys to validate with its type [$key => $type].
  * @param bool $strict Condition to check if ALL (strict) or AT LEAST ONE (relaxed) of them must be valid.
  * @param bool $crash Condition to check if the app crashes or just returns the error string.
- * @return array The invalid fields. If length's zero (0) then conditions are fulfilled.
+ * @return string The invalid fields message. If length's zero (0) then conditions are fulfilled.
  */
-function api_validate_keys(string $method, array $array, array $required, bool $strict = true, bool $crash = true)
+function api_validate_keys(string $method, array $array, array $required, bool $strict = true, bool $crash = true): string
 {
     $invalid = validate_keys($array, $required, $strict);
     if (count($invalid)) {
@@ -204,6 +211,7 @@ function api_validate_keys(string $method, array $array, array $required, bool $
         if ($crash) api_respond(400, true, $err);
         else return $err;
     }
+    return "";
 }
 
 /**
@@ -211,7 +219,7 @@ function api_validate_keys(string $method, array $array, array $required, bool $
  * @param array $array The array of objects to be checked
  * @return array The list of common keys in all the elements of the array.
  */
-function common_keys(array $array)
+function common_keys(array $array): array
 {
     if (empty($array) || !count($array)) return [];
     $common = array_keys(reset($array));
@@ -236,7 +244,7 @@ function common_keys(array $array)
  * @param array $joins An array of JOINs to be included in the query (optional - not recommended due to performance).
  * @return stdClass An object containing the built query string, joins, fields, conditions, parameter types, and parameter values.
  */
-function build_sql_query(string $method, string $columns, string $table, array $fields, array $conditions, string $end, array $valid, array $params = [], array $nested = [], array $joins = [])
+function build_sql_query(string $method, string $columns, string $table, array $fields, array $conditions, string $end, array $valid, array $params = [], array $nested = [], array $joins = []): stdClass
 {
     // Initialize the return object with default properties
     $return = new stdClass();
@@ -439,7 +447,7 @@ function build_sql_query(string $method, string $columns, string $table, array $
  * @param array $valid A mapping of valid fields for validation against the provided fields and conditions.
  * @return stdClass An object containing the status, error flag, error number, message, and result data (if any).
  */
-function execute_sql_query($mysqli, string $query, string $param_types = "", array $param_values = [], array $fields = [], array $param_data = [], array $valid = [])
+function execute_sql_query($mysqli, string $query, string $param_types = "", array $param_values = [], array $fields = [], array $param_data = [], array $valid = []): stdClass
 {
     // Initialize the return object with default values
     $return = new stdClass();
@@ -549,7 +557,7 @@ function execute_sql_query($mysqli, string $query, string $param_types = "", arr
  * @param array $valid Special characters allowed in the string.
  * @return string The normalized string.
  */
-function normalize_string(string $str, string $mode = "", array $valid = [])
+function normalize_string(string $str, string $mode = "", array $valid = []): string
 {
     $str = preg_replace("/[^a-zA-Z0-9 " . implode("", $valid) . "]/", "", $str); // Remove non-alphanumeric characters except spaces
     $str = preg_replace("/\s+/", " ", $str); // Replace multiple spaces with a single space
@@ -568,11 +576,23 @@ function normalize_string(string $str, string $mode = "", array $valid = [])
     }
 }
 
+/**
+ * Enables progressive rendering by flushing all existing output buffers, forcing PHP to automatically flush after every output call (echo, print, etc.).
+ * ⚠️ - This function MUST be called AFTER headers have already been sent.
+ * @return void
+ */
+function enable_progressive_rendering(): void
+{
+    while (ob_get_level() > 0) ob_end_flush();
+    ob_implicit_flush(true);
+}
+
 /** 
  * Redirects the user to a specified location and terminates the script.
  * @param string $location The URL or path to redirect to.
+ * @return void
  */
-function change_location(string $location)
+function change_location(string $location): void
 {
     http_response_code(307);
     header("Location: {$location}");
@@ -582,8 +602,9 @@ function change_location(string $location)
 /** 
  * Logs a message to the browser's console using JavaScript.
  * @param string $message The message to log.
+ * @return void
  */
-function console_log(string $message)
+function console_log(string $message): void
 {
     echo "<script>console.log('{$message}');</script>";
 }
@@ -591,8 +612,9 @@ function console_log(string $message)
 /** 
  * Logs a warning message to the browser's console using JavaScript.
  * @param string $message The message to log.
+ * @return void
  */
-function console_warn(string $message)
+function console_warn(string $message): void
 {
     echo "<script>console.warn('{$message}');</script>";
 }
@@ -600,8 +622,9 @@ function console_warn(string $message)
 /** 
  * Logs an error message to the browser's console using JavaScript.
  * @param string $message The message to log.
+ * @return void
  */
-function console_error(string $message)
+function console_error(string $message): void
 {
     echo "<script>console.error('{$message}');</script>";
 }
@@ -611,8 +634,9 @@ function console_error(string $message)
  * @param int $status The HTTP status code to send.
  * @param string $message The error message to display.
  * @param string $error_file The path to the error file to include.
+ * @return void
  */
-function error_crash(int $status, string $message, ?string $error_file = null)
+function error_crash(int $status, string $message, ?string $error_file = null): void
 {
     global $TO_HOME;
     if (!$error_file || !file_exists($error_file))
@@ -628,8 +652,9 @@ function error_crash(int $status, string $message, ?string $error_file = null)
 
 /** 
  * Suppresses all error reporting by setting error reporting level to 0 and disabling error display.
+ * @return void
  */
-function suppress_errors()
+function suppress_errors(): void
 {
     error_reporting(0);
     ini_set("display_errors", 0);
@@ -640,7 +665,7 @@ function suppress_errors()
  * @param mixed $input The input to escape.
  * @return string The escaped string, with newlines converted to <br> tags.
  */
-function escape_html($input)
+function escape_html($input): string
 {
     $output = htmlspecialchars($input, ENT_QUOTES, "UTF-8", false);
     return nl2br($output);
@@ -649,8 +674,9 @@ function escape_html($input)
 /** 
  * Sends a JSON response and terminates the script.
  * @param mixed $json The data to encode and send as JSON.
+ * @return void
  */
-function exit_json($json)
+function exit_json($json): void
 {
     header("Content-Type: application/json");
     echo json_encode($json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
@@ -661,8 +687,9 @@ function exit_json($json)
 /** 
  * Outputs data as a JSON-encoded string.
  * @param mixed $json The data to encode and print as JSON.
+ * @return void
  */
-function print_json($json)
+function print_json($json): void
 {
     echo json_encode($json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 }
@@ -672,7 +699,7 @@ function print_json($json)
  * @param int $length The length of the random string.
  * @return string The generated random string.
  */
-function random_string($length)
+function random_string($length): string
 {
     $string = "";
     $char = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz";
@@ -687,8 +714,9 @@ function random_string($length)
  * @param string $message The message to display in the modal.
  * @param bool $hideCancelBtn Whether to hide the cancel button.
  * @param string $redirect The URL to redirect to when "OK" is clicked.
+ * @return void
  */
-function show_modal_back($state = "success", $title = "INFO.", $message = "Message.", $hideCancelBtn = false, $redirect = "javascript:destroy_modal_back();")
+function show_modal_back($state = "success", $title = "INFO.", $message = "Message.", $hideCancelBtn = false, $redirect = "javascript:destroy_modal_back();"): void
 {
     echo '<div id="modal_back" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel">
         <div id="modal_back_container" class="modal-dialog modal-dialog-scrollable">
@@ -721,7 +749,7 @@ function show_modal_back($state = "success", $title = "INFO.", $message = "Messa
  * @param string $filename The name of the file.
  * @return string The MIME type of the file, or "application/octet-stream" if unknown.
  */
-function get_mime_type($filename)
+function get_mime_type($filename): string
 {
     $mime = [
         'aac' => 'audio/aac',

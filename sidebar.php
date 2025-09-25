@@ -9,6 +9,7 @@ require_once "{$TO_HOME}/_routes.php";
 //require_once "{$TO_HOME}/_auth.php";
 // --- PHP ---
 require_once "{$TO_HOME}/lang/" . $APP_LANG . ".php";
+//enable_progressive_rendering();
 ?>
 <nav id="bywr-sidebar" class="bywr-sidebar accordion bywr-accordion bg-dark-transparent bg-blurred text-white">
     <div class="overlay"></div>
@@ -49,6 +50,5 @@ require_once "{$TO_HOME}/lang/" . $APP_LANG . ".php";
     </div>
 </nav>
 <?php
-// Progressive output by calling ob_flush(); flush();
 while (ob_get_level() > 0) ob_end_flush();
 ?>

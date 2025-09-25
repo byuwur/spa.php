@@ -10,6 +10,7 @@ require_once "{$TO_HOME}/_routes.php";
 //require_once "{$TO_HOME}/_auth.php";
 // --- PHP ---
 require_once "{$TO_HOME}/common.example.php";
+//enable_progressive_rendering();
 ?>
 <div class="video-foreground app-container">
     <div class="container vh-100 d-flex flex-column align-items-center justify-content-center">
@@ -29,6 +30,5 @@ require_once "{$TO_HOME}/common.example.php";
     });
 </script>
 <?php
-// Progressive output by calling ob_flush(); flush();
 while (ob_get_level() > 0) ob_end_flush();
 ?>
