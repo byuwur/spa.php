@@ -36,15 +36,15 @@
 }
 /* === SELECTION === */
 ::selection {
-	background-color: #018;
+	background-color: #012;
 	color: #fff;
 }
 ::-webkit-selection {
-	background-color: #018;
+	background-color: #012;
 	color: #fff;
 }
 ::-moz-selection {
-	background-color: #018;
+	background-color: #012;
 	color: #fff;
 }
 /* === PLACEHOLDER === */
@@ -71,11 +71,11 @@
 	border-radius: 12px;
 }
 ::-webkit-scrollbar-thumb {
-	background: #04c;
+	background: #111;
 	border-radius: 12px;
 }
 ::-webkit-scrollbar-thumb:hover {
-	background: #06e;
+	background: #444;
 }
 /* === GENERAL BODY === */
 @font-face {
@@ -90,7 +90,7 @@
 	min-width: 0;
 	/* scroll */
 	scrollbar-width: 12px;
-	scrollbar-color: #04c #fff;
+	scrollbar-color: #111 #fff;
 	/* anim */
 	-webkit-transition: opacity 0.3s ease, height 0.3s ease, width 0.3s ease, transform 0.3s ease, margin 0.3s ease, padding 0.3s ease, background-color 0.3s ease, filter 0.3s ease !important;
 	-o-transition: opacity 0.3s ease, height 0.3s ease, width 0.3s ease, transform 0.3s ease, margin 0.3s ease, padding 0.3s ease, background-color 0.3s ease, filter 0.3s ease !important;
@@ -627,15 +627,27 @@ th {
 	bottom: 16px;
 	right: 16px;
 	z-index: 99;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
 }
 .fab-container a {
 	margin: 0.125rem 0;
-	padding: 0.125rem;
+	padding: 0.5rem;
+	width: auto;
+	height: 2.75rem;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
 }
 .fab-container a i {
 	height: 2rem;
-	width: 3.5rem;
+	width: 2rem;
 	font-size: 2rem;
+	margin: 0.25rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 /* === CAROUSELS === */
 .swiper {
@@ -871,7 +883,7 @@ th {
 .video-js > * {
 	color: #fff !important;
 	font-size: 0.75rem !important;
-	background: var(--bywr-red-dark-opaque) !important;
+	background: var(--dark-color) !important;
 	backdrop-filter: blur(0.125rem) !important;
 }
 .vjs-current-time,
