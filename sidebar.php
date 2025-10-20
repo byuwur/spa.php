@@ -13,7 +13,7 @@ require_once "{$TO_HOME}/lang/" . $APP_LANG . ".php";
 ?>
 <nav id="bywr-sidebar" class="bywr-sidebar accordion bywr-accordion bg-dark-transparent bg-blurred text-white">
     <div class="overlay"></div>
-    <div class="bywr-sidebar-option">
+    <div class="bywr-sidebar-header">
         <div class="navbar-brand has-background-contain" style="height:48px;width:48px;background-image:url('<?= "{$HOME_PATH}/img/byuwur.png" ?>');"></div>
         <span class="ms-2 me-4 pe-5">byuwur/spa.php</span>
     </div>
