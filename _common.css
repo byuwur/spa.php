@@ -1027,6 +1027,14 @@ th {
 	z-index: 99;
 	overflow: hidden;
 }
+.bywr-sidebar-options {
+	flex-grow: 1;
+	overflow-y: auto;
+	overflow-x: hidden;
+	border-width: 0 0 1px 0 !important;
+	border-style: solid !important;
+	border-color: var(--light-transparent) !important;
+}
 .bywr-sidebar.bywr-sidebar-expanded {
 	width: var(--sidebar-expanded-width);
 	overflow-y: auto;

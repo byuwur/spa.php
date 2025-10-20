@@ -13,11 +13,11 @@ require_once "{$TO_HOME}/lang/" . $APP_LANG . ".php";
 ?>
 <nav id="bywr-sidebar" class="bywr-sidebar accordion bywr-accordion bg-dark-transparent bg-blurred text-white">
     <div class="overlay"></div>
-    <div class="bywr-sidebar-content accordion-item flex-grow-1">
-        <div class="bywr-sidebar-option p-2o5">
-            <div class="navbar-brand has-background-contain" style="height:48px;width:48px;background-image:url('<?= "{$HOME_PATH}/img/byuwur.png" ?>');"></div>
-            <span class="ms-2 me-4 pe-5">byuwur/spa.php</span>
-        </div>
+    <div class="bywr-sidebar-option p-2o5">
+        <div class="navbar-brand has-background-contain" style="height:48px;width:48px;background-image:url('<?= "{$HOME_PATH}/img/byuwur.png" ?>');"></div>
+        <span class="ms-2 me-4 pe-5">byuwur/spa.php</span>
+    </div>
+    <div class="bywr-sidebar-content accordion-item bywr-sidebar-options">
         <a class="bywr-sidebar-option" href="<?= "/{$ROUTE_HOME}" ?>">
             <i class="fas fa-home"></i> <span><?= $home ?></span><i class="fas fa-angle-right ms-auto"></i>
         </a>
