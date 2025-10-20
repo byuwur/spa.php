@@ -19,6 +19,7 @@ dist/
 build/
 bin/
 .cache/
+cache/
 *.cache
 *.tsbuildinfo
 # === OS ===
