@@ -6,35 +6,47 @@
  * Copyright (c) 2025 Andrés Trujillo [Mateus] byUwUr
  */
 
+// --- functions ---
+
+/**
+ * Replaces "\\" directory separators to "/"
+ * @param string $path String to convert
+ * @return string Converted path
+ */
+function std_dir_separator(string $path): string
+{
+    return str_replace("\\", "/", $path);
+}
+
 // Initializes the output buffer and sets up paths and environment variables.
 ob_start();
-$INVOKER__FILE__ = isset($INVOKER__FILE__) ? str_replace("\\", "/", $INVOKER__FILE__) : "";
-#echo "INVOKER__FILE__: " . $INVOKER__FILE__ . "\n";
-$INVOKER__DIR__ = isset($INVOKER__DIR__) ? str_replace("\\", "/", $INVOKER__DIR__) : "";
-#echo "INVOKER__DIR__: " . $INVOKER__DIR__ . "\n";
-$THIS__FILE__ = str_replace("\\", "/", __FILE__);
-#echo "THIS__FILE__: " . $THIS__FILE__ . "\n";
-$SERVER_SCRIPT_FILENAME = str_replace("\\", "/", $_SERVER["SCRIPT_FILENAME"]);
-$SERVER_PHP_SELF = str_replace("\\", "/", $_SERVER["PHP_SELF"]);
-$IS_PHP_ON_SERVER = php_sapi_name() != 'cli';
+$INVOKER__FILE__ = isset($INVOKER__FILE__) ? std_dir_separator($INVOKER__FILE__) : "";
+if (isset($debug) && $debug) echo "INVOKER__FILE__: " . $INVOKER__FILE__ . " <br>\n";
+$INVOKER__DIR__ = isset($INVOKER__DIR__) ? std_dir_separator($INVOKER__DIR__) : "";
+if (isset($debug) && $debug) echo "INVOKER__DIR__: " . $INVOKER__DIR__ . " <br>\n";
+$THIS__FILE__ = std_dir_separator(__FILE__);
+if (isset($debug) && $debug) echo "THIS__FILE__: " . $THIS__FILE__ . " <br>\n";
+$SERVER_SCRIPT_FILENAME = std_dir_separator($_SERVER["SCRIPT_FILENAME"]);
+$SERVER_PHP_SELF = std_dir_separator($_SERVER["PHP_SELF"]);
+$IS_PHP_ON_SERVER = isset($IS_PHP_ON_SERVER) ? $IS_PHP_ON_SERVER : php_sapi_name() != 'cli';
 // Set the root directory of the system
 $SYSTEM_ROOT = dirname($THIS__FILE__);
-#echo "SYSTEM_ROOT: " . $SYSTEM_ROOT . "\n";
+if (isset($debug) && $debug) echo "SYSTEM_ROOT: " . $SYSTEM_ROOT . " <br>\n";
 // Determine the protocol (HTTP or HTTPS)
 $PROTOCOL = isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on" ? "https://" : "http://";
-#echo "PROTOCOL: " . $PROTOCOL . "\n";
+if (isset($debug) && $debug) echo "PROTOCOL: " . $PROTOCOL . " <br>\n";
 // Calculate the difference in directory depth between the current script and the root directory
 $PATH_DIFF = count(explode("/", ($IS_PHP_ON_SERVER ? $_SERVER["SCRIPT_FILENAME"] : $INVOKER__FILE__))) - count(explode("/", $THIS__FILE__));
-#echo "PATH_DIFF: " . $PATH_DIFF . "\n";
+if (isset($debug) && $debug) echo "PATH_DIFF: " . $PATH_DIFF . " <br>\n";
 // Set the relative path to the home directory
 $TO_HOME = $PATH_DIFF > 0 ? substr(str_repeat("../", $PATH_DIFF), 0, -1) : ".";
-#echo "TO_HOME: " . $TO_HOME . "\n";
+if (isset($debug) && $debug) echo "TO_HOME: " . $TO_HOME . " <br>\n";
 // Get the current script's directory path
 $THIS_PATH = $IS_PHP_ON_SERVER ? dirname($PROTOCOL . $_SERVER["HTTP_HOST"] . $SERVER_PHP_SELF) : dirname($INVOKER__FILE__);
-#echo "THIS_PATH: " . $THIS_PATH . "\n";
+if (isset($debug) && $debug) echo "THIS_PATH: " . $THIS_PATH . " <br>\n";
 // Set the absolute path to the home directory
 $HOME_PATH = $PATH_DIFF > 0 ? implode("/", array_slice(explode("/", $THIS_PATH), 0, -$PATH_DIFF)) : $THIS_PATH;
-#echo "HOME_PATH: " . $HOME_PATH . "\n";
+if (isset($debug) && $debug) echo "HOME_PATH: " . $HOME_PATH . " <br>\n";
 // Store the calculated paths in the browser's localStorage
 if (isset($setLocalStorage) && $setLocalStorage) { ?>
     <script>
