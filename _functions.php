@@ -105,6 +105,28 @@ function remote_file_exists(string $url): bool
 }
 
 /** 
+ * Checks if a given TCP port is currently in use on localhost.
+ * @param int $port The port number to check (e.g. 8080 or 6969).
+ * @return bool True if the port is active, false otherwise.
+ */
+function is_port_in_use(int $port, bool $is_cli = false): bool
+{
+    if ($port < 1 || $port > 65535) {
+        if (!$is_cli) console_error("PORT ERROR: Invalid port number ({$port}). Must be 1 >= PORT <= 65535.");
+        else echo "🔴 PORT ERROR: Invalid port number ({$port}). Must be 1 >= PORT <= 65535.";
+        return false;
+    }
+    $connection = @fsockopen('127.0.0.1', $port);
+    if (is_resource($connection)) {
+        fclose($connection);
+        if (!$is_cli) console_warn("⚠️ Webocket already running on port {$port}.");
+        else echo "⚠️ Websocket already running on port {$port}.";
+        return true;
+    }
+    return false;
+}
+
+/** 
  * Validates a value against a specified type and sanitizes it accordingly, returning NULL if the value is invalid.
  * @param mixed $input The value to validate.
  * @param string $type The type to validate against. Defaults to "string".
@@ -606,7 +628,8 @@ function change_location(string $location): void
  */
 function console_log(string $message): void
 {
-    echo "<script>console.log('{$message}');</script>";
+    $message = str_replace("\"", "\\\"", $message);
+    echo "<script>console.log(\"{$message}\");</script>";
 }
 
 /** 
@@ -616,7 +639,8 @@ function console_log(string $message): void
  */
 function console_warn(string $message): void
 {
-    echo "<script>console.warn('{$message}');</script>";
+    $message = str_replace("\"", "\\\"", $message);
+    echo "<script>console.warn(\"{$message}\");</script>";
 }
 
 /** 
@@ -626,7 +650,8 @@ function console_warn(string $message): void
  */
 function console_error(string $message): void
 {
-    echo "<script>console.error('{$message}');</script>";
+    $message = str_replace("\"", "\\\"", $message);
+    echo "<script>console.error(\"{$message}\");</script>";
 }
 
 /** 

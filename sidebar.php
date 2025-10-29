@@ -30,6 +30,12 @@ require_once "{$TO_HOME}/lang/" . $APP_LANG . ".php";
         <a class="bywr-sidebar-option" href="<?= "/{$ROUTE_ERROR}" ?>">
             <i class="fas fa-bug"></i> <span>Error</span><i class="fas fa-angle-right ms-auto"></i>
         </a>
+        <a class="bywr-sidebar-option" href="<?= "/{$ROUTE_SOCKET_SERVER}" ?>">
+            <i class="fas fa-globe"></i> <span>Socket Server</span><i class="fas fa-angle-right ms-auto"></i>
+        </a>
+        <a class="bywr-sidebar-option" href="<?= "/{$ROUTE_SOCKET_CLIENT}" ?>">
+            <i class="fas fa-user"></i> <span>Socket Client</span><i class="fas fa-angle-right ms-auto"></i>
+        </a>
     </div>
     <div class="bywr-sidebar-content accordion-item flex-grow-0">
         <button class="accordion-header accordion-button p-2o5 collapsed" data-bs-toggle="collapse" data-bs-target="#lang-drop" aria-expanded="false" aria-controls="lang-drop">

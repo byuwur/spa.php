@@ -14,6 +14,8 @@ $ROUTE_PAGE_ES = "pagina";
 $ROUTE_HOME_EN = "home";
 $ROUTE_PAGE_EN = "page";
 $ROUTE_VIDEO = "video";
+$ROUTE_SOCKET_SERVER = "socket-server";
+$ROUTE_SOCKET_CLIENT = "socket-client";
 
 switch ($APP_LANG) {
     case "es":
@@ -52,4 +54,6 @@ $routes = [
     "/{$ROUTE_PAGE_ES}" => ["URI" => "/page.example.php", "GET" => ["lang" => "es"], ...$ROOT_COMPONENTS],
     "/{$ROUTE_PAGE_EN}" => ["URI" => "/page.example.php", "GET" => ["lang" => "en"], ...$ROOT_COMPONENTS],
     "/{$ROUTE_VIDEO}" => ["URI" => "/video.example.php", "GET" => [], ...$ROOT_COMPONENTS],
+    "/{$ROUTE_SOCKET_SERVER}" => ["URI" => "/websocket.server.php", "GET" => [], ...$ROOT_COMPONENTS],
+    "/{$ROUTE_SOCKET_CLIENT}" => ["URI" => "/websocket.client.php", "GET" => [], ...$ROOT_COMPONENTS],
 ];

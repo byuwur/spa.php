@@ -136,6 +136,10 @@ hr {
 p {
 	margin-bottom: 0.5rem;
 }
+pre {
+	margin: 0;
+	line-height: 1;
+}
 i,
 i.fas,
 span.fas {

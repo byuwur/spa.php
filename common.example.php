@@ -9,6 +9,8 @@ if (file_exists("{$TO_HOME}/lang/{$APP_LANG}.php")) {
         0 => "SPA.PHP | byUwUr",
         "home" => "SPA " . $home . " | byUwUr",
         "page" => "SPA " . $page . " | byUwUr",
-        "video" => "SPA " . $video . " | byUwUr"
+        "video" => "SPA " . $video . " | byUwUr",
+        "socket-server" => "SPA Socket Server | byUwUr",
+        "socket-client" => "SPA Socker Client | byUwUr"
     ];
 }
