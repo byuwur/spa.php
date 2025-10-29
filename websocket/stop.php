@@ -1,4 +1,8 @@
 <?php
+$INVOKER__FILE__ = __FILE__;
+$INVOKER__DIR__ = __DIR__;
+$IS_PHP_ON_SERVER = false;
+//$debug = true;
 require_once "../_var.php";
 require_once "{$TO_HOME}/_common.php";
 require_once "{$TO_HOME}/_functions.php";

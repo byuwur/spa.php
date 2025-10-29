@@ -126,6 +126,34 @@ function is_port_in_use(int $port, bool $is_cli = false): bool
     return false;
 }
 
+/**
+ * Gets the executable from where PHP is currently running.
+ * @return string Absolute PHP path.
+ */
+function php_where(): string
+{
+    // Try PHP binary
+    $php_path = dirname(std_dir_separator(PHP_BINARY)) . "/php.exe";
+    if (is_file($php_path)) return $php_path;
+    $cgi_path = dirname(std_dir_separator(PHP_BINARY)) . "/php-cgi.exe";
+    if (is_file($cgi_path)) return $cgi_path;
+    // Try PHP PATH
+    $output = [];
+    $code = -1;
+    exec("where php", $output, $code);
+    if (reset($output) && $code == 0) return reset($output);
+    // Try PHP-CGI PATH
+    $output = [];
+    $code = -1;
+    exec("where php-cgi", $output, $code);
+    if (reset($output) && $code == 0) return reset($output);
+    // Try INI path
+    $ini = std_dir_separator(PHP_BINDIR) . "/php.exe";
+    if (is_file($ini)) return $ini;
+    // Fallback
+    return 'php';
+}
+
 /** 
  * Validates a value against a specified type and sanitizes it accordingly, returning NULL if the value is invalid.
  * @param mixed $input The value to validate.
