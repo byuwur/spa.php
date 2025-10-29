@@ -877,7 +877,7 @@ th {
 	right: 0;
 	background: #eee;
 	padding: 0 4px;
-	z-index: 9;
+	z-index: 99;
 }
 /* === VIDEO.js === */
 .video-js > * {
