@@ -15,7 +15,7 @@ require_once "{$TO_HOME}/_plugins.php";
 require_once "{$TO_HOME}/common.example.php";
 enable_progressive_rendering();
 $now = date("Y-m-d_H-i-s");
-$PORT = $_ENV["WEBSOCKET_PORT_DEFAULT"] ?? 6969;
+$PORT = $_ENV["WEBSOCKET_PORT_DEFAULT"] ?? 6996;
 ?>
 <pre>
 <?php

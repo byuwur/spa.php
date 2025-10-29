@@ -14,6 +14,8 @@ require_once "{$TO_HOME}/common.example.php";
 ?>
 <div class="video-foreground app-container">
     <div class="container vh-100 d-flex flex-column align-items-start justify-content-center text-white text-dark-shadow">
+        <a href="<?= "{$HOME_PATH}/websocket/start.php" ?>">WS START</a>
+        <a href="<?= "{$HOME_PATH}/websocket/stop.php" ?>">WS STOP</a>
         <pre id="ws_log">
 
         </pre>

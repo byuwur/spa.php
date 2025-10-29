@@ -21,7 +21,7 @@ if (file_exists("{$HOME_PATH}/vendor/autoload.php")) require_once "{$HOME_PATH}/
 // --- PHP ---
 #$dotenv = Dotenv\Dotenv::createImmutable($TO_HOME);
 #$dotenv->load();
-$WS_PORT = $_ENV["WEBSOCKET_PORT_DEFAULT"] ?? 6969;
+$WS_PORT = $_ENV["WEBSOCKET_PORT_DEFAULT"] ?? 6996;
 $WS_PATH = $_ENV["WEBSOCKET_PATH_DEFAULT"] ?? "/spa.ws";
 echo "🟡 Starting socket..." . "\n";
 
@@ -29,7 +29,7 @@ use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 use Ratchet\App;
 
-class TournamentSocket implements MessageComponentInterface
+class WebSocket implements MessageComponentInterface
 {
     protected $clients;
 
@@ -78,7 +78,7 @@ if (is_port_in_use($WS_PORT, true)) exit;
 
 try {
     $app = new App("localhost", $WS_PORT);
-    $app->route($WS_PATH, new TournamentSocket, ['*']);
+    $app->route($WS_PATH, new WebSocket, ['*']);
     echo "🚀 Socket ACTIVE" . "\n";
     $app->run();
 } catch (Exception $e) {

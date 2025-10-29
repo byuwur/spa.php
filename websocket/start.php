@@ -16,7 +16,7 @@ require_once "{$TO_HOME}/common.example.php";
 enable_progressive_rendering();
 $now = date("Y-m-d_H-i-s");
 $PHP_PATH = php_where();
-$PORT = $_ENV["WEBSOCKET_PORT_DEFAULT"] ?? 6969;
+$PORT = $_ENV["WEBSOCKET_PORT_DEFAULT"] ?? 6996;
 $WS_DIR = "{$SYSTEM_ROOT}/websocket";
 $WS_LOG_FILES = glob("{$WS_DIR}/*.log");
 $WS_SERVER_PATH = "{$WS_DIR}/server.php";
@@ -26,7 +26,7 @@ usort($WS_LOG_FILES, function ($a, $b) {
     return filemtime($b) - filemtime($a);
 });
 // Delete anything after the first 3
-foreach (array_slice($WS_LOG_FILES, 3) as $old_log) @unlink($old_log);
+foreach (array_slice($WS_LOG_FILES, 2) as $old_log) @unlink($old_log);
 ?>
 <pre>
 <?php
