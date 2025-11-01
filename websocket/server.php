@@ -19,6 +19,7 @@ while (ob_get_level() > 0) ob_end_flush();
 require_once "{$HOME_PATH}/_functions.php";
 if (file_exists("{$HOME_PATH}/vendor/autoload.php")) require_once "{$HOME_PATH}/vendor/autoload.php";
 // --- PHP ---
+suppress_errors();
 #$dotenv = Dotenv\Dotenv::createImmutable($TO_HOME);
 #$dotenv->load();
 $WS_PORT = $_ENV["WEBSOCKET_PORT_DEFAULT"] ?? 6996;

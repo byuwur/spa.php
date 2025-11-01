@@ -12,7 +12,6 @@ require_once "{$TO_HOME}/_plugins.php";
 //require_once "{$TO_HOME}/_router.php";
 //require_once "{$TO_HOME}/_auth.php";
 // --- PHP ---
-require_once "{$TO_HOME}/common.example.php";
 enable_progressive_rendering();
 $now = date("Y-m-d_H-i-s");
 $PHP_PATH = php_where();

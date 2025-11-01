@@ -7,6 +7,114 @@
  */
 
 /**
+ * Inits a websocket connection.
+ * @param {object} options Options for the websocket connection.
+ * @param {string} options.host The host where you wish to connect.
+ * @param {int} options.port The port of the host.
+ * @param {string} options.path The path where the websocket is exposed.
+ * @param {string} options.elementId The element where you want to render the websocket.
+ * @param {Function} [options.onOpen=()=>{}] onOpen trigger for websocket.
+ * @param {Function} [options.onClose=()=>{}] onClose trigger for websocket.
+ * @param {Function} [options.onError=()=>{}] onError trigger for websocket.
+ * @param {Function} [options.onMessage=()=>{}] onMessage trigger for websocket.
+ * @param {int} [options.reconnDelay=3000] How long to wait between reconnections in ms.
+ * @param {int} [options.maxRetries=3] How many reconnections tries.
+ * @return {object} Returns the ws object for further manipulation.
+ */
+function init_websocket(options) {
+	const { host, port, path, elementId, onOpen = () => {}, onClose = () => {}, onError = () => {}, onMessage = () => {}, reconnDelay = 3000, maxRetries = 3 } = options;
+	// Developer mode?
+	const appIsDEV = localStorage.getItem("APP_ENV") === "DEV";
+	if (appIsDEV) console.log(`init_websocket():`, options);
+	// Check if elementId is a valid ID (#id)
+	const inputId = elementId.match(/#[a-zA-Z0-9-_]+/);
+	if (!inputId) return console.warn(`Insert a valid element ID.`);
+	// Look up ID existence
+	const elId = inputId[0];
+	if (!$(elId).length) return console.warn(`Element ID (${elId}) doesn't exist.`);
+	// Init websocket
+
+	const ws_path = `ws://${host}:${port}/${path}`;
+	let ws = undefined;
+	let retries = 0;
+	let closedManually = false;
+
+	const logToEl = (label, data = "") => {
+		let content = data;
+		try {
+			const parsed = JSON.parse(data);
+			content = JSON.stringify(parsed, null, 2);
+		} catch {}
+		const now = new Date().toISOString().replace("T", "_").replace(/:/g, "-").split(".")[0];
+		const $pre = $("<pre>").text(`${label}: [${now}]\n${data}`);
+		$(elId).append($pre);
+	};
+
+	function connect() {
+		if (ws && ws?.readyState === WebSocket.OPEN) return;
+		console.log(`ws${appIsDEV ? `: ${ws_path}` : `.`}`);
+		ws = new WebSocket(ws_path);
+		logToEl(`ws`, `Connecting...`);
+
+		ws.onopen = (e) => {
+			if (appIsDEV) console.log("ws.onopen:", e);
+			retries = 0;
+			logToEl(`ws.onopen`, `Connection established.`);
+			onOpen(e);
+		};
+		ws.onclose = (e) => {
+			if (appIsDEV) console.log("ws.onclose:", e);
+			logToEl(`ws.onclose`, `Connection closed. (${e.code})`);
+			onClose(e);
+			if (!closedManually && retries < maxRetries) retry();
+			else logToEl(`ws.retry`, `Max retries reached (${maxRetries})`);
+		};
+		ws.onerror = (e) => {
+			if (appIsDEV) console.log("ws.onerror:", e);
+			logToEl(`ws.onerror`, `Connection failed.`);
+			onError(e);
+			ws.close();
+		};
+		ws.onmessage = (e) => {
+			if (appIsDEV) console.log("ws.onmessage:", e);
+			logToEl(`ws.onmessage`, e.data || `[no data]`);
+			onMessage(e);
+		};
+	}
+
+	function retry() {
+		if (retries > maxRetries) {
+			logToEl(`ws.retry`, `Max retries reached (${maxRetries})`);
+			return;
+		}
+		retries++;
+		logToEl(`ws.retry`, `Reconnection attempt (${retries}) in ${reconnDelay / 1000} seconds...`);
+		setTimeout(connect, reconnDelay);
+	}
+
+	//connect();
+
+	return {
+		ws: ws,
+		connect: () => {
+			// Do more if needed
+			connect();
+		},
+		close: () => {
+			closedManually = true;
+            retries = maxRetries;
+			ws?.close();
+		},
+		retry: () => {
+			closedManually = false;
+			retries = 0;
+			retry();
+		},
+		readyState: ws?.readyState
+	};
+}
+
+/**
  * Creates or updates a cookie with the specified name, value, and expiration days.
  * @param {string} name The name of the cookie.
  * @param {string} value The value of the cookie.
@@ -132,7 +240,7 @@ function make_http_request(options) {
 			if (appIsDEV) console.log(`Response (${elementId}):`, response);
 			if (loudFail && ![200, 201, 202].includes(response?.status))
 				return show_modal_front("modal_front", "danger", "ERROR", "Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + response?.message + ")</code>", true);
-			return response?.data;
+			return response?.data ?? response;
 		})
 		.catch(function (xhr, status, error) {
 			console.error(`Error (${elementId}): ${xhr?.status} ${status} ${error} "${xhr?.responseJSON?.message ?? xhr?.responseText}"`, appIsDEV ? xhr : "");
@@ -207,8 +315,8 @@ function element_make_http_request(options) {
 					if (appIsDEV) console.log(`Response (${elementId}):`, response);
 					if (loudFail && ![200, 201, 202].includes(response?.status))
 						return show_modal_front("modal_front", "danger", "ERROR", "Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + response?.message + ")</code>", true);
-					doneFn(response?.data);
-					return response?.data;
+					doneFn(response?.data ?? response);
+					return response?.data ?? response;
 				})
 				.catch(function (xhr, status, error) {
 					console.error(`Error (${elementId}): ${xhr?.status} ${status} ${error} "${xhr?.responseJSON?.message ?? xhr?.responseText}"`, appIsDEV ? xhr : "");
@@ -216,10 +324,10 @@ function element_make_http_request(options) {
 					failFn();
 					return null;
 				})
-				.always(function () {
+				.always(function (response) {
 					submitBtn.removeAttr("disabled");
 					spinner.fadeOut(111);
-					alwaysFn();
+					alwaysFn(response?.data ?? response);
 				});
 		});
 }
