@@ -14,8 +14,11 @@ require_once "{$TO_HOME}/common.example.php";
 ?>
 <div class="video-foreground app-container">
     <div class="container d-flex flex-column align-items-start justify-content-center text-white text-dark-shadow">
-        <pre id="ws_scripts" class="w-100 my-2" style="max-height:33vh;"></pre>
+        <input id="ws_user" type="text" placeholder="Username" class="form-control text-no-shadow text-dark" style="max-width:240px;" />
+        <button id="ws_send" class="btn btn-primary my-2" type="submit">WS SEND MESSAGE</button>
+        <pre id="ws_messages" class="w-100 my-2" style="max-height:33vh;"></pre>
         <button id="ws_start" class="btn btn-primary my-2" type="submit">WS START</button>
+        <pre id="ws_scripts" class="w-100 my-2" style="max-height:33vh;"></pre>
         <button id="ws_stop" class="btn btn-primary my-2" type="submit">WS STOP</button>
         <pre id="ws_log" class="w-100 my-2" style="max-height:33vh;"></pre>
     </div>
@@ -29,6 +32,7 @@ require_once "{$TO_HOME}/common.example.php";
             port: '6996',
             path: 'spa.ws',
             elementId: '#ws_log',
+            logging: true,
             /*onOpen: () => {
                 console.log('custom onOpen');
             },
@@ -37,11 +41,18 @@ require_once "{$TO_HOME}/common.example.php";
             },
             onError: () => {
                 console.log('custom onError');
-            },
-            onMessage: () => {
-                console.log('custom onMessage');
             },*/
+            onMessage: (data) => {
+                $("#ws_messages").append(data);
+            },
         });
+        $("#ws_send").off("click").on("click", function(e) {
+            event.preventDefault();
+            const now = new Date().toISOString().replace("T", "_").replace(/:/g, "-").split(".")[0],
+                msg = `${$("#ws_user").val()}: This message was sent at ${now}`;
+            console.log("Msg:", msg);
+            ws.send(msg);
+        })
         element_make_http_request({
             $elementId: "#ws_start",
             $url: "<?= "{$HOME_PATH}/websocket/start.php" ?>",

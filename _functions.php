@@ -724,17 +724,16 @@ function escape_html($input): string
     return nl2br($output);
 }
 
-/** 
- * Sends a JSON response and terminates the script.
- * @param mixed $json The data to encode and send as JSON.
- * @return void
+/**
+ * Returns a boolean if a string is a valid JSON.
+ * @param mixed $json The data check.
+ * @return bool Wether if the input is a valid JSON or not.
  */
-function exit_json($json): void
+function check_json($json): bool
 {
-    header("Content-Type: application/json");
-    echo json_encode($json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-    while (ob_get_level() > 0) ob_end_flush();
-    exit;
+    if (!is_string($json)) return false;
+    json_decode($json);
+    return json_last_error() === JSON_ERROR_NONE;
 }
 
 /** 
@@ -744,7 +743,21 @@ function exit_json($json): void
  */
 function print_json($json): void
 {
-    echo json_encode($json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+    if (check_json($json)) echo json_encode(json_decode($json, true), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+    else echo json_encode($json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+}
+
+/** 
+ * Sends a JSON response and terminates the script. (Ideally called before sending headers)
+ * @param mixed $json The data to encode and send as JSON.
+ * @return void
+ */
+function exit_json($json): void
+{
+    if (!headers_sent()) header("Content-Type: application/json");
+    print_json($json);
+    while (ob_get_level() > 0) ob_end_flush();
+    exit;
 }
 
 /** 

@@ -7,12 +7,52 @@
  */
 
 /**
+ * Checks whether a value is valid JSON.
+ * @param {any} json The data to check.
+ * @return {boolean} Whether the input is a valid JSON string.
+ */
+function check_json(json) {
+	if (typeof json !== "string") return false;
+	try {
+		JSON.parse(json);
+		return true;
+	} catch {
+		return false;
+	}
+}
+
+/**
+ * Returns a pretty-printed JSON string.
+ * If the input is already JSON, it normalizes it.
+ * @param {any} json The data to format.
+ * @return {string} JSON-formatted string.
+ */
+function print_json(json) {
+	let output = null;
+	if (check_json(json)) output = JSON.stringify(JSON.parse(json), null, 2);
+	else output = JSON.stringify(json, null, 2);
+	return output;
+}
+
+/**
+ * Logs a JSON response and stops further execution.
+ * (JS version: it just throws a special object to simulate termination)
+ * @param {any} json The data to output.
+ * @return {never}
+ */
+function exit_json(json) {
+	console.warn(print_json(json));
+	throw new Error("exit_json: Script terminated after sending JSON response.");
+}
+
+/**
  * Inits a websocket connection.
  * @param {object} options Options for the websocket connection.
  * @param {string} options.host The host where you wish to connect.
  * @param {int} options.port The port of the host.
  * @param {string} options.path The path where the websocket is exposed.
  * @param {string} options.elementId The element where you want to render the websocket.
+ * @param {boolean} [options.logging=false] Log websocket data on the element.
  * @param {Function} [options.onOpen=()=>{}] onOpen trigger for websocket.
  * @param {Function} [options.onClose=()=>{}] onClose trigger for websocket.
  * @param {Function} [options.onError=()=>{}] onError trigger for websocket.
@@ -22,7 +62,7 @@
  * @return {object} Returns the ws object for further manipulation.
  */
 function init_websocket(options) {
-	const { host, port, path, elementId, onOpen = () => {}, onClose = () => {}, onError = () => {}, onMessage = () => {}, reconnDelay = 3000, maxRetries = 3 } = options;
+	const { host, port, path, elementId, logging = false, onOpen = () => {}, onClose = () => {}, onError = () => {}, onMessage = () => {}, reconnDelay = 3000, maxRetries = 3 } = options;
 	// Developer mode?
 	const appIsDEV = localStorage.getItem("APP_ENV") === "DEV";
 	if (appIsDEV) console.log(`init_websocket():`, options);
@@ -40,11 +80,9 @@ function init_websocket(options) {
 	let closedManually = false;
 
 	const logToEl = (label, data = "") => {
+		if (!logging) return;
 		let content = data;
-		try {
-			const parsed = JSON.parse(data);
-			content = JSON.stringify(parsed, null, 2);
-		} catch {}
+		if (check_json(content)) content = JSON.stringify(JSON.parse(content), null, 2);
 		const now = new Date().toISOString().replace("T", "_").replace(/:/g, "-").split(".")[0];
 		const $pre = $("<pre>").text(`${label}: [${now}]\n${data}`);
 		$(elId).append($pre);
@@ -102,7 +140,7 @@ function init_websocket(options) {
 		},
 		close: () => {
 			closedManually = true;
-            retries = maxRetries;
+			retries = maxRetries;
 			ws?.close();
 		},
 		retry: () => {
@@ -110,7 +148,13 @@ function init_websocket(options) {
 			retries = 0;
 			retry();
 		},
-		readyState: ws?.readyState
+		readyState: ws?.readyState,
+		send: (data) => {
+			let parsedData = data;
+			if (check_json(data)) parsedData = JSON.stringify(JSON.parse(parsedData), null, 2);
+			else parsedData = JSON.stringify(parsedData, null, 2);
+			ws?.send(parsedData);
+		}
 	};
 }
 
