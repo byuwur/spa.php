@@ -52,13 +52,12 @@ class WebSocket implements MessageComponentInterface
         #echo "📩 Message Received: {$msg}" . "\n";
         echo "📩 Message Received" . "\n";
 
-        $data = json_decode($msg, true);
-        if (isset($data['update']))
-            file_put_contents("{$TO_HOME}/websocket/data.json", json_encode($data['update'], JSON_PRETTY_PRINT));
+        $og_file = json_decode(file_get_contents("{$TO_HOME}/websocket/data.json"), true);
+        $og_file[] = $msg;
+        file_put_contents("{$TO_HOME}/websocket/data.json", json_encode($og_file, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
 
-        // Broadcast the message to all other clients
         foreach ($this->clients as $client) {
-            if ($client != $from) $client->send($msg);
+            $client->send($msg);
         }
     }
 

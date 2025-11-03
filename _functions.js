@@ -52,6 +52,7 @@ function exit_json(json) {
  * @param {int} options.port The port of the host.
  * @param {string} options.path The path where the websocket is exposed.
  * @param {string} options.elementId The element where you want to render the websocket.
+ * @param {boolean} [options.autoConnect=true] Log websocket data on the element.
  * @param {boolean} [options.logging=false] Log websocket data on the element.
  * @param {Function} [options.onOpen=()=>{}] onOpen trigger for websocket.
  * @param {Function} [options.onClose=()=>{}] onClose trigger for websocket.
@@ -62,7 +63,7 @@ function exit_json(json) {
  * @return {object} Returns the ws object for further manipulation.
  */
 function init_websocket(options) {
-	const { host, port, path, elementId, logging = false, onOpen = () => {}, onClose = () => {}, onError = () => {}, onMessage = () => {}, reconnDelay = 3000, maxRetries = 3 } = options;
+	const { host, port, path, elementId, autoConnect = true, logging = false, onOpen = () => {}, onClose = () => {}, onError = () => {}, onMessage = () => {}, reconnDelay = 3000, maxRetries = 3 } = options;
 	// Developer mode?
 	const appIsDEV = localStorage.getItem("APP_ENV") === "DEV";
 	if (appIsDEV) console.log(`init_websocket():`, options);
@@ -130,10 +131,15 @@ function init_websocket(options) {
 		setTimeout(connect, reconnDelay);
 	}
 
-	//connect();
+	if (autoConnect) connect();
 
 	return {
-		ws: ws,
+		get ws() {
+			return ws;
+		},
+		get readyState() {
+			return ws?.readyState;
+		},
 		connect: () => {
 			// Do more if needed
 			connect();
@@ -148,8 +154,11 @@ function init_websocket(options) {
 			retries = 0;
 			retry();
 		},
-		readyState: ws?.readyState,
 		send: (data) => {
+			if (!ws || ws.readyState !== WebSocket.OPEN) {
+				console.warn("⚠️ Cannot send — socket not open");
+				return;
+			}
 			let parsedData = data;
 			if (check_json(data)) parsedData = JSON.stringify(JSON.parse(parsedData), null, 2);
 			else parsedData = JSON.stringify(parsedData, null, 2);

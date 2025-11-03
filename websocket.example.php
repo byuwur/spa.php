@@ -42,15 +42,20 @@ require_once "{$TO_HOME}/common.example.php";
             onError: () => {
                 console.log('custom onError');
             },*/
-            onMessage: (data) => {
-                $("#ws_messages").append(data);
+            onMessage: (e) => {
+                //console.log("custom onMessage", e);
+                const $pre = $("<pre>").text(`${e?.data}`);
+                $("#ws_messages").append($pre);
             },
         });
         $("#ws_send").off("click").on("click", function(e) {
             event.preventDefault();
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+                console.warn("⚠️ Cannot send — socket not open");
+                return;
+            }
             const now = new Date().toISOString().replace("T", "_").replace(/:/g, "-").split(".")[0],
                 msg = `${$("#ws_user").val()}: This message was sent at ${now}`;
-            console.log("Msg:", msg);
             ws.send(msg);
         })
         element_make_http_request({
