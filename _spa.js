@@ -29,18 +29,6 @@
 	bySPA.HISTORY_PATH = [];
 
 	/**
-	 * Verifies the existence of a file.
-	 * @param {string} file The file to check.
-	 * @return {boolean} Validity of the file existence
-	 */
-	bySPA.fileExists = function (file) {
-		const xhr = new XMLHttpRequest();
-		xhr.open("HEAD", file, false);
-		xhr.send();
-		return xhr.status >= 200 && xhr.status <= 299;
-	};
-
-	/**
 	 * Updates local route variables in memory.
 	 * @param {object} state The current route state.
 	 */
@@ -84,6 +72,7 @@
 	 * @param {string} custom_error_message A custom error message to display.
 	 */
 	bySPA.errorPage = function (status, custom_error_message = "") {
+		const paths = [`${bySPA.HOME_PATH}/_error.php`, `${bySPA.HOME_PATH}/spa.php/_error.php`];
 		const render = function (data) {
 			document.documentElement.innerHTML = data;
 			window.addEventListener(
@@ -95,21 +84,29 @@
 			);
 			return data;
 		};
-		const loadError = function (paths, index = 0) {
+		const requestError = function (path) {
 			return $.ajax({
-				url: `${paths[index]}?e=${status}`,
+				url: `${path}?e=${status}`,
 				type: "POST",
 				data: { custom_error_message },
 				dataType: "text"
 			})
 				.then(render)
 				.catch(function (xhr, ajaxStatus, error) {
-					if (index + 1 < paths.length) return loadError(paths, index + 1);
+					if (xhr?.responseText) return render(xhr.responseText);
 					console.error(`Error (errorPage): ${xhr?.status} ${ajaxStatus} ${error}`, bySPA.APP_ENV == "DEV" ? xhr : "");
-					return xhr?.responseText ? render(xhr.responseText) : null;
+					return null;
 				});
 		};
-		return loadError([`${bySPA.HOME_PATH}/_error.php`, `${bySPA.HOME_PATH}/spa.php/_error.php`]);
+		const loadError = function (paths, index = 0) {
+			return remote_file_exists(paths[index]).then(function (exists) {
+				if (exists) return requestError(paths[index]);
+				if (index + 1 < paths.length) return loadError(paths, index + 1);
+				console.error(`Error (errorPage): No error page found.`, bySPA.APP_ENV == "DEV" ? paths : "");
+				return null;
+			});
+		};
+		return loadError(paths);
 	};
 
 	/**

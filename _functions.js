@@ -63,6 +63,40 @@ function escape_html(value) {
 }
 
 /**
+ * Makes an HTTP request to check if a remote URL responds correctly (200 - 299).
+ * @param {string} url The URL to check.
+ * @return {Promise<boolean>} The resource existence.
+ */
+function remote_file_exists(url) {
+	try {
+		url = new URL(url, window.location.href).href;
+	} catch {
+		console.error("HTTP ERROR: Invalid URL.");
+		return Promise.resolve(false);
+	}
+	return $.ajax({
+		url,
+		type: "HEAD"
+	})
+		.then(function () {
+			return true;
+		})
+		.catch(function (xhr) {
+			if (![405, 501].includes(xhr?.status)) return false;
+			return $.ajax({
+				url,
+				type: "GET"
+			})
+				.then(function () {
+					return true;
+				})
+				.catch(function () {
+					return false;
+				});
+		});
+}
+
+/**
  * Logs a JSON response and stops further execution.
  * (JS version: it just throws a special object to simulate termination)
  * @param {any} json The data to output.
