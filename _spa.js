@@ -2,7 +2,7 @@
 /*
  * File: _spa.js
  * Desc: Manages the Single Page Application (SPA) functionality, including routing, state management, and AJAX loading of content.
- * Deps: jQuery
+ * Deps: jQuery, _functions.js
  * Copyright (c) 2025 Andrés Trujillo [Mateus] byUwUr
  */
 
@@ -16,14 +16,14 @@
 	global.bySPA = global.bySPA || {};
 	const bySPA = global.bySPA;
 	// Initializes values retrieved from localStorage and sets up environment variables.
-	bySPA.URI = localStorage.getItem("URI");
-	bySPA.URL = localStorage.getItem("URL");
-	bySPA._GET = JSON.parse(localStorage.getItem("_GET"));
-	bySPA._POST = JSON.parse(localStorage.getItem("_POST"));
+	bySPA.URI = localStorage.getItem("URI") ?? "/";
+	bySPA.URL = localStorage.getItem("URL") ?? bySPA.URI;
+	bySPA._GET = parse_json(localStorage.getItem("_GET")) ?? {};
+	bySPA._POST = parse_json(localStorage.getItem("_POST")) ?? {};
 	bySPA.HISTORY_INDEX = -1;
-	bySPA.APP_ENV = localStorage.getItem("APP_ENV");
-	bySPA.APP_VERSION = localStorage.getItem("APP_VERSION");
-	bySPA.ROUTES = JSON.parse(localStorage.getItem("ROUTES"));
+	bySPA.APP_ENV = localStorage.getItem("APP_ENV") ?? "PROD";
+	bySPA.APP_VERSION = localStorage.getItem("APP_VERSION") ?? "0.1by";
+	bySPA.ROUTES = parse_json(localStorage.getItem("ROUTES")) ?? {};
 	bySPA.TO_HOME = localStorage.getItem("TO_HOME");
 	bySPA.HOME_PATH = localStorage.getItem("HOME_PATH");
 	bySPA.HISTORY_PATH = [];
