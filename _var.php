@@ -20,14 +20,15 @@ function std_dir_separator(string $path): string
 
 // Initializes the output buffer and sets up paths and environment variables.
 ob_start();
-$INVOKER__FILE__ = isset($INVOKER__FILE__) ? std_dir_separator($INVOKER__FILE__) : "";
+$INVOKER__FILE__ = isset($INVOKER__FILE__) ? std_dir_separator($INVOKER__FILE__) : std_dir_separator(realpath($_SERVER["SCRIPT_FILENAME"] ?? "") ?: ($_SERVER["SCRIPT_FILENAME"] ?? ""));
+if ($INVOKER__FILE__ && realpath($INVOKER__FILE__)) $INVOKER__FILE__ = std_dir_separator(realpath($INVOKER__FILE__));
 if (isset($debug) && $debug) echo "INVOKER__FILE__: " . $INVOKER__FILE__ . " <br>\n";
-$INVOKER__DIR__ = isset($INVOKER__DIR__) ? std_dir_separator($INVOKER__DIR__) : "";
+$INVOKER__DIR__ = isset($INVOKER__DIR__) ? std_dir_separator($INVOKER__DIR__) : dirname($INVOKER__FILE__);
 if (isset($debug) && $debug) echo "INVOKER__DIR__: " . $INVOKER__DIR__ . " <br>\n";
 $THIS__FILE__ = std_dir_separator(__FILE__);
 if (isset($debug) && $debug) echo "THIS__FILE__: " . $THIS__FILE__ . " <br>\n";
-$SERVER_SCRIPT_FILENAME = std_dir_separator($_SERVER["SCRIPT_FILENAME"]);
-$SERVER_PHP_SELF = std_dir_separator($_SERVER["PHP_SELF"]);
+$SERVER_SCRIPT_FILENAME = std_dir_separator($_SERVER["SCRIPT_FILENAME"] ?? $INVOKER__FILE__);
+$SERVER_PHP_SELF = std_dir_separator($_SERVER["PHP_SELF"] ?? $INVOKER__FILE__);
 $IS_PHP_ON_SERVER = isset($IS_PHP_ON_SERVER) ? $IS_PHP_ON_SERVER : php_sapi_name() != 'cli';
 // Set the root directory of the system
 $SYSTEM_ROOT = dirname($THIS__FILE__);
@@ -36,7 +37,7 @@ if (isset($debug) && $debug) echo "SYSTEM_ROOT: " . $SYSTEM_ROOT . " <br>\n";
 $PROTOCOL = isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on" ? "https://" : "http://";
 if (isset($debug) && $debug) echo "PROTOCOL: " . $PROTOCOL . " <br>\n";
 // Calculate the difference in directory depth between the current script and the root directory
-$PATH_DIFF = count(explode("/", ($IS_PHP_ON_SERVER ? $_SERVER["SCRIPT_FILENAME"] : $INVOKER__FILE__))) - count(explode("/", $THIS__FILE__));
+$PATH_DIFF = count(explode("/", ($IS_PHP_ON_SERVER ? $SERVER_SCRIPT_FILENAME : $INVOKER__FILE__))) - count(explode("/", $THIS__FILE__));
 if (isset($debug) && $debug) echo "PATH_DIFF: " . $PATH_DIFF . " <br>\n";
 // Set the relative path to the home directory
 $TO_HOME = $PATH_DIFF > 0 ? substr(str_repeat("../", $PATH_DIFF), 0, -1) : ".";
