@@ -41,13 +41,20 @@
 	};
 
 	/**
-	 * Updates local variables with the latest data from localStorage.
+	 * Updates local route variables in memory.
+	 * @param {object} state The current route state.
 	 */
+	bySPA.setRouteState = function (state = {}) {
+		bySPA.URI = state.path ?? bySPA.URI;
+		bySPA.URL = state.url ?? bySPA.URL;
+		bySPA._GET = state.get ?? bySPA._GET ?? {};
+		bySPA._POST = state.post ?? bySPA._POST ?? {};
+		return state;
+	};
+
+	// Backward-compatible alias for code that used the old method name.
 	bySPA.getLocalStorageItems = function () {
-		bySPA.URI = localStorage.getItem("URI");
-		bySPA.URL = localStorage.getItem("URL");
-		bySPA._GET = JSON.parse(localStorage.getItem("_GET"));
-		bySPA._POST = JSON.parse(localStorage.getItem("_POST"));
+		return bySPA.setRouteState();
 	};
 
 	/**
@@ -177,17 +184,38 @@
 	 * @return {object} An object containing the path and parameters.
 	 */
 	bySPA.parseURL = function (uri = "/") {
+		uri = String(uri || "/").trim();
+		if (uri.includes("://")) {
+			try {
+				const parsed = new URL(uri);
+				uri = parsed.pathname + parsed.search;
+			} catch (e) {
+				uri = "/";
+			}
+		}
+		uri = uri.split("#", 1)[0] || "/";
+		const [pathInput, queryInput = ""] = uri.split("?", 2);
 		// Ensure the URI starts with a "/" and doesn't end with one
-		while (uri.length > 0 && !uri.startsWith("/")) uri = uri.substring(1);
-		while (uri.length > 1 && uri.endsWith("/")) uri = uri.substring(0, uri.length - 1);
+		let pathUri = pathInput || "/";
+		if (!pathUri.startsWith("/")) pathUri = `/${pathUri.replace(/^\/+/, "")}`;
+		while (pathUri.length > 1 && pathUri.endsWith("/")) pathUri = pathUri.substring(0, pathUri.length - 1);
+		const query = Object.fromEntries(new URLSearchParams(queryInput));
+		const url = `${pathUri}${queryInput ? `?${queryInput}` : ""}`;
 		// Handle URI parameters if present
-		if (!uri.includes("/$/")) return { path: uri, params: {} };
-		const [path, param] = uri.split("/$/", 2);
+		if (!pathUri.includes("/$/")) return { path: pathUri, params: {}, query, url };
+		const [path, param] = pathUri.split("/$/", 2);
 		const keyValuePairs = param.split("/");
 		const params = {};
 		// Iterate over the parameters and store them as key-value pairs
-		for (let i = 0; i < keyValuePairs.length; i += 2) if (keyValuePairs[i + 1] !== undefined) params[keyValuePairs[i]] = keyValuePairs[i + 1];
-		return { path, params };
+		for (let i = 0; i < keyValuePairs.length; i += 2)
+			if (keyValuePairs[i + 1] !== undefined) {
+				try {
+					params[decodeURIComponent(keyValuePairs[i])] = decodeURIComponent(keyValuePairs[i + 1]);
+				} catch (e) {
+					params[keyValuePairs[i]] = keyValuePairs[i + 1];
+				}
+			}
+		return { path, params, query, url };
 	};
 
 	/**
@@ -197,19 +225,21 @@
 	 */
 	bySPA.routeURL = function (uri = "/") {
 		// Parse the URI into path and parameters
-		const { path, params } = bySPA.parseURL(uri);
+		const { path, params, query, url } = bySPA.parseURL(uri);
 		// Check if the path exists in the defined routes
-		if (!Object.keys(bySPA.ROUTES).includes(path)) return bySPA.errorPage(404, `Route "${uri}" does not exist.`);
-		localStorage.setItem("URI", path);
-		localStorage.setItem("_GET", JSON.stringify({ ...bySPA._GET, ...(bySPA.ROUTES[path]?.GET ?? []), ...params }));
-		localStorage.setItem("_POST", JSON.stringify({ ...bySPA._POST, ...(bySPA.ROUTES[path]?.POST ?? []) }));
-		bySPA.getLocalStorageItems();
+		if (!Object.keys(bySPA.ROUTES).includes(path)) return null;
+		const route = bySPA.ROUTES[path] ?? {};
+		const get = { ...(route?.GET ?? {}), ...params, ...query };
+		const post = { ...(route?.POST ?? {}) };
 		// Determine the final URI based on the route
-		uri = bySPA.ROUTES[path]?.URI;
+		uri = route?.URI;
 		// Determine the correct URI if it's not explicitly set
-		if (uri == "") uri = bySPA._GET["uri"] ? (bySPA.ROUTES[bySPA._GET["uri"]]?.URI ? bySPA.ROUTES[bySPA._GET["uri"]]?.URI : bySPA.ROUTES["/"]?.URI) : bySPA.ROUTES["/"]?.URI;
-		else bySPA._GET["uri"] = bySPA.URI;
-		return { path, uri, file: bySPA.ROUTES[path]?.FILE, get: bySPA._GET, post: bySPA._POST, component: bySPA.ROUTES[path]?.COMPONENT };
+		if (uri == "") {
+			get.uri = bySPA.URI || "/";
+			uri = bySPA.ROUTES[get.uri]?.URI ? bySPA.ROUTES[get.uri]?.URI : bySPA.ROUTES["/"]?.URI;
+		} else get.uri = path;
+		bySPA.setRouteState({ path, url, get, post });
+		return { path, url, uri, file: route?.FILE, get, post, component: route?.COMPONENT };
 	};
 
 	/**
