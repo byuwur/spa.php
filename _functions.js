@@ -27,10 +27,12 @@ function check_json(json) {
  * @return {boolean} Whether the input is a valid JSON string.
  */
 function parse_json(json) {
-	if (typeof json !== "string") return null;
+	if (typeof json != "string") return null;
 	try {
-		const json = JSON.parse(json);
-		return json;
+        const parsed = JSON.parse(json);
+		//console.log("json?:", json);
+		//console.log("parsed?:", parsed);
+		return parsed;
 	} catch {
 		return null;
 	}
