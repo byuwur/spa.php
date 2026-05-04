@@ -367,9 +367,21 @@
 			if (bySPA.APP_ENV === "DEV") console.log("HISTORY_INDEX=", bySPA.HISTORY_INDEX, "; HISTORY_PATH=", bySPA.HISTORY_PATH);
 		});
 		// Attaches click event handlers to links for SPA navigation.
-		$(document).on("click", "a:not([target='_blank']):not([href^='#']):not([href^='javascript:']):not([custom-folder='true']):not([href*='://'])", function (e) {
+		$(document).on("click", "a[href]", function (e) {
+			if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+			if (this.target === "_blank" || this.hasAttribute("download") || this.getAttribute("custom-folder") == "true") return;
+			const href = this.getAttribute("href");
+			if (!href || href.startsWith("#") || href.startsWith("javascript:")) return;
+			let nextURL = href;
+			try {
+				const absolute = new URL(href, window.location.href);
+				if (absolute.origin != window.location.origin) return;
+				nextURL = bySPA.HOME_PATH && absolute.href.startsWith(bySPA.HOME_PATH) ? absolute.href.slice(bySPA.HOME_PATH.length) || "/" : `${absolute.pathname}${absolute.search}`;
+			} catch (error) {
+				return;
+			}
 			e.preventDefault();
-			bySPA.load($(this).attr("href"));
+			bySPA.load(nextURL);
 		});
 		// Initial load of SPA content based on the stored URL.
 		bySPA.load(`${bySPA.URL}`, { replace: true });
