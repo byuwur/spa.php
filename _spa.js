@@ -84,24 +84,32 @@
 	 * @param {string} custom_error_message A custom error message to display.
 	 */
 	bySPA.errorPage = function (status, custom_error_message = "") {
-		const _error = bySPA.fileExists(`${bySPA.HOME_PATH}/_error.php`) ? `${bySPA.HOME_PATH}/_error.php` : `${bySPA.HOME_PATH}/spa.php/_error.php`;
-		return $.ajax({
-			url: `${_error}?e=${status}`,
-			type: "POST",
-			data: { custom_error_message },
-			dataType: "text"
-		})
-			.then(function (data) {
-				document.documentElement.innerHTML = data;
-				$("head").append(`<script>window.addEventListener("popstate", function (e) { window.location.reload(); });</script>`);
-				return data;
+		const render = function (data) {
+			document.documentElement.innerHTML = data;
+			window.addEventListener(
+				"popstate",
+				function () {
+					window.location.reload();
+				},
+				{ once: true }
+			);
+			return data;
+		};
+		const loadError = function (paths, index = 0) {
+			return $.ajax({
+				url: `${paths[index]}?e=${status}`,
+				type: "POST",
+				data: { custom_error_message },
+				dataType: "text"
 			})
-			.catch(function (xhr, status, error) {
-				console.error(`Error (errorPage): ${xhr?.status} ${status} ${error}`, bySPA.APP_ENV == "DEV" ? xhr : "");
-				document.documentElement.innerHTML = xhr.responseText;
-				$("head").append(`<script>window.addEventListener("popstate", function (e) { window.location.reload(); });</script>`);
-				return null;
-			});
+				.then(render)
+				.catch(function (xhr, ajaxStatus, error) {
+					if (index + 1 < paths.length) return loadError(paths, index + 1);
+					console.error(`Error (errorPage): ${xhr?.status} ${ajaxStatus} ${error}`, bySPA.APP_ENV == "DEV" ? xhr : "");
+					return xhr?.responseText ? render(xhr.responseText) : null;
+				});
+		};
+		return loadError([`${bySPA.HOME_PATH}/_error.php`, `${bySPA.HOME_PATH}/spa.php/_error.php`]);
 	};
 
 	/**
