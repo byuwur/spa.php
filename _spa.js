@@ -269,12 +269,15 @@
 	bySPA.load = function (url, mode = { push: true }) {
 		const historyMode = typeof mode === "object" ? mode : {};
 		$("#spa-loader").fadeIn(1);
-		$("#spa-content").html("");
 		const routing = bySPA.routeURL(`${url}`);
 		// If routing fails, return early
-		if (!routing) return console.warn(`No routing available when going to "${url}"`);
+		if (!routing)
+			return bySPA.errorPage(404, `Route "${url}" does not exist.`).always(function () {
+				setTimeout(() => $("#spa-loader").fadeOut(333), 333);
+			});
 		if (historyMode.push) bySPA.historyPush(routing.url);
 		if (historyMode.replace) bySPA.historyReplace(routing.url);
+		$("#spa-content").html("");
 		const { path, uri, file, get, post, component } = routing;
 		// Log debug information if in development mode
 		if (bySPA.APP_ENV === "DEV") {
@@ -295,7 +298,8 @@
 			);
 		}
 		// Reload each component associated with the route
-		for (let key in component) bySPA.reloadComponent(key, component[key], get, post);
+		const componentLoads = [];
+		for (let key in component || {}) componentLoads.push(bySPA.reloadComponent(key, component[key], get, post));
 		// Retrieve the page data
 		return $.ajax({
 			url: `${bySPA.HOME_PATH}${uri ?? "/null"}?${new URLSearchParams(get).toString()}`,
@@ -305,17 +309,39 @@
 		})
 			.then(function (data) {
 				$("#spa-content").html(data);
-				return data;
+				return Promise.allSettled(componentLoads.map((load) => Promise.resolve(load))).then(function () {
+					bySPA.afterLoad(routing);
+					return data;
+				});
 			})
 			.catch(function (xhr, status, error) {
 				console.error(`Error (SPA): ${xhr?.status} ${status} ${error}`, bySPA.APP_ENV == "DEV" ? xhr : "");
 				document.documentElement.innerHTML = xhr.responseText;
-				$("head").append(`<script>window.addEventListener("popstate", function (e) { window.location.reload(); });</script>`);
+				window.addEventListener(
+					"popstate",
+					function () {
+						window.location.reload();
+					},
+					{ once: true }
+				);
 				return null;
 			})
 			.always(function () {
 				setTimeout(() => $("#spa-loader").fadeOut(333), 333);
 			});
+	};
+
+	/**
+	 * Runs page/component lifecycle hooks after dynamic content is swapped.
+	 * @param {object} routing The route data that was loaded.
+	 */
+	bySPA.afterLoad = function (routing) {
+		if (typeof byCommon !== "undefined" && byCommon) {
+			["initMisc", "initBootstrap", "initCaptcha", "initSidebar"].forEach(function (fn) {
+				if (typeof byCommon[fn] === "function") byCommon[fn]();
+			});
+		}
+		document.dispatchEvent(new CustomEvent("byspa:load", { detail: routing }));
 	};
 
 	bySPA.init = function () {
