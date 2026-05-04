@@ -22,6 +22,21 @@ function check_json(json) {
 }
 
 /**
+ * Checks whether a value is valid JSON.
+ * @param {any} json The data to check.
+ * @return {boolean} Whether the input is a valid JSON string.
+ */
+function parse_json(json) {
+	if (typeof json !== "string") return null;
+	try {
+		const json = JSON.parse(json);
+		return json;
+	} catch {
+		return null;
+	}
+}
+
+/**
  * Returns a pretty-printed JSON string.
  * If the input is already JSON, it normalizes it.
  * @param {any} json The data to format.
@@ -32,6 +47,17 @@ function print_json(json) {
 	if (check_json(json)) output = JSON.stringify(JSON.parse(json), null, 2);
 	else output = JSON.stringify(json, null, 2);
 	return output;
+}
+
+/**
+ * Escapes a value for safe HTML interpolation.
+ * @param {any} value The value to escape.
+ * @return {string} HTML-safe string.
+ */
+function escape_html(value) {
+	return $("<div>")
+		.text(value ?? "")
+		.html();
 }
 
 /**
@@ -75,7 +101,8 @@ function init_websocket(options) {
 	if (!$(elId).length) return console.warn(`Element ID (${elId}) doesn't exist.`);
 	// Init websocket
 
-	const ws_path = `ws://${host}:${port}/${path}`;
+	const ws_protocol = window.location.protocol === "https:" ? "wss" : "ws";
+	const ws_path = `${ws_protocol}://${host}:${port}/${path}`;
 	let ws = undefined;
 	let retries = 0;
 	let closedManually = false;
@@ -292,12 +319,12 @@ function make_http_request(options) {
 		.then(function (response) {
 			if (appIsDEV) console.log(`Response (${elementId}):`, response);
 			if (loudFail && ![200, 201, 202].includes(response?.status))
-				return show_modal_front("modal_front", "danger", "ERROR", "Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + response?.message + ")</code>", true);
+				return show_modal_front("modal_front", "danger", "ERROR", "Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + escape_html(response?.message) + ")</code>", true);
 			return response?.data ?? response;
 		})
 		.catch(function (xhr, status, error) {
 			console.error(`Error (${elementId}): ${xhr?.status} ${status} ${error} "${xhr?.responseJSON?.message ?? xhr?.responseText}"`, appIsDEV ? xhr : "");
-			if (loudFail) show_modal_front("modal_front", "danger", "ERROR", "Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + (xhr?.responseJSON?.message ?? xhr?.responseText) + ")</code>", true);
+			if (loudFail) show_modal_front("modal_front", "danger", "ERROR", "Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + escape_html(xhr?.responseJSON?.message ?? xhr?.responseText) + ")</code>", true);
 			return null;
 		});
 }
@@ -367,13 +394,14 @@ function element_make_http_request(options) {
 				.then(function (response) {
 					if (appIsDEV) console.log(`Response (${elementId}):`, response);
 					if (loudFail && ![200, 201, 202].includes(response?.status))
-						return show_modal_front("modal_front", "danger", "ERROR", "Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + response?.message + ")</code>", true);
+						return show_modal_front("modal_front", "danger", "ERROR", "Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + escape_html(response?.message) + ")</code>", true);
 					doneFn(response?.data ?? response);
 					return response?.data ?? response;
 				})
 				.catch(function (xhr, status, error) {
 					console.error(`Error (${elementId}): ${xhr?.status} ${status} ${error} "${xhr?.responseJSON?.message ?? xhr?.responseText}"`, appIsDEV ? xhr : "");
-					if (loudFail) show_modal_front("modal_front", "danger", "ERROR", "Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + (xhr?.responseJSON?.message ?? xhr?.responseText) + ")</code>", true);
+					if (loudFail)
+						show_modal_front("modal_front", "danger", "ERROR", "Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + escape_html(xhr?.responseJSON?.message ?? xhr?.responseText) + ")</code>", true);
 					failFn();
 					return null;
 				})
