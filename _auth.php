@@ -6,12 +6,14 @@
  * Copyright (c) 2025 Andrés Trujillo [Mateus] byUwUr
  */
 
+ini_set("session.use_strict_mode", "1");
+$is_https = (!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] != "off") || (($_SERVER["SERVER_PORT"] ?? "") == "443");
 // Set the cookie params for the session, keep it secure
 $has_session_set_cookie = session_set_cookie_params([
     "lifetime" => 3600,
     "path" => "/",
     "domain" => "",
-    "secure" => true,
+    "secure" => $is_https,
     "httponly" => true,
     "samesite" => "Strict"
 ]);
@@ -20,7 +22,9 @@ if (!$has_session_set_cookie) api_respond(500, true, "Session crash.");
 // At start it always checks if a session_name is provided through query params;
 // This case applies when you want to manipulate an specific session on the server. Proceed with caution
 // if that's the case, set that session_id accordingly
+$allow_post_session_id = filter_var($_ENV["ALLOW_POST_SESSION_ID"] ?? false, FILTER_VALIDATE_BOOLEAN);
 if (
+    $allow_post_session_id &&
     session_status() === PHP_SESSION_NONE &&
     validate_value($_POST[session_name()] ?? null) !== null
 ) session_id($_POST[session_name()]);
@@ -42,18 +46,46 @@ function login($session = [], $regen = false)
 }
 
 /**
+ * Returns a per-session CSRF token.
+ * @return string CSRF token
+ */
+function csrf_token(): string
+{
+    if (empty($_SESSION["csrf_token"])) $_SESSION["csrf_token"] = bin2hex(random_bytes(32));
+    return $_SESSION["csrf_token"];
+}
+
+/**
+ * Validates a CSRF token against the current session.
+ * @param string|null $token Token submitted by the client.
+ * @return bool Whether the token matches.
+ */
+function csrf_check(?string $token): bool
+{
+    return is_string($token) && isset($_SESSION["csrf_token"]) && hash_equals($_SESSION["csrf_token"], $token);
+}
+
+/**
  * Logs the user out by clearing session data and destroying the session.
  * @return bool Always returns false.
  */
 function logout()
 {
+    global $is_https;
     if (session_status() != PHP_SESSION_ACTIVE) return false;
     $session_file = session_save_path() . "/sess_" . session_id();
     $_SESSION = [];
     session_unset();
     session_gc();
     session_destroy();
-    setcookie(session_name(), "", time() - 600, "/", "", true, true);
+    setcookie(session_name(), "", [
+        "expires" => time() - 600,
+        "path" => "/",
+        "domain" => "",
+        "secure" => $is_https,
+        "httponly" => true,
+        "samesite" => "Strict"
+    ]);
     if (file_exists($session_file)) @unlink($session_file);
     return false;
 }
