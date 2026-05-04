@@ -8,6 +8,18 @@
 
 // --- API functions ---
 
+/**
+ * Safely encodes PHP values for inline JavaScript.
+ * @param mixed $value Value to encode
+ * @return string JavaScript-safe JSON literal
+ */
+function js_encode($value): string
+{
+    $json = json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
+    if ($json === false) return "null";
+    return $json;
+}
+
 /** 
  * Sends a JSON response with status, error, message, and optional data, then terminates the script.
  * @param int $status HTTP status code.
@@ -173,56 +185,62 @@ function validate_value($input, string $type = "string", array $options = [])
         $input === "null" ||
         $input === ""
     ) return null;
-    $VALIDATE_MAP = [
-        "boolean" => FILTER_VALIDATE_BOOLEAN,
-        "email" => FILTER_VALIDATE_EMAIL,
-        "float" => FILTER_VALIDATE_FLOAT,
-        "int" => FILTER_VALIDATE_INT,
-        "url" => FILTER_VALIDATE_URL,
-        "ip" => FILTER_VALIDATE_IP,
-        "domain" => FILTER_VALIDATE_DOMAIN,
-        "mac" => FILTER_VALIDATE_MAC
-    ];
-    $input = trim($input);
-    $input = strip_tags($input, $options["allowed_tags"] ?? []);
-    $input = htmlspecialchars($input);
-    if (isset($options["allowed_tags"]) && is_array($options["allowed_tags"]))
-        foreach ($options["allowed_tags"] as $tag)
-            $input = str_replace(
-                ["&lt;{$tag}&gt;", "&lt;/{$tag}&gt;", "&lt;{$tag}/&gt;"],
-                ["<{$tag}>", "</{$tag}>", "<{$tag}/>"],
-                $input
-            );
-    $input = filter_var($input, $VALIDATE_MAP[$type] ?? FILTER_UNSAFE_RAW, FILTER_NULL_ON_FAILURE);
-    if ($input === null) return null;
-    $SANITIZE_MAP = [
-        "email" => FILTER_SANITIZE_EMAIL,
-        "float" => FILTER_SANITIZE_NUMBER_FLOAT,
-        "int" => FILTER_SANITIZE_NUMBER_INT,
-        "url" => FILTER_SANITIZE_URL,
-        "encoded" => FILTER_SANITIZE_ENCODED
-    ];
-    $input = filter_var($input, $SANITIZE_MAP[$type] ?? FILTER_UNSAFE_RAW, FILTER_NULL_ON_FAILURE);
-    if ($input === null) return null;
-    if (in_array($type, ["int", "float"], true)) {
-        if (isset($options["min"]) && $input < $options["min"]) return null;
-        if (isset($options["max"]) && $input > $options["max"]) return null;
-        return $input;
-    }
+    if (is_array($input) || is_object($input)) return null;
+    $type = strtolower($type);
+    $raw_input = is_string($input) ? trim($input) : $input;
+    $check_range = function ($value) use ($options) {
+        if (isset($options["min"]) && $value < $options["min"]) return null;
+        if (isset($options["max"]) && $value > $options["max"]) return null;
+        return $value;
+    };
     switch ($type) {
         case "string":
         default:
-            return is_string($input) ? $input : null;
+            $value = strip_tags((string) $raw_input, $options["allowed_tags"] ?? []);
+            $value = htmlspecialchars($value, ENT_QUOTES, "UTF-8", false);
+            if (isset($options["allowed_tags"]) && is_array($options["allowed_tags"]))
+                foreach ($options["allowed_tags"] as $tag)
+                    $value = str_replace(
+                        ["&lt;{$tag}&gt;", "&lt;/{$tag}&gt;", "&lt;{$tag}/&gt;"],
+                        ["<{$tag}>", "</{$tag}>", "<{$tag}/>"],
+                        $value
+                    );
+            return $value;
+        case "boolean":
+        case "bool":
+            return filter_var($raw_input, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+        case "int":
+        case "integer":
+            $value = filter_var($raw_input, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+            return $value === null ? null : $check_range($value);
+        case "float":
+        case "double":
+            $value = filter_var($raw_input, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
+            return $value === null ? null : $check_range($value);
+        case "email":
+            return filter_var($raw_input, FILTER_VALIDATE_EMAIL) ?: null;
+        case "url":
+            return filter_var($raw_input, FILTER_VALIDATE_URL) ?: null;
+        case "ip":
+            return filter_var($raw_input, FILTER_VALIDATE_IP) ?: null;
+        case "domain":
+            return filter_var($raw_input, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME) ?: null;
+        case "mac":
+            return filter_var($raw_input, FILTER_VALIDATE_MAC) ?: null;
+        case "encoded":
+            return filter_var($raw_input, FILTER_SANITIZE_ENCODED);
         case "regex":
-            return preg_match($options["pattern"] ?? "", $input) ? $input : null;
+            if (!isset($options["pattern"]) || $options["pattern"] === "") return null;
+            return preg_match($options["pattern"], (string) $raw_input) ? (string) $raw_input : null;
         case "date":
-            return strtotime($input) !== false ? $input : null;
+            return strtotime((string) $raw_input) !== false ? (string) $raw_input : null;
         case "json":
-            json_decode($input);
-            return json_last_error() === JSON_ERROR_NONE ? $input : null;
+            json_decode((string) $raw_input);
+            return json_last_error() === JSON_ERROR_NONE ? (string) $raw_input : null;
         case "uuid":
-            return preg_match("/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i", $input) ? $input : null;
+            return preg_match("/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i", (string) $raw_input) ? (string) $raw_input : null;
     }
+    return null;
 }
 
 /**
@@ -315,10 +333,11 @@ function build_sql_query(string $method, string $columns, string $table, array $
         }
     }
     // Process fields for INSERT or UPDATE operations
-    if ($method == "C" || $method == "U") $common_fields = common_keys($params);
+    $requested_fields = count($fields) ? $fields : array_keys($valid);
+    $common_fields = count($params) ? common_keys($params) : $requested_fields;
     foreach ($valid as $valid_key => $valid_value) {
         if ($method == "R" || $method == "D") break; // Skip if the method is READ or DELETE
-        if (in_array($valid_key, $fields) && in_array($valid_key, $common_fields)) {
+        if (in_array($valid_key, $requested_fields) && in_array($valid_key, $common_fields)) {
             $return->fields[] = $valid_value["column"];
             $return->param_types .= $valid_value["type"];
         }
@@ -326,10 +345,14 @@ function build_sql_query(string $method, string $columns, string $table, array $
     // Process conditions for WHERE clauses
     foreach ($valid as $valid_key => $valid_value) {
         if ($method == "C") break; // Skip if the method is CREATE
-        if (array_key_exists($valid_key, $conditions)) {
+        $condition = normalize_string($valid_value["condition"] ?? "equal", "low");
+        $has_condition = array_key_exists($valid_key, $conditions)
+            || (in_array($condition, ["between", "between symmetric", "symmetric"], true)
+                && isset($conditions["{$valid_key}_from"], $conditions["{$valid_key}_to"]));
+        if ($has_condition) {
             if (array_key_exists($valid_key, $nested)) continue; // Skip if the condition is custom
             if (isset($valid_value["condition"])) {
-                switch (normalize_string($valid_value["condition"], "low")) { // Handle conditions
+                switch ($condition) { // Handle conditions
                     case "equal":
                     default:
                         $return->conditions[] =  "{$valid_value["column"]} = ?";
@@ -387,7 +410,7 @@ function build_sql_query(string $method, string $columns, string $table, array $
                     case "not in":
                         if (!isset($conditions[$valid_key]) || !is_array($conditions[$valid_key])) break;
                         $placeholders = implode(", ", array_fill(0, count($conditions[$valid_key]), "?"));
-                        $return->conditions[] = "{$valid_value["column"]} IN ({$placeholders})";
+                        $return->conditions[] = "{$valid_value["column"]} NOT IN ({$placeholders})";
                         $return->param_types .= str_repeat($valid_value["type"], count($conditions[$valid_key]));
                         $return->param_values = [...$return->param_values, ...$conditions[$valid_key]];
                         break;
@@ -450,8 +473,16 @@ function build_sql_query(string $method, string $columns, string $table, array $
     // Process custom conditions
     foreach ($valid as $valid_key => $valid_value) {
         if ($method == "C") break; // Skip if the method is CREATE
-        if (array_key_exists($valid_key, $nested))
+        if (array_key_exists($valid_key, $nested)) {
             $return->conditions[] = "{$valid_value["column"]} {$nested[$valid_key]["condition"]} {$nested[$valid_key]["custom"]}";
+            $placeholder_count = substr_count($nested[$valid_key]["custom"] ?? "", "?");
+            if ($placeholder_count > 0 && array_key_exists($valid_key, $conditions)) {
+                $nested_values = is_array($conditions[$valid_key]) ? array_values($conditions[$valid_key]) : array_fill(0, $placeholder_count, $conditions[$valid_key]);
+                $nested_values = array_slice($nested_values, 0, $placeholder_count);
+                $return->param_types .= str_repeat($valid_value["type"], count($nested_values));
+                $return->param_values = [...$return->param_values, ...$nested_values];
+            }
+        }
     }
     // Build the SQL query string based on the method
     switch ($method) {
@@ -508,10 +539,17 @@ function execute_sql_query($mysqli, string $query, string $param_types = "", arr
     $return->data = [];
 
     // Determine the SQL method based on the query string
+    $method = null;
     if (stripos($query, "INSERT") === 0) $method = "C"; // Create
     if (stripos($query, "SELECT") === 0) $method = "R"; // Read
     if (stripos($query, "UPDATE") === 0) $method = "U"; // Update
     if (stripos($query, "DELETE") === 0) $method = "D"; // Delete
+    if (!$method) {
+        $return->status = 400;
+        $return->error = true;
+        $return->message = "Invalid query method.";
+        return $return;
+    }
 
     try {
         // Prepare the SQL statement
@@ -544,7 +582,7 @@ function execute_sql_query($mysqli, string $query, string $param_types = "", arr
                             }
                         } else $qMsg .= "{$i}= Query failed: " . ($_ENV["APP_ENV"] === "DEV" ? "{$mysqli->errno} = {$mysqli->error}" : "") . PHP_EOL;
                     } else $qMsg .= "{$i}= Query failed: " . ($_ENV["APP_ENV"] === "DEV" ? "{$mysqli->errno} = {$mysqli->error}" : "") . PHP_EOL;
-                } catch (Exception $e) {
+                } catch (Throwable $e) {
                     $qMsg .= "{$i}= Query failed: " . ($_ENV["APP_ENV"] === "DEV" ? "{$mysqli->errno} = {$mysqli->error}" : "") . PHP_EOL;
                 }
             }
@@ -578,7 +616,7 @@ function execute_sql_query($mysqli, string $query, string $param_types = "", arr
                         } else throw new Exception("Query failed" . ($_ENV["APP_ENV"] === "DEV" ? ": {$mysqli->errno} = {$mysqli->error}" : ""));
                     }
                 } else throw new Exception("Query failed" . ($_ENV["APP_ENV"] === "DEV" ? ": {$mysqli->errno} = {$mysqli->error}" : ""));
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 $return->status = 400;
                 $return->error = true;
                 $return->errno = $e->getCode();
@@ -587,7 +625,7 @@ function execute_sql_query($mysqli, string $query, string $param_types = "", arr
         }
         // Close the SQL statement
         $sql->close();
-    } catch (Exception $e) {
+    } catch (Throwable $e) {
         // Handle errors during query preparation
         $return->status = 400;
         $return->error = true;
@@ -656,8 +694,7 @@ function change_location(string $location): void
  */
 function console_log(string $message): void
 {
-    $message = str_replace("\"", "\\\"", $message);
-    echo "<script>console.log(\"{$message}\");</script>";
+    echo "<script>console.log(" . js_encode($message) . ");</script>";
 }
 
 /** 
@@ -667,8 +704,7 @@ function console_log(string $message): void
  */
 function console_warn(string $message): void
 {
-    $message = str_replace("\"", "\\\"", $message);
-    echo "<script>console.warn(\"{$message}\");</script>";
+    echo "<script>console.warn(" . js_encode($message) . ");</script>";
 }
 
 /** 
@@ -678,8 +714,7 @@ function console_warn(string $message): void
  */
 function console_error(string $message): void
 {
-    $message = str_replace("\"", "\\\"", $message);
-    echo "<script>console.error(\"{$message}\");</script>";
+    echo "<script>console.error(" . js_encode($message) . ");</script>";
 }
 
 /** 
@@ -769,7 +804,9 @@ function random_string($length): string
 {
     $string = "";
     $char = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz";
-    for ($i = 0; $i < $length; $i++) $string .= substr($char, rand(0, strlen($char)), 1);
+    $length = max(0, (int) $length);
+    $max = strlen($char) - 1;
+    for ($i = 0; $i < $length; $i++) $string .= $char[random_int(0, $max)];
     return $string;
 }
 
