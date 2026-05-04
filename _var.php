@@ -18,6 +18,8 @@ function std_dir_separator(string $path): string
     return str_replace("\\", "/", $path);
 }
 
+// Check if we're on localhost for DEVbugging
+$NOTENV_APP_ENV = preg_match("/^(localhost|127\.0\.0\.1|\[::1\]|::1)(:\d+)?$/", $_SERVER["HTTP_HOST"] ?? "") ? "DEV" : "PROD";
 // Initializes the output buffer and sets up paths and environment variables.
 ob_start();
 $INVOKER__FILE__ = isset($INVOKER__FILE__) ? std_dir_separator($INVOKER__FILE__) : std_dir_separator(realpath($_SERVER["SCRIPT_FILENAME"] ?? "") ?: ($_SERVER["SCRIPT_FILENAME"] ?? ""));
@@ -51,6 +53,13 @@ if (isset($debug) && $debug) echo "HOME_PATH: " . $HOME_PATH . " <br>\n";
 // Store the calculated paths in the browser's localStorage
 if (isset($setLocalStorage) && $setLocalStorage) { ?>
     <script>
+        <?php if (($_ENV["APP_ENV"] ?? $NOTENV_APP_ENV) === "DEV") { ?>
+            console.log("PROTOCOL", "<?= $PROTOCOL ?>");
+            console.log("PATH_DIFF", "<?= $PATH_DIFF ?>");
+            console.log("TO_HOME", "<?= $TO_HOME ?>");
+            console.log("THIS_PATH", "<?= $THIS_PATH ?>");
+            console.log("HOME_PATH", "<?= $HOME_PATH ?>");
+        <?php } ?>
         localStorage.setItem("PROTOCOL", "<?= $PROTOCOL ?>");
         localStorage.setItem("PATH_DIFF", "<?= $PATH_DIFF ?>");
         localStorage.setItem("TO_HOME", "<?= $TO_HOME ?>");
