@@ -39,18 +39,18 @@
 		if (!jqAppContainer.length) console.warn(`Can't load Sidebar Element: "jqAppContainer". It doesn't exist.`);
 		// Ensure the overlay inside the sidebar follows it accordingly, due to being an absolute positioned inside another
 		jqSidebar
-			.off("scroll")
-			.on("scroll", function () {
+			.off("scroll.byCommon")
+			.on("scroll.byCommon", function () {
 				const overlay = $(this).find(".overlay");
 				if ($(overlay).length) $(overlay).height(`${this.scrollHeight}px`);
 			})
 			// Ensure the sidebar collapses when the mouse leaves the sidebar itself
-			.off("mouseleave")
-			.on("mouseleave", function () {
+			.off("mouseleave.byCommon")
+			.on("mouseleave.byCommon", function () {
 				if (!jqSidebarToggle.hasClass("bywr-sidebar-expanded")) jqSidebar.removeClass("bywr-sidebar-expanded");
 			});
 		// Toggle sidebar expansion when the sidebar toggle button is clicked
-		jqSidebarToggle.off("click").on("click", function () {
+		jqSidebarToggle.off("click.byCommon").on("click.byCommon", function () {
 			jqSidebarToggle.trigger("blur");
 			$("#bywr-sidebar .overlay").css("height", "");
 			if (!jqSidebarToggle.hasClass("bywr-sidebar-expanded")) {
@@ -67,12 +67,12 @@
 			}
 		});
 		// Expand sidebar when the hidden sidebar area is hovered
-		jqSidebarHidden.off("mouseenter").on("mouseenter", function () {
+		jqSidebarHidden.off("mouseenter.byCommon").on("mouseenter.byCommon", function () {
 			$("#bywr-sidebar .overlay").css("height", "");
 			if (!jqSidebarToggle.hasClass("bywr-sidebar-expanded")) jqSidebar.addClass("bywr-sidebar-expanded");
 		});
 		// Collapse sidebar when the mouse leaves the hidden sidebar area
-		jqSidebarHidden.off("mouseleave").on("mouseleave", function () {
+		jqSidebarHidden.off("mouseleave.byCommon").on("mouseleave.byCommon", function () {
 			$("#bywr-sidebar .overlay").css("height", "");
 			if (!jqSidebarToggle.hasClass("bywr-sidebar-expanded") && !jqSidebar.is(":hover")) jqSidebar.removeClass("bywr-sidebar-expanded");
 		});
@@ -90,8 +90,8 @@
 	byCommon.initMisc = function () {
 		// Smooth scroll for links with hashes in their href (excluding empty hashes)
 		$("a[href*='#']:not([href='#'])")
-			.off("click")
-			.on("click", function (event) {
+			.off("click.byCommon")
+			.on("click.byCommon", function (event) {
 				event.preventDefault();
 				// Scroll to the target element if it exists on the same page
 				if ($(this.hash).length)
@@ -143,10 +143,12 @@
 			[...document.querySelectorAll(".toast")].forEach((toastEl) => bootstrap.Toast.getInstance(toastEl) ?? new bootstrap.Toast(toastEl));
 			// Initialize Button components with aria-pressed synchronization
 			[...document.querySelectorAll(".btn")].forEach((buttonEl) => {
-				const buttonInstance = bootstrap.Tooltip.getInstance(buttonEl) ?? new bootstrap.Button(buttonEl);
-				buttonEl.addEventListener("click", function () {
-					buttonEl.setAttribute("aria-pressed", buttonInstance._element.classList.contains("active"));
-				});
+				const buttonInstance = bootstrap.Button.getInstance(buttonEl) ?? new bootstrap.Button(buttonEl);
+				$(buttonEl)
+					.off("click.byCommonBootstrap")
+					.on("click.byCommonBootstrap", function () {
+						buttonEl.setAttribute("aria-pressed", buttonInstance._element.classList.contains("active"));
+					});
 			});
 			// Add more as needed, in case BS drops another class
 			console.log("Init bootstrap");
@@ -283,38 +285,40 @@
 			byVideoPlayer = videojs(elementId, { ...byCommon.VIDEO_COMMON_OPTIONS, ...optionsOverride });
 			console.log(`Init Video.JS("#${elementId}")`);
 			// Bind keyboard shortcuts
-			$(document).on("keydown", function (e) {
-				if (!VIDEO_CONTAINER.is(":focus")) return; // Ignore if player is not focused
-				if ($(":focus").is("input, textarea")) return; // Ignore if input is focused
-				// Params
-				const actions = {
-						0: () => byVideoPlayer.currentTime(0), // Go to Start
-						" ": () => (byVideoPlayer.paused() ? byVideoPlayer.play() : byVideoPlayer.pause()), // Spacebar
-						k: () => (byVideoPlayer.paused() ? byVideoPlayer.play() : byVideoPlayer.pause()),
-						arrowup: () => byVideoPlayer.volume(Math.min(1, volume + 0.1)), // Volume Up
-						arrowdown: () => byVideoPlayer.volume(Math.max(0, volume - 0.1)), // Volume Down
-						arrowleft: () => byVideoPlayer.currentTime(time - 5), // Seek -5s
-						arrowright: () => byVideoPlayer.currentTime(time + 5), // Seek +5s
-						j: () => byVideoPlayer.currentTime(time - 10), // Seek -10s
-						l: () => byVideoPlayer.currentTime(time + 10), // Seek +10s
-						m: () => byVideoPlayer.muted(!byVideoPlayer.muted()), // Mute
-						f: () => (byVideoPlayer.isFullscreen() ? byVideoPlayer.exitFullscreen() : byVideoPlayer.requestFullscreen()) // Fullscreen
-					},
-					key = e.key.toLowerCase(),
-					time = byVideoPlayer.currentTime(),
-					duration = byVideoPlayer.duration(),
-					volume = byVideoPlayer.volume();
-				// Number (1-9) jump to its percentage
-				if (!isNaN(key) && key > 0) {
-					e.preventDefault();
-					byVideoPlayer.currentTime(((key * 10) / 100) * duration);
-				}
-				// Execute action
-				if (actions[key]) {
-					e.preventDefault();
-					actions[key]();
-				}
-			});
+			$(document)
+				.off("keydown.byCommonVideo")
+				.on("keydown.byCommonVideo", function (e) {
+					if (!VIDEO_CONTAINER.is(":focus")) return; // Ignore if player is not focused
+					if ($(":focus").is("input, textarea")) return; // Ignore if input is focused
+					// Params
+					const actions = {
+							0: () => byVideoPlayer.currentTime(0), // Go to Start
+							" ": () => (byVideoPlayer.paused() ? byVideoPlayer.play() : byVideoPlayer.pause()), // Spacebar
+							k: () => (byVideoPlayer.paused() ? byVideoPlayer.play() : byVideoPlayer.pause()),
+							arrowup: () => byVideoPlayer.volume(Math.min(1, volume + 0.1)), // Volume Up
+							arrowdown: () => byVideoPlayer.volume(Math.max(0, volume - 0.1)), // Volume Down
+							arrowleft: () => byVideoPlayer.currentTime(time - 5), // Seek -5s
+							arrowright: () => byVideoPlayer.currentTime(time + 5), // Seek +5s
+							j: () => byVideoPlayer.currentTime(time - 10), // Seek -10s
+							l: () => byVideoPlayer.currentTime(time + 10), // Seek +10s
+							m: () => byVideoPlayer.muted(!byVideoPlayer.muted()), // Mute
+							f: () => (byVideoPlayer.isFullscreen() ? byVideoPlayer.exitFullscreen() : byVideoPlayer.requestFullscreen()) // Fullscreen
+						},
+						key = e.key.toLowerCase(),
+						time = byVideoPlayer.currentTime(),
+						duration = byVideoPlayer.duration(),
+						volume = byVideoPlayer.volume();
+					// Number (1-9) jump to its percentage
+					if (!isNaN(key) && key > 0) {
+						e.preventDefault();
+						byVideoPlayer.currentTime(((key * 10) / 100) * duration);
+					}
+					// Execute action
+					if (actions[key]) {
+						e.preventDefault();
+						actions[key]();
+					}
+				});
 			// Initialize Tooltip components for shortcuts if bootstrap exists
 			if (typeof bootstrap != "undefined" && window.bootstrap) {
 				$(".vjs-play-control").attr({ "data-bs-toggle": "tooltip", "data-bs-title": "Play/Pause (K)" });
