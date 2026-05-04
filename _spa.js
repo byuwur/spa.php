@@ -62,9 +62,20 @@
 	 * @param {string} url The URL to push to the history stack.
 	 */
 	bySPA.historyPush = function (url) {
+		bySPA.HISTORY_PATH = bySPA.HISTORY_PATH.slice(0, bySPA.HISTORY_INDEX + 1);
 		bySPA.HISTORY_INDEX++;
 		bySPA.HISTORY_PATH[bySPA.HISTORY_INDEX] = url;
-		history.pushState({ index: bySPA.HISTORY_INDEX }, "", `${bySPA.HOME_PATH}${url}`);
+		history.pushState({ index: bySPA.HISTORY_INDEX, url }, "", `${bySPA.HOME_PATH}${url}`);
+	};
+
+	/**
+	 * Replaces the current history state without creating a new entry.
+	 * @param {string} url The URL to store in the current history entry.
+	 */
+	bySPA.historyReplace = function (url) {
+		if (bySPA.HISTORY_INDEX < 0) bySPA.HISTORY_INDEX = 0;
+		bySPA.HISTORY_PATH[bySPA.HISTORY_INDEX] = url;
+		history.replaceState({ index: bySPA.HISTORY_INDEX, url }, "", `${bySPA.HOME_PATH}${url}`);
 	};
 
 	/**
@@ -245,15 +256,17 @@
 	/**
 	 * Loads the SPA content for the given URL, optionally pushing the state to history.
 	 * @param {string} url The URL to load.
-	 * @param {boolean} push Whether to push the state to the browser history.
+	 * @param {object} mode History handling options.
 	 */
-	bySPA.load = function (url, push = true) {
+	bySPA.load = function (url, mode = { push: true }) {
+		const historyMode = typeof mode === "object" ? mode : {};
 		$("#spa-loader").fadeIn(1);
 		$("#spa-content").html("");
-		if (push) bySPA.historyPush(url);
 		const routing = bySPA.routeURL(`${url}`);
 		// If routing fails, return early
 		if (!routing) return console.warn(`No routing available when going to "${url}"`);
+		if (historyMode.push) bySPA.historyPush(routing.url);
+		if (historyMode.replace) bySPA.historyReplace(routing.url);
 		const { path, uri, file, get, post, component } = routing;
 		// Log debug information if in development mode
 		if (bySPA.APP_ENV === "DEV") {
@@ -316,7 +329,7 @@
 		window.addEventListener("popstate", function (e) {
 			if (!e.state) return;
 			bySPA.HISTORY_INDEX = e.state.index;
-			bySPA.load(bySPA.HISTORY_PATH[bySPA.HISTORY_INDEX], false);
+			bySPA.load(e.state.url ?? bySPA.HISTORY_PATH[bySPA.HISTORY_INDEX], { push: false });
 			if (bySPA.APP_ENV === "DEV") console.log("HISTORY_INDEX=", bySPA.HISTORY_INDEX, "; HISTORY_PATH=", bySPA.HISTORY_PATH);
 		});
 		// Attaches click event handlers to links for SPA navigation.
@@ -325,7 +338,7 @@
 			bySPA.load($(this).attr("href"));
 		});
 		// Initial load of SPA content based on the stored URL.
-		bySPA.load(`${bySPA.URL}`);
+		bySPA.load(`${bySPA.URL}`, { replace: true });
 	};
 })(typeof window !== "undefined" ? window : this);
 
