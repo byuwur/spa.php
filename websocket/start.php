@@ -34,7 +34,7 @@ if (!is_port_in_use($PORT, true)) {
     echo "🚀 Launching websocket on port {$PORT}..." . "\n";
     $cmd = "start /B {$PHP_PATH} \"{$WS_SERVER_PATH}\" > \"{$WS_LOG_NOW}\" 2>&1";
     console_log("Run: {$cmd}");
-    pclose(popen($cmd, "r"));
+    //pclose(popen($cmd, "r"));
     echo "✅ Websocket started.";
 }
 ?>
