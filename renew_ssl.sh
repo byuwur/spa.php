@@ -36,14 +36,14 @@ echo "Using WILDCARD = $WILDCARD"
 sleep 1
 
 echo ""
+sudo /opt/bitnami/ctlscript.sh stop
+
+echo ""
 echo "Please complete the ACME challenge on your DNS records:"
 echo ""
 sleep 2
 
 sudo certbot -d $DOMAIN -d $WILDCARD --manual --preferred-challenges dns certonly
-
-echo ""
-sudo /opt/bitnami/ctlscript.sh stop
 
 echo ""
 echo "Move the old certificates:"
@@ -53,7 +53,7 @@ echo "Which instance of Bitnami LAMP are you using:"
 echo "1. Ubuntu"
 echo "2. Debian Packages"
 echo "3. Debian self-contained"
-while [[ ! "$USER_INSTANCE" =~ ^[1-3]$ ]]; do
+while [[ ! "$USER_INSTANCE" =~ ^[1-39]$ ]]; do
     read -p "Please select one: " USER_INSTANCE
 done
 
@@ -82,9 +82,9 @@ case $USER_INSTANCE in
         sudo ln -sf /etc/letsencrypt/live/$DOMAIN/privkey.pem /opt/bitnami/apache2/conf/server.key
         sudo ln -sf /etc/letsencrypt/live/$DOMAIN/fullchain.pem /opt/bitnami/apache2/conf/server.crt
         ;;
-    0)
+    9)
         echo ""
-        echo "Option 0: TRY ALL"
+        echo "Option 9: TRY ALL"
         sudo mv /opt/bitnami/apache/conf/bitnami/certs/server.crt /opt/bitnami/apache/conf/bitnami/certs/server.crt.old
         sudo mv /opt/bitnami/apache/conf/bitnami/certs/server.key /opt/bitnami/apache/conf/bitnami/certs/server.key.old
         sudo ln -s /etc/letsencrypt/live/$DOMAIN/privkey.pem /opt/bitnami/apache/conf/bitnami/certs/server.key
