@@ -6,6 +6,8 @@
 
 Test it out at: [byuwur.co/spa.php/](https://byuwur.co/spa.php/)
 
+Looking for an even lighter SPA micro-framework with vanilla JS? Check out [byuwur/spa.js](https://github.com/byuwur/spa.js)
+
 ## What's this about?
 
 This project is a simple, easy-to-use framework for building single-page applications (SPAs) using PHP. It provides a structure for handling routing, modals, and basic operations required for an SPA. The framework is designed to be lightweight and easy to integrate into existing projects.
