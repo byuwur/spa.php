@@ -13,30 +13,30 @@ $_GET["value"] = 3;
 // $valid are the values admited in function
 // so if $_GET has something else than the defined array its ignored
 $valid = [
-    "id" => ["column" => "ID", "type" => "i"],
-    "name" => ["column" => "NAME", "type" => "s"],
-    "value" => ["column" => "VALUE", "type" => "s"]
+  "id" => ["column" => "ID", "type" => "i"],
+  "name" => ["column" => "NAME", "type" => "s"],
+  "value" => ["column" => "VALUE", "type" => "s"]
 ];
 // $_POST must always have "data"
 // $_POST["data"] is an array of the modifications intended on script
 // INSERT can admit multiple rows in bulk,
 // UPDATE shouldn't have multiple rows, due to $_GET that acts as where
 $_POST["data"] = [
-    ["id" => "1", "name" => "2", "value" => "3"],
-    ["id" => "2", "name" => "3", "value" => "1"]
+  ["id" => "1", "name" => "2", "value" => "3"],
+  ["id" => "2", "name" => "3", "value" => "1"]
 ];
 // $fields are similar to valid but with $_POST
 $fields = ["id", "name", "value"];
 // $joins are intended to complement WHERE in very specific scenarios
 // if you have the option to make another request instead of using these... do
 $joins = [
-    ["join_type" => "JOIN", "join_table" => "roles", "join_columns" => ["id" => ["condition" => "=", "custom" => "usuarios_ID"]]]
+  ["join_type" => "JOIN", "join_table" => "roles", "join_columns" => ["id" => ["condition" => "=", "custom" => "usuarios_ID"]]]
 ];
 // $nested, whether rare, can be used in hand with $_GET to check values
 // with subqueries, can be a bit underperforming if you DB grows too much, but:
 // if you have the option to make another request instead of using these... do
 $nested = [
-    "id" => ["condition" => "IN", "custom" => "( SELECT ID FROM test WHERE ID = ? ORDER BY ID DESC )"],
+  "id" => ["condition" => "IN", "custom" => "( SELECT ID FROM test WHERE ID = ? ORDER BY ID DESC )"],
 ];
 $FULLbq = build_sql_query("R", "*", "test", $fields, $_GET, " ORDER BY ID ASC", $valid, $_POST["data"] ?? [], $nested, $joins);
 $Cbq = build_sql_query("C", "", "test", $fields, $_GET, "", ["id" => ["column" => "ID", "type" => "i"], "name" => ["column" => "NAME", "type" => "s"], "value" => ["column" => "VALUE", "type" => "s"]]);

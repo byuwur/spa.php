@@ -10,12 +10,12 @@ ini_set("session.use_strict_mode", "1");
 $is_https = (!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] != "off") || (($_SERVER["SERVER_PORT"] ?? "") == "443");
 // Set the cookie params for the session, keep it secure
 $has_session_set_cookie = session_set_cookie_params([
-    "lifetime" => 3600,
-    "path" => "/",
-    "domain" => "",
-    "secure" => $is_https,
-    "httponly" => true,
-    "samesite" => "Strict"
+  "lifetime" => 3600,
+  "path" => "/",
+  "domain" => "",
+  "secure" => $is_https,
+  "httponly" => true,
+  "samesite" => "Strict"
 ]);
 // Crash if cookie cannot be configured
 if (!$has_session_set_cookie) api_respond(500, true, "Session crash.");
@@ -24,9 +24,9 @@ if (!$has_session_set_cookie) api_respond(500, true, "Session crash.");
 // if that's the case, set that session_id accordingly
 $allow_post_session_id = filter_var($_ENV["ALLOW_POST_SESSION_ID"] ?? false, FILTER_VALIDATE_BOOLEAN);
 if (
-    $allow_post_session_id &&
-    session_status() === PHP_SESSION_NONE &&
-    validate_value($_POST[session_name()] ?? null) !== null
+  $allow_post_session_id &&
+  session_status() === PHP_SESSION_NONE &&
+  validate_value($_POST[session_name()] ?? null) !== null
 ) session_id($_POST[session_name()]);
 // Then start it to use it
 session_start();
@@ -39,10 +39,10 @@ session_start();
  */
 function login($session = [], $regen = false)
 {
-    if ($regen) session_regenerate_id(true);
-    //setcookie(session_name(), session_id(), time() + 3600, "/", "", true, true);
-    $_SESSION = [...$_SESSION, ...$session];
-    return true;
+  if ($regen) session_regenerate_id(true);
+  //setcookie(session_name(), session_id(), time() + 3600, "/", "", true, true);
+  $_SESSION = [...$_SESSION, ...$session];
+  return true;
 }
 
 /**
@@ -51,8 +51,8 @@ function login($session = [], $regen = false)
  */
 function csrf_token(): string
 {
-    if (empty($_SESSION["csrf_token"])) $_SESSION["csrf_token"] = bin2hex(random_bytes(32));
-    return $_SESSION["csrf_token"];
+  if (empty($_SESSION["csrf_token"])) $_SESSION["csrf_token"] = bin2hex(random_bytes(32));
+  return $_SESSION["csrf_token"];
 }
 
 /**
@@ -62,7 +62,7 @@ function csrf_token(): string
  */
 function csrf_check(?string $token): bool
 {
-    return is_string($token) && isset($_SESSION["csrf_token"]) && hash_equals($_SESSION["csrf_token"], $token);
+  return is_string($token) && isset($_SESSION["csrf_token"]) && hash_equals($_SESSION["csrf_token"], $token);
 }
 
 /**
@@ -71,23 +71,23 @@ function csrf_check(?string $token): bool
  */
 function logout()
 {
-    global $is_https;
-    if (session_status() != PHP_SESSION_ACTIVE) return false;
-    $session_file = session_save_path() . "/sess_" . session_id();
-    $_SESSION = [];
-    session_unset();
-    session_gc();
-    session_destroy();
-    setcookie(session_name(), "", [
-        "expires" => time() - 600,
-        "path" => "/",
-        "domain" => "",
-        "secure" => $is_https,
-        "httponly" => true,
-        "samesite" => "Strict"
-    ]);
-    if (file_exists($session_file)) @unlink($session_file);
-    return false;
+  global $is_https;
+  if (session_status() != PHP_SESSION_ACTIVE) return false;
+  $session_file = session_save_path() . "/sess_" . session_id();
+  $_SESSION = [];
+  session_unset();
+  session_gc();
+  session_destroy();
+  setcookie(session_name(), "", [
+    "expires" => time() - 600,
+    "path" => "/",
+    "domain" => "",
+    "secure" => $is_https,
+    "httponly" => true,
+    "samesite" => "Strict"
+  ]);
+  if (file_exists($session_file)) @unlink($session_file);
+  return false;
 }
 
 /**
@@ -96,10 +96,10 @@ function logout()
  */
 function session_check()
 {
-    if (validate_value($_SESSION["logintime"] ?? null) === null) return logout();
-    if (validate_value($_SESSION["username"] ?? null) === null) return logout();
-    if (time() - $_SESSION["logintime"] > 3600) return logout();
-    $_GET = [...$_GET, ...$_SESSION];
-    $_POST = [...$_POST, ...$_SESSION];
-    return login(["logintime" => time()]);
+  if (validate_value($_SESSION["logintime"] ?? null) === null) return logout();
+  if (validate_value($_SESSION["username"] ?? null) === null) return logout();
+  if (time() - $_SESSION["logintime"] > 3600) return logout();
+  $_GET = [...$_GET, ...$_SESSION];
+  $_POST = [...$_POST, ...$_SESSION];
+  return login(["logintime" => time()]);
 }

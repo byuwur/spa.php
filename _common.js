@@ -92,7 +92,7 @@
 		$("a[href*='#']:not([href='#'])")
 			.off("click.byCommon")
 			.on("click.byCommon", function (event) {
-        if (this.hash && this.hash.startsWith("#/")) return;
+				if (this.hash && this.hash.startsWith("#/")) return;
 				event.preventDefault();
 				// Scroll to the target element if it exists on the same page
 				if ($(this.hash).length)

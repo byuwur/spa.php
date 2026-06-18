@@ -13,17 +13,17 @@ require_once "{$TO_HOME}/common.example.php";
 //enable_progressive_rendering();
 ?>
 <div class="video-foreground app-container">
-    <div class="container vh-100 d-flex flex-column align-items-center justify-content-center text-white text-dark-shadow">
-        <p><?= $description ?></p>
-        <p><?= "{$thisis} {$page}." ?></p>
-        <p><?= "{$page}: " ?><b><i>"<?= $page_desc ?>"</i></b></p>
-    </div>
+  <div class="container vh-100 d-flex flex-column align-items-center justify-content-center text-white text-dark-shadow">
+    <p><?= $description ?></p>
+    <p><?= "{$thisis} {$page}." ?></p>
+    <p><?= "{$page}: " ?><b><i>"<?= $page_desc ?>"</i></b></p>
+  </div>
 </div>
 <script>
-    $(() => {
-        document.title = "<?= $titles[$title_index] ?>";
-        byCommon.init();
-    });
+  $(() => {
+    document.title = "<?= $titles[$title_index] ?>";
+    byCommon.init();
+  });
 </script>
 <?php
 while (ob_get_level() > 0) ob_end_flush();

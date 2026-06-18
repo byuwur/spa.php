@@ -26,20 +26,20 @@ SET time_zone = "+00:00";
 --
 DROP TABLE IF EXISTS `test`;
 CREATE TABLE IF NOT EXISTS `test` (
-    `ID` int NOT NULL,
-    `NAME` varchar(45) NOT NULL,
-    `VALUE` varchar(45) DEFAULT NULL,
-    PRIMARY KEY (`ID`)
+  `ID` int NOT NULL,
+  `NAME` varchar(45) NOT NULL,
+  `VALUE` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`ID`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb3;
 --
 -- Volcado de datos para la tabla `test`
 --
 INSERT INTO `test` (`ID`, `NAME`, `VALUE`)
 VALUES (1, 'Sample 1', '10'),
-    (2, 'Sample 2', '20'),
-    (3, 'Sample 3', '30'),
-    (4, 'Sample 4', '40'),
-    (5, 'Sample 5', '50');
+  (2, 'Sample 2', '20'),
+  (3, 'Sample 3', '30'),
+  (4, 'Sample 4', '40'),
+  (5, 'Sample 5', '50');
 COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */
 ;
