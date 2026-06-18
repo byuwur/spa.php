@@ -29,7 +29,7 @@ function check_json(json) {
 function parse_json(json) {
 	if (typeof json != "string") return null;
 	try {
-        const parsed = JSON.parse(json);
+		const parsed = JSON.parse(json);
 		//console.log("json?:", json);
 		//console.log("parsed?:", parsed);
 		return parsed;
@@ -49,6 +49,15 @@ function print_json(json) {
 	if (check_json(json)) output = JSON.stringify(JSON.parse(json), null, 2);
 	else output = JSON.stringify(json, null, 2);
 	return output;
+}
+
+/**
+ * Returns if a variable is an object.
+ * @param {any} value The data to check.
+ * @return {boolean} Whether the input is an object or not.
+ */
+function is_object(value) {
+	return value && typeof value === "object" && !Array.isArray(value);
 }
 
 /**
@@ -94,6 +103,24 @@ function remote_file_exists(url) {
 					return false;
 				});
 		});
+}
+
+/**
+ * Replaces "\\" directory separators to "/"
+ * @param {string} path String to convert
+ * @return string Converted path
+ */
+function std_dir_separator(path) {
+	return String(path || "").replace(/\\/g, "/");
+}
+
+/**
+ * Returns the directory portion of a path using normalized "/" separators.
+ * @param {string} path Path string to inspect.
+ * @return {string} Directory path, or "." when no directory portion exists.
+ */
+function dirname(path) {
+	return std_dir_separator(path).replace(/\/[^/]*$/, "") || ".";
 }
 
 /**
@@ -247,6 +274,22 @@ function set_cookie(name, value, minutes = 31536000) {
  */
 function get_cookie(name) {
 	return `; ${document.cookie}`.split(`; ${name}=`).pop().split(";").shift() || null;
+}
+
+/**
+ * Retrieves the value of a URL param.
+ * @param {string} name The name of the param to retrieve.
+ * @return {string|null} The value of the param or null if not found.
+ */
+function get_url_param(name) {
+	const href = (typeof window !== "undefined" && window.location?.href) || (typeof location !== "undefined" && location.href) || "";
+	if (!href) return null;
+	const locationURL = new URL(href);
+	const directValue = locationURL.searchParams.get(name);
+	if (directValue !== null) return directValue;
+	const hash = locationURL.hash || "";
+	if (!hash.startsWith("#/") || !hash.includes("?")) return null;
+	return new URLSearchParams(hash.split("?", 2)[1]).get(name);
 }
 
 /**

@@ -334,7 +334,7 @@
 	 */
 	bySPA.afterLoad = function (routing) {
 		if (typeof byCommon !== "undefined" && byCommon) {
-			["initMisc", "initBootstrap", "initCaptcha", "initSidebar"].forEach(function (fn) {
+			["initMisc", "initBootstrap", "initCaptcha", "initSidebar", "initParticles"].forEach(function (fn) {
 				if (typeof byCommon[fn] === "function") byCommon[fn]();
 			});
 		}
@@ -368,7 +368,8 @@
 			if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
 			if (this.target === "_blank" || this.hasAttribute("download") || this.getAttribute("custom-folder") == "true") return;
 			const href = this.getAttribute("href");
-			if (!href || href.startsWith("#") || href.startsWith("javascript:")) return;
+			if (!href || href.startsWith("javascript:")) return;
+			if (href.startsWith("#") && !href.startsWith("#/")) return;
 			let nextURL = href;
 			try {
 				const absolute = new URL(href, window.location.href);
