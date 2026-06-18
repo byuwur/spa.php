@@ -97,7 +97,7 @@
 				if ($(this.hash).length)
 					$(`html, body, ${byCommon.APP_CONTAINER_SELECTOR}`)
 						.stop()
-						.animate({ scrollTop: $(this.hash).offset().top - 120 }, 999, "easeInOutExpo");
+						.animate({ scrollTop: $(this.hash).offset().top - 0 }, 999, "easeInOutExpo");
 				// Collapse the navbar after clicking the link
 				setTimeout(() => {
 					$(".navbar-collapse").collapse("hide");
