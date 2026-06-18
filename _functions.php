@@ -75,7 +75,7 @@ function make_http_request(string $url, array $get = [], array $post = [], bool 
     $response = curl_exec($req);
   }
   if (curl_errno($req)) console_error("CURL HTTP1.1 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req));
-  curl_close($req);
+  //curl_close($req);
   if ($is_local_req && session_status() == PHP_SESSION_NONE) session_start();
   if (!$json_decode) return $response;
   $json_decoded = json_decode($response, true);
@@ -112,7 +112,7 @@ function remote_file_exists(string $url): bool
   }
   if (curl_errno($req)) console_error("CURL HTTP1.1 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req));
   $http_code = curl_getinfo($req, CURLINFO_RESPONSE_CODE);
-  curl_close($req);
+  //curl_close($req);
   return $http_code >= 200 && $http_code <= 299;
 }
 
