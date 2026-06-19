@@ -4,7 +4,7 @@
 $_home = "inicio";
 $_page = "pagina";
 $_video = "video";
-$load = "<strong>Loading...</strong><br><br>Still loading? <a href='javascript:location.reload();'>Try reloading.</a>";
+$load = "<strong>Cargando...</strong><br><br>¿Sigue cargando? <a href='javascript:location.reload();'>Intenta recargar.</a>";
 $home = "Inicio";
 $page = "Página";
 $video = "Demo Video Subtitulado";
