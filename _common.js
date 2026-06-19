@@ -200,7 +200,7 @@
 				palette: localStorage.getItem("APP_THEME") ?? "dark",
 				language: localStorage.getItem("APP_LANG") ?? "es",
 				website_name: "[Mateus] byUwUr",
-				change_preferences_selector: "#cookiePrefs"
+				change_preferences_selector: "#cookiePrefs",
 			});
 			console.log("Init CookieConsent");
 		} catch (e) {
@@ -223,13 +223,13 @@
 					opacity: { value: 0.25 },
 					size: { value: 2 },
 					line_linked: { enable: true, distance: 192, color: "#777777", opacity: 0.5, width: 1 },
-					move: { enable: true, speed: 1, direction: "right", random: false, straight: false, out_mode: "out", bounce: false, attract: { enable: false } }
+					move: { enable: true, speed: 1, direction: "right", random: false, straight: false, out_mode: "out", bounce: false, attract: { enable: false } },
 				},
 				interactivity: {
 					detect_on: "window",
 					events: { onhover: { enable: true, mode: "grab" }, onclick: { enable: false } },
-					modes: { grab: { distance: 256, line_linked: { opacity: 0.5 } } }
-				}
+					modes: { grab: { distance: 256, line_linked: { opacity: 0.5 } } },
+				},
 			});
 			console.log("Init Particles.JS");
 		} catch (e) {
@@ -272,8 +272,8 @@
 			fullscreenToggle: true,
 			pictureInPictureToggle: true,
 			playbackRateMenuButton: true,
-			chaptersButton: true
-		}
+			chaptersButton: true,
+		},
 	};
 
 	byCommon.initVideo = function (elementId, optionsOverride = {}) {
@@ -303,7 +303,7 @@
 							j: () => byVideoPlayer.currentTime(time - 10), // Seek -10s
 							l: () => byVideoPlayer.currentTime(time + 10), // Seek +10s
 							m: () => byVideoPlayer.muted(!byVideoPlayer.muted()), // Mute
-							f: () => (byVideoPlayer.isFullscreen() ? byVideoPlayer.exitFullscreen() : byVideoPlayer.requestFullscreen()) // Fullscreen
+							f: () => (byVideoPlayer.isFullscreen() ? byVideoPlayer.exitFullscreen() : byVideoPlayer.requestFullscreen()), // Fullscreen
 						},
 						key = e.key.toLowerCase(),
 						time = byVideoPlayer.currentTime(),

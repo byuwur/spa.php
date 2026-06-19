@@ -85,7 +85,7 @@ function remote_file_exists(url) {
 	}
 	return $.ajax({
 		url,
-		type: "HEAD"
+		type: "HEAD",
 	})
 		.then(function () {
 			return true;
@@ -94,7 +94,7 @@ function remote_file_exists(url) {
 			if (![405, 501].includes(xhr?.status)) return false;
 			return $.ajax({
 				url,
-				type: "GET"
+				type: "GET",
 			})
 				.then(function () {
 					return true;
@@ -152,7 +152,20 @@ function exit_json(json) {
  * @return {object} Returns the ws object for further manipulation.
  */
 function init_websocket(options) {
-	const { host, port, path, elementId, autoConnect = true, logging = false, onOpen = () => {}, onClose = () => {}, onError = () => {}, onMessage = () => {}, reconnDelay = 3000, maxRetries = 3 } = options;
+	const {
+		host,
+		port,
+		path,
+		elementId,
+		autoConnect = true,
+		logging = false,
+		onOpen = () => {},
+		onClose = () => {},
+		onError = () => {},
+		onMessage = () => {},
+		reconnDelay = 3000,
+		maxRetries = 3,
+	} = options;
 	// Developer mode?
 	const appIsDEV = localStorage.getItem("APP_ENV") === "DEV";
 	if (appIsDEV) console.log(`init_websocket():`, options);
@@ -253,7 +266,7 @@ function init_websocket(options) {
 			if (check_json(data)) parsedData = JSON.stringify(JSON.parse(parsedData), null, 2);
 			else parsedData = JSON.stringify(parsedData, null, 2);
 			ws?.send(parsedData);
-		}
+		},
 	};
 }
 
@@ -381,7 +394,7 @@ function make_http_request(options) {
 	$_post.forEach((post) => {
 		formData.push({
 			name: post?.name,
-			value: post?.value
+			value: post?.value,
 		});
 	});
 	if (appIsDEV) {
@@ -393,17 +406,30 @@ function make_http_request(options) {
 		url: urlGet,
 		type: $type,
 		data: formData,
-		dataType: $returnType
+		dataType: $returnType,
 	})
 		.then(function (response) {
 			if (appIsDEV) console.log(`Response (${elementId}):`, response);
 			if (loudFail && ![200, 201, 202].includes(response?.status))
-				return show_modal_front("modal_front", "danger", "ERROR", "Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + escape_html(response?.message) + ")</code>", true);
+				return show_modal_front(
+					"modal_front",
+					"danger",
+					"ERROR",
+					"Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + escape_html(response?.message) + ")</code>",
+					true,
+				);
 			return response?.data ?? response;
 		})
 		.catch(function (xhr, status, error) {
 			console.error(`Error (${elementId}): ${xhr?.status} ${status} ${error} "${xhr?.responseJSON?.message ?? xhr?.responseText}"`, appIsDEV ? xhr : "");
-			if (loudFail) show_modal_front("modal_front", "danger", "ERROR", "Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + escape_html(xhr?.responseJSON?.message ?? xhr?.responseText) + ")</code>", true);
+			if (loudFail)
+				show_modal_front(
+					"modal_front",
+					"danger",
+					"ERROR",
+					"Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + escape_html(xhr?.responseJSON?.message ?? xhr?.responseText) + ")</code>",
+					true,
+				);
 			return null;
 		});
 }
@@ -428,7 +454,21 @@ function make_http_request(options) {
  * @param {boolean} [options.loudFail=true] (Default True) Defines if the error is displayed with the modal or console only.
  */
 function element_make_http_request(options) {
-	const { $elementId, $trigger = "submit", $url, $type = "POST", $returnType = "json", $_get = {}, $_post = [], beforeFn = () => {}, doneFn = () => {}, failFn = () => {}, alwaysFn = () => {}, ajaxOpts = {}, loudFail = true } = options;
+	const {
+		$elementId,
+		$trigger = "submit",
+		$url,
+		$type = "POST",
+		$returnType = "json",
+		$_get = {},
+		$_post = [],
+		beforeFn = () => {},
+		doneFn = () => {},
+		failFn = () => {},
+		alwaysFn = () => {},
+		ajaxOpts = {},
+		loudFail = true,
+	} = options;
 	// Developer mode?
 	const appIsDEV = localStorage.getItem("APP_ENV") === "DEV";
 	if (appIsDEV) console.log(`element_make_http_request():`, options);
@@ -458,7 +498,7 @@ function element_make_http_request(options) {
 			$_post.forEach((post) => {
 				formData.push({
 					name: post?.name,
-					value: post?.value
+					value: post?.value,
 				});
 			});
 			if (appIsDEV) console.log(`HTTP (${elementId}):${$returnType} to ${urlGet} `, formData);
@@ -468,19 +508,31 @@ function element_make_http_request(options) {
 				url: urlGet,
 				type: $type,
 				data: formData,
-				dataType: $returnType
+				dataType: $returnType,
 			})
 				.then(function (response) {
 					if (appIsDEV) console.log(`Response (${elementId}):`, response);
 					if (loudFail && ![200, 201, 202].includes(response?.status))
-						return show_modal_front("modal_front", "danger", "ERROR", "Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + escape_html(response?.message) + ")</code>", true);
+						return show_modal_front(
+							"modal_front",
+							"danger",
+							"ERROR",
+							"Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + escape_html(response?.message) + ")</code>",
+							true,
+						);
 					doneFn(response?.data ?? response);
 					return response?.data ?? response;
 				})
 				.catch(function (xhr, status, error) {
 					console.error(`Error (${elementId}): ${xhr?.status} ${status} ${error} "${xhr?.responseJSON?.message ?? xhr?.responseText}"`, appIsDEV ? xhr : "");
 					if (loudFail)
-						show_modal_front("modal_front", "danger", "ERROR", "Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + escape_html(xhr?.responseJSON?.message ?? xhr?.responseText) + ")</code>", true);
+						show_modal_front(
+							"modal_front",
+							"danger",
+							"ERROR",
+							"Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + escape_html(xhr?.responseJSON?.message ?? xhr?.responseText) + ")</code>",
+							true,
+						);
 					failFn();
 					return null;
 				})
