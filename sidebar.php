@@ -33,7 +33,7 @@ require_once "{$TO_HOME}/lang/" . $APP_LANG . ".php";
   </div>
   <div class="bywr-sidebar-content accordion-item flex-grow-0">
     <button class="accordion-header accordion-button p-2o5 collapsed" data-bs-toggle="collapse" data-bs-target="#lang-drop" aria-expanded="false" aria-controls="lang-drop">
-      <i class="fas fa-earth-americas"></i><span>Idiomas/Languages:</span>
+      <i class="fas fa-language"></i><span>Idiomas/Languages:</span>
     </button>
     <div id="lang-drop" class="accordion-collapse collapse bg-dark-transparent" data-bs-parent="#bywr-sidebar">
       <div class="d-flex flex-row">
