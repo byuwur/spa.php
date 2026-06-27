@@ -13,6 +13,8 @@ $ROUTE_HOME_ES = "inicio";
 $ROUTE_PAGE_ES = "pagina";
 $ROUTE_HOME_EN = "home";
 $ROUTE_PAGE_EN = "page";
+$ROUTE_HOME_JA = "ja/home";
+$ROUTE_PAGE_JA = "ja/page";
 $ROUTE_VIDEO = "video";
 $ROUTE_WEBSOCKET = "socket";
 $ROUTE_PDF = "pdf";
@@ -27,10 +29,15 @@ switch ($APP_LANG) {
 		$ROUTE_HOME = "home";
 		$ROUTE_PAGE = "page";
 		break;
+	case "ja":
+		$ROUTE_HOME = "ja/home";
+		$ROUTE_PAGE = "ja/page";
+		break;
 }
 
 $ROUTE_ES = "es";
 $ROUTE_EN = "en";
+$ROUTE_JA = "ja";
 $ROUTE_ERROR = "error";
 $ROUTE_LOGIN = "login";
 $ROUTE_LOGOUT = "logout";
@@ -49,10 +56,13 @@ $routes = [
 	"{$ROUTE_ROOT}" => ["URI" => "/main.example.php", ...$ROOT_COMPONENTS],
 	"/{$ROUTE_ES}" => ["URI" => "", "GET" => ["lang" => "es"], ...$ROOT_COMPONENTS],
 	"/{$ROUTE_EN}" => ["URI" => "", "GET" => ["lang" => "en"], ...$ROOT_COMPONENTS],
+	"/{$ROUTE_JA}" => ["URI" => "", "GET" => ["lang" => "ja"], ...$ROOT_COMPONENTS],
 	"/{$ROUTE_HOME_ES}" => ["URI" => "/main.example.php", "GET" => ["lang" => "es"], ...$ROOT_COMPONENTS],
 	"/{$ROUTE_HOME_EN}" => ["URI" => "/main.example.php", "GET" => ["lang" => "en"], ...$ROOT_COMPONENTS],
+	"/{$ROUTE_HOME_JA}" => ["URI" => "/main.example.php", "GET" => ["lang" => "ja"], ...$ROOT_COMPONENTS],
 	"/{$ROUTE_PAGE_ES}" => ["URI" => "/page.example.php", "GET" => ["lang" => "es"], ...$ROOT_COMPONENTS],
 	"/{$ROUTE_PAGE_EN}" => ["URI" => "/page.example.php", "GET" => ["lang" => "en"], ...$ROOT_COMPONENTS],
+	"/{$ROUTE_PAGE_JA}" => ["URI" => "/page.example.php", "GET" => ["lang" => "ja"], ...$ROOT_COMPONENTS],
 	"/{$ROUTE_VIDEO}" => ["URI" => "/video.example.php", "GET" => [], ...$ROOT_COMPONENTS],
 	//"/{$ROUTE_WEBSOCKET}" => ["URI" => "/websocket.example.php", "GET" => [], ...$ROOT_COMPONENTS],
 	"/{$ROUTE_PDF}" => ["FILE" => "/img/pdf/sample.pdf"],

@@ -22,6 +22,7 @@ require_once "{$TO_HOME}/common.example.php";
       <source src="<?= "{$HOME_PATH}/img/video/sample.mp4" ?>" type="video/mp4" />
       <track src="<?= "{$HOME_PATH}/img/video/sample.en.vtt" ?>" kind="captions" srclang="en" label="English" default />
       <track src="<?= "{$HOME_PATH}/img/video/sample.es.vtt" ?>" kind="captions" srclang="es" label="Español" />
+      <track src="<?= "{$HOME_PATH}/img/video/sample.ja.vtt" ?>" kind="captions" srclang="ja" label="日本語" />
     </video>
   </div>
 </div>

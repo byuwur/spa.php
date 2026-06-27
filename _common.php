@@ -13,6 +13,7 @@ if (isset($_GET["lang"])) $lang = $_GET["lang"];
 switch ($lang) {
   case "es":
   case "en":
+  case "ja":
     $APP_LANG = $lang;
     break;
   default:
