@@ -15,7 +15,7 @@ require_once "{$TO_HOME}/common.example.php";
 <div class="video-foreground app-container">
   <div class="container vh-100 d-flex flex-column align-items-center justify-content-center">
     <div class="text-white text-dark-shadow">
-      <p><?= $video ?>:</p>
+      <p><?= $LANG["nav.video"] ?>:</p>
       <hr class="w-100" />
     </div>
     <video id="bywr-video-player" class="video-js w-100" poster="<?= "{$HOME_PATH}/img/video/sample.jpg" ?>" controls playsinline>

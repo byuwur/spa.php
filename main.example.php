@@ -15,11 +15,11 @@ require_once "{$TO_HOME}/common.example.php";
 <div class="video-foreground app-container">
   <div class="container vh-100 d-flex flex-column align-items-center justify-content-center">
     <div class="text-white text-dark-shadow">
-      <p><?= $description ?></p>
-      <p><?= "{$thisis} {$home}." ?></p>
-      <p><?= "{$home}: " ?><b><i>"<?= $home_desc ?>"</i></b></p>
+      <p><?= $LANG["demo.description"] ?></p>
+      <p><?= $LANG["demo.this_is"] . " " . $LANG["nav.home"] . "." ?></p>
+      <p><?= $LANG["nav.home"] . ": " ?><b><i>"<?= $LANG["demo.home.description"] ?>"</i></b></p>
       <hr class="w-100" />
-      <a href="<?= "/{$ROUTE_VIDEO}" ?>" class="link"><?= $video ?></a>
+      <a href="<?= "/{$ROUTE_VIDEO}" ?>" class="link"><?= $LANG["nav.video"] ?></a>
     </div>
   </div>
 </div>

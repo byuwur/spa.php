@@ -89,50 +89,50 @@ require_once "{$TO_HOME}/common.example.php";
   <div id="spa-loader">
     <div class="load-circle-back"></div>
     <div class="load-circle-fore"></div>
-    <div class="load-text"><?= $load ?></div>
+    <div class="load-text"><?= $LANG["loader.loading"] ?></div>
   </div>
   <div id="bywr-accessibility">
-    <a href="javascript:byCommon.accessibilityToggle();" data-bs-toggle="tooltip" data-bs-title="Accesibilidad" title="Accesibilidad">
+    <a href="javascript:byCommon.accessibilityToggle();" role="button" data-bs-toggle="tooltip" data-bs-title="<?= htmlspecialchars($LANG["accessibility.open_panel"], ENT_QUOTES, "UTF-8") ?>" title="<?= htmlspecialchars($LANG["accessibility.open_panel"], ENT_QUOTES, "UTF-8") ?>" aria-label="<?= htmlspecialchars($LANG["accessibility.open_panel"], ENT_QUOTES, "UTF-8") ?>">
       <i class="fas fa-universal-access"></i>
     </a>
     <div id="bywr-accessibility-buttons" class="hide">
-      <a href="javascript:byCommon.accessibilityText('plus');" data-bs-toggle="tooltip" data-bs-title="Aumentar tamaño de texto" title="Aumentar tamaño de texto">
+      <a href="javascript:byCommon.accessibilityText('plus');" role="button" data-bs-toggle="tooltip" data-bs-title="<?= htmlspecialchars($LANG["accessibility.increase_text"], ENT_QUOTES, "UTF-8") ?>" title="<?= htmlspecialchars($LANG["accessibility.increase_text"], ENT_QUOTES, "UTF-8") ?>" aria-label="<?= htmlspecialchars($LANG["accessibility.increase_text"], ENT_QUOTES, "UTF-8") ?>">
         <i class="fas fa-magnifying-glass-plus"></i>
       </a>
-      <a href="javascript:byCommon.accessibilityText();" data-bs-toggle="tooltip" data-bs-title="Reiniciar tamaño de texto" title="Reiniciar tamaño de texto">
+      <a href="javascript:byCommon.accessibilityText();" role="button" data-bs-toggle="tooltip" data-bs-title="<?= htmlspecialchars($LANG["accessibility.reset_text"], ENT_QUOTES, "UTF-8") ?>" title="<?= htmlspecialchars($LANG["accessibility.reset_text"], ENT_QUOTES, "UTF-8") ?>" aria-label="<?= htmlspecialchars($LANG["accessibility.reset_text"], ENT_QUOTES, "UTF-8") ?>">
         <i class="fas fa-magnifying-glass"></i>
       </a>
-      <a href="javascript:byCommon.accessibilityText('minus');" data-bs-toggle="tooltip" data-bs-title="Disminuir tamaño de texto" title="Disminuir tamaño de texto">
+      <a href="javascript:byCommon.accessibilityText('minus');" role="button" data-bs-toggle="tooltip" data-bs-title="<?= htmlspecialchars($LANG["accessibility.decrease_text"], ENT_QUOTES, "UTF-8") ?>" title="<?= htmlspecialchars($LANG["accessibility.decrease_text"], ENT_QUOTES, "UTF-8") ?>" aria-label="<?= htmlspecialchars($LANG["accessibility.decrease_text"], ENT_QUOTES, "UTF-8") ?>">
         <i class="fas fa-magnifying-glass-minus"></i>
       </a>
-      <a href="javascript:byCommon.accessibilityMotion();" data-bs-toggle="tooltip" data-bs-title="Alternar animaciones" title="Alternar animaciones">
+      <a href="javascript:byCommon.accessibilityMotion();" role="button" data-bs-toggle="tooltip" data-bs-title="<?= htmlspecialchars($LANG["accessibility.toggle_motion"], ENT_QUOTES, "UTF-8") ?>" title="<?= htmlspecialchars($LANG["accessibility.toggle_motion"], ENT_QUOTES, "UTF-8") ?>" aria-label="<?= htmlspecialchars($LANG["accessibility.toggle_motion"], ENT_QUOTES, "UTF-8") ?>">
         <i class="fas fa-wind"></i>
       </a>
-      <a href="javascript:byCommon.accessibilityDyslexia();" data-bs-toggle="tooltip" data-bs-title="Apto para dislexia" title="Apto para dislexia">
+      <a href="javascript:byCommon.accessibilityDyslexia();" role="button" data-bs-toggle="tooltip" data-bs-title="<?= htmlspecialchars($LANG["accessibility.dyslexia"], ENT_QUOTES, "UTF-8") ?>" title="<?= htmlspecialchars($LANG["accessibility.dyslexia"], ENT_QUOTES, "UTF-8") ?>" aria-label="<?= htmlspecialchars($LANG["accessibility.dyslexia"], ENT_QUOTES, "UTF-8") ?>">
         <i class="fas fa-font"></i>
       </a>
-      <a href="javascript:byCommon.accessibilityWordSpacing();" data-bs-toggle="tooltip" data-bs-title="Texto espaciado" title="Texto espaciado">
+      <a href="javascript:byCommon.accessibilityWordSpacing();" role="button" data-bs-toggle="tooltip" data-bs-title="<?= htmlspecialchars($LANG["accessibility.word_spacing"], ENT_QUOTES, "UTF-8") ?>" title="<?= htmlspecialchars($LANG["accessibility.word_spacing"], ENT_QUOTES, "UTF-8") ?>" aria-label="<?= htmlspecialchars($LANG["accessibility.word_spacing"], ENT_QUOTES, "UTF-8") ?>">
         <i class="fas fa-text-width"></i>
       </a>
-      <a href="javascript:byCommon.accessibilityHighlightLinks();" data-bs-toggle="tooltip" data-bs-title="Resaltar enlaces" title="Resaltar enlaces">
+      <a href="javascript:byCommon.accessibilityHighlightLinks();" role="button" data-bs-toggle="tooltip" data-bs-title="<?= htmlspecialchars($LANG["accessibility.highlight_links"], ENT_QUOTES, "UTF-8") ?>" title="<?= htmlspecialchars($LANG["accessibility.highlight_links"], ENT_QUOTES, "UTF-8") ?>" aria-label="<?= htmlspecialchars($LANG["accessibility.highlight_links"], ENT_QUOTES, "UTF-8") ?>">
         <i class="fas fa-link"></i>
       </a>
-      <a href="javascript:byCommon.accessibilityHighContrast();" data-bs-toggle="tooltip" data-bs-title="Alto contraste" title="Alto contraste">
+      <a href="javascript:byCommon.accessibilityHighContrast();" role="button" data-bs-toggle="tooltip" data-bs-title="<?= htmlspecialchars($LANG["accessibility.high_contrast"], ENT_QUOTES, "UTF-8") ?>" title="<?= htmlspecialchars($LANG["accessibility.high_contrast"], ENT_QUOTES, "UTF-8") ?>" aria-label="<?= htmlspecialchars($LANG["accessibility.high_contrast"], ENT_QUOTES, "UTF-8") ?>">
         <i class="fas fa-circle-half-stroke"></i>
       </a>
-      <a href="javascript:byCommon.accessibilityHighContrast('invertchropia');" data-bs-toggle="tooltip" data-bs-title="Invertir colores" title="Invertir colores">
+      <a href="javascript:byCommon.accessibilityHighContrast('invertchropia');" role="button" data-bs-toggle="tooltip" data-bs-title="<?= htmlspecialchars($LANG["accessibility.invert_colors"], ENT_QUOTES, "UTF-8") ?>" title="<?= htmlspecialchars($LANG["accessibility.invert_colors"], ENT_QUOTES, "UTF-8") ?>" aria-label="<?= htmlspecialchars($LANG["accessibility.invert_colors"], ENT_QUOTES, "UTF-8") ?>">
         <i class="fas fa-droplet"></i>
       </a>
-      <a href="javascript:byCommon.accessibilityHighContrast('monochropia');" data-bs-toggle="tooltip" data-bs-title="Escala de grises" title="Escala de grises">
+      <a href="javascript:byCommon.accessibilityHighContrast('monochropia');" role="button" data-bs-toggle="tooltip" data-bs-title="<?= htmlspecialchars($LANG["accessibility.grayscale"], ENT_QUOTES, "UTF-8") ?>" title="<?= htmlspecialchars($LANG["accessibility.grayscale"], ENT_QUOTES, "UTF-8") ?>" aria-label="<?= htmlspecialchars($LANG["accessibility.grayscale"], ENT_QUOTES, "UTF-8") ?>">
         <i class="fas fa-droplet-slash"></i>
       </a>
-      <a href="javascript:byCommon.accessibilityHighContrast('protanopia');" data-bs-toggle="tooltip" data-bs-title="Protanopia" title="Protanopia">
+      <a href="javascript:byCommon.accessibilityHighContrast('protanopia');" role="button" data-bs-toggle="tooltip" data-bs-title="<?= htmlspecialchars($LANG["accessibility.protanopia"], ENT_QUOTES, "UTF-8") ?>" title="<?= htmlspecialchars($LANG["accessibility.protanopia"], ENT_QUOTES, "UTF-8") ?>" aria-label="<?= htmlspecialchars($LANG["accessibility.protanopia"], ENT_QUOTES, "UTF-8") ?>">
         <i class="fas fa-eye"></i>
       </a>
-      <a href="javascript:byCommon.accessibilityHighContrast('deuteranopia');" data-bs-toggle="tooltip" data-bs-title="Deuteranopia" title="Deuteranopia">
+      <a href="javascript:byCommon.accessibilityHighContrast('deuteranopia');" role="button" data-bs-toggle="tooltip" data-bs-title="<?= htmlspecialchars($LANG["accessibility.deuteranopia"], ENT_QUOTES, "UTF-8") ?>" title="<?= htmlspecialchars($LANG["accessibility.deuteranopia"], ENT_QUOTES, "UTF-8") ?>" aria-label="<?= htmlspecialchars($LANG["accessibility.deuteranopia"], ENT_QUOTES, "UTF-8") ?>">
         <i class="fas fa-eye-slash"></i>
       </a>
-      <a href="javascript:byCommon.accessibilityHighContrast('tritanopia');" data-bs-toggle="tooltip" data-bs-title="Tritanopia" title="Tritanopia">
+      <a href="javascript:byCommon.accessibilityHighContrast('tritanopia');" role="button" data-bs-toggle="tooltip" data-bs-title="<?= htmlspecialchars($LANG["accessibility.tritanopia"], ENT_QUOTES, "UTF-8") ?>" title="<?= htmlspecialchars($LANG["accessibility.tritanopia"], ENT_QUOTES, "UTF-8") ?>" aria-label="<?= htmlspecialchars($LANG["accessibility.tritanopia"], ENT_QUOTES, "UTF-8") ?>">
         <i class="fas fa-eye-low-vision"></i>
       </a>
     </div>

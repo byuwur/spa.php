@@ -4,13 +4,14 @@
 // Just call the SPA.php file and add whatever you need below
 if (file_exists("{$TO_HOME}/lang/{$APP_LANG}.php")) {
   require_once "{$TO_HOME}/lang/{$APP_LANG}.php";
+  $LANG = $LANG ?? [];
 
   $titles = [
-    0 => "SPA.PHP | byUwUr",
-    "home" => "SPA " . $home . " | byUwUr",
-    "page" => "SPA " . $page . " | byUwUr",
-    "video" => "SPA " . $video . " | byUwUr",
-    "socket-server" => "SPA Socket Server | byUwUr",
-    "socket-client" => "SPA Socker Client | byUwUr"
+    0 => $LANG["title.default"],
+    "home" => $LANG["title.home"],
+    "page" => $LANG["title.page"],
+    "video" => $LANG["title.video"],
+    "socket-server" => $LANG["title.socket_server"],
+    "socket-client" => $LANG["title.socket_client"]
   ];
 }

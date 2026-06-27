@@ -14,9 +14,9 @@ require_once "{$TO_HOME}/common.example.php";
 ?>
 <div class="video-foreground app-container">
   <div class="container vh-100 d-flex flex-column align-items-center justify-content-center text-white text-dark-shadow">
-    <p><?= $description ?></p>
-    <p><?= "{$thisis} {$page}." ?></p>
-    <p><?= "{$page}: " ?><b><i>"<?= $page_desc ?>"</i></b></p>
+    <p><?= $LANG["demo.description"] ?></p>
+    <p><?= $LANG["demo.this_is"] . " " . $LANG["nav.page"] . "." ?></p>
+    <p><?= $LANG["nav.page"] . ": " ?><b><i>"<?= $LANG["demo.page.description"] ?>"</i></b></p>
   </div>
 </div>
 <script>
