@@ -20,6 +20,7 @@
 	byCommon.SIDERBAR_TOGGLE_ID = "#bywr-sidebar-toggle";
 	byCommon.SIDEBAR_HIDDEN_ID = "#bywr-sidebar-hidden";
 	byCommon.APP_CONTAINER_SELECTOR = ".app-container";
+	byCommon.COOKIE_CONSENT_READY = byCommon.COOKIE_CONSENT_READY || false;
 
 	/**
 	 * Initializes the <Sidebar /> component in #spa-nav.
@@ -193,6 +194,7 @@
 	 */
 	byCommon.initCookieConsent = function () {
 		if (typeof cookieconsent === "undefined" && !window.cookieconsent) return console.warn("Can't load CookieConsent if script ain't present.");
+		if (byCommon.COOKIE_CONSENT_READY) return;
 		try {
 			cookieconsent.run({
 				notice_banner_type: "simple",
@@ -202,6 +204,7 @@
 				website_name: "[Mateus] byUwUr",
 				change_preferences_selector: "#cookiePrefs",
 			});
+			byCommon.COOKIE_CONSENT_READY = true;
 			console.log("Init CookieConsent");
 		} catch (e) {
 			console.warn("initCookieConsent():", e);

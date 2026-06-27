@@ -80,7 +80,7 @@
 				function () {
 					window.location.reload();
 				},
-				{ once: true }
+				{ once: true },
 			);
 			return data;
 		};
@@ -89,7 +89,7 @@
 				url: `${path}?e=${status}`,
 				type: "POST",
 				data: { custom_error_message },
-				dataType: "text"
+				dataType: "text",
 			})
 				.then(render)
 				.catch(function (xhr, ajaxStatus, error) {
@@ -181,7 +181,7 @@
 			url: `${bySPA.HOME_PATH}${file}?${new URLSearchParams({ ...get, uri: false }).toString()}`,
 			type: "POST",
 			data: { ...post },
-			dataType: "text"
+			dataType: "text",
 		})
 			.then(function (data) {
 				$(componentId).html(data);
@@ -290,8 +290,8 @@
 			console.warn("Main Component (main#spa-content) missing. Creating and appending to the body...");
 			$("body").append(
 				$("<main>", {
-					id: "spa-content"
-				})
+					id: "spa-content",
+				}),
 			);
 		}
 		// Reload each component associated with the route
@@ -302,7 +302,7 @@
 			url: `${bySPA.HOME_PATH}${uri ?? "/null"}?${new URLSearchParams(get).toString()}`,
 			type: "POST",
 			data: { ...post },
-			dataType: "text"
+			dataType: "text",
 		})
 			.then(function (data) {
 				$("#spa-content").html(data);
@@ -319,7 +319,7 @@
 					function () {
 						window.location.reload();
 					},
-					{ once: true }
+					{ once: true },
 				);
 				return null;
 			})
@@ -333,11 +333,7 @@
 	 * @param {object} routing The route data that was loaded.
 	 */
 	bySPA.afterLoad = function (routing) {
-		if (typeof byCommon !== "undefined" && byCommon) {
-			["initMisc", "initBootstrap", "initCaptcha", "initSidebar", "initParticles"].forEach(function (fn) {
-				if (typeof byCommon[fn] === "function") byCommon[fn]();
-			});
-		}
+		if (typeof byCommon !== "undefined" && typeof byCommon.init === "function") byCommon.init();
 		document.dispatchEvent(new CustomEvent("byspa:load", { detail: routing }));
 	};
 
