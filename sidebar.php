@@ -8,7 +8,7 @@ require_once "{$TO_HOME}/_routes.php";
 //require_once "{$TO_HOME}/_router.php";
 //require_once "{$TO_HOME}/_auth.php";
 // --- PHP ---
-require_once "{$TO_HOME}/lang/" . $APP_LANG . ".php";
+require_once "{$TO_HOME}/common.example.php";
 //enable_progressive_rendering();
 ?>
 <nav id="bywr-sidebar" class="bywr-sidebar accordion bywr-accordion bg-dark-transparent bg-blurred text-white">
