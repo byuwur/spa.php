@@ -37,8 +37,8 @@ require_once "{$TO_HOME}/lang/" . $APP_LANG . ".php";
     </button>
     <div id="lang-drop" class="accordion-collapse collapse bg-dark-transparent" data-bs-parent="#bywr-sidebar">
       <div class="d-flex flex-row">
-        <a class="bywr-sidebar-option" href="<?= "/{$ROUTE_ES}" ?>" title="<?= htmlspecialchars($LANG["language.spanish"], ENT_QUOTES, "UTF-8") ?>"><img src="img/co.png" width="16px" height="12px" style="margin: 4px;" alt="<?= htmlspecialchars($LANG["language.spanish"], ENT_QUOTES, "UTF-8") ?>" /> ES<i class="fas fa-angle-right ms-auto"></i></a>
-        <a class="bywr-sidebar-option" href="<?= "/{$ROUTE_EN}" ?>" title="<?= htmlspecialchars($LANG["language.english"], ENT_QUOTES, "UTF-8") ?>"><img src="img/uk.png" width="16px" height="12px" style="margin: 4px;" alt="<?= htmlspecialchars($LANG["language.english"], ENT_QUOTES, "UTF-8") ?>" /> EN<i class="fas fa-angle-right ms-auto"></i></a>
+        <a class="bywr-sidebar-option" href="<?= "/{$ROUTE_ES}" ?>" title="<?= htmlspecialchars($LANG["language.spanish"], ENT_QUOTES, "UTF-8") ?>"><img src="img/co.svg" width="16px" height="12px" style="margin: 4px;" alt="<?= htmlspecialchars($LANG["language.spanish"], ENT_QUOTES, "UTF-8") ?>" /> ES<i class="fas fa-angle-right ms-auto"></i></a>
+        <a class="bywr-sidebar-option" href="<?= "/{$ROUTE_EN}" ?>" title="<?= htmlspecialchars($LANG["language.english"], ENT_QUOTES, "UTF-8") ?>"><img src="img/gb.svg" width="16px" height="12px" style="margin: 4px;" alt="<?= htmlspecialchars($LANG["language.english"], ENT_QUOTES, "UTF-8") ?>" /> EN<i class="fas fa-angle-right ms-auto"></i></a>
       </div>
       <!--a class="bywr-sidebar-option" href="javascript:;"><i class="fas fa-home"></i>Home<i class="fas fa-angle-right ms-auto"></i></a-->
     </div>

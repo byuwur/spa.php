@@ -16,7 +16,7 @@ $LANG = [
   "nav.error" => "エラー",
 
   "sidebar.toggle" => "サイドバーメニューを切り替え",
-  "sidebar.menu" => "メニュー",
+  "sidebar.menu" => "menu",
   "sidebar.logo_alt" => "byuwur/spa.php ロゴ",
 
   "language.selector" => "言語:",
