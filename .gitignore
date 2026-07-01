@@ -40,7 +40,7 @@ Icon?
 *.bak
 *.backup
 *.old
-# Multimedia
+# === MULTIMEDIA ===
 *.mp4
 *.mkv
 *.mov
