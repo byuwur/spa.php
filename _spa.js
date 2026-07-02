@@ -40,11 +40,6 @@
 		return state;
 	};
 
-	// Backward-compatible alias for code that used the old method name.
-	bySPA.getLocalStorageItems = function () {
-		return bySPA.setRouteState();
-	};
-
 	/**
 	 * Pushes the current state to the browser's history stack.
 	 * @param {string} url The URL to push to the history stack.
