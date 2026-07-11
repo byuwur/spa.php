@@ -70,6 +70,25 @@ This project is a simple, easy-to-use framework for building single-page applica
 3. Add custom functionality by creating new PHP files and adding them to the routes.
 4. Navigate. Suit yourself.
 
+## Security basics
+
+- `_auth.php` enables strict sessions, secure cookies on HTTPS, and CSRF helpers.
+- Add the CSRF token to a meta tag or `sessionStorage` and `_functions.js` will include it in jQuery POST requests:
+
+```php
+<meta name="csrf-token" content="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, "UTF-8") ?>" />
+```
+
+```js
+sessionStorage.setItem("CSRF_TOKEN", token);
+```
+
+- `make_http_request()` does not forward the PHP session ID unless `ALLOW_POST_SESSION_ID` is explicitly enabled and the URL matches `APP_URL`. Keep it disabled unless a controlled same-application request truly needs the same session.
+- `session_check()` validates the session; it does not rewrite `$_GET` or `$_POST`. Application tenant scope stays explicit.
+- A form POST sent to an SPA route is forwarded once to the routed PHP file and is not stored in browser history.
+- Public, authenticated, role, and tenant authorization belong to the consuming application. Keep those rules explicit at the endpoint.
+- Track `composer.lock` in applications so dependency installs are reproducible.
+
 ## Some other things I've made and used here
 
 - [easy-http-error](https://github.com/byuwur/easy-http-error) - Custom error page with server configurations.
