@@ -364,6 +364,27 @@ function show_modal_front($modalId, $state = "success", $title = "INFO.", $messa
 }
 
 /**
+ * Returns the CSRF token provided by the consuming application.
+ * @returns {string} CSRF token or an empty string.
+ */
+function get_csrf_token() {
+	return $("meta[name='csrf-token']").attr("content") || sessionStorage.getItem("CSRF_TOKEN") || "";
+}
+
+/**
+ * Adds the CSRF token to a serialized form when one is available.
+ * @param {Array} formData Serialized form data.
+ * @param {string} method HTTP method.
+ * @returns {Array} Serialized form data.
+ */
+function add_csrf_token(formData, method = "POST") {
+	if (["GET", "HEAD", "OPTIONS"].includes(String(method).toUpperCase())) return formData;
+	const token = get_csrf_token();
+	if (token && !formData.some((field) => field?.name === "_csrf")) formData.push({ name: "_csrf", value: token });
+	return formData;
+}
+
+/**
  * Makes an HTTP POST request to a given URL with optional GET and POST parameters.
  * @param {Object} options The options for the HTTP request.
  * @param {string} options.$elementId The element selector triggering the request (debug identification only).
@@ -397,6 +418,7 @@ function make_http_request(options) {
 			value: post?.value,
 		});
 	});
+	add_csrf_token(formData, $type);
 	if (appIsDEV) {
 		console.log(`element_make_http_request():`, options);
 		console.log(`HTTP (${elementId}):${$returnType} to ${urlGet} `, formData);
@@ -501,6 +523,7 @@ function element_make_http_request(options) {
 					value: post?.value,
 				});
 			});
+			add_csrf_token(formData, $type);
 			if (appIsDEV) console.log(`HTTP (${elementId}):${$returnType} to ${urlGet} `, formData);
 			beforeFn(this);
 			return $.ajax({
