@@ -2,11 +2,13 @@
 *.env*
 .env/
 .env.*
+!.env.example
 # === UPLOADS ===
 assets/
 uploads/
 # === DEPENDENCIES ===
 *.lock
+!composer.lock
 *.phar
 vendor/
 node_modules/
