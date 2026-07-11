@@ -270,7 +270,8 @@
 		if (historyMode.push) bySPA.historyPush(routing.url);
 		if (historyMode.replace) bySPA.historyReplace(routing.url);
 		$("#spa-content").html("");
-		const { path, uri, file, get, post, component } = routing;
+		const { path, uri, file, get, post: routePost, component } = routing;
+		const post = { ...routePost, ...(historyMode.post ?? {}) };
 		// Log debug information if in development mode
 		if (bySPA.APP_ENV === "DEV") {
 			console.log(`loadSPA("${url}")`);
@@ -373,7 +374,7 @@
 			bySPA.load(nextURL);
 		});
 		// Initial load of SPA content based on the stored URL.
-		bySPA.load(`${bySPA.URL}`, { replace: true });
+		bySPA.load(`${bySPA.URL}`, { replace: true, post: bySPA._POST });
 	};
 })(typeof window !== "undefined" ? window : this);
 
