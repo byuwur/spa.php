@@ -53,9 +53,11 @@ function api_respond(int $status, bool $error, string $message, array $data = []
 function make_http_request(string $url, array $get = [], array $post = [], bool $json_decode = false)
 {
   if (!validate_value($url, "url")) return console_error("CURL ERROR: Invalid URL.");
-  global $TO_HOME, $SYSTEM_ROOT, $HOME_PATH;
-  $is_local_req = str_starts_with($url, $HOME_PATH);
-  if ($is_local_req) {
+  global $TO_HOME, $SYSTEM_ROOT;
+  $session_origin = rtrim((string) validate_value($_ENV["APP_URL"] ?? null, "url"), "/");
+  $is_session_origin = $session_origin !== "" && ($url === $session_origin || str_starts_with($url, "{$session_origin}/"));
+  $forward_session = $is_session_origin && filter_var($_ENV["ALLOW_POST_SESSION_ID"] ?? false, FILTER_VALIDATE_BOOLEAN);
+  if ($forward_session) {
     if (session_status() != PHP_SESSION_NONE) session_write_close();
     $post[session_name()] = session_id();
   }
@@ -64,7 +66,9 @@ function make_http_request(string $url, array $get = [], array $post = [], bool 
   curl_setopt($req, CURLOPT_URL, $url);
   curl_setopt($req, CURLOPT_POST, 1);
   curl_setopt($req, CURLOPT_POSTFIELDS, http_build_query($post));
-  curl_setopt($req, CURLOPT_VERBOSE, true);
+  curl_setopt($req, CURLOPT_CONNECTTIMEOUT, 10);
+  curl_setopt($req, CURLOPT_TIMEOUT, 30);
+  curl_setopt($req, CURLOPT_VERBOSE, ($_ENV["APP_ENV"] ?? "PROD") === "DEV");
   curl_setopt($req, CURLOPT_RETURNTRANSFER, true);
   $cert_file = file_exists("{$TO_HOME}/spa.php/cacert.pem") ? "{$SYSTEM_ROOT}/spa.php/cacert.pem" : "{$SYSTEM_ROOT}/cacert.pem";
   curl_setopt($req, CURLOPT_CAINFO, $cert_file);
@@ -76,7 +80,7 @@ function make_http_request(string $url, array $get = [], array $post = [], bool 
   }
   if (curl_errno($req)) console_error("CURL HTTP1.1 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req));
   //curl_close($req);
-  if ($is_local_req && session_status() == PHP_SESSION_NONE) session_start();
+  if ($forward_session && session_status() == PHP_SESSION_NONE) session_start();
   if (!$json_decode) return $response;
   $json_decoded = json_decode($response, true);
   if (json_last_error() === JSON_ERROR_NONE) return $json_decoded;
@@ -100,7 +104,9 @@ function remote_file_exists(string $url): bool
   curl_setopt($req, CURLOPT_URL, $url);
   curl_setopt($req, CURLOPT_NOBODY, true);
   curl_setopt($req, CURLOPT_FOLLOWLOCATION, true);
-  curl_setopt($req, CURLOPT_VERBOSE, true);
+  curl_setopt($req, CURLOPT_CONNECTTIMEOUT, 10);
+  curl_setopt($req, CURLOPT_TIMEOUT, 30);
+  curl_setopt($req, CURLOPT_VERBOSE, ($_ENV["APP_ENV"] ?? "PROD") === "DEV");
   curl_setopt($req, CURLOPT_RETURNTRANSFER, true);
   $cert_file = file_exists("{$TO_HOME}/spa.php/cacert.pem") ? "{$SYSTEM_ROOT}/spa.php/cacert.pem" : "{$SYSTEM_ROOT}/cacert.pem";
   curl_setopt($req, CURLOPT_CAINFO, $cert_file);
@@ -678,11 +684,13 @@ function enable_progressive_rendering(): void
 /** 
  * Redirects the user to a specified location and terminates the script.
  * @param string $location The URL or path to redirect to.
+ * @param int $status HTTP redirect status.
  * @return void
  */
-function change_location(string $location): void
+function change_location(string $location, int $status = 307): void
 {
-  http_response_code(307);
+  if ($status < 300 || $status > 399) $status = 307;
+  http_response_code($status);
   header("Location: {$location}");
   exit;
 }
