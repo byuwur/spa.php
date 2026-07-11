@@ -54,16 +54,16 @@ if (isset($debug) && $debug) echo "HOME_PATH: " . $HOME_PATH . " <br>\n";
 if (isset($setLocalStorage) && $setLocalStorage) { ?>
   <script>
     <?php if (($_ENV["APP_ENV"] ?? $NOTENV_APP_ENV) === "DEV") { ?>
-      console.log("PROTOCOL", "<?= $PROTOCOL ?>");
-      console.log("PATH_DIFF", "<?= $PATH_DIFF ?>");
-      console.log("TO_HOME", "<?= $TO_HOME ?>");
-      console.log("THIS_PATH", "<?= $THIS_PATH ?>");
-      console.log("HOME_PATH", "<?= $HOME_PATH ?>");
+      console.log("PROTOCOL", <?= json_encode($PROTOCOL, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>);
+      console.log("PATH_DIFF", <?= json_encode($PATH_DIFF) ?>);
+      console.log("TO_HOME", <?= json_encode($TO_HOME, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>);
+      console.log("THIS_PATH", <?= json_encode($THIS_PATH, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>);
+      console.log("HOME_PATH", <?= json_encode($HOME_PATH, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>);
     <?php } ?>
-    localStorage.setItem("PROTOCOL", "<?= $PROTOCOL ?>");
-    localStorage.setItem("PATH_DIFF", "<?= $PATH_DIFF ?>");
-    localStorage.setItem("TO_HOME", "<?= $TO_HOME ?>");
-    localStorage.setItem("THIS_PATH", "<?= $THIS_PATH ?>");
-    localStorage.setItem("HOME_PATH", "<?= $HOME_PATH ?>");
+    localStorage.setItem("PROTOCOL", <?= json_encode($PROTOCOL, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>);
+    localStorage.setItem("PATH_DIFF", <?= json_encode((string) $PATH_DIFF) ?>);
+    localStorage.setItem("TO_HOME", <?= json_encode($TO_HOME, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>);
+    localStorage.setItem("THIS_PATH", <?= json_encode($THIS_PATH, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>);
+    localStorage.setItem("HOME_PATH", <?= json_encode($HOME_PATH, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>);
   </script>
 <?php }
