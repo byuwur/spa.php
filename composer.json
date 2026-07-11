@@ -1,4 +1,6 @@
 {
+	"name": "byuwur/spa.php",
+	"license": "MIT",
 	"require": {
 		"vlucas/phpdotenv": "^5.6"
 	}
