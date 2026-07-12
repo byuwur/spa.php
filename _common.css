@@ -1097,9 +1097,10 @@ th {
 .bywr-sidebar-header,
 .bywr-accordion .accordion-button,
 .bywr-accordion .bywr-sidebar-option {
-	border-width: 0 0 1px 0;
-	border-style: solid;
-	border-color: var(--light-transparent);
+	background: var(--dark-clear);
+	border-width: 0 0 1px 0 !important;
+	border-style: solid !important;
+	border-color: var(--light-transparent) !important;
 }
 .p-2o5 {
 	padding: 0.75rem !important;
