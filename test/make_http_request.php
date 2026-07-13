@@ -7,7 +7,7 @@ $get = [
   "get2" => "get2"
 ];
 $post = [
-  "testpost" => "POSTTER",
+  "testpost" => "POSTER",
   "post1" => "post1",
   "post2" => "post2",
   [
