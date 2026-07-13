@@ -16,7 +16,8 @@
 function js_encode($value): string
 {
   $json = json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
-  if ($json === false) return "null";
+  if ($json === false)
+    return "null";
   return $json;
 }
 
@@ -38,7 +39,8 @@ function api_respond(int $status, bool $error, string $message, array $data = []
   $response->message = $message;
   $response->data = $data;
   echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-  while (ob_get_level() > 0) ob_end_flush();
+  while (ob_get_level() > 0)
+    ob_end_flush();
   exit;
 }
 
@@ -52,17 +54,20 @@ function api_respond(int $status, bool $error, string $message, array $data = []
  */
 function make_http_request(string $url, array $get = [], array $post = [], bool $json_decode = false)
 {
-  if (!validate_value($url, "url")) return console_error("CURL ERROR: Invalid URL.");
+  if (!validate_value($url, "url"))
+    return console_error("CURL ERROR: Invalid URL.");
   global $TO_HOME, $SYSTEM_ROOT;
   $session_origin = rtrim((string) validate_value($_ENV["APP_URL"] ?? null, "url"), "/");
   $is_session_origin = $session_origin !== "" && ($url === $session_origin || str_starts_with($url, "{$session_origin}/"));
   $forward_session = $is_session_origin && filter_var($_ENV["ALLOW_POST_SESSION_ID"] ?? false, FILTER_VALIDATE_BOOLEAN);
   if ($forward_session) {
-    if (session_status() != PHP_SESSION_NONE) session_write_close();
+    if (session_status() != PHP_SESSION_NONE)
+      session_write_close();
     $post[session_name()] = session_id();
   }
   $req = curl_init();
-  if (count($get)) $url = $url .  "?" . http_build_query($get);
+  if (count($get))
+    $url = $url . "?" . http_build_query($get);
   curl_setopt($req, CURLOPT_URL, $url);
   curl_setopt($req, CURLOPT_POST, 1);
   curl_setopt($req, CURLOPT_POSTFIELDS, http_build_query($post));
@@ -78,12 +83,16 @@ function make_http_request(string $url, array $get = [], array $post = [], bool 
     curl_setopt($req, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
     $response = curl_exec($req);
   }
-  if (curl_errno($req)) console_error("CURL HTTP1.1 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req));
+  if (curl_errno($req))
+    console_error("CURL HTTP1.1 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req));
   //curl_close($req);
-  if ($forward_session && session_status() == PHP_SESSION_NONE) session_start();
-  if (!$json_decode) return $response;
+  if ($forward_session && session_status() == PHP_SESSION_NONE)
+    session_start();
+  if (!$json_decode)
+    return $response;
   $json_decoded = json_decode($response, true);
-  if (json_last_error() === JSON_ERROR_NONE) return $json_decoded;
+  if (json_last_error() === JSON_ERROR_NONE)
+    return $json_decoded;
   console_warn("Request ({$url}) couldn't be JSON decoded.");
   return $response;
 }
@@ -116,7 +125,8 @@ function remote_file_exists(string $url): bool
     curl_setopt($req, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
     curl_exec($req);
   }
-  if (curl_errno($req)) console_error("CURL HTTP1.1 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req));
+  if (curl_errno($req))
+    console_error("CURL HTTP1.1 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req));
   $http_code = curl_getinfo($req, CURLINFO_RESPONSE_CODE);
   //curl_close($req);
   return $http_code >= 200 && $http_code <= 299;
@@ -130,15 +140,19 @@ function remote_file_exists(string $url): bool
 function is_port_in_use(int $port, bool $is_cli = false): bool
 {
   if ($port < 1 || $port > 65535) {
-    if (!$is_cli) console_error("PORT ERROR: Invalid port number ({$port}). Must be 1 >= PORT <= 65535.");
-    else echo "🔴 PORT ERROR: Invalid port number ({$port}). Must be 1 >= PORT <= 65535.";
+    if (!$is_cli)
+      console_error("PORT ERROR: Invalid port number ({$port}). Must be 1 >= PORT <= 65535.");
+    else
+      echo "🔴 PORT ERROR: Invalid port number ({$port}). Must be 1 >= PORT <= 65535.";
     return false;
   }
   $connection = @fsockopen('127.0.0.1', $port);
   if (is_resource($connection)) {
     fclose($connection);
-    if (!$is_cli) console_warn("⚠️ Webocket already running on port {$port}.");
-    else echo "⚠️ Websocket already running on port {$port}.";
+    if (!$is_cli)
+      console_warn("⚠️ Webocket already running on port {$port}.");
+    else
+      echo "⚠️ Websocket already running on port {$port}.";
     return true;
   }
   return false;
@@ -152,22 +166,27 @@ function php_where(): string
 {
   // Try PHP binary
   $php_path = dirname(std_dir_separator(PHP_BINARY)) . "/php.exe";
-  if (is_file($php_path)) return $php_path;
+  if (is_file($php_path))
+    return $php_path;
   $cgi_path = dirname(std_dir_separator(PHP_BINARY)) . "/php-cgi.exe";
-  if (is_file($cgi_path)) return $cgi_path;
+  if (is_file($cgi_path))
+    return $cgi_path;
   // Try PHP PATH
   $output = [];
   $code = -1;
   exec("where php", $output, $code);
-  if (reset($output) && $code == 0) return reset($output);
+  if (reset($output) && $code == 0)
+    return reset($output);
   // Try PHP-CGI PATH
   $output = [];
   $code = -1;
   exec("where php-cgi", $output, $code);
-  if (reset($output) && $code == 0) return reset($output);
+  if (reset($output) && $code == 0)
+    return reset($output);
   // Try INI path
   $ini = std_dir_separator(PHP_BINDIR) . "/php.exe";
-  if (is_file($ini)) return $ini;
+  if (is_file($ini))
+    return $ini;
   // Fallback
   return 'php';
 }
@@ -190,13 +209,17 @@ function validate_value($input, string $type = "string", array $options = [])
     $input === null ||
     $input === "null" ||
     $input === ""
-  ) return null;
-  if (is_array($input) || is_object($input)) return null;
+  )
+    return null;
+  if (is_array($input) || is_object($input))
+    return null;
   $type = strtolower($type);
   $raw_input = is_string($input) ? trim($input) : $input;
   $check_range = function ($value) use ($options) {
-    if (isset($options["min"]) && $value < $options["min"]) return null;
-    if (isset($options["max"]) && $value > $options["max"]) return null;
+    if (isset($options["min"]) && $value < $options["min"])
+      return null;
+    if (isset($options["max"]) && $value > $options["max"])
+      return null;
     return $value;
   };
   switch ($type) {
@@ -236,7 +259,8 @@ function validate_value($input, string $type = "string", array $options = [])
     case "encoded":
       return filter_var($raw_input, FILTER_SANITIZE_ENCODED);
     case "regex":
-      if (!isset($options["pattern"]) || $options["pattern"] === "") return null;
+      if (!isset($options["pattern"]) || $options["pattern"] === "")
+        return null;
       return preg_match($options["pattern"], (string) $raw_input) ? (string) $raw_input : null;
     case "date":
       return strtotime((string) $raw_input) !== false ? (string) $raw_input : null;
@@ -262,7 +286,8 @@ function validate_keys(array $array, array $required, bool $strict = true): arra
   foreach ($required as $key => $type)
     if (validate_value($array[$key] ?? null, $type ?? "string") === null)
       $invalid[] = $key;
-  if ($strict) return $invalid;
+  if ($strict)
+    return $invalid;
   return count($invalid) < count($required) ? [] : $invalid;
 }
 
@@ -281,9 +306,12 @@ function api_validate_keys(string $method, array $array, array $required, bool $
   $invalid = validate_keys($array, $required, $strict);
   if (count($invalid)) {
     $err = "Parámetros inválidos: (" . $method . ")";
-    if ($_ENV["APP_ENV"] === "DEV") $err .= " [Missing fields " . implode(", ", $invalid) . "]";
-    if ($crash) api_respond(400, true, $err);
-    else return $err;
+    if ($_ENV["APP_ENV"] === "DEV")
+      $err .= " [Missing fields " . implode(", ", $invalid) . "]";
+    if ($crash)
+      api_respond(400, true, $err);
+    else
+      return $err;
   }
   return "";
 }
@@ -295,7 +323,8 @@ function api_validate_keys(string $method, array $array, array $required, bool $
  */
 function common_keys(array $array): array
 {
-  if (empty($array) || !count($array)) return [];
+  if (empty($array) || !count($array))
+    return [];
   $common = array_keys(reset($array));
   foreach ($array as $item)
     $common = array_intersect($common, array_keys($item));
@@ -305,6 +334,7 @@ function common_keys(array $array): array
 /**
  * Builds a SQL query string based on the specified method, columns, table, fields, conditions, and other parameters.
  * This function dynamically constructs SQL queries for CRUD operations (Create, Read, Update, Delete) with optional JOINs and conditions.
+ * SQL fragments such as columns, table, end, nested, and joins must come from application code. Only values are parameterized.
  *
  * @param string $method The type of SQL operation: [C]REATE, [R]EAD, [U]PDATE, [D]ELETE.
  * @param string $columns The columns to be selected in the operation.
@@ -316,52 +346,141 @@ function common_keys(array $array): array
  * @param array $params Custom conditions that involve more complex logic (optional - not recommended due to performance).
  * @param array $nested Custom conditions that involve more complex logic (optional - not recommended due to performance).
  * @param array $joins An array of JOINs to be included in the query (optional - not recommended due to performance).
+ * @param array $options Build options. "strict" rejects invalid fields and unscoped mutations. "allow_full_table" explicitly allows unscoped UPDATE/DELETE queries.
  * @return stdClass An object containing the built query string, joins, fields, conditions, parameter types, and parameter values.
  */
-function build_sql_query(string $method, string $columns, string $table, array $fields, array $conditions, string $end, array $valid, array $params = [], array $nested = [], array $joins = []): stdClass
+function build_sql_query(string $method, string $columns, string $table, array $fields, array $conditions, string $end, array $valid, array $params = [], array $nested = [], array $joins = [], array $options = []): stdClass
 {
   // Initialize the return object with default properties
   $return = new stdClass();
+  $return->method = "";
   $return->query = "";
   $return->joins = [];
   $return->fields = [];
+  $return->field_keys = [];
   $return->conditions = [];
   $return->param_types = "";
   $return->param_values = [];
-  // Determine the validity of the SQL method
-  if (!in_array($method, ["C", "R", "U", "D"])) return $return;
+  $return->params = $params;
+  $return->valid = $valid;
+  $return->error = false;
+  $return->message = "";
+  // Failure return
+  $fail = function (string $message) use ($return): stdClass {
+    $return->error = true;
+    $return->message = $message;
+    return $return;
+  };
+  // Options
+  $strict = (bool) ($options["strict"] ?? false);
+  $allow_full_table = (bool) ($options["allow_full_table"] ?? false);
+
+  // Validate builder metadata before concatenating trusted SQL fragments.
+  $method = strtoupper(trim($method));
+  $return->method = $method;
+  if (!in_array($method, ["C", "R", "U", "D"], true))
+    return $fail("Invalid query method.");
+  if (trim($table) === "")
+    return $fail("Invalid query table.");
+  if ($method === "R" && trim($columns) === "")
+    return $fail("Invalid query columns.");
+
+  foreach ($valid as $valid_key => $valid_value) {
+    if (!is_array($valid_value) || trim((string) ($valid_value["column"] ?? "")) === "")
+      return $fail("Invalid SQL definition for {$valid_key}.");
+    if (!preg_match("/^[idsb]$/", (string) ($valid_value["type"] ?? "")))
+      return $fail("Invalid SQL parameter type for {$valid_key}.");
+  }
+  foreach ($params as $index => $param)
+    if (!is_array($param))
+      return $fail("Invalid SQL data at index {$index}.");
+  // Strict mode catches filter and nested-condition typos instead of silently ignoring them.
+  if ($strict) {
+    $condition_keys = array_keys($valid);
+    foreach ($valid as $valid_key => $valid_value) {
+      $condition = strtolower(trim((string) ($valid_value["condition"] ?? "equal")));
+      $condition = preg_replace("/\s+/", " ", $condition);
+      if (in_array($condition, ["between", "between symmetric", "symmetric"], true)) {
+        $condition_keys[] = "{$valid_key}_from";
+        $condition_keys[] = "{$valid_key}_to";
+      }
+    }
+    foreach (array_keys($conditions) as $condition_key)
+      if (!in_array($condition_key, $condition_keys, true))
+        return $fail("Invalid SQL condition field: {$condition_key}.");
+    foreach (array_keys($nested) as $nested_key)
+      if (!array_key_exists($nested_key, $valid))
+        return $fail("Invalid nested SQL field: {$nested_key}.");
+  }
+
   // Process JOINs based on valid fields and provided joins
   foreach ($valid as $valid_key => $valid_value) {
     foreach ($joins as $join) {
-      if (!isset($join["join_columns"])) continue;
-      if (array_key_exists($valid_key, $join["join_columns"]))
-        $return->joins[] = "{$join["join_type"]} {$join["join_table"]} ON {$valid[$valid_key]["column"]} {$join["join_columns"][$valid_key]["condition"]} {$join["join_table"]}.{$join["join_columns"][$valid_key]["custom"]}";
+      if (!is_array($join) || !isset($join["join_columns"]) || !is_array($join["join_columns"])) {
+        if ($strict)
+          return $fail("Invalid JOIN definition.");
+        continue;
+      }
+      if (!array_key_exists($valid_key, $join["join_columns"]))
+        continue;
+      $join_column = $join["join_columns"][$valid_key];
+      if (
+        !is_array($join_column)
+        || trim((string) ($join["join_type"] ?? "")) === ""
+        || trim((string) ($join["join_table"] ?? "")) === ""
+        || trim((string) ($join_column["condition"] ?? "")) === ""
+        || trim((string) ($join_column["custom"] ?? "")) === ""
+      ) {
+        if ($strict)
+          return $fail("Invalid JOIN definition for {$valid_key}.");
+        continue;
+      }
+      $return->joins[] = "{$join["join_type"]} {$join["join_table"]} ON {$valid_value["column"]} {$join_column["condition"]} {$join["join_table"]}.{$join_column["custom"]}";
     }
   }
-  // Process fields for INSERT or UPDATE operations
-  $requested_fields = count($fields) ? $fields : array_keys($valid);
+  $return->joins = array_values(array_unique($return->joins));
+
+  // Use the valid map as the canonical field order and retain API keys for direct execution.
+  $requested_fields = count($fields) ? array_values(array_unique($fields)) : array_keys($valid);
+  if ($strict)
+    foreach ($requested_fields as $field)
+      if (!array_key_exists($field, $valid))
+        return $fail("Invalid SQL field: {$field}.");
+  if ($strict && in_array($method, ["C", "U"], true))
+    foreach ($params as $index => $param)
+      foreach ($requested_fields as $field)
+        if (array_key_exists($field, $valid) && !array_key_exists($field, $param))
+          return $fail("Missing SQL field {$field} at index {$index}.");
   $common_fields = count($params) ? common_keys($params) : $requested_fields;
   foreach ($valid as $valid_key => $valid_value) {
-    if ($method == "R" || $method == "D") break; // Skip if the method is READ or DELETE
-    if (in_array($valid_key, $requested_fields) && in_array($valid_key, $common_fields)) {
+    if ($method == "R" || $method == "D")
+      break; // Skip if the method is READ or DELETE
+    if (in_array($valid_key, $requested_fields, true) && in_array($valid_key, $common_fields, true)) {
       $return->fields[] = $valid_value["column"];
+      $return->field_keys[] = $valid_key;
       $return->param_types .= $valid_value["type"];
     }
   }
-  // Process conditions for WHERE clauses
+  if (in_array($method, ["C", "U"], true) && !count($return->fields))
+    return $fail("No valid fields were provided for the query.");
+
+  // Process conditions for WHERE clauses. Keep symbols because normalize_string() strips SQL operators.
   foreach ($valid as $valid_key => $valid_value) {
-    if ($method == "C") break; // Skip if the method is CREATE
-    $condition = normalize_string($valid_value["condition"] ?? "equal", "low");
+    if ($method == "C")
+      break; // Skip if the method is CREATE
+    $condition = strtolower(trim((string) ($valid_value["condition"] ?? "equal")));
+    $condition = preg_replace("/\s+/", " ", $condition);
     $has_condition = array_key_exists($valid_key, $conditions)
       || (in_array($condition, ["between", "between symmetric", "symmetric"], true)
         && isset($conditions["{$valid_key}_from"], $conditions["{$valid_key}_to"]));
     if ($has_condition) {
-      if (array_key_exists($valid_key, $nested)) continue; // Skip if the condition is custom
+      if (array_key_exists($valid_key, $nested))
+        continue; // Skip if the condition is custom
       if (isset($valid_value["condition"])) {
         switch ($condition) { // Handle conditions
           case "equal":
-          default:
-            $return->conditions[] =  "{$valid_value["column"]} = ?";
+          case "=":
+            $return->conditions[] = "{$valid_value["column"]} = ?";
             $return->param_types .= $valid_value["type"];
             $return->param_values[] = $conditions[$valid_key];
             break;
@@ -393,6 +512,7 @@ function build_sql_query(string $method, string $columns, string $table, array $
             $return->param_values[] = $conditions[$valid_key];
             break;
           case "goq":
+          case "gte":
           case "greater or equal":
           case ">=":
             $return->conditions[] = "{$valid_value["column"]} >= ?";
@@ -400,6 +520,7 @@ function build_sql_query(string $method, string $columns, string $table, array $
             $return->param_values[] = $conditions[$valid_key];
             break;
           case "loq":
+          case "lte":
           case "less or equal":
           case "<=":
             $return->conditions[] = "{$valid_value["column"]} <= ?";
@@ -407,28 +528,54 @@ function build_sql_query(string $method, string $columns, string $table, array $
             $return->param_values[] = $conditions[$valid_key];
             break;
           case "in":
-            if (!isset($conditions[$valid_key]) || !is_array($conditions[$valid_key])) break;
-            $placeholders = implode(", ", array_fill(0, count($conditions[$valid_key]), "?"));
+            if (!isset($conditions[$valid_key]) || !is_array($conditions[$valid_key])) {
+              if ($strict)
+                return $fail("Invalid IN condition for {$valid_key}.");
+              break;
+            }
+            $values = array_values($conditions[$valid_key]);
+            if (!count($values)) {
+              // Avoid invalid IN () syntax while preserving empty-set semantics.
+              $return->conditions[] = "0 = 1";
+              break;
+            }
+            $placeholders = implode(", ", array_fill(0, count($values), "?"));
             $return->conditions[] = "{$valid_value["column"]} IN ({$placeholders})";
-            $return->param_types .= str_repeat($valid_value["type"], count($conditions[$valid_key]));
-            $return->param_values = [...$return->param_values, ...$conditions[$valid_key]];
+            $return->param_types .= str_repeat($valid_value["type"], count($values));
+            $return->param_values = [...$return->param_values, ...$values];
             break;
           case "not in":
-            if (!isset($conditions[$valid_key]) || !is_array($conditions[$valid_key])) break;
-            $placeholders = implode(", ", array_fill(0, count($conditions[$valid_key]), "?"));
+            if (!isset($conditions[$valid_key]) || !is_array($conditions[$valid_key])) {
+              if ($strict)
+                return $fail("Invalid NOT IN condition for {$valid_key}.");
+              break;
+            }
+            $values = array_values($conditions[$valid_key]);
+            if (!count($values)) {
+              // NOT IN [] matches everything, so strict mutations must reject it as a scope.
+              if ($strict && in_array($method, ["U", "D"], true))
+                return $fail("Empty NOT IN cannot scope a mutation.");
+              $return->conditions[] = "1 = 1";
+              break;
+            }
+            $placeholders = implode(", ", array_fill(0, count($values), "?"));
             $return->conditions[] = "{$valid_value["column"]} NOT IN ({$placeholders})";
-            $return->param_types .= str_repeat($valid_value["type"], count($conditions[$valid_key]));
-            $return->param_values = [...$return->param_values, ...$conditions[$valid_key]];
+            $return->param_types .= str_repeat($valid_value["type"], count($values));
+            $return->param_values = [...$return->param_values, ...$values];
             break;
           case "between":
-            if (!isset($conditions["{$valid_key}_from"]) || !isset($conditions["{$valid_key}_to"])) break;
+            if (!isset($conditions["{$valid_key}_from"]) || !isset($conditions["{$valid_key}_to"])) {
+              if ($strict)
+                return $fail("Invalid BETWEEN condition for {$valid_key}.");
+              break;
+            }
             $return->conditions[] = "{$valid_value["column"]} BETWEEN ? AND ?";
             $return->param_types .= "{$valid_value["type"]}{$valid_value["type"]}"; // Add double conditions value for betweens
             $return->param_values[] = $conditions["{$valid_key}_from"];
             $return->param_values[] = $conditions["{$valid_key}_to"];
             break;
           case "like":
-            $return->conditions[] =  "{$valid_value["column"]} LIKE ?";
+            $return->conditions[] = "{$valid_value["column"]} LIKE ?";
             $return->param_types .= $valid_value["type"];
             $return->param_values[] = $conditions[$valid_key];
             break;
@@ -449,28 +596,50 @@ function build_sql_query(string $method, string $columns, string $table, array $
             break;
           case "between symmetric":
           case "symmetric":
-            if (!isset($conditions["{$valid_key}_from"]) || !isset($conditions["{$valid_key}_to"])) break;
-            $return->conditions[] = "{$valid_value["column"]} BETWEEN SYMMETRIC ? AND ?";
-            $return->param_types .= "{$valid_value["type"]}{$valid_value["type"]}";
+            if (!isset($conditions["{$valid_key}_from"]) || !isset($conditions["{$valid_key}_to"])) {
+              if ($strict)
+                return $fail("Invalid symmetric condition for {$valid_key}.");
+              break;
+            }
+            // MySQL lacks BETWEEN SYMMETRIC; LEAST/GREATEST keeps the same behavior.
+            $return->conditions[] = "{$valid_value["column"]} BETWEEN LEAST(?, ?) AND GREATEST(?, ?)";
+            $return->param_types .= str_repeat($valid_value["type"], 4);
+            $return->param_values[] = $conditions["{$valid_key}_from"];
+            $return->param_values[] = $conditions["{$valid_key}_to"];
             $return->param_values[] = $conditions["{$valid_key}_from"];
             $return->param_values[] = $conditions["{$valid_key}_to"];
             break;
           case "match":
-            if (!isset($conditions[$valid_key])) break;
+            if (!isset($conditions[$valid_key])) {
+              if ($strict)
+                return $fail("Invalid MATCH condition for {$valid_key}.");
+              break;
+            }
             $return->conditions[] = "MATCH({$valid_value["column"]}) AGAINST(?)";
             $return->param_types .= $valid_value["type"];
             $return->param_values[] = $conditions[$valid_key];
             break;
           case "regex":
           case "regexp":
-            if (!isset($conditions[$valid_key]) || !is_string($conditions[$valid_key])) break;
+            if (!isset($conditions[$valid_key]) || !is_string($conditions[$valid_key])) {
+              if ($strict)
+                return $fail("Invalid REGEXP condition for {$valid_key}.");
+              break;
+            }
             $return->conditions[] = "{$valid_value["column"]} REGEXP ?";
+            $return->param_types .= $valid_value["type"];
+            $return->param_values[] = $conditions[$valid_key];
+            break;
+          default:
+            if ($strict)
+              return $fail("Invalid SQL condition for {$valid_key}: {$condition}.");
+            $return->conditions[] = "{$valid_value["column"]} = ?";
             $return->param_types .= $valid_value["type"];
             $return->param_values[] = $conditions[$valid_key];
             break;
         }
       } else {
-        $return->conditions[] =  "{$valid_value["column"]} = ?";
+        $return->conditions[] = "{$valid_value["column"]} = ?";
         $return->param_types .= $valid_value["type"];
         $return->param_values[] = $conditions[$valid_key]; // Add condition value
       }
@@ -478,43 +647,79 @@ function build_sql_query(string $method, string $columns, string $table, array $
   }
   // Process custom conditions
   foreach ($valid as $valid_key => $valid_value) {
-    if ($method == "C") break; // Skip if the method is CREATE
+    if ($method == "C")
+      break; // Skip if the method is CREATE
     if (array_key_exists($valid_key, $nested)) {
-      $return->conditions[] = "{$valid_value["column"]} {$nested[$valid_key]["condition"]} {$nested[$valid_key]["custom"]}";
-      $placeholder_count = substr_count($nested[$valid_key]["custom"] ?? "", "?");
-      if ($placeholder_count > 0 && array_key_exists($valid_key, $conditions)) {
-        $nested_values = is_array($conditions[$valid_key]) ? array_values($conditions[$valid_key]) : array_fill(0, $placeholder_count, $conditions[$valid_key]);
-        $nested_values = array_slice($nested_values, 0, $placeholder_count);
-        $return->param_types .= str_repeat($valid_value["type"], count($nested_values));
-        $return->param_values = [...$return->param_values, ...$nested_values];
+      $nested_value = $nested[$valid_key];
+      if (
+        !is_array($nested_value)
+        || trim((string) ($nested_value["condition"] ?? "")) === ""
+        || trim((string) ($nested_value["custom"] ?? "")) === ""
+      )
+        return $fail("Invalid nested SQL condition for {$valid_key}.");
+      $placeholder_count = substr_count($nested_value["custom"], "?");
+      if ($placeholder_count > 0 && !array_key_exists($valid_key, $conditions))
+        return $fail("Missing nested SQL values for {$valid_key}.");
+      $nested_values = [];
+      if ($placeholder_count > 0) {
+        $nested_values = is_array($conditions[$valid_key])
+          ? array_values($conditions[$valid_key])
+          : array_fill(0, $placeholder_count, $conditions[$valid_key]);
+        if (count($nested_values) !== $placeholder_count)
+          return $fail("Invalid nested SQL value count for {$valid_key}.");
       }
+      $return->conditions[] = "{$valid_value["column"]} {$nested_value["condition"]} {$nested_value["custom"]}";
+      $return->param_types .= str_repeat($valid_value["type"], $placeholder_count);
+      $return->param_values = [...$return->param_values, ...$nested_values];
     }
   }
-  // Build the SQL query string based on the method
+
+  // Full-table mutations require an explicit opt-in when strict mode is enabled.
+  if ($strict && in_array($method, ["U", "D"], true) && !count($return->conditions) && !$allow_full_table)
+    return $fail("Refusing to build an unscoped mutation.");
+
+  // Build the SQL query. The trusted ending also applies to UPDATE/DELETE for LIMIT support.
+  $end = trim($end);
   switch ($method) {
     case "C": // CREATE
       $return->query = "INSERT INTO {$table}";
-      if (!empty($return->fields)) $return->query .= " (" . implode(", ", $return->fields) . ") VALUES";
-      else $return->query .= " VALUES";
-      if (count($return->fields)) $return->query .= " (" . str_repeat("?, ", count($return->fields) - 1) . "?)";
-      else $return->query .= " (" . str_repeat("?, ", count($valid) - 1) . "?)";
+      if (!empty($return->fields))
+        $return->query .= " (" . implode(", ", $return->fields) . ") VALUES";
+      else
+        $return->query .= " VALUES";
+      if (count($return->fields))
+        $return->query .= " (" . str_repeat("?, ", count($return->fields) - 1) . "?)";
+      else
+        $return->query .= " (" . str_repeat("?, ", count($valid) - 1) . "?)";
       break;
     case "R": // READ
       $return->query = "SELECT {$columns} FROM {$table}";
-      if (!empty($return->joins)) $return->query .= " " . implode(" ", $return->joins);
-      if (!empty($return->conditions)) $return->query .= " WHERE " . implode(" AND ", $return->conditions);
-      $return->query .= " {$end}";
+      if (!empty($return->joins))
+        $return->query .= " " . implode(" ", $return->joins);
+      if (!empty($return->conditions))
+        $return->query .= " WHERE " . implode(" AND ", $return->conditions);
+      if ($end !== "")
+        $return->query .= " {$end}";
       break;
     case "U": // UPDATE
       $return->query = "UPDATE {$table}";
-      if (!empty($return->joins)) $return->query .= " " . implode(" ", $return->joins);
-      if (!empty($return->fields)) $return->query .= " SET " . implode(" = ?, ", $return->fields) . " = ?";
-      if (!empty($return->conditions)) $return->query .= " WHERE " . implode(" AND ", $return->conditions);
+      if (!empty($return->joins))
+        $return->query .= " " . implode(" ", $return->joins);
+      if (!empty($return->fields))
+        $return->query .= " SET " . implode(" = ?, ", $return->fields) . " = ?";
+      if (!empty($return->conditions))
+        $return->query .= " WHERE " . implode(" AND ", $return->conditions);
+      if ($end !== "")
+        $return->query .= " {$end}";
       break;
     case "D": // DELETE
       $return->query = "DELETE FROM {$table}";
-      if (!empty($return->joins)) $return->query .= " " . implode(" ", $return->joins);
-      if (!empty($return->conditions)) $return->query .= " WHERE " . implode(" AND ", $return->conditions);
+      if (!empty($return->joins))
+        $return->query .= " " . implode(" ", $return->joins);
+      if (!empty($return->conditions))
+        $return->query .= " WHERE " . implode(" AND ", $return->conditions);
+      if ($end !== "")
+        $return->query .= " {$end}";
       break;
   }
   // Return the built query and related data
@@ -524,17 +729,20 @@ function build_sql_query(string $method, string $columns, string $table, array $
 /**
  * Executes a prepared SQL query using the provided mysqli connection, handling different types of SQL operations (CRUD).
  * It supports both single and batch execution of queries with dynamic binding of parameters.
+ * A built query can be executed directly: execute_sql_query($mysqli, $built, ["throw" => true]).
+ * Use "throw" inside caller-owned transactions so the caller can roll back the complete workflow.
  *
  * @param mysqli $mysqli The MySQLi connection object used to execute the query.
- * @param string $query The SQL query string to be executed.
- * @param string $param_types A string that defines the types of the parameters in the query (e.g., 'ssi' for string, string, integer).
+ * @param string|stdClass $query The SQL query string or object returned by build_sql_query().
+ * @param string|array $param_types A parameter type string, or execution options when a built query object is provided.
  * @param array $param_values An array of values corresponding to the parameters defined in $param_types.
  * @param array $fields The fields involved in the query, particularly used for INSERT and UPDATE operations.
  * @param array $param_data An array of data arrays to be used in batch operations (for INSERT/UPDATE).
  * @param array $valid A mapping of valid fields for validation against the provided fields and conditions.
+ * @param array $options Execution options: "throw", "fail_fast", "allow_empty", and "allow_noop".
  * @return stdClass An object containing the status, error flag, error number, message, and result data (if any).
  */
-function execute_sql_query($mysqli, string $query, string $param_types = "", array $param_values = [], array $fields = [], array $param_data = [], array $valid = []): stdClass
+function execute_sql_query($mysqli, string|stdClass $query, string|array $param_types = "", array $param_values = [], array $fields = [], array $param_data = [], array $valid = [], array $options = []): stdClass
 {
   // Initialize the return object with default values
   $return = new stdClass();
@@ -543,101 +751,183 @@ function execute_sql_query($mysqli, string $query, string $param_types = "", arr
   $return->errno = 0;
   $return->message = "";
   $return->data = [];
+  $return->method = "";
+  $return->rows = 0;
+  $return->affected = 0;
+  $return->affected_rows = 0;
+  $return->insert_id = 0;
+  $return->insert_ids = [];
+  $return->successes = 0;
+  $return->errors = 0;
 
-  // Determine the SQL method based on the query string
-  $method = null;
-  if (stripos($query, "INSERT") === 0) $method = "C"; // Create
-  if (stripos($query, "SELECT") === 0) $method = "R"; // Read
-  if (stripos($query, "UPDATE") === 0) $method = "U"; // Update
-  if (stripos($query, "DELETE") === 0) $method = "D"; // Delete
-  if (!$method) {
+  // Built-query mode carries the query, binding order, data rows, and valid map together.
+  $built = $query instanceof stdClass ? $query : null;
+  if (is_array($param_types)) {
+    $options = [...$param_types, ...$options];
+    $param_types = "";
+  }
+  if ($built) {
+    $query = (string) ($built->query ?? "");
+    $param_types = (string) ($built->param_types ?? "");
+    $param_values = is_array($built->param_values ?? null) ? $built->param_values : [];
+    $param_data = is_array($built->params ?? null) ? $built->params : [];
+    $valid = is_array($built->valid ?? null) ? $built->valid : [];
+    $fields = is_array($built->field_keys ?? null) ? $built->field_keys : [];
+    if (!count($fields) && is_array($built->fields ?? null))
+      foreach ($valid as $field => $definition)
+        if (in_array($definition["column"] ?? null, $built->fields, true))
+          $fields[] = $field;
+  } elseif (count($fields) && count($valid)) {
+    // Legacy calls still need the builder's valid-map order to match SQL placeholders.
+    $requested_fields = array_values(array_unique($fields));
+    $ordered_fields = [];
+    foreach ($valid as $field => $definition)
+      if (in_array($field, $requested_fields, true))
+        $ordered_fields[] = $field;
+    if (count($ordered_fields) === count($requested_fields))
+      $fields = $ordered_fields;
+  }
+
+  // Defaults preserve legacy responses; callers opt into modern empty/no-op behavior.
+  $throw = (bool) ($options["throw"] ?? false);
+  $fail_fast = $throw || (bool) ($options["fail_fast"] ?? false);
+  $allow_empty = (bool) ($options["allow_empty"] ?? false);
+  $allow_noop = (bool) ($options["allow_noop"] ?? false);
+  $dev = ($_ENV["APP_ENV"] ?? "PROD") === "DEV";
+  // Throw mode preserves the original exception for caller-owned transaction rollbacks.
+  $fail = function (Throwable $error, string $fallback) use ($mysqli, $return, $throw, $dev): stdClass {
+    if ($throw)
+      throw $error;
     $return->status = 400;
     $return->error = true;
-    $return->message = "Invalid query method.";
+    $return->errors = max(1, $return->errors);
+    $return->errno = (int) $error->getCode() ?: (int) ($mysqli->errno ?? 0);
+    $return->message = $dev ? $error->getMessage() : $fallback;
     return $return;
-  }
+  };
+
+  if ($built && ($built->error ?? false))
+    return $fail(new InvalidArgumentException($built->message ?: "Invalid built query."), "Invalid query.");
+  if (!preg_match("/^[idsb]*$/", $param_types))
+    return $fail(new InvalidArgumentException("Invalid SQL parameter types."), "Invalid query parameters.");
+  if (!preg_match("/^\s*(INSERT|SELECT|UPDATE|DELETE)\b/i", $query, $matches))
+    return $fail(new InvalidArgumentException("Invalid query method."), "Invalid query method.");
+
+  // Detect the CRUD method without requiring the query to start at byte zero.
+  $return->method = match (strtoupper($matches[1])) {
+    "INSERT" => "C",
+    "SELECT" => "R",
+    "UPDATE" => "U",
+    "DELETE" => "D"
+  };
+  $sql = null;
+  $phase = "preparation";
 
   try {
-    // Prepare the SQL statement
     $sql = $mysqli->prepare($query);
-    if (!$sql) throw new Exception("Invalid query.", 400);
-    // Handle batch execution for INSERT and UPDATE operations
-    if ($method != "R" && $method != "D" && strlen($param_types) && count($param_data)) {
-      $successes = 0;
-      $errors = 0;
-      $qMsg = "";
-      // Loop the $_POST["data"] for: only first in updates, all iterations for inserts
-      foreach ($param_data as $i => $data) {
-        // Updates only need the first data index
-        if ($method == "U" && $i != 0) break;
-        // Reset. Errors add first then substract if sucessful
-        $errors++;
-        $fields_data = [];
-        // Bind the valid fields for the current data set
-        foreach ($fields as $field) if (array_key_exists($field, $data) && array_key_exists($field, $valid)) $fields_data[] = $data[$field];
-        $sql->bind_param($param_types, ...$fields_data, ...$param_values);
+    if (!$sql)
+      throw new RuntimeException((string) ($mysqli->error ?? "Invalid query."), (int) ($mysqli->errno ?? 0));
+    $phase = "execution";
 
+    // Validate the complete binding contract before MySQLi receives any values.
+    $bind = function (array $values) use ($mysqli, $sql, $param_types): void {
+      if (strlen($param_types) !== count($values))
+        throw new InvalidArgumentException("SQL parameter count does not match the parameter types.");
+      if ($param_types !== "" && !$sql->bind_param($param_types, ...$values))
+        throw new RuntimeException((string) ($mysqli->error ?? "Could not bind query parameters."), (int) ($mysqli->errno ?? 0));
+    };
+    $execution_error = function (string $fallback = "Query execution failed.") use ($mysqli): RuntimeException {
+      $message = trim((string) ($mysqli->error ?? ""));
+      return new RuntimeException($message !== "" ? $message : $fallback, (int) ($mysqli->errno ?? 0));
+    };
+
+    // SELECT returns all rows; allow_empty controls whether an empty result is an error.
+    if ($return->method === "R") {
+      $bind($param_values);
+      if (!$sql->execute())
+        throw $execution_error();
+      $result = $sql->get_result();
+      if ($result === false)
+        throw $execution_error("Could not read query results.");
+      while ($row = $result->fetch_assoc())
+        $return->data[] = $row;
+      $return->rows = count($return->data);
+      if (!$return->rows && !$allow_empty)
+        throw new RuntimeException("No data found.");
+      $return->successes = 1;
+      $return->message = "Query successful.";
+    } else {
+      // INSERT supports batches; UPDATE is intentionally limited to one data row.
+      $rows = [null];
+      if (in_array($return->method, ["C", "U"], true) && count($param_data))
+        $rows = array_values($param_data);
+      if ($return->method === "U" && count($rows) > 1)
+        throw new InvalidArgumentException("UPDATE queries accept one data row.");
+
+      $query_messages = [];
+      foreach ($rows as $index => $data) {
         try {
-          if ($sql->execute()) {
-            if ($sql->affected_rows > -1) {
-              if ($method == "U" && $sql->affected_rows == 0) $qMsg .= "{$i}= Query failed: 999 => Row not updated probably due to no coincidence." . PHP_EOL;
-              else {
-                $errors--;
-                $successes++;
-                $qMsg .= "{$i}= Query successful. " . ($_ENV["APP_ENV"] === "DEV" ? "({$sql->affected_rows} rows)" : "") . PHP_EOL;
-              }
-            } else $qMsg .= "{$i}= Query failed: " . ($_ENV["APP_ENV"] === "DEV" ? "{$mysqli->errno} = {$mysqli->error}" : "") . PHP_EOL;
-          } else $qMsg .= "{$i}= Query failed: " . ($_ENV["APP_ENV"] === "DEV" ? "{$mysqli->errno} = {$mysqli->error}" : "") . PHP_EOL;
-        } catch (Throwable $e) {
-          $qMsg .= "{$i}= Query failed: " . ($_ENV["APP_ENV"] === "DEV" ? "{$mysqli->errno} = {$mysqli->error}" : "") . PHP_EOL;
+          $values = [];
+          if ($data !== null) {
+            if (!is_array($data))
+              throw new InvalidArgumentException("Invalid SQL data at index {$index}.");
+            foreach ($fields as $field) {
+              if (!array_key_exists($field, $valid) || !array_key_exists($field, $data))
+                throw new InvalidArgumentException("Missing SQL field {$field} at index {$index}.");
+              $values[] = $data[$field];
+            }
+          }
+          // Mutation field values precede the WHERE-condition values in the built SQL.
+          $values = [...$values, ...$param_values];
+          $bind($values);
+          if (!$sql->execute())
+            throw $execution_error();
+          $affected = (int) $sql->affected_rows;
+          if ($affected < 0)
+            throw $execution_error();
+          // A zero-row UPDATE/DELETE is configurable because it can mean no change or no match.
+          if (in_array($return->method, ["U", "D"], true) && $affected === 0 && !$allow_noop)
+            throw new RuntimeException("No matching row was changed.", 999);
+
+          $return->successes++;
+          $return->affected_rows += $affected;
+          if ($return->method === "C") {
+            $return->insert_id = (int) ($sql->insert_id ?? 0);
+            $return->insert_ids[] = $return->insert_id;
+          }
+          $label = count($rows) > 1 ? "{$index}= " : "";
+          $query_messages[] = $label . "Query successful." . ($dev ? " ({$affected} rows)" : "");
+        } catch (Throwable $error) {
+          // Non-throw mode retains legacy partial-batch reporting; fail_fast stops at first error.
+          if ($throw)
+            throw $error;
+          $return->errors++;
+          $errno = (int) $error->getCode() ?: (int) ($mysqli->errno ?? 0);
+          if (!$return->errno)
+            $return->errno = $errno;
+          $label = count($rows) > 1 ? "{$index}= " : "";
+          $query_messages[] = $label . "Query failed." . ($dev ? " {$errno} = {$error->getMessage()}" : "");
+          if ($fail_fast)
+            break;
         }
       }
-      // Determine the status and error flags based on the number of successes and errors
-      if ($errors) {
-        $return->status = 207;
-        $return->message .= "Queries executed with errors." . PHP_EOL;
+
+      $return->affected = $return->affected_rows;
+      if ($return->errors) {
+        $return->status = $return->successes ? 207 : 400;
+        $return->error = !$return->successes;
+        $return->message = "Queries executed with errors." . PHP_EOL;
       }
-      if (!$successes) {
-        $return->status = 400;
-        $return->error = true;
-      }
-      $return->message .= $qMsg;
+      $return->message .= implode(PHP_EOL, $query_messages);
     }
-    // Handle single execution for READ and DELETE operations
-    if ($method != "C" && $method != "U") {
-      if (strlen($param_types)) $sql->bind_param($param_types, ...$param_values);
-      try {
-        if ($sql->execute()) {
-          if ($method == "D") {
-            if ($sql->affected_rows == -1) throw new Exception("Query failed" . ($_ENV["APP_ENV"] === "DEV" ? ": {$mysqli->errno} = {$mysqli->error}" : ""));
-            if ($sql->affected_rows == 0) throw new Exception("Query failed: 999 => Row not updated probably due to no coincidence.");
-            if ($sql->affected_rows > 0) $return->message = "Query successful. " . ($_ENV["APP_ENV"] === "DEV" ? "({$sql->affected_rows} rows)" : "");
-          }
-          if ($method == "R") {
-            if ($res = $sql->get_result()) {
-              if ($res->num_rows) {
-                $return->message = "Query successful.";
-                while ($row = $res->fetch_assoc()) $return->data[] = $row;
-              } else throw new Exception("No data found.");
-            } else throw new Exception("Query failed" . ($_ENV["APP_ENV"] === "DEV" ? ": {$mysqli->errno} = {$mysqli->error}" : ""));
-          }
-        } else throw new Exception("Query failed" . ($_ENV["APP_ENV"] === "DEV" ? ": {$mysqli->errno} = {$mysqli->error}" : ""));
-      } catch (Throwable $e) {
-        $return->status = 400;
-        $return->error = true;
-        $return->errno = $e->getCode();
-        $return->message = $_ENV["APP_ENV"] === "DEV" ? $e->getMessage() : "Something went wrong in query execution.";
-      }
-    }
-    // Close the SQL statement
-    $sql->close();
-  } catch (Throwable $e) {
-    // Handle errors during query preparation
-    $return->status = 400;
-    $return->error = true;
-    $return->errno = $e->getCode();
-    $return->message = $_ENV["APP_ENV"] === "DEV" ? $e->getMessage() : "Something went wrong in query preparation.";
+  } catch (Throwable $error) {
+    return $fail($error, "Something went wrong in query {$phase}.");
+  } finally {
+    // Always release the prepared statement, including when throw mode propagates an error.
+    if ($sql)
+      $sql->close();
   }
+
   // Return the result object with status, message, and data
   return $return;
 }
@@ -677,7 +967,8 @@ function normalize_string(string $str, string $mode = "", array $valid = []): st
  */
 function enable_progressive_rendering(): void
 {
-  while (ob_get_level() > 0) ob_end_flush();
+  while (ob_get_level() > 0)
+    ob_end_flush();
   ob_implicit_flush(true);
 }
 
@@ -689,7 +980,8 @@ function enable_progressive_rendering(): void
  */
 function change_location(string $location, int $status = 307): void
 {
-  if ($status < 300 || $status > 399) $status = 307;
+  if ($status < 300 || $status > 399)
+    $status = 307;
   http_response_code($status);
   header("Location: {$location}");
   exit;
@@ -742,7 +1034,8 @@ function error_crash(int $status, string $message, ?string $error_file = null): 
   $_POST["custom_error_message"] = $message;
   http_response_code($status);
   require_once $error_file;
-  while (ob_get_level() > 0) ob_end_flush();
+  while (ob_get_level() > 0)
+    ob_end_flush();
   exit;
 }
 
@@ -774,7 +1067,8 @@ function escape_html($input): string
  */
 function check_json($json): bool
 {
-  if (!is_string($json)) return false;
+  if (!is_string($json))
+    return false;
   json_decode($json);
   return json_last_error() === JSON_ERROR_NONE;
 }
@@ -786,8 +1080,10 @@ function check_json($json): bool
  */
 function print_json($json): void
 {
-  if (check_json($json)) echo json_encode(json_decode($json, true), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-  else echo json_encode($json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+  if (check_json($json))
+    echo json_encode(json_decode($json, true), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+  else
+    echo json_encode($json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 }
 
 /** 
@@ -797,9 +1093,11 @@ function print_json($json): void
  */
 function exit_json($json): void
 {
-  if (!headers_sent()) header("Content-Type: application/json");
+  if (!headers_sent())
+    header("Content-Type: application/json");
   print_json($json);
-  while (ob_get_level() > 0) ob_end_flush();
+  while (ob_get_level() > 0)
+    ob_end_flush();
   exit;
 }
 
@@ -814,7 +1112,8 @@ function random_string($length): string
   $char = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz";
   $length = max(0, (int) $length);
   $max = strlen($char) - 1;
-  for ($i = 0; $i < $length; $i++) $string .= $char[random_int(0, $max)];
+  for ($i = 0; $i < $length; $i++)
+    $string .= $char[random_int(0, $max)];
   return $string;
 }
 
