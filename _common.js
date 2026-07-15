@@ -143,13 +143,12 @@
 			[...document.querySelectorAll(".nav-tabs .nav-link")].forEach((tabEl) => bootstrap.Tab.getInstance(tabEl) ?? new bootstrap.Tab(tabEl));
 			// Initialize Toast components
 			[...document.querySelectorAll(".toast")].forEach((toastEl) => bootstrap.Toast.getInstance(toastEl) ?? new bootstrap.Toast(toastEl));
-			// Initialize Button components with aria-pressed synchronization
+			// Keep aria-pressed synchronized without creating a Button instance on tooltip elements
 			[...document.querySelectorAll(".btn")].forEach((buttonEl) => {
-				const buttonInstance = bootstrap.Button.getInstance(buttonEl) ?? new bootstrap.Button(buttonEl);
 				$(buttonEl)
 					.off("click.byCommonBootstrap")
 					.on("click.byCommonBootstrap", function () {
-						buttonEl.setAttribute("aria-pressed", buttonInstance._element.classList.contains("active"));
+						buttonEl.setAttribute("aria-pressed", buttonEl.classList.contains("active"));
 					});
 			});
 			// Add more as needed, in case BS drops another class

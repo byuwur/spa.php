@@ -1220,6 +1220,7 @@ th {
 	background: linear-gradient(to bottom, #fefefe 0%, #fff 100%);
 	border: 1px solid #ccc;
 	box-shadow: 0 2px #fff inset;
+	margin: 1rem;
 }
 .app-content .container-fluid {
 	padding: 2rem 4rem;
