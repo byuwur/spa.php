@@ -121,6 +121,33 @@
 	byCommon.initBootstrap = function () {
 		if (typeof bootstrap === "undefined" && !window.bootstrap) return console.warn("Can't load Bootstrap if script ain't present.");
 		try {
+			const route = String(window.bySPA?.URL || window.location.pathname);
+
+			// Body-mounted modals outlive SPA content, so remove only those from the previous route.
+			$("body > .modal[data-byspa-modal]")
+				.filter(function () {
+					return $(this).attr("data-byspa-route") !== route;
+				})
+				.each(function () {
+					if ($.fn.select2) $(this).find("select.select2-hidden-accessible").select2("destroy");
+					bootstrap.Modal.getInstance(this)?.dispose();
+					$(this).remove();
+				});
+
+			if (!$("body > .modal.show").length) {
+				$(".modal-backdrop").remove();
+				$("body").removeClass("modal-open").css({ overflow: "", paddingRight: "" });
+			}
+
+			// Keep form modals above the SPA stacking context and Select2 inside its modal.
+			$("#spa-content .modal").each(function () {
+				const $modal = $(this).attr({ "data-byspa-modal": "true", "data-byspa-route": route }).appendTo("body");
+				if (!$.fn.select2) return;
+				$modal.find("select").each(function () {
+					$(this).select2({ dropdownParent: $modal, width: "100%" });
+				});
+			});
+
 			// Initialize Alert components
 			[...document.querySelectorAll(".alert")].forEach((alertEl) => bootstrap.Alert.getInstance(alertEl) ?? new bootstrap.Alert(alertEl));
 			// Initialize Carousel components
