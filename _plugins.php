@@ -11,7 +11,8 @@ Please consider if you require_once THIS file,
 it isn't going to access the vendor/autoload from SPA.php
 but the one on the root of your project due to _var.php
 */
-if (file_exists("{$TO_HOME}/vendor/autoload.php")) require_once "{$TO_HOME}/vendor/autoload.php";
+if (file_exists("{$TO_HOME}/vendor/autoload.php"))
+  require_once "{$TO_HOME}/vendor/autoload.php";
 
 // If using as submodule: Instance your libraries in ROOT/_plugins.php, not ROOT/spa.php/_plugins.php
 #$dotenv = Dotenv\Dotenv::createImmutable($TO_HOME);

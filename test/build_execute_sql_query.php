@@ -46,11 +46,16 @@ $Dbq = build_sql_query("D", "", "test", $fields, $_GET, "", ["id" => ["column" =
 //exit_json([$FULLbq, $Cbq, $Rbq, $Ubq, $Dbq]);
 //exit_json([$FULLbq, $Rbq]);
 //exit_json($Rbq);
-if (!isset($_GET["test"])) exit_json([]);
-if ($_GET["test"] == "c") $bq = $Cbq;
-if ($_GET["test"] == "r") $bq = $Rbq;
-if ($_GET["test"] == "u") $bq = $Ubq;
-if ($_GET["test"] == "d") $bq = $Dbq;
+if (!isset($_GET["test"]))
+  exit_json([]);
+if ($_GET["test"] == "c")
+  $bq = $Cbq;
+if ($_GET["test"] == "r")
+  $bq = $Rbq;
+if ($_GET["test"] == "u")
+  $bq = $Ubq;
+if ($_GET["test"] == "d")
+  $bq = $Dbq;
 $sql = execute_sql_query($mysqli, $bq->query, $bq->param_types, $bq->param_values, $fields, $_POST["data"] ?? [], $valid);
 $mysqli->close();
 api_respond($sql->status, $sql->error, $sql->message, $sql->data);

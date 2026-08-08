@@ -15,12 +15,13 @@ foreach ($_GET as $key => $value)
   $get[$key] = validate_value($value);
 // Curate data from POST
 $post = [];
-if (isset($_POST["data"]) && is_array($_POST["data"])) foreach ($_POST["data"] as $i => $post_data) {
-  $curated = [];
-  foreach ($post_data as $key => $value)
-    $curated[$key] = validate_value($value);
-  $post[] = $curated;
-}
+if (isset($_POST["data"]) && is_array($_POST["data"]))
+  foreach ($_POST["data"] as $i => $post_data) {
+    $curated = [];
+    foreach ($post_data as $key => $value)
+      $curated[$key] = validate_value($value);
+    $post[] = $curated;
+  }
 print_r("=\$data=<br>");
 print_json($get);
 print_r("<br>=\$data=<br>");

@@ -8,8 +8,10 @@
 
 // --- LANGUAGE ---
 $lang = substr($_SERVER["HTTP_ACCEPT_LANGUAGE"] ?? "es", 0, 2);
-if (isset($_COOKIE["lang"])) $lang = $_COOKIE["lang"];
-if (isset($_GET["lang"])) $lang = $_GET["lang"];
+if (isset($_COOKIE["lang"]))
+  $lang = $_COOKIE["lang"];
+if (isset($_GET["lang"]))
+  $lang = $_GET["lang"];
 switch ($lang) {
   case "es":
   case "en":
@@ -24,8 +26,10 @@ setcookie("lang", $APP_LANG, time() + 31536000, "/", "", false, false);
 
 // --- THEME ---
 $theme = "dark";
-if (isset($_COOKIE["theme"])) $theme = $_COOKIE["theme"];
-if (isset($_GET["theme"])) $theme = $_GET["theme"];
+if (isset($_COOKIE["theme"]))
+  $theme = $_COOKIE["theme"];
+if (isset($_GET["theme"]))
+  $theme = $_GET["theme"];
 switch ($theme) {
   case "dark":
   case "light":
@@ -39,13 +43,13 @@ setcookie("theme", $APP_THEME, time() + 31536000, "/", "", false, false);
 
 // --- LOCAL STORAGE ---
 if (isset($setLocalStorage) && $setLocalStorage) {
-?>
+  ?>
   <html lang="<?= $APP_LANG ?>" dir="ltr">
   <script>
     localStorage.setItem("APP_LANG", "<?= $APP_LANG ?>");
     localStorage.setItem("APP_THEME", "<?= $APP_THEME ?>");
   </script>
-<?php
+  <?php
 }
 
 // --- VARIABLES ---

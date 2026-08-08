@@ -12,13 +12,13 @@
  * @return {boolean} Whether the input is a valid JSON string.
  */
 function check_json(json) {
-	if (typeof json !== "string") return false;
-	try {
-		JSON.parse(json);
-		return true;
-	} catch {
-		return false;
-	}
+  if (typeof json !== "string") return false;
+  try {
+    JSON.parse(json);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -27,15 +27,15 @@ function check_json(json) {
  * @return {boolean} Whether the input is a valid JSON string.
  */
 function parse_json(json) {
-	if (typeof json != "string") return null;
-	try {
-		const parsed = JSON.parse(json);
-		//console.log("json?:", json);
-		//console.log("parsed?:", parsed);
-		return parsed;
-	} catch {
-		return null;
-	}
+  if (typeof json != "string") return null;
+  try {
+    const parsed = JSON.parse(json);
+    //console.log("json?:", json);
+    //console.log("parsed?:", parsed);
+    return parsed;
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -45,10 +45,10 @@ function parse_json(json) {
  * @return {string} JSON-formatted string.
  */
 function print_json(json) {
-	let output = null;
-	if (check_json(json)) output = JSON.stringify(JSON.parse(json), null, 2);
-	else output = JSON.stringify(json, null, 2);
-	return output;
+  let output = null;
+  if (check_json(json)) output = JSON.stringify(JSON.parse(json), null, 2);
+  else output = JSON.stringify(json, null, 2);
+  return output;
 }
 
 /**
@@ -57,7 +57,7 @@ function print_json(json) {
  * @return {boolean} Whether the input is an object or not.
  */
 function is_object(value) {
-	return value && typeof value === "object" && !Array.isArray(value);
+  return value && typeof value === "object" && !Array.isArray(value);
 }
 
 /**
@@ -66,9 +66,9 @@ function is_object(value) {
  * @return {string} HTML-safe string.
  */
 function escape_html(value) {
-	return $("<div>")
-		.text(value ?? "")
-		.html();
+  return $("<div>")
+    .text(value ?? "")
+    .html();
 }
 
 /**
@@ -77,32 +77,32 @@ function escape_html(value) {
  * @return {Promise<boolean>} The resource existence.
  */
 function remote_file_exists(url) {
-	try {
-		url = new URL(url, window.location.href).href;
-	} catch {
-		console.error("HTTP ERROR: Invalid URL.");
-		return Promise.resolve(false);
-	}
-	return $.ajax({
-		url,
-		type: "HEAD",
-	})
-		.then(function () {
-			return true;
-		})
-		.catch(function (xhr) {
-			if (![405, 501].includes(xhr?.status)) return false;
-			return $.ajax({
-				url,
-				type: "GET",
-			})
-				.then(function () {
-					return true;
-				})
-				.catch(function () {
-					return false;
-				});
-		});
+  try {
+    url = new URL(url, window.location.href).href;
+  } catch {
+    console.error("HTTP ERROR: Invalid URL.");
+    return Promise.resolve(false);
+  }
+  return $.ajax({
+    url,
+    type: "HEAD"
+  })
+    .then(function () {
+      return true;
+    })
+    .catch(function (xhr) {
+      if (![405, 501].includes(xhr?.status)) return false;
+      return $.ajax({
+        url,
+        type: "GET"
+      })
+        .then(function () {
+          return true;
+        })
+        .catch(function () {
+          return false;
+        });
+    });
 }
 
 /**
@@ -111,7 +111,7 @@ function remote_file_exists(url) {
  * @return string Converted path
  */
 function std_dir_separator(path) {
-	return String(path || "").replace(/\\/g, "/");
+  return String(path || "").replace(/\\/g, "/");
 }
 
 /**
@@ -120,7 +120,7 @@ function std_dir_separator(path) {
  * @return {string} Directory path, or "." when no directory portion exists.
  */
 function dirname(path) {
-	return std_dir_separator(path).replace(/\/[^/]*$/, "") || ".";
+  return std_dir_separator(path).replace(/\/[^/]*$/, "") || ".";
 }
 
 /**
@@ -130,8 +130,8 @@ function dirname(path) {
  * @return {never}
  */
 function exit_json(json) {
-	console.warn(print_json(json));
-	throw new Error("exit_json: Script terminated after sending JSON response.");
+  console.warn(print_json(json));
+  throw new Error("exit_json: Script terminated after sending JSON response.");
 }
 
 /**
@@ -152,122 +152,109 @@ function exit_json(json) {
  * @return {object} Returns the ws object for further manipulation.
  */
 function init_websocket(options) {
-	const {
-		host,
-		port,
-		path,
-		elementId,
-		autoConnect = true,
-		logging = false,
-		onOpen = () => {},
-		onClose = () => {},
-		onError = () => {},
-		onMessage = () => {},
-		reconnDelay = 3000,
-		maxRetries = 3,
-	} = options;
-	// Developer mode?
-	const appIsDEV = localStorage.getItem("APP_ENV") === "DEV";
-	if (appIsDEV) console.log(`init_websocket():`, options);
-	// Check if elementId is a valid ID (#id)
-	const inputId = elementId.match(/#[a-zA-Z0-9-_]+/);
-	if (!inputId) return console.warn(`Insert a valid element ID.`);
-	// Look up ID existence
-	const elId = inputId[0];
-	if (!$(elId).length) return console.warn(`Element ID (${elId}) doesn't exist.`);
-	// Init websocket
+  const { host, port, path, elementId, autoConnect = true, logging = false, onOpen = () => {}, onClose = () => {}, onError = () => {}, onMessage = () => {}, reconnDelay = 3000, maxRetries = 3 } = options;
+  // Developer mode?
+  const appIsDEV = localStorage.getItem("APP_ENV") === "DEV";
+  if (appIsDEV) console.log(`init_websocket():`, options);
+  // Check if elementId is a valid ID (#id)
+  const inputId = elementId.match(/#[a-zA-Z0-9-_]+/);
+  if (!inputId) return console.warn(`Insert a valid element ID.`);
+  // Look up ID existence
+  const elId = inputId[0];
+  if (!$(elId).length) return console.warn(`Element ID (${elId}) doesn't exist.`);
+  // Init websocket
 
-	const ws_protocol = window.location.protocol === "https:" ? "wss" : "ws";
-	const ws_path = `${ws_protocol}://${host}:${port}/${path}`;
-	let ws = undefined;
-	let retries = 0;
-	let closedManually = false;
+  const ws_protocol = window.location.protocol === "https:" ? "wss" : "ws";
+  const ws_path = `${ws_protocol}://${host}:${port}/${path}`;
+  let ws = undefined;
+  let retries = 0;
+  let closedManually = false;
 
-	const logToEl = (label, data = "") => {
-		if (!logging) return;
-		let content = data;
-		if (check_json(content)) content = JSON.stringify(JSON.parse(content), null, 2);
-		const now = new Date().toISOString().replace("T", "_").replace(/:/g, "-").split(".")[0];
-		const $pre = $("<pre>").text(`${label}: [${now}]\n${data}`);
-		$(elId).append($pre);
-	};
+  const logToEl = (label, data = "") => {
+    if (!logging) return;
+    let content = data;
+    if (check_json(content)) content = JSON.stringify(JSON.parse(content), null, 2);
+    const now = new Date().toISOString().replace("T", "_").replace(/:/g, "-").split(".")[0];
+    const $pre = $("<pre>").text(`${label}: [${now}]\n${data}`);
+    $(elId).append($pre);
+  };
 
-	function connect() {
-		if (ws && ws?.readyState === WebSocket.OPEN) return;
-		console.log(`ws${appIsDEV ? `: ${ws_path}` : `.`}`);
-		ws = new WebSocket(ws_path);
-		logToEl(`ws`, `Connecting...`);
+  function connect() {
+    if (ws && ws?.readyState === WebSocket.OPEN) return;
+    console.log(`ws${appIsDEV ? `: ${ws_path}` : `.`}`);
+    ws = new WebSocket(ws_path);
+    logToEl(`ws`, `Connecting...`);
 
-		ws.onopen = (e) => {
-			if (appIsDEV) console.log("ws.onopen:", e);
-			retries = 0;
-			logToEl(`ws.onopen`, `Connection established.`);
-			onOpen(e);
-		};
-		ws.onclose = (e) => {
-			if (appIsDEV) console.log("ws.onclose:", e);
-			logToEl(`ws.onclose`, `Connection closed. (${e.code})`);
-			onClose(e);
-			if (!closedManually && retries < maxRetries) retry();
-			else logToEl(`ws.retry`, `Max retries reached (${maxRetries})`);
-		};
-		ws.onerror = (e) => {
-			if (appIsDEV) console.log("ws.onerror:", e);
-			logToEl(`ws.onerror`, `Connection failed.`);
-			onError(e);
-			ws.close();
-		};
-		ws.onmessage = (e) => {
-			if (appIsDEV) console.log("ws.onmessage:", e);
-			logToEl(`ws.onmessage`, e.data || `[no data]`);
-			onMessage(e);
-		};
-	}
+    ws.onopen = (e) => {
+      if (appIsDEV) console.log("ws.onopen:", e);
+      retries = 0;
+      logToEl(`ws.onopen`, `Connection established.`);
+      onOpen(e);
+    };
+    ws.onclose = (e) => {
+      if (appIsDEV) console.log("ws.onclose:", e);
+      logToEl(`ws.onclose`, `Connection closed. (${e.code})`);
+      onClose(e);
+      if (!closedManually && retries < maxRetries) retry();
+      else logToEl(`ws.retry`, `Max retries reached (${maxRetries})`);
+    };
+    ws.onerror = (e) => {
+      if (appIsDEV) console.log("ws.onerror:", e);
+      logToEl(`ws.onerror`, `Connection failed.`);
+      onError(e);
+      ws.close();
+    };
+    ws.onmessage = (e) => {
+      if (appIsDEV) console.log("ws.onmessage:", e);
+      logToEl(`ws.onmessage`, e.data || `[no data]`);
+      onMessage(e);
+    };
+  }
 
-	function retry() {
-		if (retries > maxRetries) {
-			logToEl(`ws.retry`, `Max retries reached (${maxRetries})`);
-			return;
-		}
-		retries++;
-		logToEl(`ws.retry`, `Reconnection attempt (${retries}) in ${reconnDelay / 1000} seconds...`);
-		setTimeout(connect, reconnDelay);
-	}
+  function retry() {
+    if (retries > maxRetries) {
+      logToEl(`ws.retry`, `Max retries reached (${maxRetries})`);
+      return;
+    }
+    retries++;
+    logToEl(`ws.retry`, `Reconnection attempt (${retries}) in ${reconnDelay / 1000} seconds...`);
+    setTimeout(connect, reconnDelay);
+  }
 
-	if (autoConnect) connect();
+  if (autoConnect) connect();
 
-	return {
-		get ws() {
-			return ws;
-		},
-		get readyState() {
-			return ws?.readyState;
-		},
-		connect: () => {
-			// Do more if needed
-			connect();
-		},
-		close: () => {
-			closedManually = true;
-			retries = maxRetries;
-			ws?.close();
-		},
-		retry: () => {
-			closedManually = false;
-			retries = 0;
-			retry();
-		},
-		send: (data) => {
-			if (!ws || ws.readyState !== WebSocket.OPEN) {
-				console.warn("⚠️ Cannot send — socket not open");
-				return;
-			}
-			let parsedData = data;
-			if (check_json(data)) parsedData = JSON.stringify(JSON.parse(parsedData), null, 2);
-			else parsedData = JSON.stringify(parsedData, null, 2);
-			ws?.send(parsedData);
-		},
-	};
+  return {
+    get ws() {
+      return ws;
+    },
+    get readyState() {
+      return ws?.readyState;
+    },
+    connect: () => {
+      // Do more if needed
+      connect();
+    },
+    close: () => {
+      closedManually = true;
+      retries = maxRetries;
+      ws?.close();
+    },
+    retry: () => {
+      closedManually = false;
+      retries = 0;
+      retry();
+    },
+    send: (data) => {
+      if (!ws || ws.readyState !== WebSocket.OPEN) {
+        console.warn("⚠️ Cannot send — socket not open");
+        return;
+      }
+      let parsedData = data;
+      if (check_json(data)) parsedData = JSON.stringify(JSON.parse(parsedData), null, 2);
+      else parsedData = JSON.stringify(parsedData, null, 2);
+      ws?.send(parsedData);
+    }
+  };
 }
 
 /**
@@ -277,7 +264,7 @@ function init_websocket(options) {
  * @param {number} [minutes=31536000] (Default 1y) The number of days until the cookie expires. A negative number expires the cookie.
  */
 function set_cookie(name, value, minutes = 31536000) {
-	document.cookie = `${name}=${encodeURIComponent(value)};max-age=${minutes};path=/`;
+  document.cookie = `${name}=${encodeURIComponent(value)};max-age=${minutes};path=/`;
 }
 
 /**
@@ -286,7 +273,7 @@ function set_cookie(name, value, minutes = 31536000) {
  * @return {string | null} The value of the cookie or null if not found.
  */
 function get_cookie(name) {
-	return `; ${document.cookie}`.split(`; ${name}=`).pop().split(";").shift() || null;
+  return `; ${document.cookie}`.split(`; ${name}=`).pop().split(";").shift() || null;
 }
 
 /**
@@ -295,14 +282,14 @@ function get_cookie(name) {
  * @return {string|null} The value of the param or null if not found.
  */
 function get_url_param(name) {
-	const href = (typeof window !== "undefined" && window.location?.href) || (typeof location !== "undefined" && location.href) || "";
-	if (!href) return null;
-	const locationURL = new URL(href);
-	const directValue = locationURL.searchParams.get(name);
-	if (directValue !== null) return directValue;
-	const hash = locationURL.hash || "";
-	if (!hash.startsWith("#/") || !hash.includes("?")) return null;
-	return new URLSearchParams(hash.split("?", 2)[1]).get(name);
+  const href = (typeof window !== "undefined" && window.location?.href) || (typeof location !== "undefined" && location.href) || "";
+  if (!href) return null;
+  const locationURL = new URL(href);
+  const directValue = locationURL.searchParams.get(name);
+  if (directValue !== null) return directValue;
+  const hash = locationURL.hash || "";
+  if (!hash.startsWith("#/") || !hash.includes("?")) return null;
+  return new URLSearchParams(hash.split("?", 2)[1]).get(name);
 }
 
 /**
@@ -312,11 +299,11 @@ function get_url_param(name) {
  * @return {Function} Returns a new debounced version of the `func` that delays its execution.
  */
 function debounce(func, wait = 250) {
-	let timeout;
-	return function () {
-		clearTimeout(timeout);
-		timeout = setTimeout(() => func.apply(this, arguments), wait);
-	};
+  let timeout;
+  return function () {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(this, arguments), wait);
+  };
 }
 
 /**
@@ -325,9 +312,9 @@ function debounce(func, wait = 250) {
  * @param {boolean} $delay Whether delays its detruction or not.
  */
 function destroy_modal_front($modalId, $delay = true) {
-	if (!$(`#${$modalId}`).length) return console.log(`Modal #${$modalId} doesn't exist...`);
-	$(`#${$modalId}`).modal("hide");
-	setTimeout(() => $(`#${$modalId}`).remove(), $delay ? 333 : 1);
+  if (!$(`#${$modalId}`).length) return console.log(`Modal #${$modalId} doesn't exist...`);
+  $(`#${$modalId}`).modal("hide");
+  setTimeout(() => $(`#${$modalId}`).remove(), $delay ? 333 : 1);
 }
 
 /**
@@ -340,10 +327,10 @@ function destroy_modal_front($modalId, $delay = true) {
  * @param {string} $redirect The URL to redirect to when "OK" is clicked.
  */
 function show_modal_front($modalId, $state = "success", $title = "INFO.", $message = "Message.", $hideCancelBtn = false, $redirect = `javascript:destroy_modal_front('${$modalId}');`) {
-	// If already exist, destroy it with no delay
-	if ($(`#${$modalId}`).length) destroy_modal_front($modalId, false);
-	// HTML structure for the modal
-	const modal_front = `<div id="${$modalId}" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel">
+  // If already exist, destroy it with no delay
+  if ($(`#${$modalId}`).length) destroy_modal_front($modalId, false);
+  // HTML structure for the modal
+  const modal_front = `<div id="${$modalId}" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel">
         <div id="${$modalId}_container" class="modal-dialog modal-dialog-scrollable">
             <div class="modal-content">
                 <div id="${$modalId}_title" class="modal-header m-0 fs-5 alert alert-${$state}">${$title}</div>
@@ -355,12 +342,12 @@ function show_modal_front($modalId, $state = "success", $title = "INFO.", $messa
             </div>
         </div>
     </div>`;
-	// Append it to the <body>
-	$("body").append(modal_front);
-	$hideCancelBtn ? $(`#${$modalId}_back`).addClass("d-none") : $(`#${$modalId}_back`).removeClass("d-none");
-	// Center if window size merits and show
-	window.innerWidth < 992 ? $(`#${$modalId}_container`).addClass("modal-dialog-centered") : $(`#${$modalId}_container`).removeClass("modal-dialog-centered");
-	$(`#${$modalId}`).modal("show");
+  // Append it to the <body>
+  $("body").append(modal_front);
+  $hideCancelBtn ? $(`#${$modalId}_back`).addClass("d-none") : $(`#${$modalId}_back`).removeClass("d-none");
+  // Center if window size merits and show
+  window.innerWidth < 992 ? $(`#${$modalId}_container`).addClass("modal-dialog-centered") : $(`#${$modalId}_container`).removeClass("modal-dialog-centered");
+  $(`#${$modalId}`).modal("show");
 }
 
 /**
@@ -368,7 +355,7 @@ function show_modal_front($modalId, $state = "success", $title = "INFO.", $messa
  * @returns {string} CSRF token or an empty string.
  */
 function get_csrf_token() {
-	return $("meta[name='csrf-token']").attr("content") || sessionStorage.getItem("CSRF_TOKEN") || "";
+  return $("meta[name='csrf-token']").attr("content") || sessionStorage.getItem("CSRF_TOKEN") || "";
 }
 
 /**
@@ -378,10 +365,10 @@ function get_csrf_token() {
  * @returns {Array} Serialized form data.
  */
 function add_csrf_token(formData, method = "POST") {
-	if (["GET", "HEAD", "OPTIONS"].includes(String(method).toUpperCase())) return formData;
-	const token = get_csrf_token();
-	if (token && !formData.some((field) => field?.name === "_csrf")) formData.push({ name: "_csrf", value: token });
-	return formData;
+  if (["GET", "HEAD", "OPTIONS"].includes(String(method).toUpperCase())) return formData;
+  const token = get_csrf_token();
+  if (token && !formData.some((field) => field?.name === "_csrf")) formData.push({ name: "_csrf", value: token });
+  return formData;
 }
 
 /**
@@ -397,63 +384,50 @@ function add_csrf_token(formData, method = "POST") {
  * @param {boolean} [options.loudFail=false] (Default False) Defines if the error is displayed with the modal or console only.
  */
 function make_http_request(options) {
-	const { $elementId, $url, $type = "POST", $returnType = "json", $_get = {}, $_post = [], ajaxOpts = {}, loudFail = false } = options;
-	// Developer mode?
-	const appIsDEV = localStorage.getItem("APP_ENV") === "DEV";
-	// Check if $elementId is a valid ID (#id)
-	const inputId = $elementId.match(/#[a-zA-Z0-9-_]+/);
-	if (!inputId) return console.warn(`Insert a valid element ID.`);
-	// Look up ID existence
-	const elementId = inputId[0];
-	if (!$(elementId).length) return console.warn(`Element ID (${elementId}) doesn't exist.`);
-	// Prepare URL for callback
-	if ($url.includes("?")) console.warn(`URL (${elementId}) shouldn't have GET in itself since they're ignored. Use $_get Object instead.`);
-	const inputUrl = $url.match(/^[^?]+/);
-	const urlGet = `${inputUrl[0]}?${new URLSearchParams($_get).toString()}`;
-	// Start request
-	const formData = [];
-	$_post.forEach((post) => {
-		formData.push({
-			name: post?.name,
-			value: post?.value,
-		});
-	});
-	add_csrf_token(formData, $type);
-	if (appIsDEV) {
-		console.log(`element_make_http_request():`, options);
-		console.log(`HTTP (${elementId}):${$returnType} to ${urlGet} `, formData);
-	}
-	return $.ajax({
-		...ajaxOpts,
-		url: urlGet,
-		type: $type,
-		data: formData,
-		dataType: $returnType,
-	})
-		.then(function (response) {
-			if (appIsDEV) console.log(`Response (${elementId}):`, response);
-			if (loudFail && ![200, 201, 202].includes(response?.status))
-				return show_modal_front(
-					"modal_front",
-					"danger",
-					"ERROR",
-					"Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + escape_html(response?.message) + ")</code>",
-					true,
-				);
-			return response?.data ?? response;
-		})
-		.catch(function (xhr, status, error) {
-			console.error(`Error (${elementId}): ${xhr?.status} ${status} ${error} "${xhr?.responseJSON?.message ?? xhr?.responseText}"`, appIsDEV ? xhr : "");
-			if (loudFail)
-				show_modal_front(
-					"modal_front",
-					"danger",
-					"ERROR",
-					"Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + escape_html(xhr?.responseJSON?.message ?? xhr?.responseText) + ")</code>",
-					true,
-				);
-			return null;
-		});
+  const { $elementId, $url, $type = "POST", $returnType = "json", $_get = {}, $_post = [], ajaxOpts = {}, loudFail = false } = options;
+  // Developer mode?
+  const appIsDEV = localStorage.getItem("APP_ENV") === "DEV";
+  // Check if $elementId is a valid ID (#id)
+  const inputId = $elementId.match(/#[a-zA-Z0-9-_]+/);
+  if (!inputId) return console.warn(`Insert a valid element ID.`);
+  // Look up ID existence
+  const elementId = inputId[0];
+  if (!$(elementId).length) return console.warn(`Element ID (${elementId}) doesn't exist.`);
+  // Prepare URL for callback
+  if ($url.includes("?")) console.warn(`URL (${elementId}) shouldn't have GET in itself since they're ignored. Use $_get Object instead.`);
+  const inputUrl = $url.match(/^[^?]+/);
+  const urlGet = `${inputUrl[0]}?${new URLSearchParams($_get).toString()}`;
+  // Start request
+  const formData = [];
+  $_post.forEach((post) => {
+    formData.push({
+      name: post?.name,
+      value: post?.value
+    });
+  });
+  add_csrf_token(formData, $type);
+  if (appIsDEV) {
+    console.log(`element_make_http_request():`, options);
+    console.log(`HTTP (${elementId}):${$returnType} to ${urlGet} `, formData);
+  }
+  return $.ajax({
+    ...ajaxOpts,
+    url: urlGet,
+    type: $type,
+    data: formData,
+    dataType: $returnType
+  })
+    .then(function (response) {
+      if (appIsDEV) console.log(`Response (${elementId}):`, response);
+      if (loudFail && ![200, 201, 202].includes(response?.status))
+        return show_modal_front("modal_front", "danger", "ERROR", "Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + escape_html(response?.message) + ")</code>", true);
+      return response?.data ?? response;
+    })
+    .catch(function (xhr, status, error) {
+      console.error(`Error (${elementId}): ${xhr?.status} ${status} ${error} "${xhr?.responseJSON?.message ?? xhr?.responseText}"`, appIsDEV ? xhr : "");
+      if (loudFail) show_modal_front("modal_front", "danger", "ERROR", "Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + escape_html(xhr?.responseJSON?.message ?? xhr?.responseText) + ")</code>", true);
+      return null;
+    });
 }
 
 /**
@@ -476,93 +450,66 @@ function make_http_request(options) {
  * @param {boolean} [options.loudFail=true] (Default True) Defines if the error is displayed with the modal or console only.
  */
 function element_make_http_request(options) {
-	const {
-		$elementId,
-		$trigger = "submit",
-		$url,
-		$type = "POST",
-		$returnType = "json",
-		$_get = {},
-		$_post = [],
-		beforeFn = () => {},
-		doneFn = () => {},
-		failFn = () => {},
-		alwaysFn = () => {},
-		ajaxOpts = {},
-		loudFail = true,
-	} = options;
-	// Developer mode?
-	const appIsDEV = localStorage.getItem("APP_ENV") === "DEV";
-	if (appIsDEV) console.log(`element_make_http_request():`, options);
-	// Check if $elementId is a valid ID (#id)
-	const inputId = $elementId.match(/#[a-zA-Z0-9-_]+/);
-	if (!inputId) return console.warn(`Insert a valid element ID.`);
-	// Look up ID existence
-	const elementId = inputId[0];
-	if (!$(elementId).length) return console.warn(`Element ID (${elementId}) doesn't exist.`);
-	// Look up the submit button inside the form
-	const submitBtn = $(elementId).find("button[type='submit'], input[type='submit'], [type='submit']");
-	if (!submitBtn.length) console.warn(`Submit (${elementId}) not found.`);
-	// Look up the spinner inside the submit button
-	const spinner = submitBtn.find(".spinner-border, .spinner-grow");
-	// Prepare URL for callback
-	if ($url.includes("?")) console.warn(`URL (${elementId}) shouldn't have GET in itself since they're ignored. Use $_get Object instead.`);
-	const inputUrl = $url.match(/^[^?]+/);
-	const urlGet = `${inputUrl[0]}?${new URLSearchParams($_get).toString()}`;
-	// Start request
-	$(elementId)
-		.off($trigger)
-		.on($trigger, function (event) {
-			event.preventDefault();
-			submitBtn.attr("disabled", true);
-			spinner.fadeIn(111);
-			const formData = $(this).serializeArray();
-			$_post.forEach((post) => {
-				formData.push({
-					name: post?.name,
-					value: post?.value,
-				});
-			});
-			add_csrf_token(formData, $type);
-			if (appIsDEV) console.log(`HTTP (${elementId}):${$returnType} to ${urlGet} `, formData);
-			beforeFn(this);
-			return $.ajax({
-				...ajaxOpts,
-				url: urlGet,
-				type: $type,
-				data: formData,
-				dataType: $returnType,
-			})
-				.then(function (response) {
-					if (appIsDEV) console.log(`Response (${elementId}):`, response);
-					if (loudFail && ![200, 201, 202].includes(response?.status))
-						return show_modal_front(
-							"modal_front",
-							"danger",
-							"ERROR",
-							"Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + escape_html(response?.message) + ")</code>",
-							true,
-						);
-					doneFn(response?.data ?? response);
-					return response?.data ?? response;
-				})
-				.catch(function (xhr, status, error) {
-					console.error(`Error (${elementId}): ${xhr?.status} ${status} ${error} "${xhr?.responseJSON?.message ?? xhr?.responseText}"`, appIsDEV ? xhr : "");
-					if (loudFail)
-						show_modal_front(
-							"modal_front",
-							"danger",
-							"ERROR",
-							"Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + escape_html(xhr?.responseJSON?.message ?? xhr?.responseText) + ")</code>",
-							true,
-						);
-					failFn();
-					return null;
-				})
-				.always(function (response) {
-					submitBtn.removeAttr("disabled");
-					spinner.fadeOut(111);
-					alwaysFn(response?.data ?? response);
-				});
-		});
+  const { $elementId, $trigger = "submit", $url, $type = "POST", $returnType = "json", $_get = {}, $_post = [], beforeFn = () => {}, doneFn = () => {}, failFn = () => {}, alwaysFn = () => {}, ajaxOpts = {}, loudFail = true } = options;
+  // Developer mode?
+  const appIsDEV = localStorage.getItem("APP_ENV") === "DEV";
+  if (appIsDEV) console.log(`element_make_http_request():`, options);
+  // Check if $elementId is a valid ID (#id)
+  const inputId = $elementId.match(/#[a-zA-Z0-9-_]+/);
+  if (!inputId) return console.warn(`Insert a valid element ID.`);
+  // Look up ID existence
+  const elementId = inputId[0];
+  if (!$(elementId).length) return console.warn(`Element ID (${elementId}) doesn't exist.`);
+  // Look up the submit button inside the form
+  const submitBtn = $(elementId).find("button[type='submit'], input[type='submit'], [type='submit']");
+  if (!submitBtn.length) console.warn(`Submit (${elementId}) not found.`);
+  // Look up the spinner inside the submit button
+  const spinner = submitBtn.find(".spinner-border, .spinner-grow");
+  // Prepare URL for callback
+  if ($url.includes("?")) console.warn(`URL (${elementId}) shouldn't have GET in itself since they're ignored. Use $_get Object instead.`);
+  const inputUrl = $url.match(/^[^?]+/);
+  const urlGet = `${inputUrl[0]}?${new URLSearchParams($_get).toString()}`;
+  // Start request
+  $(elementId)
+    .off($trigger)
+    .on($trigger, function (event) {
+      event.preventDefault();
+      submitBtn.attr("disabled", true);
+      spinner.fadeIn(111);
+      const formData = $(this).serializeArray();
+      $_post.forEach((post) => {
+        formData.push({
+          name: post?.name,
+          value: post?.value
+        });
+      });
+      add_csrf_token(formData, $type);
+      if (appIsDEV) console.log(`HTTP (${elementId}):${$returnType} to ${urlGet} `, formData);
+      beforeFn(this);
+      return $.ajax({
+        ...ajaxOpts,
+        url: urlGet,
+        type: $type,
+        data: formData,
+        dataType: $returnType
+      })
+        .then(function (response) {
+          if (appIsDEV) console.log(`Response (${elementId}):`, response);
+          if (loudFail && ![200, 201, 202].includes(response?.status))
+            return show_modal_front("modal_front", "danger", "ERROR", "Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + escape_html(response?.message) + ")</code>", true);
+          doneFn(response?.data ?? response);
+          return response?.data ?? response;
+        })
+        .catch(function (xhr, status, error) {
+          console.error(`Error (${elementId}): ${xhr?.status} ${status} ${error} "${xhr?.responseJSON?.message ?? xhr?.responseText}"`, appIsDEV ? xhr : "");
+          if (loudFail) show_modal_front("modal_front", "danger", "ERROR", "Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(" + escape_html(xhr?.responseJSON?.message ?? xhr?.responseText) + ")</code>", true);
+          failFn();
+          return null;
+        })
+        .always(function (response) {
+          submitBtn.removeAttr("disabled");
+          spinner.fadeOut(111);
+          alwaysFn(response?.data ?? response);
+        });
+    });
 }

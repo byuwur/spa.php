@@ -10,8 +10,10 @@
 // Initialize the URI from the GET parameter, defaulting to "/"
 $uri = is_string($_GET["uri"] ?? null) ? $_GET["uri"] : "/";
 // Ensure the URI starts with a "/" and doesn't end with one
-if (!str_starts_with($uri, "/")) $uri = "/" . ltrim($uri, "/");
-while (strlen($uri) > 1 && substr($uri, -1) == "/") $uri = substr($uri, 0, -1);
+if (!str_starts_with($uri, "/"))
+  $uri = "/" . ltrim($uri, "/");
+while (strlen($uri) > 1 && substr($uri, -1) == "/")
+  $uri = substr($uri, 0, -1);
 // Store the processed URI
 $url = $uri;
 // Handle URI parameters if present
@@ -29,7 +31,8 @@ if (!array_key_exists($uri, $routes) || (!isset($routes[$uri]["URI"]) && !isset(
 if (array_key_exists($uri, $routes) && isset($routes[$uri]["FILE"])) {
   $file = $routes[$uri]["FILE"];
   $file_path = is_file($file) ? $file : (is_file("{$TO_HOME}{$file}") ? "{$TO_HOME}{$file}" : null);
-  if (!$file_path) error_crash(404, "File route \"{$uri}\" does not exist.");
+  if (!$file_path)
+    error_crash(404, "File route \"{$uri}\" does not exist.");
   header("Content-Type: " . get_mime_type($file_path));
   header("Content-Disposition: inline; filename=\"" . basename($file_path) . "\"");
   readfile($file_path);
@@ -46,7 +49,7 @@ $json_script_flags = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
 <script>
   // Store environment and routing information in localStorage for client-side use
   <?php if (($_ENV["APP_ENV"] ?? $NOTENV_APP_ENV) === "DEV") { ?>
-    console.log("=== PHP ===", );
+    console.log("=== PHP ===",);
     console.log("APP_ENV", <?= json_encode($_ENV["APP_ENV"] ?? $NOTENV_APP_ENV, $json_script_flags) ?>);
     console.log("APP_VERSION", <?= json_encode($_ENV["APP_VERSION"] ?? "0.1by", $json_script_flags) ?>);
     console.log("URI", <?= json_encode($uri, $json_script_flags) ?>);
@@ -54,7 +57,7 @@ $json_script_flags = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
     console.log("ROUTES", JSON.stringify(<?= json_encode($routes, $json_script_flags) ?>));
     console.log("_GET", JSON.stringify(<?= json_encode($_GET, $json_script_flags) ?>));
     console.log("_POST", JSON.stringify(<?= json_encode($_POST, $json_script_flags) ?>));
-    console.log("=== PHP ===", );
+    console.log("=== PHP ===",);
   <?php } ?>
   localStorage.setItem("APP_ENV", <?= json_encode($_ENV["APP_ENV"] ?? $NOTENV_APP_ENV, $json_script_flags) ?>);
   localStorage.setItem("APP_VERSION", <?= json_encode($_ENV["APP_VERSION"] ?? "0.1by", $json_script_flags) ?>);
