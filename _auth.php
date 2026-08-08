@@ -18,7 +18,8 @@ $has_session_set_cookie = session_set_cookie_params([
   "samesite" => "Strict"
 ]);
 // Crash if cookie cannot be configured
-if (!$has_session_set_cookie) api_respond(500, true, "Session crash.");
+if (!$has_session_set_cookie)
+  api_respond(500, true, "Session crash.");
 // At start it always checks if a session_name is provided through query params;
 // This case applies when you want to manipulate an specific session on the server. Proceed with caution
 // if that's the case, set that session_id accordingly
@@ -27,7 +28,8 @@ if (
   $allow_post_session_id &&
   session_status() === PHP_SESSION_NONE &&
   validate_value($_POST[session_name()] ?? null) !== null
-) session_id($_POST[session_name()]);
+)
+  session_id($_POST[session_name()]);
 // Then start it to use it
 session_start();
 
@@ -39,7 +41,8 @@ session_start();
  */
 function login($session = [], $regen = false)
 {
-  if ($regen) session_regenerate_id(true);
+  if ($regen)
+    session_regenerate_id(true);
   //setcookie(session_name(), session_id(), time() + 3600, "/", "", true, true);
   $_SESSION = [...$_SESSION, ...$session];
   return true;
@@ -51,7 +54,8 @@ function login($session = [], $regen = false)
  */
 function csrf_token(): string
 {
-  if (empty($_SESSION["csrf_token"])) $_SESSION["csrf_token"] = bin2hex(random_bytes(32));
+  if (empty($_SESSION["csrf_token"]))
+    $_SESSION["csrf_token"] = bin2hex(random_bytes(32));
   return $_SESSION["csrf_token"];
 }
 
@@ -72,7 +76,8 @@ function csrf_check(?string $token): bool
 function logout()
 {
   global $is_https;
-  if (session_status() != PHP_SESSION_ACTIVE) return false;
+  if (session_status() != PHP_SESSION_ACTIVE)
+    return false;
   $session_file = session_save_path() . "/sess_" . session_id();
   $_SESSION = [];
   session_unset();
@@ -86,7 +91,8 @@ function logout()
     "httponly" => true,
     "samesite" => "Strict"
   ]);
-  if (file_exists($session_file)) @unlink($session_file);
+  if (file_exists($session_file))
+    @unlink($session_file);
   return false;
 }
 
@@ -96,8 +102,11 @@ function logout()
  */
 function session_check()
 {
-  if (validate_value($_SESSION["logintime"] ?? null) === null) return logout();
-  if (validate_value($_SESSION["username"] ?? null) === null) return logout();
-  if (time() - $_SESSION["logintime"] > 3600) return logout();
+  if (validate_value($_SESSION["logintime"] ?? null) === null)
+    return logout();
+  if (validate_value($_SESSION["username"] ?? null) === null)
+    return logout();
+  if (time() - $_SESSION["logintime"] > 3600)
+    return logout();
   return login(["logintime" => time()]);
 }
