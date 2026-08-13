@@ -649,6 +649,9 @@ th {
   z-index: 0;
 }
 .overlay,
+.overlay-inverted,
+.overlay-vertical,
+.overlay-vertical-inverted,
 .overlay-primary,
 .overlay-secondary {
   position: absolute;
@@ -665,6 +668,27 @@ th {
   background: -o-linear-gradient(90deg, var(--secondary-color) 0%, var(--primary-color) 100%);
   background: -ms-linear-gradient(90deg, var(--secondary-color) 0%, var(--primary-color) 100%);
   background: linear-gradient(90deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+}
+.overlay-inverted {
+  background: -moz-linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  background: -webkit-linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  background: -o-linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  background: -ms-linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+}
+.overlay-vertical {
+  background: -moz-linear-gradient(0deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+  background: -webkit-linear-gradient(0deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+  background: -o-linear-gradient(0deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+  background: -ms-linear-gradient(0deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+  background: linear-gradient(0deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+}
+.overlay-vertical-inverted {
+  background: -moz-linear-gradient(0deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  background: -webkit-linear-gradient(0deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  background: -o-linear-gradient(0deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  background: -ms-linear-gradient(0deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  background: linear-gradient(0deg, var(--primary-color) 0%, var(--secondary-color) 100%);
 }
 .overlay-primary {
   background: var(--primary-color);
