@@ -43,12 +43,12 @@ require_once "{$TO_HOME}/common.example.php";
       <div class="d-flex flex-row">
         <a class="bywr-sidebar-option" href="<?= "/{$ROUTE_ES}" ?>"
           title="<?= htmlspecialchars($LANG["language.spanish"], ENT_QUOTES, "UTF-8") ?>">
-          <img src="img/co.svg" width="16px" height="12px" style="margin: 4px;"
+          <img src="img/co.svg" style="width:1rem;height:1rem;margin:4px;"
             alt="<?= htmlspecialchars($LANG["language.spanish"], ENT_QUOTES, "UTF-8") ?>" />
           ES<i class="fas fa-angle-right ms-auto"></i></a>
         <a class="bywr-sidebar-option" href="<?= "/{$ROUTE_EN}" ?>"
           title="<?= htmlspecialchars($LANG["language.english"], ENT_QUOTES, "UTF-8") ?>"><img src="img/gb.svg"
-            width="16px" height="12px" style="margin: 4px;"
+            style="width:1rem;height:1rem;margin:4px;"
             alt="<?= htmlspecialchars($LANG["language.english"], ENT_QUOTES, "UTF-8") ?>" />
           EN<i class="fas fa-angle-right ms-auto"></i></a>
       </div>
