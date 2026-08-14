@@ -161,7 +161,15 @@
       // Initialize Offcanvas components
       [...document.querySelectorAll(".offcanvas")].forEach((offcanvasEl) => bootstrap.Offcanvas.getInstance(offcanvasEl) ?? new bootstrap.Offcanvas(offcanvasEl));
       // Initialize Tooltip components
-      [...document.querySelectorAll("[data-bs-toggle='tooltip']")].forEach((tooltipEl) => bootstrap.Tooltip.getInstance(tooltipEl) ?? new bootstrap.Tooltip(tooltipEl, { animation: false }));
+      [...document.querySelectorAll("[data-bs-toggle='tooltip']")].forEach((tooltipEl) => {
+        const tooltip = bootstrap.Tooltip.getInstance(tooltipEl) ?? new bootstrap.Tooltip(tooltipEl, { animation: false });
+        $(tooltipEl)
+          .off("pointerdown pointerleave pointerdown.tooltipDismiss pointerleave.tooltipDismiss")
+          .on("pointerdown pointerleave pointerdown.tooltipDismiss pointerleave.tooltipDismiss", function () {
+            tooltip.hide();
+          });
+        return tooltip;
+      });
       // Initialize Popover components
       [...document.querySelectorAll("[data-bs-toggle='popover']")].forEach((popoverEl) => bootstrap.Popover.getInstance(popoverEl) ?? new bootstrap.Popover(popoverEl, { animation: false }));
       // Initialize ScrollSpy components
