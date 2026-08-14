@@ -272,6 +272,11 @@ th {
   -ms-transition: all 0s !important;
   -moz-transition: all 0s !important;
   transition: all 0s !important;
+  -webkit-filter: drop-shadow(0 0 2px #bbb) !important;
+  -moz-filter: drop-shadow(0 0 2px #bbb) !important;
+  -ms-filter: drop-shadow(0 0 2px #bbb) !important;
+  -o-filter: drop-shadow(0 0 2px #bbb) !important;
+  filter: drop-shadow(0 0 2px #bbb) !important;
 }
 /* === BACKGROUND COLORS AND TEXTS === */
 .bg-primary {
