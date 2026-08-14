@@ -246,7 +246,7 @@ function init_websocket(options) {
     },
     send: (data) => {
       if (!ws || ws.readyState !== WebSocket.OPEN) {
-        console.warn("⚠️ Cannot send — socket not open");
+        console.warn("⚠️ Cannot send = socket not open");
         return;
       }
       let parsedData = data;

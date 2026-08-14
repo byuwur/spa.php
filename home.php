@@ -84,7 +84,7 @@ require_once "{$TO_HOME}/common.example.php";
   <!-- byuwur/spa.php | Copyright (c) 2025 Andrés Trujillo [Mateus] byUwUr -->
   <section id="intro" class="d-none">
     <!-- Add a short description to help SEO -->
-    SPA made easy, with love, and PHP. — byUwUr/SPA.php
+    SPA made easy, with love, and PHP. = byUwUr/SPA.php
   </section>
   <div id="spa-loader">
     <div class="load-circle-back"></div>
