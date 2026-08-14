@@ -21,6 +21,7 @@
   byCommon.SIDEBAR_HIDDEN_ID = "#bywr-sidebar-hidden";
   byCommon.APP_CONTAINER_SELECTOR = ".app-container";
   byCommon.COOKIE_CONSENT_READY = byCommon.COOKIE_CONSENT_READY || false;
+  byCommon.SECTION_TOP_OVERHEAD = 0;
 
   /**
    * Initializes the <Sidebar /> component in #spa-nav.
@@ -99,7 +100,7 @@
         if ($(this.hash).length)
           $(`html, body, ${byCommon.APP_CONTAINER_SELECTOR}`)
             .stop()
-            .animate({ scrollTop: $(this.hash).offset().top - 0 }, 99, "swing");
+            .animate({ scrollTop: $(this.hash).offset().top - byCommon.SECTION_TOP_OVERHEAD }, 99, "swing");
         // Collapse the navbar after clicking the link
         setTimeout(() => {
           $(".navbar-collapse").collapse("hide");
