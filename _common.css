@@ -1371,13 +1371,13 @@ th {
   width: 3rem;
   padding: 1.5rem 0;
   background-color: #009;
-  color: #fff;
+  color: #fff !important;
   border-radius: 0;
   text-align: center;
   font-size: 1.5rem;
 }
 #bywr-accessibility a:hover {
-  background-color: #00d;
+  background-color: #00f;
   color: #eee !important;
 }
 #bywr-accessibility-buttons.hide {
