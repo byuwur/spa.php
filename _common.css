@@ -222,7 +222,7 @@ a {
 a:hover,
 a:hover * {
   text-decoration: underline !important;
-  color: #56f !important;
+  color: #67f !important;
   text-shadow: 0 0 var(--transparent) !important;
 }
 .link {
