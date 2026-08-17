@@ -36,15 +36,15 @@
 }
 /* === SELECTION === */
 ::selection {
-  background-color: #012;
+  background-color: #45f;
   color: #fff;
 }
 ::-webkit-selection {
-  background-color: #012;
+  background-color: #45f;
   color: #fff;
 }
 ::-moz-selection {
-  background-color: #012;
+  background-color: #45f;
   color: #fff;
 }
 /* === PLACEHOLDER === */
