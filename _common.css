@@ -218,6 +218,7 @@ i.select-icon {
 a {
   color: var(--primary-color);
   text-decoration: none !important;
+  white-space: nowrap !important;
 }
 a:hover,
 a:hover * {
@@ -475,6 +476,7 @@ th {
 /* === BUTTONS === */
 .btn {
   padding: 0.25rem 0.5rem;
+  white-space: nowrap !important;
 }
 .btn.btn-primary,
 .btn.btn-secondary:hover {
@@ -1329,7 +1331,6 @@ th {
   border: 1px solid var(--light-color);
   margin: 0.25rem;
   padding: 0.5rem;
-  white-space: nowrap;
 }
 .a-lang img {
   width: 1rem;
