@@ -91,7 +91,7 @@ require_once "{$TO_HOME}/common.example.php";
     <div class="load-circle-fore"></div>
     <div class="load-text"><?= $LANG["loader.loading"] ?></div>
   </div>
-  <div id="bywr-accessibility">
+  <div id="bywr-accessibility" class="uncolor-links">
     <a href="javascript:byCommon.accessibilityToggle();" role="button" data-bs-toggle="tooltip"
       data-bs-title="<?= htmlspecialchars($LANG["accessibility.open_panel"], ENT_QUOTES, "UTF-8") ?>"
       title="<?= htmlspecialchars($LANG["accessibility.open_panel"], ENT_QUOTES, "UTF-8") ?>"
