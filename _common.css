@@ -222,7 +222,7 @@ a {
 a:hover,
 a:hover * {
   text-decoration: underline !important;
-  color: #69f !important;
+  color: #56f !important;
   text-shadow: 0 0 var(--transparent) !important;
 }
 .link {
@@ -419,11 +419,25 @@ th {
 .text-tertiary-color * {
   color: var(--text-tertiary-color) !important;
 }
-.light-links a:hover {
+.light-links a:hover,
+.light-links a:hover * {
   color: var(--light-links) !important;
 }
-.dark-links a:hover {
+.dark-links a:hover,
+.dark-links a:hover * {
   color: var(--dark-links) !important;
+}
+.uncolor-links,
+.uncolor-links * {
+  color: inherit !important;
+}
+.uncolor-links:hover,
+.uncolor-links:hover * {
+  color: inherit !important;
+}
+.uncolor-links-hover:hover,
+.uncolor-links-hover:hover * {
+  color: inherit !important;
 }
 .text-smallest,
 .text-smallest * {
