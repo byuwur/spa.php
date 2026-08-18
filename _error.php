@@ -323,7 +323,7 @@ function e(string $value): string
     window.addEventListener("popstate", function () {
       console.log('Go back event');
       window.location.reload();
-    });
+    }, { once: true });
   </script>
 </head>
 
