@@ -6,6 +6,11 @@
  * Copyright (c) 2026 Andrés Trujillo [Mateus] byUwUr
  */
 
+if (isset($_GET["probe"]) || isset($_POST["probe"])) {
+  http_response_code(204);
+  exit;
+}
+
 $errors = [
   400 => [
     "es" => "solicitud incorrecta",
@@ -77,10 +82,9 @@ $langInput = $_GET["lang"] ?? $_COOKIE["lang"] ?? "es";
 $lang = is_string($langInput) && $langInput === "en" ? "en" : "es";
 
 $errorInput = $_GET["e"] ?? null;
-$err = is_string($errorInput) && ctype_digit($errorInput) ? (int) $errorInput : 500;
-if (!isset($errors[$err])) {
+$err = (is_string($errorInput) || is_int($errorInput)) && ctype_digit((string) $errorInput) ? (int) $errorInput : 500;
+if (!isset($errors[$err]))
   $err = 500;
-}
 
 $customMessage = "";
 if (isset($_POST["custom_error_message"]) && is_string($_POST["custom_error_message"])) {
@@ -98,6 +102,7 @@ setcookie("lang", $lang, [
   "path" => "/",
   "samesite" => "Lax",
 ]);
+
 http_response_code($err);
 
 function e(string $value): string
@@ -252,7 +257,7 @@ function e(string $value): string
       margin: 32px 0;
     }
 
-    #action-link-wrap button {
+    #action-link-wrap .btn {
       background: #600;
       border: 0;
       color: #fff;
@@ -265,11 +270,11 @@ function e(string $value): string
       text-transform: uppercase;
     }
 
-    #action-link-wrap button:hover {
+    #action-link-wrap .btn:hover {
       background: #900;
     }
 
-    #action-link-wrap button:focus-visible {
+    #action-link-wrap .btn:focus-visible {
       outline: 2px solid #fff;
       outline-offset: 3px;
     }
@@ -314,6 +319,7 @@ function e(string $value): string
     }
   </style>
   <script>
+    "use strict";
     window.addEventListener("popstate", function () {
       console.log('Go back event');
       window.location.reload();
@@ -347,15 +353,12 @@ function e(string $value): string
       <span><?= e($error["message"][$lang]) ?></span>
       <span><?= e($sorry) ?></span>
       <div id="action-link-wrap">
-        <button id="back" type="button"><?= e($back) ?></button>
+        <button id="back" type="button" class="btn" onclick="history.back();"><?= e($back) ?></button>
+        <!--a href="javascript:history.back();" class="btn"><?= e($back) ?></a-->
       </div>
       <span><?= e($customMessage) ?></span>
     </div>
   </div>
-  <script>
-    "use strict";
-    document.getElementById("back").addEventListener("click", () => { console.log('Go back button'); history.back() });
-  </script>
 </body>
 
 </html>
