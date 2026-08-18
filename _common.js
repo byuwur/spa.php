@@ -17,7 +17,7 @@
   const byCommon = global.byCommon;
   // Common selectors
   byCommon.SIDEBAR_ID = "#bywr-sidebar";
-  byCommon.SIDERBAR_TOGGLE_ID = "#bywr-sidebar-toggle";
+  byCommon.SIDEBAR_TOGGLE_ID = "#bywr-sidebar-toggle";
   byCommon.SIDEBAR_HIDDEN_ID = "#bywr-sidebar-hidden";
   byCommon.APP_CONTAINER_SELECTOR = ".app-container";
   byCommon.COOKIE_CONSENT_READY = byCommon.COOKIE_CONSENT_READY || false;
@@ -33,7 +33,7 @@
     console.log("Init <Sidebar />");
     if (!get_cookie("SidebarExpand")) set_cookie("SidebarExpand", "on");
     // Init the rest of the elements
-    const jqSidebarToggle = $(byCommon.SIDERBAR_TOGGLE_ID);
+    const jqSidebarToggle = $(byCommon.SIDEBAR_TOGGLE_ID);
     if (!jqSidebarToggle.length) console.warn(`Can't load Sidebar Element: "jqSidebarToggle". It doesn't exist.`);
     const jqSidebarHidden = $(byCommon.SIDEBAR_HIDDEN_ID);
     if (!jqSidebarHidden.length) console.warn(`Can't load Sidebar Element: "jqSidebarHidden". It doesn't exist.`);
@@ -104,8 +104,8 @@
         // Collapse the navbar after clicking the link
         setTimeout(() => {
           $(".navbar-collapse").collapse("hide");
-          if (window.innerWidth < 768 && $(byCommon.SIDERBAR_TOGGLE_ID).hasClass("bywr-sidebar-expanded")) {
-            $(byCommon.SIDERBAR_TOGGLE_ID).removeClass("bywr-sidebar-expanded");
+          if (window.innerWidth < 768 && $(byCommon.SIDEBAR_TOGGLE_ID).hasClass("bywr-sidebar-expanded")) {
+            $(byCommon.SIDEBAR_TOGGLE_ID).removeClass("bywr-sidebar-expanded");
             $(byCommon.SIDEBAR_ID).removeClass("bywr-sidebar-expanded");
             $(byCommon.APP_CONTAINER_SELECTOR).removeClass("bywr-sidebar-expanded");
             $(byCommon.SIDEBAR_ID).scrollTop(0);

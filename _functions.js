@@ -261,10 +261,10 @@ function init_websocket(options) {
  * Creates or updates a cookie with the specified name, value, and expiration days.
  * @param {string} name The name of the cookie.
  * @param {string} value The value of the cookie.
- * @param {number} [minutes=31536000] (Default 1y) The number of days until the cookie expires. A negative number expires the cookie.
+ * @param {number} [seconds=31536000] (Default 1y) The number of seconds until the cookie expires. A negative number expires the cookie.
  */
-function set_cookie(name, value, minutes = 31536000) {
-  document.cookie = `${name}=${encodeURIComponent(value)};max-age=${minutes};path=/`;
+function set_cookie(name, value, seconds = 31536000) {
+  document.cookie = `${name}=${encodeURIComponent(value)};max-age=${seconds};path=/`;
 }
 
 /**
