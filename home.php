@@ -4,7 +4,7 @@
  * File: home.php
  * Desc: Entry point for the Single Page Application (SPA). This file initializes configurations, handles routing, and loads the main structure of the SPA, including the header, content container, and footer. The page also includes necessary CSS and JS resources.
  * Deps: _var.php, _common.php, _functions.php, _plugin.php, _routes.php, _router.php
- * Copyright (c) 2025 Andrés Trujillo [Mateus] byUwUr
+ * Copyright (c) 2026 Andrés Trujillo [Mateus] byUwUr
  */
 
 // Sets a flag to enable the inclusion of local storage variables in the HTML output
@@ -81,7 +81,7 @@ require_once "{$TO_HOME}/common.example.php";
 </head>
 
 <body>
-  <!-- byuwur/spa.php | Copyright (c) 2025 Andrés Trujillo [Mateus] byUwUr -->
+  <!-- byuwur/spa.php | Copyright (c) 2026 Andrés Trujillo [Mateus] byUwUr -->
   <section id="intro" class="d-none">
     <!-- Add a short description to help SEO -->
     SPA made easy, with love, and PHP. = byUwUr/SPA.php
