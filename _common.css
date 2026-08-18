@@ -89,7 +89,6 @@
 * {
   min-width: 0;
   /* scroll */
-  scrollbar-width: 12px;
   scrollbar-color: #111 #fff;
   /* anim */
   -webkit-transition:
