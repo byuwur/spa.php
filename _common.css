@@ -148,7 +148,7 @@ body {
   font-weight: 400;
   color: var(--dark-color);
   text-overflow: ellipsis !important;
-  white-space: wrap !important;
+  white-space: normal !important;
 }
 /* === GENERAL ELEMENTS === */
 ol,
