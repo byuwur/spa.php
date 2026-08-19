@@ -69,14 +69,27 @@
   bySPA.errorPage = function (status, custom_error_message = "") {
     const paths = [`${bySPA.HOME_PATH}/_error.php`, `${bySPA.HOME_PATH}/spa.php/_error.php`];
     const render = function (data) {
+      // Temporarily expose bySPA variables to the error page
+      bySPA.ERROR_STATUS = status;
+      bySPA.ERROR_MESSAGE = custom_error_message;
+
       document.documentElement.innerHTML = data;
-      window.addEventListener(
+      // extract all <script> inside data to remove them and re-append them to force them to run
+      document.querySelectorAll("script").forEach(function (oldScript) {
+        const newScript = document.createElement("script");
+        for (const attr of oldScript.attributes) newScript.setAttribute(attr.name, attr.value);
+        newScript.textContent = oldScript.textContent;
+        oldScript.replaceWith(newScript);
+      });
+      /* window.addEventListener(
         "popstate",
         function () {
           window.location.reload();
         },
         { once: true }
-      );
+      ); */
+      delete bySPA.ERROR_STATUS;
+      delete bySPA.ERROR_MESSAGE;
       return data;
     };
     const requestError = function (path) {
