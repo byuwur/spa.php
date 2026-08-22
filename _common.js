@@ -20,8 +20,10 @@
   byCommon.SIDEBAR_TOGGLE_ID = "#bywr-sidebar-toggle";
   byCommon.SIDEBAR_HIDDEN_ID = "#bywr-sidebar-hidden";
   byCommon.APP_CONTAINER_SELECTOR = ".app-container";
+  // These properties can be previously initialized to be overriden
+  byCommon.GLOBAL_TRANSITION_DURATION = byCommon.GLOBAL_TRANSITION_DURATION || 199;
   byCommon.COOKIE_CONSENT_READY = byCommon.COOKIE_CONSENT_READY || false;
-  byCommon.SECTION_TOP_OVERHEAD = 0;
+  byCommon.SECTION_TOP_OVERHEAD = byCommon.SECTION_TOP_OVERHEAD || 0;
 
   /**
    * Initializes the <Sidebar /> component in #spa-nav.
@@ -100,7 +102,7 @@
         if ($(this.hash).length)
           $(`html, body, ${byCommon.APP_CONTAINER_SELECTOR}`)
             .stop()
-            .animate({ scrollTop: $(this.hash).offset().top - byCommon.SECTION_TOP_OVERHEAD }, 99, "swing");
+            .animate({ scrollTop: $(this.hash).offset().top - byCommon.SECTION_TOP_OVERHEAD }, byCommon.GLOBAL_TRANSITION_DURATION, "swing");
         // Collapse the navbar after clicking the link
         setTimeout(() => {
           $(".navbar-collapse").collapse("hide");
