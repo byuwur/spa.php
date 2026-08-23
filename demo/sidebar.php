@@ -1,12 +1,12 @@
 <?php
 require_once "./_var.php";
-require_once "{$TO_HOME}/_functions.php";
-require_once "{$TO_HOME}/_common.php";
-//require_once "{$TO_HOME}/_plugins.php";
-//require_once "{$TO_HOME}/_config.php";
+require_once "{$TO_HOME}/../_functions.php";
+require_once "{$TO_HOME}/../_common.php";
+//require_once "{$TO_HOME}/../_plugins.php";
+//require_once "{$TO_HOME}/../_config.php";
 require_once "{$TO_HOME}/_routes.php";
-//require_once "{$TO_HOME}/_router.php";
-//require_once "{$TO_HOME}/_auth.php";
+//require_once "{$TO_HOME}/../_router.php";
+//require_once "{$TO_HOME}/../_auth.php";
 // --- PHP ---
 require_once "{$TO_HOME}/common.example.php";
 //enable_progressive_rendering();
@@ -16,7 +16,7 @@ require_once "{$TO_HOME}/common.example.php";
   <div class="bywr-sidebar-header">
     <div class="navbar-brand has-background-contain" role="img"
       aria-label="<?= escape_html($LANG["sidebar.logo_alt"]) ?>"
-      style="height:48px;width:48px;background-image:url('<?= "{$HOME_PATH}/img/byuwur.png" ?>');">
+      style="height:48px;width:48px;background-image:url('<?= "{$HOME_PATH}/../img/byuwur.png" ?>');">
     </div>
     <span class="ms-2 me-4 pe-5">byuwur/spa.php</span>
   </div>
@@ -66,7 +66,7 @@ require_once "{$TO_HOME}/common.example.php";
   <div id="bywr-sidebar-hidden" class="bywr-sidebar-hidden">
     <div class="navbar-brand has-background-contain mt-auto" role="img"
       aria-label="<?= escape_html($LANG["sidebar.logo_alt"]) ?>"
-      style="height:48px;width:48px;background-image:url('<?= "{$HOME_PATH}/img/byuwur.png" ?>');">
+      style="height:48px;width:48px;background-image:url('<?= "{$HOME_PATH}/../img/byuwur.png" ?>');">
     </div>
   </div>
 </nav>
