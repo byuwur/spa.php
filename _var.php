@@ -61,19 +61,20 @@ $HOME_PATH = $PATH_DIFF > 0 ? implode("/", array_slice(explode("/", $THIS_PATH),
 if (isset($debug) && $debug)
   echo "HOME_PATH: " . $HOME_PATH . " <br>\n";
 // Store the calculated paths in the browser's localStorage
+$json_script_flags = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE;
 if (isset($setLocalStorage) && $setLocalStorage) { ?>
   <script>
     <?php if (($_ENV["APP_ENV"] ?? $NOTENV_APP_ENV) === "DEV") { ?>
-      console.log("PROTOCOL", <?= json_encode($PROTOCOL, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>);
-      console.log("PATH_DIFF", <?= json_encode($PATH_DIFF) ?>);
-      console.log("TO_HOME", <?= json_encode($TO_HOME, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>);
-      console.log("THIS_PATH", <?= json_encode($THIS_PATH, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>);
-      console.log("HOME_PATH", <?= json_encode($HOME_PATH, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>);
+      console.log("PROTOCOL", <?= json_encode($PROTOCOL, $json_script_flags) ?>);
+      console.log("PATH_DIFF", <?= json_encode($PATH_DIFF, $json_script_flags) ?>);
+      console.log("TO_HOME", <?= json_encode($TO_HOME, $json_script_flags) ?>);
+      console.log("THIS_PATH", <?= json_encode($THIS_PATH, $json_script_flags) ?>);
+      console.log("HOME_PATH", <?= json_encode($HOME_PATH, $json_script_flags) ?>);
     <?php } ?>
-    localStorage.setItem("PROTOCOL", <?= json_encode($PROTOCOL, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>);
+    localStorage.setItem("PROTOCOL", <?= json_encode($PROTOCOL, $json_script_flags) ?>);
     localStorage.setItem("PATH_DIFF", <?= json_encode((string) $PATH_DIFF) ?>);
-    localStorage.setItem("TO_HOME", <?= json_encode($TO_HOME, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>);
-    localStorage.setItem("THIS_PATH", <?= json_encode($THIS_PATH, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>);
-    localStorage.setItem("HOME_PATH", <?= json_encode($HOME_PATH, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>);
+    localStorage.setItem("TO_HOME", <?= json_encode($TO_HOME, $json_script_flags) ?>);
+    localStorage.setItem("THIS_PATH", <?= json_encode($THIS_PATH, $json_script_flags) ?>);
+    localStorage.setItem("HOME_PATH", <?= json_encode($HOME_PATH, $json_script_flags) ?>);
   </script>
 <?php }
