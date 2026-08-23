@@ -1,7 +1,7 @@
 <?php
 require_once "./_var.php";
 require_once "{$TO_HOME}/_common.php";
-//require_once "{$TO_HOME}/_functions.php";
+require_once "{$TO_HOME}/_functions.php";
 //require_once "{$TO_HOME}/_plugins.php";
 //require_once "{$TO_HOME}/_config.php";
 require_once "{$TO_HOME}/_routes.php";
@@ -15,7 +15,7 @@ require_once "{$TO_HOME}/common.example.php";
   <div class="overlay"></div>
   <div class="bywr-sidebar-header">
     <div class="navbar-brand has-background-contain" role="img"
-      aria-label="<?= htmlspecialchars($LANG["sidebar.logo_alt"], ENT_QUOTES, "UTF-8") ?>"
+      aria-label="<?= escape_html($LANG["sidebar.logo_alt"], false) ?>"
       style="height:48px;width:48px;background-image:url('<?= "{$HOME_PATH}/img/byuwur.png" ?>');">
     </div>
     <span class="ms-2 me-4 pe-5">byuwur/spa.php</span>
@@ -41,12 +41,12 @@ require_once "{$TO_HOME}/common.example.php";
     </button>
     <div id="lang-drop" class="accordion-collapse collapse bg-dark-transparent" data-bs-parent="#bywr-sidebar">
       <div class="d-flex flex-row">
-        <a class="bywr-sidebar-option" href="<?= "/{$ROUTE_ES}" ?>" title="<?= htmlspecialchars($LANG["language.spanish"], ENT_QUOTES, "UTF-8") ?>">
-          <img class="inline-logo" src="img/co.svg" alt="<?= htmlspecialchars($LANG["language.spanish"], ENT_QUOTES, "UTF-8") ?>" />
+        <a class="bywr-sidebar-option" href="<?= "/{$ROUTE_ES}" ?>" title="<?= escape_html($LANG["language.spanish"], false) ?>">
+          <img class="inline-logo" src="img/co.svg" alt="<?= escape_html($LANG["language.spanish"], false) ?>" />
           ES<i class="fas fa-angle-right ms-auto"></i>
         </a>
-        <a class="bywr-sidebar-option" href="<?= "/{$ROUTE_EN}" ?>" title="<?= htmlspecialchars($LANG["language.english"], ENT_QUOTES, "UTF-8") ?>">
-          <img class="inline-logo" src="img/gb.svg" alt="<?= htmlspecialchars($LANG["language.english"], ENT_QUOTES, "UTF-8") ?>" />
+        <a class="bywr-sidebar-option" href="<?= "/{$ROUTE_EN}" ?>" title="<?= escape_html($LANG["language.english"], false) ?>">
+          <img class="inline-logo" src="img/gb.svg" alt="<?= escape_html($LANG["language.english"], false) ?>" />
           EN<i class="fas fa-angle-right ms-auto"></i>
         </a>
       </div>
@@ -59,13 +59,13 @@ require_once "{$TO_HOME}/common.example.php";
       <?= $LANG["footer.by"] ?> <a href="<?= $MATEUS_LINK ?>" target="_blank">[Mateus] byUwUr</a>
     </p>
   </div>
-  <a id="bywr-sidebar-toggle" class="bywr-sidebar-toggle" href="javascript:;" title="<?= htmlspecialchars($LANG["sidebar.toggle"], ENT_QUOTES, "UTF-8") ?>" aria-label="<?= htmlspecialchars($LANG["sidebar.toggle"], ENT_QUOTES, "UTF-8") ?>"
-    data-bs-toggle="tooltip" data-bs-title="<?= htmlspecialchars($LANG["sidebar.toggle"], ENT_QUOTES, "UTF-8") ?>">
+  <a id="bywr-sidebar-toggle" class="bywr-sidebar-toggle" href="javascript:;" title="<?= escape_html($LANG["sidebar.toggle"], false) ?>" aria-label="<?= escape_html($LANG["sidebar.toggle"], false) ?>"
+    data-bs-toggle="tooltip" data-bs-title="<?= escape_html($LANG["sidebar.toggle"], false) ?>">
     <i class="fas fa-bars"></i><span><?= $LANG["sidebar.menu"] ?></span>
   </a>
   <div id="bywr-sidebar-hidden" class="bywr-sidebar-hidden">
     <div class="navbar-brand has-background-contain mt-auto" role="img"
-      aria-label="<?= htmlspecialchars($LANG["sidebar.logo_alt"], ENT_QUOTES, "UTF-8") ?>"
+      aria-label="<?= escape_html($LANG["sidebar.logo_alt"], false) ?>"
       style="height:48px;width:48px;background-image:url('<?= "{$HOME_PATH}/img/byuwur.png" ?>');">
     </div>
   </div>
