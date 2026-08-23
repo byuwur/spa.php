@@ -60,9 +60,6 @@ if (isset($debug) && $debug)
 $HOME_PATH = $PATH_DIFF > 0 ? implode("/", array_slice(explode("/", $THIS_PATH), 0, -$PATH_DIFF)) : $THIS_PATH;
 if (isset($debug) && $debug)
   echo "HOME_PATH: " . $HOME_PATH . " <br>\n";
-// The demo is the application; the reusable framework happens to live in its parent directory.
-$SPA_ROOT = std_dir_separator(dirname(__DIR__));
-$SPA_PATH = std_dir_separator(dirname($HOME_PATH));
 // Store the calculated paths in the browser's localStorage
 $json_script_flags = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE;
 if (isset($setLocalStorage) && $setLocalStorage) { ?>
