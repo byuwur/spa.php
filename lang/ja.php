@@ -47,6 +47,11 @@ $LANG = [
   "demo.home.description" => "ウェブサイトへようこそ。サービスや製品をご覧ください。",
   "demo.page.description" => "最新ニュースと更新情報はこちらで確認できます。",
 
+  "meta.description" => "PHPでシングルページアプリケーションを構築するための軽量フレームワークとルーターです。",
+  "meta.keywords" => "SPA.php, シングルページアプリケーション, SPAルーター, PHPフレームワーク, PHP, byUwUr",
+  "meta.locale" => "ja_JP",
+  "meta.url" => "https://byuwur.co/spa.php/ja",
+
   "title.default" => "SPA.PHP | byUwUr",
   "title.home" => "SPA ホーム | byUwUr",
   "title.page" => "SPA ページ | byUwUr",

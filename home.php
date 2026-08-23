@@ -32,21 +32,34 @@ require_once "{$TO_HOME}/common.example.php";
 ?>
 
 <head>
-  <title>SPA.php | byUwUr</title>
+  <title><?= escape_html($LANG["title.default"]) ?></title>
   <meta charset="utf-8" />
-  <meta property="og:title" content="SPA.php | byUwUr" />
+  <meta property="og:title" content="<?= escape_html($LANG["title.default"]) ?>" />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="https://byuwur.co/img/logo.png" />
-  <meta property="og:url" content="https://byuwur.co/spa.php" />
+  <meta property="og:image:alt" content="SPA.php | byUwUr" />
+  <meta property="og:url" content="<?= escape_html($LANG["meta.url"]) ?>" />
   <meta property="og:site_name" content="SPA.php | byUwUr" />
-  <meta property="og:description" content="SPA made easy, with love, and PHP." />
+  <meta property="og:description" content="<?= escape_html($LANG["meta.description"]) ?>" />
+  <meta property="og:locale" content="<?= escape_html($LANG["meta.locale"]) ?>" />
   <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no" />
-  <meta name="description" content="SPA made easy, with love, and PHP." />
-  <meta name="author" content="Andrés Trujillo [Mateus] byUwUr" />
-  <meta name="keywords" content="SPA.php, SPA, PHP, Mateus, byUwUr, byuwur, Mateus byUwUr" />
+  <meta name="description" content="<?= escape_html($LANG["meta.description"]) ?>" />
+  <meta name="author" content="Andrés Trujillo Mateus" />
+  <meta name="keywords" content="<?= escape_html($LANG["meta.keywords"]) ?>" />
   <meta name="copyright" content="[Mateus] byUwUr" />
-  <!--meta name="robots" content="index, follow" /> <!-- Decommented to get indexed -->
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:creator" content="@byUwUr" />
+  <meta name="twitter:title" content="<?= escape_html($LANG["title.default"]) ?>" />
+  <meta name="twitter:description" content="<?= escape_html($LANG["meta.description"]) ?>" />
+  <meta name="twitter:image" content="https://byuwur.co/img/logo.png" />
+  <meta name="twitter:image:alt" content="SPA.php | byUwUr" />
   <meta name="theme-color" content="#300" />
+  <link rel="canonical" href="<?= escape_html($LANG["meta.url"]) ?>" />
+  <link rel="alternate" hreflang="es" href="https://byuwur.co/spa.php/es" />
+  <link rel="alternate" hreflang="en" href="https://byuwur.co/spa.php/en" />
+  <link rel="alternate" hreflang="ja" href="https://byuwur.co/spa.php/ja" />
+  <link rel="alternate" hreflang="x-default" href="https://byuwur.co/spa.php" />
   <link rel="icon" type="image/png" href="<?= "{$HOME_PATH}/img/byuwur.png" ?>" />
   <link rel="apple-touch-icon" href="<?= "{$HOME_PATH}/img/byuwur.png" ?>" />
   <!-- Remove per your needs -->
@@ -82,9 +95,17 @@ require_once "{$TO_HOME}/common.example.php";
 
 <body>
   <!-- byuwur/spa.php | Copyright (c) 2026 Andrés Trujillo [Mateus] byUwUr -->
+  <noscript>
+    <section aria-labelledby="noscript-title">
+      <h1 id="noscript-title"><?= escape_html($LANG["title.default"]) ?></h1>
+      <p><?= escape_html($LANG["meta.description"]) ?></p>
+      <p><?= escape_html($LANG["demo.description"]) ?></p>
+      <p><a href="https://github.com/byuwur/spa.php">GitHub</a></p>
+    </section>
+  </noscript>
   <section id="intro" class="d-none">
     <!-- Add a short description to help SEO -->
-    SPA made easy, with love, and PHP. = byUwUr/SPA.php
+    <?= escape_html($LANG["meta.description"]) ?>
   </section>
   <div id="spa-loader">
     <div class="load-circle-back"></div>
