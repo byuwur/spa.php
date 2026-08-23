@@ -15,7 +15,7 @@ require_once "{$TO_HOME}/common.example.php";
 <div class="video-foreground app-container">
   <div class="container vh-100 d-flex flex-column align-items-center justify-content-center">
     <div class="text-white text-dark-shadow">
-      <p><?= $LANG["nav.video"] ?>:</p>
+      <p><?= escape_html($LANG["nav.video"]) ?>:</p>
       <hr class="w-100" />
     </div>
     <video id="bywr-video-player" class="video-js w-100" poster="<?= "{$HOME_PATH}/img/video/sample.jpg" ?>" controls
@@ -29,7 +29,7 @@ require_once "{$TO_HOME}/common.example.php";
 </div>
 <script>
   $(() => {
-    document.title = "<?= $titles[$title_index] ?>";
+    document.title = <?= js_encode($titles[$title_index]) ?>;
     byCommon.init();
     byCommon.initVideo("bywr-video-player");
   });
