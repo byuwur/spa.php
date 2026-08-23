@@ -25,50 +25,89 @@ This project is a simple, easy-to-use framework for building single-page applica
 
 ## How is it done?
 
-### Core Files [in priority order]
+### What "SPA root" means
 
-- **.htaccess:** _(root)_ Apache configuration file that handles URL rewriting, directs requests to the main `home.php` entry point, and configures custom error pages. [This file MUST be duplicated to the root]
-- **nginx.conf:** _(root)_ Example nginx configuration file. For more details visit `https://github.com/byuwur/nginx-configurations`
-- **\_var.php:** _(root)_ Essential configuration file that sets up environment variables and paths used throughout the application. [This file MUST be duplicated to the root]
-- **\_spa.js:** Contains the main JavaScript functions for managing the SPA's frontend logic.
-- **\_router.php:** Resolves incoming URIs to the correct routes defined in `_routes.php`, handling dynamic parameters and generating the necessary GET and POST data for each route.
-- **\_routes.php:** _(main)_ Defines all routes within the application, mapping URIs to specific PHP files and components.
-- **.env:** _(root)_ Environment file that contains credentials and cofigurations.
-- **home.php:** _(root)_ The main entry point of the SPA. Loads resources and handles the basic layout of the application.
-- **\_plugins.php:** _(main)_ Handles the initialization and inclusion of essential composer libraries.
-- **\_config.php:** _(main)_ Configures the databases connections (uses $\_ENV), provides error handling for connection failures.
+- The **application root** is the public directory that owns one independently routed SPA, such as the root of `byuwur.github.io` or this repository's `demo/` directory.
+- The **framework root** is the `spa.php/` checkout or submodule consumed by that application. It normally lives at `application-root/spa.php/`; the repository demo uses the parent directory as the equivalent framework root. Reusable files stay there and are referenced from the application.
 
-**[NEW!]** When this repository is used as a submodule: the "(root)" files are mandatory to be referenced in the root of the project; the "(main)" files are not required to be on the root of the project but are better handled there.
+The old `(root)` and `(main)` labels mixed location with responsibility. The distinction used here is **application-owned** versus **framework-owned**, followed by whether the file is required by the default setup.
 
-### Additional Files
+### REQUIRED at each application root
 
-- **\_auth.php:** Manages basic user authentication with login, logout, and session validation.
-- **\_functions.php:** Contains a set of utility functions used across the application, including API responses, HTTP requests, data validation, data sanitization, and other general-purpose functions.
-- **\_functions.js:** Contains general-purpose functions used across different parts of the application.
-- **\_common.php:** Configuration file that initializes common project-wide variables.
-- **\_common.js:** JavaScript file that initializes common UI elements.
-- **\_common.css:** CSS file that styles common UI elements.
-- **\_error.php:** File rendered when SPA throws an error.
+The default PHP SPA layout requires:
 
-### Public Assets
+```text
+application-root/
+|-- home.php        # REQUIRED application shell and router entry point
+|-- _var.php        # REQUIRED application path/environment configuration
+|-- _routes.php     # REQUIRED application route table
+|-- .htaccess       # REQUIRED on Apache; use equivalent server rules on nginx
+`-- spa.php/        # REQUIRED framework checkout/submodule
+```
 
-- **css/**: Contains all style files. (This project uses Bootstrap 5.3)
-- **js/**: Contains all script files. (This project uses Bootstrap 5.3 and jQuery 4)
-- **img/**: Contains all image resources.
+- **home.php:** Sets `$setLocalStorage`, loads the application and framework files in order, renders the shell, and is the rewrite target for SPA routes. It may be renamed only when the server rules are updated with it.
+- **\_var.php:** Must be owned by each independent SPA root because its own filesystem and URL location establish `$SYSTEM_ROOT`, `$HOME_PATH`, `$TO_HOME`, and related values. Do not replace it with `spa.php/_var.php`; use the framework file as the starting implementation for the application copy.
+- **\_routes.php:** Must define `$routes` before `spa.php/_router.php` is included. It can be stored elsewhere only if `home.php` explicitly loads that location first.
+- **.htaccess or equivalent server configuration:** Must route non-file requests to `home.php?uri=...`. Apache uses an application-root `.htaccess`; nginx uses equivalent `try_files` configuration such as `spa.php/nginx.location.router.conf`.
+- **spa.php/:** In a normal consumer, the framework directory must remain reachable by PHP includes and browser asset URLs at this application-root path. The repository demo references the parent directory instead because it already is the framework checkout. A normal Git submodule still checks out the full directory.
+
+### Framework/Core files [in priority order]
+
+- **\_var.php:** Provides the starting implementation for the required application-owned `_var.php`; it calculates application and browser paths, detects the environment, and optionally exposes those values to the browser.
+- **\_functions.php:** Provides shared PHP utilities for API responses, HTTP requests, validation, escaping, error handling, files, and other common work used by routes and application endpoints.
+- **\_common.php:** Establishes the default common request state, including language and theme, before the application shell and route are rendered. The default shell uses it; an application can add its own `_common.php` after it.
+- **\_plugins.php:** Optionally loads the consuming application's Composer autoloader so its libraries are available to SPA endpoints; application-specific plugin setup remains outside the framework.
+- **\_config.php:** Optionally creates the environment-configured MySQL connection used by application endpoints and returns a safe API error if the connection fails.
+- **\_auth.php:** Optionally supplies strict session setup plus login, logout, session-validation, and CSRF helpers for authenticated SPA endpoints.
+- **\_router.php:** Resolves the incoming URI against the application's route table, merges route parameters, serves direct file routes, and passes the resulting route state to the browser.
+- **\_spa.js:** Handles browser history, link interception, route requests, page/component replacement, and the lifecycle that runs after dynamically loaded content.
+- **\_functions.js:** Provides browser-side request, JSON, cookie, modal, validation, and other reusable helpers for SPA pages and application scripts.
+- **\_common.js:** Reinitializes shared sidebar, accessibility, Bootstrap, tooltip, and modal behavior after the initial page and each dynamic route load.
+- **\_common.css:** Supplies the reusable loader, sidebar, accessibility, and base interface styles used by the application shell and dynamically loaded content.
+- **\_error.php:** Renders the reusable server-side HTTP error page used when routing or an endpoint fails.
+- **css/** and **js/**: Reusable vendor assets used by the demo and available to applications. `_spa.js` requires jQuery, while Bootstrap and the other libraries are required only by the helpers or UI an application enables.
+- **img/**: Shared loader and interface assets referenced by framework styles.
+- **cacert.pem:** Certificate bundle used by the `_functions.php` cURL helpers when the application makes outbound HTTPS requests.
+- **composer.json:** Declares the optional Composer dependencies that an application may load through `_plugins.php`.
+
+### Application-owned optional files
+
+- **\_common.php:** Application-specific common variables, dictionaries, or initialization layered after the framework preset.
+- **\_plugins.php:** Application-specific Composer library initialization layered after the framework autoloader helper.
+- **\_config.php:** Application-specific database or service connections when the framework's MySQL helper is not sufficient.
+- **\_auth.php:** Application authorization rules layered around the optional framework session helpers.
+- **lang/**: Application dictionaries when the SPA renders translated PHP fragments. The repository demo supplies `demo/lang/`.
+- **.env**, **vendor/**, and **composer.lock:** Required only when the application loads environment files or Composer dependencies; they belong to the consuming application rather than the submodule.
+
+### Repository compatibility files
+
+- **home.php:** Redirects requests made to the deployed repository root into `demo/`; it is not the application shell consumers should copy.
+- **index.html:** Provides the same static fallback redirect when PHP `DirectoryIndex` handling is unavailable.
+- **.htaccess:** Routes repository-root requests through the compatibility entry point and retains the repository's security and error directives. Consumer applications need their own application-root routing rules.
+- **nginx.location.router.conf:** Shows the equivalent nginx route fallback that a consuming application can adapt in its server configuration.
+- **.env.example:** Documents optional environment values consumed by database, authentication, request, and development behavior; the actual environment belongs to the application.
+- **.nojekyll:** Keeps static files unchanged when the repository is published through GitHub Pages; it is not part of the PHP runtime.
+
+### Demo
+
+The runnable showcase is fully contained in `demo/`: its application variables, shell, routes, page fragments, sidebar, dictionaries, background, flags, sample PDF, and sample video. It owns `$SYSTEM_ROOT` and `$HOME_PATH` like a real consumer and loads reusable framework files from the parent directory, which takes the place a submodule folder would have in another repository. Visiting `https://byuwur.co/spa.php/` redirects to it.
+
+The root `img/icon-back.png`, `img/icon-fore.png`, and `img/byuwur.png` remain beside `_common.css` because shared CSS references them.
 
 ## Installation
 
 1. Clone the repository to your local machine.
 2. Ensure your web server has PHP installed.
-3. Update the `.htaccess` or `nginx.conf` file to match your server configuration.
+3. Update `.htaccess` or `nginx.location.router.conf` to match your server mount path.
 4. Configure your environment variables in the `.env` file using `.env.example`.
 
 ## Usage
 
-1. Define your routes in the `_routes.php` file.
-2. Use the routing system to manage your SPA's navigation.
-3. Add custom functionality by creating new PHP files and adding them to the routes.
-4. Navigate. Suit yourself.
+1. Keep application variables in your own `_var.php`.
+2. Define your application's routes in its own `_routes.php`.
+3. Use the routing system to manage your SPA's navigation.
+4. Add custom functionality by creating new PHP files and adding them to the routes.
+5. Navigate. Suit yourself.
 
 ## Security basics
 
