@@ -1052,12 +1052,15 @@ function suppress_errors(): void
 /** 
  * Escapes HTML characters in a string to prevent XSS attacks.
  * @param mixed $input The input to escape.
- * @return string The escaped string, with newlines converted to <br> tags.
+ * @param bool $multiline Converts line breaks to <br> elements.
+ * @return string The escaped string.
  */
-function escape_html($input): string
+function escape_html($input, $multiline = true): string
 {
-  $output = htmlspecialchars($input, ENT_QUOTES, "UTF-8", false);
-  return nl2br($output);
+  $output = htmlspecialchars((string) $input, ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8", false);
+  if ($multiline)
+    $output = nl2br($output);
+  return $output;
 }
 
 /**
