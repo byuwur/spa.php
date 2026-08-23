@@ -59,7 +59,7 @@ require_once "{$TO_HOME}/common.example.php";
   <link rel="alternate" hreflang="es" href="https://byuwur.co/spa.php/demo/es" />
   <link rel="alternate" hreflang="en" href="https://byuwur.co/spa.php/demo/en" />
   <link rel="alternate" hreflang="ja" href="https://byuwur.co/spa.php/demo/ja" />
-  <link rel="alternate" hreflang="x-default" href="https://byuwur.co/spa.php" />
+  <link rel="alternate" hreflang="x-default" href="https://byuwur.co/spa.php/demo/" />
   <link rel="icon" type="image/png" href="<?= "{$HOME_PATH}/../img/byuwur.png" ?>" />
   <link rel="apple-touch-icon" href="<?= "{$HOME_PATH}/../img/byuwur.png" ?>" />
   <!-- Remove per your needs -->
@@ -96,7 +96,7 @@ require_once "{$TO_HOME}/common.example.php";
 <body>
   <!-- byuwur/spa.php | Copyright (c) 2026 Andrés Trujillo [Mateus] byUwUr -->
   <noscript>
-    <section aria-labelledby="noscript-title">
+    <section id="noscript-intro" aria-labelledby="noscript-title">
       <h1 id="noscript-title"><?= escape_html($LANG["title.default"]) ?></h1>
       <p><?= escape_html($LANG["meta.description"]) ?></p>
       <p><?= escape_html($LANG["demo.description"]) ?></p>
