@@ -41,9 +41,24 @@ if (array_key_exists($uri, $routes) && isset($routes[$uri]["FILE"])) {
 // Merge additional GET and POST parameters from the routes array
 //$_GET = [...($routes[$uri]["GET"] ?? []), ...$_GET];
 //$_POST = [...($routes[$uri]["POST"] ?? []), ...$_POST];
-// It up to you who gets the priority tho...
+// It's up to you who gets the priority tho...
 $_GET = [...$_GET, ...$routes[$uri]["GET"] ?? []];
 $_POST = [...$_POST, ...$routes[$uri]["POST"] ?? []];
+// Apply the route language after its parameters have been merged
+if (isset($_GET["lang"])) {
+  $APP_LANG = $_GET["lang"];
+  setcookie("lang", $APP_LANG, time() + 31536000, "/", "", false, false);
+}
+// Render the document language and client settings after route overrides
+if (isset($setLocalStorage) && $setLocalStorage) {
+  ?>
+  <html lang="<?= escape_html($APP_LANG) ?>" dir="ltr">
+  <script>
+    localStorage.setItem("APP_LANG", <?= js_encode($APP_LANG) ?>);
+    localStorage.setItem("APP_THEME", <?= js_encode($APP_THEME) ?>);
+  </script>
+  <?php
+}
 $json_script_flags = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE;
 ?>
 <script>

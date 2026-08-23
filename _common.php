@@ -41,17 +41,6 @@ switch ($theme) {
 }
 setcookie("theme", $APP_THEME, time() + 31536000, "/", "", false, false);
 
-// --- LOCAL STORAGE ---
-if (isset($setLocalStorage) && $setLocalStorage) {
-  ?>
-  <html lang="<?= escape_html($APP_LANG) ?>" dir="ltr">
-  <script>
-    localStorage.setItem("APP_LANG", <?= js_encode($APP_LANG) ?>);
-    localStorage.setItem("APP_THEME", <?= js_encode($APP_THEME) ?>);
-  </script>
-  <?php
-}
-
 // --- VARIABLES ---
 $titles = [
   0 => "SPA.PHP | byUwUr"
