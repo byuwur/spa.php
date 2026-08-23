@@ -50,7 +50,7 @@ $LANG = [
   "meta.description" => "A lightweight PHP framework and router for building single-page applications.",
   "meta.keywords" => "SPA.php, single-page application, SPA router, PHP framework, PHP, byUwUr",
   "meta.locale" => "en_US",
-  "meta.url" => "https://byuwur.co/spa.php/en",
+  "meta.url" => "https://byuwur.co/spa.php/demo/en",
 
   "title.default" => "SPA.PHP | byUwUr",
   "title.home" => "SPA Home | byUwUr",

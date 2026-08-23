@@ -56,9 +56,9 @@ require_once "{$TO_HOME}/common.example.php";
   <meta name="twitter:image:alt" content="SPA.php | byUwUr" />
   <meta name="theme-color" content="#300" />
   <link rel="canonical" href="<?= escape_html($LANG["meta.url"]) ?>" />
-  <link rel="alternate" hreflang="es" href="https://byuwur.co/spa.php/es" />
-  <link rel="alternate" hreflang="en" href="https://byuwur.co/spa.php/en" />
-  <link rel="alternate" hreflang="ja" href="https://byuwur.co/spa.php/ja" />
+  <link rel="alternate" hreflang="es" href="https://byuwur.co/spa.php/demo/es" />
+  <link rel="alternate" hreflang="en" href="https://byuwur.co/spa.php/demo/en" />
+  <link rel="alternate" hreflang="ja" href="https://byuwur.co/spa.php/demo/ja" />
   <link rel="alternate" hreflang="x-default" href="https://byuwur.co/spa.php" />
   <link rel="icon" type="image/png" href="<?= "{$HOME_PATH}/../img/byuwur.png" ?>" />
   <link rel="apple-touch-icon" href="<?= "{$HOME_PATH}/../img/byuwur.png" ?>" />
