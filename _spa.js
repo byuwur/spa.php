@@ -69,7 +69,7 @@
    * @param {string} custom_error_message A custom error message to display.
    */
   bySPA.errorPage = function (status, custom_error_message = "") {
-    const paths = [`${bySPA.HOME_PATH}/_error.php`, `${bySPA.HOME_PATH}/spa.php/_error.php`];
+    const paths = [`${bySPA.HOME_PATH}/_error.php`, `${bySPA.HOME_PATH}/spa.php/_error.php`, `${bySPA.HOME_PATH}/../_error.php`];
     const render = function (data) {
       // Temporarily expose bySPA variables to the error page
       bySPA.ERROR_STATUS = status;
