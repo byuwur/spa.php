@@ -19,22 +19,6 @@ $ROUTE_VIDEO = "video";
 $ROUTE_WEBSOCKET = "socket";
 $ROUTE_PDF = "pdf";
 
-switch ($APP_LANG) {
-  case "es":
-  default:
-    $ROUTE_HOME = "inicio";
-    $ROUTE_PAGE = "pagina";
-    break;
-  case "en":
-    $ROUTE_HOME = "home";
-    $ROUTE_PAGE = "page";
-    break;
-  case "ja":
-    $ROUTE_HOME = "ja/home";
-    $ROUTE_PAGE = "ja/page";
-    break;
-}
-
 $ROUTE_ES = "es";
 $ROUTE_EN = "en";
 $ROUTE_JA = "ja";
@@ -67,3 +51,17 @@ $routes = [
   //"/{$ROUTE_WEBSOCKET}" => ["URI" => "/websocket.example.php", "GET" => [], ...$ROOT_COMPONENTS],
   "/{$ROUTE_PDF}" => ["FILE" => "/img/pdf/sample.pdf"],
 ];
+
+// Link aliases | <a> href prints
+switch ($APP_LANG) {
+  case "es":
+  default:
+    $ROUTE_HOME = "inicio";
+    $ROUTE_PAGE = "pagina";
+    break;
+  case "en":
+  case "ja":
+    $ROUTE_HOME = "home";
+    $ROUTE_PAGE = "page";
+    break;
+}
