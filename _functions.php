@@ -1055,7 +1055,7 @@ function suppress_errors(): void
  * @param bool $multiline Converts line breaks to <br> elements.
  * @return string The escaped string.
  */
-function escape_html($input, $multiline = true): string
+function escape_html($input, $multiline = false): string
 {
   $output = htmlspecialchars((string) $input, ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8", false);
   if ($multiline)
