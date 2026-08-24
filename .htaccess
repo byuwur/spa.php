@@ -1,73 +1,92 @@
 ### File: .htaccess
-### Desc: Configures URL rewriting, custom error handling, proxy blocking, and access restrictions for the server.
+### Desc: Configures URL rewriting, custom error handling, and access restrictions for the server.
 ### Deps: none
 ### Copyright (c) 2026 Andrés Trujillo [Mateus] byUwUr
 
-# Disable MultiViews to avoid URL conflicts && Directory Listing
+# Disable MultiViews to avoid URL conflicts and directory listing
 Options -Multiviews -Indexes
 # Enable URL rewriting
 RewriteEngine On
-# Rewrite non-existing files or directories to home.php with a query parameter
+# Block TRACE and TRACK HTTP methods
+RewriteCond %{REQUEST_METHOD} ^(?:TRACE|TRACK)$ [NC]
+RewriteRule ^ - [F,L]
+
+# Block hidden directories/path segments except public standard files
+RewriteRule "(^|/)\.(?!(?:well-known|public)(?:/|$))" - [F,L]
+# Block archive and backup packages except in allowed download folders
+RewriteCond %{REQUEST_URI} !^/(?:downloads|releases|uploads|assets)(?:/|$) [NC]
+RewriteRule \.(?:zip|rar|7z|tar|tgz|gz|bz2|xz)$ - [F,L,NC]
+# Block sensitive file extensions
+<FilesMatch "(?i)\.(?:bak|backup|old|orig|save|tmp|temp|swp|swo|rej|dist|sample|log|dump|sql|sqlite|sqlite3|db|ini|conf|cfg|cnf|pem|key|p12|pfx|jks|keystore|inc|phps|sh|rb|lock)$">
+    Require all denied
+</FilesMatch>
+# Block TXT files except public standard files
+<FilesMatch "(?i)^(?!(?:robots|ads|app-ads|humans|security)\.txt$).*\.txt$">
+    Require all denied
+</FilesMatch>
+# Block JSON files except public standard files
+<FilesMatch "(?i)^(?!(?:manifest|assetlinks)\.json$).*\.json$">
+    Require all denied
+</FilesMatch>
+# Block XML files except public standard files
+<FilesMatch "(?i)^(?!(?:sitemap|sitemap_index|browserconfig)\.xml$).*\.xml$">
+    Require all denied
+</FilesMatch>
+# Block YAML files
+<FilesMatch "(?i)\.(?:yaml|yml)$">
+    Require all denied
+</FilesMatch>
+# Block Markdown files
+<FilesMatch "(?i)\.(?:md|markdown)$">
+    Require all denied
+</FilesMatch>
+# Block common extensionless development files
+<FilesMatch "(?i)^(?:Dockerfile|Makefile|Vagrantfile|Procfile|Gemfile|Rakefile)$">
+    Require all denied
+</FilesMatch>
+# Block hidden files starting with a dot
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+# Block editor backup files
+<FilesMatch "~$">
+    Require all denied
+</FilesMatch>
+
+# Rewrite non-existing files or directories to home.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ home.php?uri=/$1 [L,QSA]
 # Set the default file to be served
 DirectoryIndex home.php
-# Custom error pages for various HTTP status codes
-ErrorDocument 404 /_error.php?e=404
-ErrorDocument 403 /_error.php?e=403
-ErrorDocument 401 /_error.php?e=401
-ErrorDocument 400 /_error.php?e=400
-ErrorDocument 500 /_error.php?e=500
-ErrorDocument 502 /_error.php?e=502
-ErrorDocument 503 /_error.php?e=503
-ErrorDocument 504 /_error.php?e=504
-#---
-# If you have SPA.php as a SUBMODULE: UNCOMMENT THESE. Delete the previous.
-#ErrorDocument 404 /spa.php/_error.php?e=404
-#ErrorDocument 403 /spa.php/_error.php?e=403
-#ErrorDocument 401 /spa.php/_error.php?e=401
-#ErrorDocument 400 /spa.php/_error.php?e=400
-#ErrorDocument 500 /spa.php/_error.php?e=500
-#ErrorDocument 502 /spa.php/_error.php?e=502
-#ErrorDocument 503 /spa.php/_error.php?e=503
-#ErrorDocument 504 /spa.php/_error.php?e=504
-#---
-# Block requests from most types of proxies
-RewriteCond %{HTTP:HTTP_VIA} !^$ [OR]
-RewriteCond %{HTTP:HTTP_X_FORWARDED_FOR} !^$ [OR]
-RewriteCond %{HTTP:HTTP_FORWARDED_FOR} !^$ [OR]
-RewriteCond %{HTTP:HTTP_X_FORWARDED} !^$ [OR]
-RewriteCond %{HTTP:HTTP_FORWARDED} !^$ [OR]
-RewriteCond %{HTTP:HTTP_CLIENT_IP} !^$ [OR]
-RewriteCond %{HTTP:HTTP_FORWARDED_FOR_IP} !^$ [OR]
-RewriteCond %{HTTP:VIA} !^$ [OR]
-RewriteCond %{HTTP:X_FORWARDED_FOR} !^$ [OR]
-RewriteCond %{HTTP:FORWARDED_FOR} !^$ [OR]
-RewriteCond %{HTTP:X_FORWARDED} !^$ [OR]
-RewriteCond %{HTTP:FORWARDED} !^$ [OR]
-RewriteCond %{HTTP:CLIENT_IP} !^$ [OR]
-RewriteCond %{HTTP:FORWARDED_FOR_IP} !^$ [OR]
-RewriteCond %{HTTP:HTTP_PROXY_CONNECTION} !^$
-RewriteRule ^(.*)$ - [F]
-# Block TRACE and TRACK HTTP methods
-RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK)
-RewriteRule .* - [F]
-# Forbid access to specific file types
-<FilesMatch "^(.*\.)?(git|gitignore|gitmodules|example|sh|rb|inc|ht|env|md|json|lock|htaccess|ini|log|conf|con|pem|sql|txt|bak|old)$">
-    Require all denied
-</FilesMatch>
-# Block access to hidden files and folders starting with a dot
-<FilesMatch "^\.">
-    Require all denied
-</FilesMatch>
-# MIME Sniffing && XSS
+
+# Custom error pages
+#ErrorDocument 404 /_error.php?e=404
+#ErrorDocument 403 /_error.php?e=403
+#ErrorDocument 401 /_error.php?e=401
+#ErrorDocument 400 /_error.php?e=400
+#ErrorDocument 500 /_error.php?e=500
+#ErrorDocument 502 /_error.php?e=502
+#ErrorDocument 503 /_error.php?e=503
+#ErrorDocument 504 /_error.php?e=504
+# Custom error pages for the SPA.php submodule
+ErrorDocument 404 /spa.php/_error.php?e=404
+ErrorDocument 403 /spa.php/_error.php?e=403
+ErrorDocument 401 /spa.php/_error.php?e=401
+ErrorDocument 400 /spa.php/_error.php?e=400
+ErrorDocument 500 /spa.php/_error.php?e=500
+ErrorDocument 502 /spa.php/_error.php?e=502
+ErrorDocument 503 /spa.php/_error.php?e=503
+ErrorDocument 504 /spa.php/_error.php?e=504
+
+# Prevent MIME sniffing
 <IfModule mod_headers.c>
-    Header set X-Content-Type-Options "nosniff"
-    Header set X-XSS-Protection "1; mode=block"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set X-Frame-Options "SAMEORIGIN"
 </IfModule>
-# === Prevent PHP Exec === [You might need to add this into the respective folder's .htaccess. e.g.: (uploads/, assets/)]
-# Disable PHP execution in this folder, but allow file access
+
+# Prevent PHP execution when placed inside non-executable folders such as uploads/ or assets/
 #<IfModule mod_php.c>
 #    php_flag engine off
 #</IfModule>
@@ -75,8 +94,6 @@ RewriteRule .* - [F]
 #    RemoveHandler .php .phtml .php3 .php4 .php5 .php7 .php8
 #    AddType text/plain .php .phtml .php3 .php4 .php5 .php7 .php8
 #</IfModule>
-# If you have PHP-FPM enabled, deny the access as a fall back
-#<FilesMatch "\.(php|phtml|php3|php4|php5|php7|php8)$">
+#<FilesMatch "\.(?:php|phtml|php3|php4|php5|php7|php8)$">
 #    Require all denied
 #</FilesMatch>
-# === Prevent PHP Exec ===
