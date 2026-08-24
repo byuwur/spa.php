@@ -1027,12 +1027,19 @@ function console_error(string $message): void
 function error_crash(int $status, string $message, ?string $error_file = null): void
 {
   global $TO_HOME;
-  if (!$error_file || !file_exists($error_file))
-    $error_file = file_exists("{$TO_HOME}/_error.php") ? "{$TO_HOME}/_error.php" : "{$TO_HOME}/spa.php/_error.php";
+  $error_files = array_filter([$error_file, "{$TO_HOME}/_error.php", "{$TO_HOME}/spa.php/_error.php", "{$TO_HOME}/../_error.php"]);
+  $error_file = null;
+  foreach ($error_files as $candidate)
+    if (is_file($candidate)) {
+      $error_file = $candidate;
+      break;
+    }
   console_warn("App crashed ({$status}): {$message}");
   $_GET["e"] = $status;
   $_POST["custom_error_message"] = $message;
   http_response_code($status);
+  if (!$error_file)
+    die("HTTP {$status}");
   require_once $error_file;
   while (ob_get_level() > 0)
     ob_end_flush();

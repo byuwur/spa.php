@@ -1,0 +1,7 @@
+# In the edge case where SPA.php is the parent directory, as in this demo,
+# only override routing to send every request to this folder's entry point
+RewriteEngine On
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ home.php?uri=/$1 [L,QSA]
