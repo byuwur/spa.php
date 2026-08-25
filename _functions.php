@@ -114,6 +114,8 @@ function make_http_request(string $url, array $get = [], array $post = [], bool 
 function remote_file_exists(string $url, bool $clog_error = false): bool
 {
   if (!validate_value($url, "url")) {
+    if ($clog_error)
+      console_error("CURL ERROR: Invalid URL.");
     error_log("CURL ERROR: Invalid URL.");
     return false;
   }
