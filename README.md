@@ -39,21 +39,23 @@ The default PHP SPA layout requires:
 ```text
 application-root/
 |-- home.php        # REQUIRED application shell and router entry point
-|-- _var.php        # REQUIRED application path/environment configuration
+|-- _init.php       # REQUIRED application-specific SPA initialization
 |-- _routes.php     # REQUIRED application route table
 |-- .htaccess       # REQUIRED on Apache; use equivalent server rules on nginx
 `-- spa.php/        # REQUIRED framework checkout/submodule
 ```
 
 - **home.php:** Sets `$setLocalStorage`, loads the application and framework files in order, renders the shell, and is the rewrite target for SPA routes. It may be renamed only when the server rules are updated with it.
-- **\_var.php:** Must be owned by each independent SPA root because its own filesystem and URL location establish `$SYSTEM_ROOT`, `$HOME_PATH`, `$TO_HOME`, and related values. Do not replace it with `spa.php/_var.php`; use the framework file as the starting implementation for the application copy.
+- **\_init.php:** Copy this application-specific initialization file into each SPA root. Its filesystem and entry-point context establish `$SYSTEM_ROOT`, `$HOME_PATH`, `$TO_HOME`, environment values, browser storage, and related runtime state. Loading `spa.php/_init.php` directly would derive application paths from the framework directory instead of the consuming application.
 - **\_routes.php:** Must define `$routes` before `spa.php/_router.php` is included. It can be stored elsewhere only if `home.php` explicitly loads that location first.
 - **.htaccess or equivalent server configuration:** Must route non-file requests to `home.php?uri=...`. Apache uses an application-root `.htaccess`; nginx uses equivalent `try_files` configuration based on `spa.php/nginx.conf`.
 - **spa.php/:** In a normal consumer, the framework directory must remain reachable by PHP includes and browser asset URLs at this application-root path. The repository demo references the parent directory instead because it already is the framework checkout. A normal Git submodule still checks out the full directory.
 
+Framework files are reusable implementation; `_init.php` and `_routes.php` are application-owned copies/configuration. If a project has multiple independent SPA roots, each root needs its own `_init.php` and route table because initialization belongs to that entry-point context.
+
 ### Framework/Core files [in priority order]
 
-- **\_var.php:** Provides the starting implementation for the required application-owned `_var.php`; it calculates application and browser paths, detects the environment, and optionally exposes those values to the browser.
+- **\_init.php:** Provides the starting implementation to copy as the required application-owned `_init.php`; it initializes application and browser paths, environment values, namespaced storage, and runtime state before routes and the router load.
 - **\_functions.php:** Provides shared PHP utilities for API responses, HTTP requests, validation, escaping, error handling, files, and other common work used by routes and application endpoints.
 - **\_common.php:** Establishes the default common request state, including language and theme, before the application shell and route are rendered. The default shell uses it; an application can add its own `_common.php` after it.
 - **\_plugins.php:** Optionally loads the consuming application's Composer autoloader so its libraries are available to SPA endpoints; application-specific plugin setup remains outside the framework.
@@ -90,7 +92,7 @@ application-root/
 
 ### Demo
 
-The runnable showcase is fully contained in `demo/`: its application variables, shell, routes, page fragments, sidebar, dictionaries, background, flags, sample PDF, and sample video. It owns `$SYSTEM_ROOT` and `$HOME_PATH` like a real consumer and loads reusable framework files from the parent directory, which takes the place a submodule folder would have in another repository. Visiting `https://byuwur.co/spa.php/` redirects to it.
+The runnable showcase is fully contained in `demo/`: its application initialization, shell, routes, page fragments, sidebar, dictionaries, background, flags, sample PDF, and sample video. It owns `$SYSTEM_ROOT` and `$HOME_PATH` like a real consumer and loads reusable framework files from the parent directory, which takes the place a submodule folder would have in another repository. Visiting `https://byuwur.co/spa.php/` redirects to it.
 
 The root `img/icon-back.png`, `img/icon-fore.png`, and `img/byuwur.png` remain beside `_common.css` because shared CSS references them.
 
@@ -116,11 +118,15 @@ Login regenerates the session ID by default. Applications remain responsible for
 
 ## Usage
 
-1. Keep application variables in your own `_var.php`.
+1. Copy `_init.php` into the application root and keep that application-specific initialization there.
 2. Define your application's routes in its own `_routes.php`.
 3. Use the routing system to manage your SPA's navigation.
 4. Add custom functionality by creating new PHP files and adding them to the routes.
 5. Navigate. Suit yourself.
+
+### Migration
+
+`_var.php` was renamed to `_init.php`. Existing applications must rename their copied file and update every include from `_var.php` to `_init.php`; no compatibility alias is provided.
 
 ## Security basics
 

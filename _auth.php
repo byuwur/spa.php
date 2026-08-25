@@ -2,7 +2,7 @@
 /*
  * File: _auth.php
  * Desc: Handles user auth and session management
- * Deps: /_var.php, "{$TO_HOME}/_functions.php", "{$TO_HOME}/_config.php", "{$TO_HOME}/_routes.php";
+ * Deps: /_init.php, "{$TO_HOME}/_functions.php", "{$TO_HOME}/_config.php", "{$TO_HOME}/_routes.php";
  * Copyright (c) 2026 Andrés Trujillo [Mateus] byUwUr
  */
 

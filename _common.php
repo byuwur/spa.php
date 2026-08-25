@@ -2,7 +2,7 @@
 /* 
  * File: _common.php
  * Desc: Handles common initializations such as language and theme; it also includes project-wide common variables
- * Deps: /_var.php, /_functions.php
+ * Deps: /_init.php, /_functions.php
  * Copyright (c) 2026 Andrés Trujillo [Mateus] byUwUr
  */
 

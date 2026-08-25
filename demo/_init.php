@@ -1,7 +1,7 @@
 <?php
 /* 
- * File: _var.php
- * Desc: Initializes the system environment, sets up path-related variables, and optionally stores these values in the browser's localStorage. (MUST be included in every file)
+ * File: _init.php
+ * Desc: Initializes the application-specific SPA environment, paths, storage, and runtime state. (MUST be included in every file)
  * Deps: none
  * Copyright (c) 2026 Andrés Trujillo [Mateus] byUwUr
  */

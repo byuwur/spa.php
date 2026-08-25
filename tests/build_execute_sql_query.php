@@ -1,5 +1,5 @@
 <?php
-require_once "../_var.php";
+require_once "../_init.php";
 require_once "{$TO_HOME}/_functions.php";
 require_once "{$TO_HOME}/vendor/autoload.php";
 $dotenv = Dotenv\Dotenv::createImmutable($TO_HOME);

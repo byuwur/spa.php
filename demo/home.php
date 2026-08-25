@@ -3,14 +3,14 @@
 /*
  * File: home.php
  * Desc: Entry point for the Single Page Application (SPA). This file initializes configurations, handles routing, and loads the main structure of the SPA, including the header, content container, and footer. The page also includes necessary CSS and JS resources.
- * Deps: ./_var.php, _common.php, _functions.php, _plugins.php, ./_routes.php, _router.php
+ * Deps: ./_init.php, _common.php, _functions.php, _plugins.php, ./_routes.php, _router.php
  * Copyright (c) 2026 Andrés Trujillo [Mateus] byUwUr
  */
 
 // Sets a flag to enable the inclusion of local storage variables in the HTML output
 $setLocalStorage = true;
-// Include the main variable configuration file
-require_once "./_var.php";
+// Initialize this application's environment, paths, storage, and runtime state
+require_once "./_init.php";
 // Include utility functions
 require_once "{$TO_HOME}/../_functions.php";
 // Include common functions and initializations
