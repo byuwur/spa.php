@@ -154,7 +154,7 @@ function exit_json(json) {
 function init_websocket(options) {
   const { host, port, path, elementId, autoConnect = true, logging = false, onOpen = () => {}, onClose = () => {}, onError = () => {}, onMessage = () => {}, reconnDelay = 3000, maxRetries = 3 } = options;
   // Developer mode?
-  const appIsDEV = localStorage.getItem("APP_ENV") === "DEV";
+  const appIsDEV = byStorage.getItem("APP_ENV") === "DEV";
   if (appIsDEV) console.log(`init_websocket():`, options);
   // Check if elementId is a valid ID (#id)
   const inputId = elementId.match(/#[a-zA-Z0-9-_]+/);
@@ -386,7 +386,7 @@ function add_csrf_token(formData, method = "POST") {
 function make_http_request(options) {
   const { $elementId, $url, $type = "POST", $returnType = "json", $_get = {}, $_post = [], ajaxOpts = {}, loudFail = false } = options;
   // Developer mode?
-  const appIsDEV = localStorage.getItem("APP_ENV") === "DEV";
+  const appIsDEV = byStorage.getItem("APP_ENV") === "DEV";
   // Check if $elementId is a valid ID (#id)
   const inputId = $elementId.match(/#[a-zA-Z0-9-_]+/);
   if (!inputId) return console.warn(`Insert a valid element ID.`);
@@ -452,7 +452,7 @@ function make_http_request(options) {
 function element_make_http_request(options) {
   const { $elementId, $trigger = "submit", $url, $type = "POST", $returnType = "json", $_get = {}, $_post = [], beforeFn = () => {}, doneFn = () => {}, failFn = () => {}, alwaysFn = () => {}, ajaxOpts = {}, loudFail = true } = options;
   // Developer mode?
-  const appIsDEV = localStorage.getItem("APP_ENV") === "DEV";
+  const appIsDEV = byStorage.getItem("APP_ENV") === "DEV";
   if (appIsDEV) console.log(`element_make_http_request():`, options);
   // Check if $elementId is a valid ID (#id)
   const inputId = $elementId.match(/#[a-zA-Z0-9-_]+/);

@@ -16,16 +16,16 @@
   global.bySPA = global.bySPA || {};
   const bySPA = global.bySPA;
   // Initializes values retrieved from localStorage and sets up environment variables.
-  bySPA.URI = localStorage.getItem("URI") ?? "/";
-  bySPA.URL = localStorage.getItem("URL") ?? bySPA.URI;
-  bySPA._GET = parse_json(localStorage.getItem("_GET")) ?? {};
-  bySPA._POST = parse_json(localStorage.getItem("_POST")) ?? {};
+  bySPA.URI = byStorage.getItem("URI") ?? "/";
+  bySPA.URL = byStorage.getItem("URL") ?? bySPA.URI;
+  bySPA._GET = parse_json(byStorage.getItem("_GET")) ?? {};
+  bySPA._POST = parse_json(byStorage.getItem("_POST")) ?? {};
   bySPA.HISTORY_INDEX = -1;
-  bySPA.APP_ENV = localStorage.getItem("APP_ENV") ?? "PROD";
-  bySPA.APP_VERSION = localStorage.getItem("APP_VERSION") ?? "0.1by";
-  bySPA.ROUTES = parse_json(localStorage.getItem("ROUTES")) ?? {};
-  bySPA.TO_HOME = localStorage.getItem("TO_HOME");
-  bySPA.HOME_PATH = localStorage.getItem("HOME_PATH");
+  bySPA.APP_ENV = byStorage.getItem("APP_ENV") ?? "PROD";
+  bySPA.APP_VERSION = byStorage.getItem("APP_VERSION") ?? "0.1by";
+  bySPA.ROUTES = parse_json(byStorage.getItem("ROUTES")) ?? {};
+  bySPA.TO_HOME = byStorage.getItem("TO_HOME");
+  bySPA.HOME_PATH = byStorage.getItem("HOME_PATH");
   bySPA.HISTORY_PATH = [];
   // These properties can be previously initialized to be overriden
   byCommon.GLOBAL_TRANSITION_DURATION = byCommon.GLOBAL_TRANSITION_DURATION || 199;
