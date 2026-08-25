@@ -110,75 +110,74 @@ if ($configured_app_url)
   $HOME_PATH = rtrim($configured_app_url, "/");
 if (isset($debug) && $debug)
   echo "HOME_PATH: " . $HOME_PATH . " <br>\n";
-?>
-<script>
-  "use strict";
-  /*
-   * File: _storage.js
-   * Desc: Manages the Single Page Application (SPA) storage.
-   * Deps: none
-   * Copyright (c) 2026 Andrés Trujillo [Mateus] byUwUr
-   */
-
-  /**
-   * Provides namespaced SPA storage with an in-memory fallback.
-   * Legacy unprefixed keys are migrated on first read.
-   * @namespace byStorage
-   */
-  (function (global) {
-    global.byStorage = global.byStorage || {};
-    const byStorage = global.byStorage;
-    byStorage.memory = {};
-    byStorage.base = new URL(document.baseURI || global.location.href).pathname.replace(/\/[^/]*$/, "") || "/";
-    byStorage.prefix = `bySPA:${byStorage.base}:`;
-
-    /**
-     * Gets a stored value, migrating a legacy key when needed.
-     * @param {string} key
-     * @returns {string|null}
-     */
-    byStorage.getItem = function (key) {
-      try {
-        const value = global.localStorage.getItem(byStorage.prefix + key);
-        if (value !== null) return value;
-        // Migrate legacy unprefixed storage.
-        const legacy = global.localStorage.getItem(key);
-        if (legacy !== null) global.localStorage.setItem(byStorage.prefix + key, legacy);
-        return legacy;
-      } catch (_) {
-        return Object.prototype.hasOwnProperty.call(byStorage.memory, key) ? byStorage.memory[key] : null;
-      }
-    };
-
-    /**
-     * Stores a value using the SPA namespace.
-     * @param {string} key
-     * @param {*} value
-     * @returns {void}
-     */
-    byStorage.setItem = function (key, value) {
-      byStorage.memory[key] = String(value);
-      try {
-        global.localStorage.setItem(byStorage.prefix + key, value);
-      } catch (_) { }
-    };
-
-    /**
-     * Removes a stored value.
-     * @param {string} key
-     * @returns {void}
-     */
-    byStorage.removeItem = function (key) {
-      delete byStorage.memory[key];
-      try {
-        global.localStorage.removeItem(byStorage.prefix + key);
-      } catch (_) { }
-    };
-  })(typeof window !== "undefined" ? window : this);
-</script>
-<?php
+// _storaje.js code only exists in first invokation
 $json_script_flags = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE;
 if (isset($setLocalStorage) && $setLocalStorage) { ?>
+  <script>
+    "use strict";
+    /*
+     * File: _storage.js
+     * Desc: Manages the Single Page Application (SPA) storage.
+     * Deps: none
+     * Copyright (c) 2026 Andrés Trujillo [Mateus] byUwUr
+     */
+
+    /**
+     * Provides namespaced SPA storage with an in-memory fallback.
+     * Legacy unprefixed keys are migrated on first read.
+     * @namespace byStorage
+     */
+    (function (global) {
+      global.byStorage = global.byStorage || {};
+      const byStorage = global.byStorage;
+      byStorage.memory = {};
+      byStorage.base = new URL(document.baseURI || global.location.href).pathname.replace(/\/[^/]*$/, "") || "/";
+      byStorage.prefix = `bySPA:${byStorage.base}:`;
+
+      /**
+       * Gets a stored value, migrating a legacy key when needed.
+       * @param {string} key
+       * @returns {string|null}
+       */
+      byStorage.getItem = function (key) {
+        try {
+          const value = global.localStorage.getItem(byStorage.prefix + key);
+          if (value !== null) return value;
+          // Migrate legacy unprefixed storage.
+          const legacy = global.localStorage.getItem(key);
+          if (legacy !== null) global.localStorage.setItem(byStorage.prefix + key, legacy);
+          return legacy;
+        } catch (_) {
+          return Object.prototype.hasOwnProperty.call(byStorage.memory, key) ? byStorage.memory[key] : null;
+        }
+      };
+
+      /**
+       * Stores a value using the SPA namespace.
+       * @param {string} key
+       * @param {*} value
+       * @returns {void}
+       */
+      byStorage.setItem = function (key, value) {
+        byStorage.memory[key] = String(value);
+        try {
+          global.localStorage.setItem(byStorage.prefix + key, value);
+        } catch (_) { }
+      };
+
+      /**
+       * Removes a stored value.
+       * @param {string} key
+       * @returns {void}
+       */
+      byStorage.removeItem = function (key) {
+        delete byStorage.memory[key];
+        try {
+          global.localStorage.removeItem(byStorage.prefix + key);
+        } catch (_) { }
+      };
+    })(typeof window !== "undefined" ? window : this);
+  </script>
   <script>
     // Store the calculated paths in the browser's localStorage
     <?php if (($_ENV["APP_ENV"] ?? $NOTENV_APP_ENV) === "DEV") { ?>
