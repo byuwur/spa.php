@@ -71,33 +71,29 @@ if (isset($_GET["lang"])) {
 if (isset($setLocalStorage) && $setLocalStorage) {
   ?>
   <html lang="<?= escape_html($APP_LANG) ?>" dir="ltr">
-  <script>
-    byStorage.setItem("APP_LANG", <?= js_encode($APP_LANG) ?>);
-    byStorage.setItem("APP_THEME", <?= js_encode($APP_THEME) ?>);
-  </script>
   <?php
 }
-// JSON script flags fallback
-$json_script_flags = $json_script_flags ?? JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE;
 ?>
 <script>
   // Store environment and routing information in localStorage for client-side use
+  byStorage.setItem("APP_LANG", <?= js_encode($APP_LANG) ?>);
+  byStorage.setItem("APP_THEME", <?= js_encode($APP_THEME) ?>);
   <?php if (($_ENV["APP_ENV"] ?? $NOTENV_APP_ENV) === "DEV") { ?>
     console.log("=== PHP ===",);
-    console.log("APP_ENV", <?= json_encode($_ENV["APP_ENV"] ?? $NOTENV_APP_ENV, $json_script_flags) ?>);
-    console.log("APP_VERSION", <?= json_encode($_ENV["APP_VERSION"] ?? "0.1by", $json_script_flags) ?>);
-    console.log("URI", <?= json_encode($uri, $json_script_flags) ?>);
-    console.log("URL", <?= json_encode($url, $json_script_flags) ?>);
-    console.log("ROUTES", JSON.stringify(<?= json_encode($routes, $json_script_flags) ?>));
-    console.log("_GET", JSON.stringify(<?= json_encode($_GET, $json_script_flags) ?>));
-    console.log("_POST", JSON.stringify(<?= json_encode($_POST, $json_script_flags) ?>));
+    console.log("APP_ENV", <?= js_encode($_ENV["APP_ENV"] ?? $NOTENV_APP_ENV) ?>);
+    console.log("APP_VERSION", <?= js_encode($_ENV["APP_VERSION"] ?? "0.1by") ?>);
+    console.log("URI", <?= js_encode($uri) ?>);
+    console.log("URL", <?= js_encode($url) ?>);
+    console.log("ROUTES", JSON.stringify(<?= js_encode($routes) ?>));
+    console.log("_GET", JSON.stringify(<?= js_encode($_GET) ?>));
+    console.log("_POST", JSON.stringify(<?= js_encode($_POST) ?>));
     console.log("=== PHP ===",);
   <?php } ?>
-  byStorage.setItem("APP_ENV", <?= json_encode($_ENV["APP_ENV"] ?? $NOTENV_APP_ENV, $json_script_flags) ?>);
-  byStorage.setItem("APP_VERSION", <?= json_encode($_ENV["APP_VERSION"] ?? "0.1by", $json_script_flags) ?>);
-  byStorage.setItem("URI", <?= json_encode($uri, $json_script_flags) ?>);
-  byStorage.setItem("URL", <?= json_encode($url, $json_script_flags) ?>);
-  byStorage.setItem("ROUTES", JSON.stringify(<?= json_encode($routes, $json_script_flags) ?>));
-  byStorage.setItem("_GET", JSON.stringify(<?= json_encode($_GET, $json_script_flags) ?>));
-  byStorage.setItem("_POST", JSON.stringify(<?= json_encode($_POST, $json_script_flags) ?>));
+  byStorage.setItem("APP_ENV", <?= js_encode($_ENV["APP_ENV"] ?? $NOTENV_APP_ENV) ?>);
+  byStorage.setItem("APP_VERSION", <?= js_encode($_ENV["APP_VERSION"] ?? "0.1by") ?>);
+  byStorage.setItem("URI", <?= js_encode($uri) ?>);
+  byStorage.setItem("URL", <?= js_encode($url) ?>);
+  byStorage.setItem("ROUTES", JSON.stringify(<?= js_encode($routes) ?>));
+  byStorage.setItem("_GET", JSON.stringify(<?= js_encode($_GET) ?>));
+  byStorage.setItem("_POST", JSON.stringify(<?= js_encode($_POST) ?>));
 </script>
