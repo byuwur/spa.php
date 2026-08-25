@@ -23,6 +23,7 @@ function js_encode($value): string
 
 /** 
  * Sends a JSON response with status, error, message, and optional data, then terminates the script.
+ * Existing output buffers are discarded first so accidental output cannot corrupt the JSON document.
  * @param int $status HTTP status code.
  * @param bool $error Indicates if the response represents an error.
  * @param string $message Message to include in the response.
@@ -31,16 +32,17 @@ function js_encode($value): string
  */
 function api_respond(int $status, bool $error, string $message, array $data = []): void
 {
+  // Discard framework/application noise before headers and the one intended JSON body.
+  while (ob_get_level() > 0)
+    ob_end_clean();
   http_response_code($status);
-  header("Content-Type: application/json");
+  header("Content-Type: application/json; charset=UTF-8");
   $response = new stdClass();
   $response->status = $status;
   $response->error = $error;
   $response->message = $message;
   $response->data = $data;
   echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-  while (ob_get_level() > 0)
-    ob_end_flush();
   exit;
 }
 
