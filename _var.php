@@ -18,6 +18,46 @@ function std_dir_separator(string $path): string
   return str_replace("\\", "/", $path);
 }
 
+/**
+ * Returns whether the immediate client is an explicitly trusted proxy.
+ * TRUST_PROXY must be enabled and REMOTE_ADDR must exactly match an address in TRUSTED_PROXIES.
+ * @return bool Whether forwarded request metadata may be considered.
+ */
+function is_trusted_proxy(): bool
+{
+  if (!filter_var($_ENV["TRUST_PROXY"] ?? false, FILTER_VALIDATE_BOOLEAN))
+    return false;
+  $trusted = array_filter(array_map("trim", explode(",", $_ENV["TRUSTED_PROXIES"] ?? "")));
+  return in_array($_SERVER["REMOTE_ADDR"] ?? "", $trusted, true);
+}
+
+/**
+ * Returns the externally visible request scheme.
+ * APP_URL has priority. Forwarded protocol is accepted only from a trusted proxy; otherwise direct HTTPS/server-port detection is used.
+ * @return string "http" or "https".
+ */
+function public_scheme(): string
+{
+  $app_url = filter_var($_ENV["APP_URL"] ?? null, FILTER_VALIDATE_URL);
+  if ($app_url)
+    return strtolower(parse_url($app_url, PHP_URL_SCHEME) ?: "http");
+  if (is_trusted_proxy()) {
+    $forwarded = strtolower(trim(explode(",", $_SERVER["HTTP_X_FORWARDED_PROTO"] ?? "")[0]));
+    if (in_array($forwarded, ["http", "https"], true))
+      return $forwarded;
+  }
+  return ((!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] !== "off") || ($_SERVER["SERVER_PORT"] ?? "") === "443") ? "https" : "http";
+}
+
+/**
+ * Returns whether the public-facing request uses HTTPS.
+ * @return bool Public HTTPS state used by secure session cookies.
+ */
+function is_public_https(): bool
+{
+  return public_scheme() === "https";
+}
+
 // Check if we're on localhost for DEVbugging
 $NOTENV_APP_ENV = preg_match("/^(localhost|127\.0\.0\.1|\[::1\]|::1)(:\d+)?$/", $_SERVER["HTTP_HOST"] ?? "") ? "DEV" : "PROD";
 // Initializes the output buffer and sets up paths and environment variables.
@@ -41,7 +81,7 @@ $SYSTEM_ROOT = dirname($THIS__FILE__);
 if (isset($debug) && $debug)
   echo "SYSTEM_ROOT: " . $SYSTEM_ROOT . " <br>\n";
 // Determine the protocol (HTTP or HTTPS)
-$PROTOCOL = isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on" ? "https://" : "http://";
+$PROTOCOL = public_scheme() . "://";
 if (isset($debug) && $debug)
   echo "PROTOCOL: " . $PROTOCOL . " <br>\n";
 // Calculate the difference in directory depth between the current script and the root directory
@@ -53,11 +93,21 @@ $TO_HOME = $PATH_DIFF > 0 ? substr(str_repeat("../", $PATH_DIFF), 0, -1) : ".";
 if (isset($debug) && $debug)
   echo "TO_HOME: " . $TO_HOME . " <br>\n";
 // Get the current script's directory path
-$THIS_PATH = $IS_PHP_ON_SERVER ? dirname($PROTOCOL . $_SERVER["HTTP_HOST"] . $SERVER_PHP_SELF) : dirname($INVOKER__FILE__);
+$public_host = $_SERVER["HTTP_HOST"] ?? "localhost";
+// Forwarded hosts are user-controlled unless the immediate proxy is trusted.
+if (is_trusted_proxy()) {
+  $forwarded_host = trim(explode(",", $_SERVER["HTTP_X_FORWARDED_HOST"] ?? "")[0]);
+  if (preg_match("/^[a-z0-9.-]+(?::\d+)?$/i", $forwarded_host))
+    $public_host = $forwarded_host;
+}
+$THIS_PATH = $IS_PHP_ON_SERVER ? dirname($PROTOCOL . $public_host . $SERVER_PHP_SELF) : dirname($INVOKER__FILE__);
 if (isset($debug) && $debug)
   echo "THIS_PATH: " . $THIS_PATH . " <br>\n";
 // Set the absolute path to the home directory
 $HOME_PATH = $PATH_DIFF > 0 ? implode("/", array_slice(explode("/", $THIS_PATH), 0, -$PATH_DIFF)) : $THIS_PATH;
+$configured_app_url = filter_var($_ENV["APP_URL"] ?? null, FILTER_VALIDATE_URL);
+if ($configured_app_url)
+  $HOME_PATH = rtrim($configured_app_url, "/");
 if (isset($debug) && $debug)
   echo "HOME_PATH: " . $HOME_PATH . " <br>\n";
 // Store the calculated paths in the browser's localStorage

@@ -7,7 +7,7 @@
  */
 
 ini_set("session.use_strict_mode", "1");
-$is_https = (!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] != "off") || (($_SERVER["SERVER_PORT"] ?? "") == "443");
+$is_https = function_exists("is_public_https") ? is_public_https() : ((!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] != "off") || (($_SERVER["SERVER_PORT"] ?? "") == "443"));
 // Set the cookie params for the session, keep it secure
 $has_session_set_cookie = session_set_cookie_params([
   "lifetime" => 3600,
