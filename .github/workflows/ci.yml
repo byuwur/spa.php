@@ -13,6 +13,7 @@ jobs:
       - run: find . -name '*.php' -print0 | xargs -0 -n1 php -l
       - run: cd tests && php test_sql.php
       - run: php tests/test_proxy.php
-      - run: php tests/test_api_respond.php | php -r '$data=json_decode(stream_get_contents(STDIN), true); exit(($data["message"] ?? null) === "ok" ? 0 : 1);'
+      - run: |
+          php tests/test_api_respond.php | php -r '$data = json_decode(stream_get_contents(STDIN), true); exit(($data["message"] ?? null) === "ok" ? 0 : 1);'
       - run: node --check _functions.js && node --check _spa.js
       - run: composer validate --no-check-publish
