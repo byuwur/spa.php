@@ -52,9 +52,10 @@ function api_respond(int $status, bool $error, string $message, array $data = []
  * @param array $get GET parameters to include in the request.
  * @param array $post POST parameters to include in the request.
  * @param bool $json_decode Whether to try to decode the JSON response.
- * @return mixed The response from the request.
+ * @param bool $clog_error Whether it logs the error through frontend's console.
+ * @return mixed The response from the request, optionally JSON-decoded when valid.
  */
-function make_http_request(string $url, array $get = [], array $post = [], bool $json_decode = false)
+function make_http_request(string $url, array $get = [], array $post = [], bool $json_decode = false, bool $clog_error = false)
 {
   if (!validate_value($url, "url"))
     return console_error("CURL ERROR: Invalid URL.");
@@ -81,12 +82,17 @@ function make_http_request(string $url, array $get = [], array $post = [], bool 
   curl_setopt($req, CURLOPT_CAINFO, $cert_file);
   $response = curl_exec($req);
   if (curl_errno($req)) {
-    console_error("CURL HTTP2 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req) . " = Switching to HTTP1.1");
+    if ($clog_error)
+      console_error("CURL HTTP2 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req) . " = Switching to HTTP1.1");
+    error_log("CURL HTTP2 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req) . " = Switching to HTTP1.1");
     curl_setopt($req, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
     $response = curl_exec($req);
   }
-  if (curl_errno($req))
-    console_error("CURL HTTP1.1 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req));
+  if (curl_errno($req)) {
+    if ($clog_error)
+      console_error("CURL HTTP1.1 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req));
+    error_log("CURL HTTP1.1 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req));
+  }
   //curl_close($req);
   if ($forward_session && session_status() == PHP_SESSION_NONE)
     session_start();
@@ -102,12 +108,13 @@ function make_http_request(string $url, array $get = [], array $post = [], bool 
 /** 
  * Makes an HTTP CURL request to a given URL to check if responds correctly (200 - 299).
  * @param string $url The URL to send the request to.
- * @return bool The resource existence.
+ * @param bool $clog_error Whether it logs the error through frontend's console.
+ * @return bool Whether the remote response status is between 200 and 299.
  */
-function remote_file_exists(string $url): bool
+function remote_file_exists(string $url, bool $clog_error = false): bool
 {
   if (!validate_value($url, "url")) {
-    console_error("CURL ERROR: Invalid URL.");
+    error_log("CURL ERROR: Invalid URL.");
     return false;
   }
   global $TO_HOME, $SYSTEM_ROOT;
@@ -123,12 +130,16 @@ function remote_file_exists(string $url): bool
   curl_setopt($req, CURLOPT_CAINFO, $cert_file);
   curl_exec($req);
   if (curl_errno($req)) {
-    console_error("CURL HTTP2 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req) . " = Switching to HTTP1.1");
+    if ($clog_error)
+      console_error("CURL HTTP2 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req) . " = Switching to HTTP1.1");
+    error_log("CURL HTTP2 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req) . " = Switching to HTTP1.1");
     curl_setopt($req, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
     curl_exec($req);
   }
   if (curl_errno($req))
-    console_error("CURL HTTP1.1 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req));
+    if ($clog_error)
+      console_error("CURL HTTP1.1 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req));
+  error_log("CURL HTTP1.1 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req));
   $http_code = curl_getinfo($req, CURLINFO_RESPONSE_CODE);
   //curl_close($req);
   return $http_code >= 200 && $http_code <= 299;
