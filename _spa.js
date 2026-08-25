@@ -414,6 +414,11 @@
       try {
         const absolute = new URL(href, window.location.href);
         if (absolute.origin != window.location.origin) return;
+        const home = new URL(`${bySPA.HOME_PATH.replace(/\/$/, "")}/`, document.baseURI);
+        const insideHome = absolute.pathname === home.pathname.replace(/\/$/, "") || absolute.pathname.startsWith(home.pathname);
+        const candidate = bySPA.parseURL(`${absolute.pathname}${absolute.search}`).path;
+        // Preserve normal navigation to sibling applications. Root-relative virtual routes remain routable when they are explicitly configured.
+        if (!insideHome && !Object.prototype.hasOwnProperty.call(bySPA.ROUTES, candidate)) return;
         nextURL = bySPA.HOME_PATH && absolute.href.startsWith(bySPA.HOME_PATH) ? absolute.href.slice(bySPA.HOME_PATH.length) || "/" : `${absolute.pathname}${absolute.search}`;
       } catch (error) {
         return;
