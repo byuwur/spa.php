@@ -346,7 +346,7 @@ function common_keys(array $array): array
  * @param array $params Custom conditions that involve more complex logic (optional - not recommended due to performance).
  * @param array $nested Custom conditions that involve more complex logic (optional - not recommended due to performance).
  * @param array $joins An array of JOINs to be included in the query (optional - not recommended due to performance).
- * @param array $options Build options. "strict" rejects invalid fields and unscoped mutations. "allow_full_table" explicitly allows unscoped UPDATE/DELETE queries.
+ * @param array $options Build options. "strict" rejects invalid fields. "allow_full_table" explicitly authorizes UPDATE/DELETE without a built condition and defaults to false.
  * @return stdClass An object containing the built query string, joins, fields, conditions, parameter types, and parameter values.
  */
 function build_sql_query(string $method, string $columns, string $table, array $fields, array $conditions, string $end, array $valid, array $params = [], array $nested = [], array $joins = [], array $options = []): stdClass
@@ -674,8 +674,9 @@ function build_sql_query(string $method, string $columns, string $table, array $
     }
   }
 
-  // Full-table mutations require an explicit opt-in when strict mode is enabled.
-  if ($strict && in_array($method, ["U", "D"], true) && !count($return->conditions) && !$allow_full_table)
+  // Relaxed validation must never imply permission for a full-table mutation.
+  // That destructive scope requires its own explicit authorization.
+  if (in_array($method, ["U", "D"], true) && !count($return->conditions) && !$allow_full_table)
     return $fail("Refusing to build an unscoped mutation.");
 
   // Build the SQL query. The trusted ending also applies to UPDATE/DELETE for LIMIT support.

@@ -236,6 +236,10 @@ sql_test_assert($legacy_noop->error && $legacy_noop->errno === 999, "Legacy no-o
 // Strict mode blocks full-table mutations unless explicitly allowed.
 $unsafe = build_sql_query("U", "", "test", ["name"], [], "", $valid, [["name" => "Unsafe"]], [], [], ["strict" => true]);
 sql_test_assert($unsafe->error && $unsafe->query === "", "Strict mode should reject unscoped updates.");
+$unsafe_relaxed = build_sql_query("D", "", "test", [], ["tenant_typo" => 1], "", $valid);
+sql_test_assert($unsafe_relaxed->error && $unsafe_relaxed->query === "", "Relaxed DELETE with an unknown condition should be rejected.");
+$unsafe_empty_in = build_sql_query("D", "", "test", [], ["ids" => []], "", ["ids" => ["column" => "ID", "type" => "i", "condition" => "in"]]);
+sql_test_assert(!$unsafe_empty_in->error && $unsafe_empty_in->query === "DELETE FROM test WHERE 0 = 1", "DELETE with an empty IN condition should match nothing.");
 $allowed = build_sql_query("U", "", "test", ["name"], [], "", $valid, [["name" => "Allowed"]], [], [], ["strict" => true, "allow_full_table" => true]);
 sql_test_assert(!$allowed->error && $allowed->query === "UPDATE test SET NAME = ?", "Full-table mutations should require explicit permission.");
 
