@@ -6,7 +6,7 @@
 
 Test it out at: [byuwur.co/spa.php/](https://byuwur.co/spa.php/)
 
-Looking for an even lighter SPA micro-framework with vanilla JS? Check out [byuwur/spa.js](https://github.com/byuwur/spa.js)
+Looking for a static SPA micro-framework/toolkit? Check out [byuwur/spa.js](https://github.com/byuwur/spa.js).
 
 ## What's this about?
 
@@ -48,7 +48,7 @@ application-root/
 - **home.php:** Sets `$setLocalStorage`, loads the application and framework files in order, renders the shell, and is the rewrite target for SPA routes. It may be renamed only when the server rules are updated with it.
 - **\_var.php:** Must be owned by each independent SPA root because its own filesystem and URL location establish `$SYSTEM_ROOT`, `$HOME_PATH`, `$TO_HOME`, and related values. Do not replace it with `spa.php/_var.php`; use the framework file as the starting implementation for the application copy.
 - **\_routes.php:** Must define `$routes` before `spa.php/_router.php` is included. It can be stored elsewhere only if `home.php` explicitly loads that location first.
-- **.htaccess or equivalent server configuration:** Must route non-file requests to `home.php?uri=...`. Apache uses an application-root `.htaccess`; nginx uses equivalent `try_files` configuration such as `spa.php/nginx.location.router.conf`.
+- **.htaccess or equivalent server configuration:** Must route non-file requests to `home.php?uri=...`. Apache uses an application-root `.htaccess`; nginx uses equivalent `try_files` configuration based on `spa.php/nginx.conf`.
 - **spa.php/:** In a normal consumer, the framework directory must remain reachable by PHP includes and browser asset URLs at this application-root path. The repository demo references the parent directory instead because it already is the framework checkout. A normal Git submodule still checks out the full directory.
 
 ### Framework/Core files [in priority order]
@@ -84,7 +84,7 @@ application-root/
 - **home.php:** Redirects requests made to the deployed repository root into `demo/`; it is not the application shell consumers should copy.
 - **index.html:** Provides the same static fallback redirect when PHP `DirectoryIndex` handling is unavailable.
 - **.htaccess:** Routes repository-root requests through the compatibility entry point and retains the repository's security and error directives. Consumer applications need their own application-root routing rules.
-- **nginx.location.router.conf:** Shows the equivalent nginx route fallback that a consuming application can adapt in its server configuration.
+- **nginx.conf:** Shows the equivalent nginx route fallback that a consuming application can adapt in its server configuration.
 - **.env.example:** Documents optional environment values consumed by database, authentication, request, and development behavior; the actual environment belongs to the application.
 - **.nojekyll:** Keeps static files unchanged when the repository is published through GitHub Pages; it is not part of the PHP runtime.
 
@@ -98,8 +98,21 @@ The root `img/icon-back.png`, `img/icon-fore.png`, and `img/byuwur.png` remain b
 
 1. Clone the repository to your local machine.
 2. Ensure your web server has PHP installed.
-3. Update `.htaccess` or `nginx.location.router.conf` to match your server mount path.
-4. Configure your environment variables in the `.env` file using `.env.example`.
+3. Update `.htaccess` or `nginx.conf` to match your server mount path.
+
+## Runtime contracts
+
+`spa.php` is a hybrid SPA micro-framework/toolkit. PHP 8.1+, jQuery, and the core framework scripts are hard runtime dependencies; Bootstrap and other bundled integrations are optional unless used by the application.
+
+Route data precedence is fixed: route-defined `GET`/`POST` values override `/$/` path parameters, which override ordinary query parameters. Route state is namespaced per application path and falls back to memory when browser storage is unavailable; legacy values are migrated automatically.
+
+Navigation emits `bySPA:before-unload`, then `bySPA:load` on success or `bySPA:error` on failure. Older slow responses are ignored. `bySPA.REQUEST_TIMEOUT` defaults to 30 seconds.
+
+Set `APP_URL` to the public application URL behind a proxy. Alternatively enable `TRUST_PROXY` and list exact proxy addresses in `TRUSTED_PROXIES`; forwarded headers from other clients are ignored.
+
+Login regenerates the session ID by default. Applications remain responsible for authorization and for calling CSRF checks on state-changing endpoints. Validate or allowlist user-influenced outbound URLs to prevent SSRF. HTML fragments are trusted application HTML.
+
+`build_sql_query()` rejects `UPDATE` and `DELETE` when no valid condition is built. Intentional full-table mutations require the explicit `allow_full_table => true` option; relaxed validation does not grant destructive scope. 4. Configure your environment variables in the `.env` file using `.env.example`.
 
 ## Usage
 
