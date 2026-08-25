@@ -13,6 +13,8 @@ $LANG = [
   "nav.home" => "ホーム",
   "nav.page" => "ページ",
   "nav.video" => "字幕付き動画デモ",
+  "nav.json" => "JSON",
+  "nav.md" => "MarkDown",
   "nav.error" => "エラー",
 
   "sidebar.toggle" => "サイドバーメニューを切り替え",

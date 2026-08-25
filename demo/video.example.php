@@ -28,6 +28,11 @@ require_once "{$TO_HOME}/common.example.php";
   </div>
 </div>
 <script>
+  /*
+   * Keep fragment-local declarations inside this callback.
+   * SPA routes execute in the same document, so top-level const/let bindings
+   * remain declared and cause redeclaration errors when a fragment loads again.
+   */
   $(() => {
     document.title = <?= js_encode($titles[$title_index]) ?>;
     byCommon.init();

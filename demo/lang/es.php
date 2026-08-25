@@ -13,6 +13,8 @@ $LANG = [
   "nav.home" => "Inicio",
   "nav.page" => "Página",
   "nav.video" => "Demo Video Subtitulado",
+  "nav.json" => "JSON",
+  "nav.md" => "MarkDown",
   "nav.error" => "Error",
 
   "sidebar.toggle" => "Alternar menú lateral",

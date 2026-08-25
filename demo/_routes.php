@@ -16,6 +16,8 @@ $ROUTE_PAGE_EN = "page";
 $ROUTE_HOME_JA = "ja/home";
 $ROUTE_PAGE_JA = "ja/page";
 $ROUTE_VIDEO = "video";
+$ROUTE_JSON = "json";
+$ROUTE_MD = "md";
 $ROUTE_WEBSOCKET = "socket";
 $ROUTE_PDF = "pdf";
 
@@ -48,6 +50,8 @@ $routes = [
   "/{$ROUTE_PAGE_EN}" => ["URI" => "/page.example.php", "GET" => ["lang" => "en"], ...$ROOT_COMPONENTS],
   "/{$ROUTE_PAGE_JA}" => ["URI" => "/page.example.php", "GET" => ["lang" => "ja"], ...$ROOT_COMPONENTS],
   "/{$ROUTE_VIDEO}" => ["URI" => "/video.example.php", "GET" => [], ...$ROOT_COMPONENTS],
+  "/{$ROUTE_JSON}" => ["URI" => "/json.example.php", "GET" => [], ...$ROOT_COMPONENTS],
+  "/{$ROUTE_MD}" => ["URI" => "/md.example.php", "GET" => [], ...$ROOT_COMPONENTS],
   //"/{$ROUTE_WEBSOCKET}" => ["URI" => "/websocket.example.php", "GET" => [], ...$ROOT_COMPONENTS],
   "/{$ROUTE_PDF}" => ["FILE" => "/img/pdf/sample.pdf"],
 ];
