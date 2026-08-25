@@ -6,7 +6,7 @@
 
 Test it out at: [byuwur.co/spa.php/](https://byuwur.co/spa.php/)
 
-Looking for a static SPA micro-framework/toolkit? Check out [byuwur/spa.js](https://github.com/byuwur/spa.js).
+Looking for a static SPA micro-framework? Check out [byuwur/spa.js](https://github.com/byuwur/spa.js).
 
 ## What's this about?
 
@@ -104,7 +104,9 @@ The root `img/icon-back.png`, `img/icon-fore.png`, and `img/byuwur.png` remain b
 
 ## Runtime contracts
 
-`spa.php` is a hybrid SPA micro-framework/toolkit. PHP 8.1+, jQuery, and the core framework scripts are hard runtime dependencies; Bootstrap and other bundled integrations are optional unless used by the application.
+`spa.php` is a hybrid SPA micro-framework. PHP 8.1+, jQuery, and the core framework scripts are hard runtime dependencies; Bootstrap and other bundled integrations are optional unless used by the application.
+
+`bySPA.VERSION` is the framework/runtime version and can be read with `console.log(bySPA.VERSION)`. `bySPA.APP_VERSION` remains the consuming application's version.
 
 Route data precedence is fixed: route-defined `GET`/`POST` values override `/$/` path parameters, which override ordinary query parameters. Route state is namespaced per application path and falls back to memory when browser storage is unavailable; legacy values are migrated automatically.
 
@@ -124,7 +126,7 @@ Login regenerates the session ID by default. Applications remain responsible for
 4. Add custom functionality by creating new PHP files and adding them to the routes.
 5. Navigate. Suit yourself.
 
-### Migration
+### Migration [v14]
 
 `_var.php` was renamed to `_init.php`. Existing applications must rename their copied file and update every include from `_var.php` to `_init.php`; no compatibility alias is provided.
 

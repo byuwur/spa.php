@@ -15,6 +15,7 @@
 (function (global) {
   global.bySPA = global.bySPA || {};
   const bySPA = global.bySPA;
+  bySPA.VERSION = "14";
   // Initializes values retrieved from localStorage and sets up environment variables.
   bySPA.URI = byStorage.getItem("URI") ?? "/";
   bySPA.URL = byStorage.getItem("URL") ?? bySPA.URI;
@@ -384,8 +385,9 @@
   bySPA.init = function () {
     if (typeof jQuery === "undefined" && !window.jQuery) return console.error("Init _spa.js FAILED. No jQuery found.");
     // Log debug information if in development mode
+    console.log("SPA_VERSION=", bySPA.VERSION);
+    console.log("APP_VERSION=", bySPA.APP_VERSION);
     if (bySPA.APP_ENV === "DEV") {
-      console.log("APP_VERSION=", bySPA.APP_VERSION);
       console.log("TO_HOME=", bySPA.TO_HOME);
       console.log("HOME_PATH=", bySPA.HOME_PATH);
       console.log("URI=", bySPA.URI);

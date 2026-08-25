@@ -12,10 +12,15 @@ function proxy_assert(bool $condition, string $message): void
 
 $application_root = std_dir_separator(realpath(__DIR__ . "/.."));
 $demo_home = file_get_contents(__DIR__ . "/../demo/home.php");
+$spa_runtime = file_get_contents(__DIR__ . "/../_spa.js");
 proxy_assert(basename($THIS__FILE__) === "_init.php", "The renamed initialization file loads.");
 proxy_assert($SYSTEM_ROOT === $application_root && $HOME_PATH === $application_root && $TO_HOME === "..", "Nested entry-point paths remain application-relative.");
 proxy_assert(strpos($demo_home, '"./_init.php"') < strpos($demo_home, '"{$TO_HOME}/_routes.php"') && strpos($demo_home, '"{$TO_HOME}/_routes.php"') < strpos($demo_home, '"{$TO_HOME}/../_router.php"'), "Initialization runs before routes and the router.");
 proxy_assert(str_contains(file_get_contents(__DIR__ . "/../_init.php"), "global.byStorage"), "Early byStorage initialization remains available.");
+preg_match_all('/bySPA\.VERSION\s*=\s*"([^"]+)";/', $spa_runtime, $framework_versions);
+proxy_assert(count($framework_versions[1]) === 1 && $framework_versions[1][0] !== "", "The SPA runtime has one framework version source.");
+proxy_assert(str_contains($spa_runtime, 'bySPA.APP_VERSION = byStorage.getItem("APP_VERSION") ?? "0.1by";'), "The consuming application version remains unchanged.");
+proxy_assert(strpos($spa_runtime, "bySPA.VERSION =") < strpos($spa_runtime, 'console.log("SPA_VERSION=", bySPA.VERSION);'), "The framework version is initialized before DEV startup logging.");
 
 proxy_assert(public_scheme() === "http", "Direct HTTP is detected.");
 $_SERVER["HTTP_X_FORWARDED_PROTO"] = "https";
