@@ -31,6 +31,21 @@
   byCommon.GLOBAL_TRANSITION_DURATION = byCommon.GLOBAL_TRANSITION_DURATION || 199;
 
   /**
+   * Builds a fragment request URL while preserving query parameters already present in the route URI.
+   * @param {string} path Route fragment path, optionally containing a query string.
+   * @param {Object} [get={}] Additional GET values. These replace matching URI query values.
+   * @return {string} Absolute request URL, safe for nested deployments.
+   */
+  bySPA.buildRequestURL = function (path, get = {}) {
+    const base = `${String(bySPA.HOME_PATH || window.location.origin).replace(/\/$/, "")}/`;
+    const target = new URL(String(path || "/null").replace(/^\/+/, ""), base);
+    Object.entries(get).forEach(function ([key, value]) {
+      if (value !== undefined && value !== null) target.searchParams.set(key, value);
+    });
+    return target.href;
+  };
+
+  /**
    * Updates local route variables in memory.
    * @param {object} state The current route state.
    */
@@ -308,7 +323,7 @@
     for (let key in component || {}) componentLoads.push(bySPA.reloadComponent(key, component[key], get, post));
     // Retrieve the page data
     return $.ajax({
-      url: `${bySPA.HOME_PATH}${uri ?? "/null"}?${new URLSearchParams(get).toString()}`,
+      url: bySPA.buildRequestURL(uri ?? "/null", get),
       type: "POST",
       data: { ...post },
       dataType: "text"

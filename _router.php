@@ -8,6 +8,10 @@
 
 // The rule must be previously configured in .htaccess or nginx.conf
 // Initialize the URI from the GET parameter, defaulting to "/"
+// Keep the browser query separately from the rewrite-only `uri` value so the
+// initial client fragment request receives the same ordinary query parameters.
+$request_query = $_GET;
+unset($request_query["uri"]);
 $uri = is_string($_GET["uri"] ?? null) ? $_GET["uri"] : "/";
 // Ensure the URI starts with a "/" and doesn't end with one
 if (!str_starts_with($uri, "/"))
@@ -15,7 +19,7 @@ if (!str_starts_with($uri, "/"))
 while (strlen($uri) > 1 && substr($uri, -1) == "/")
   $uri = substr($uri, 0, -1);
 // Store the processed URI
-$url = $uri;
+$url = $uri . (count($request_query) ? "?" . http_build_query($request_query) : "");
 // Fail early with a useful message instead of allowing malformed routes to
 // produce obscure client-side errors later.
 if (!is_array($routes))
