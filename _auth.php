@@ -36,10 +36,10 @@ session_start();
 /**
  * Logs the user in by regenerating session ID if requested and merging session data.
  * @param array $session Data to merge with the current session.
- * @param bool $regen Whether to regenerate the session ID.
+ * @param bool $regen Whether to regenerate the session ID. Defaults to true; pass false only for explicit legacy compatibility.
  * @return bool Always returns true.
  */
-function login($session = [], $regen = false)
+function login($session = [], $regen = true)
 {
   if ($regen)
     session_regenerate_id(true);
@@ -78,10 +78,8 @@ function logout()
   global $is_https;
   if (session_status() != PHP_SESSION_ACTIVE)
     return false;
-  $session_file = session_save_path() . "/sess_" . session_id();
   $_SESSION = [];
   session_unset();
-  session_gc();
   session_destroy();
   setcookie(session_name(), "", [
     "expires" => time() - 600,
@@ -91,8 +89,6 @@ function logout()
     "httponly" => true,
     "samesite" => "Strict"
   ]);
-  if (file_exists($session_file))
-    @unlink($session_file);
   return false;
 }
 
