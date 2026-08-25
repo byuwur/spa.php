@@ -261,6 +261,7 @@
 
   /**
    * Routes the given URI within the SPA, managing state and navigation.
+   * Route GET values override /$/ parameters, which override ordinary query values.
    * @param {string} uri The URI to route.
    * @return {object} An object containing the routed path, URI, file, parameters, and components.
    */
@@ -270,7 +271,8 @@
     // Check if the path exists in the defined routes
     if (!Object.keys(bySPA.ROUTES).includes(path)) return null;
     const route = bySPA.ROUTES[path] ?? {};
-    const get = { ...(route?.GET ?? {}), ...params, ...query };
+    // Application configuration is authoritative: route > /$/ params > query.
+    const get = { ...query, ...params, ...(route?.GET ?? {}) };
     const post = { ...(route?.POST ?? {}) };
     // Determine the final URI based on the route
     uri = route?.URI;

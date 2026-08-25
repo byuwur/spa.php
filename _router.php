@@ -58,10 +58,8 @@ if (array_key_exists($uri, $routes) && isset($routes[$uri]["FILE"])) {
   readfile($file_path);
   exit;
 }
-// Merge additional GET and POST parameters from the routes array
-//$_GET = [...($routes[$uri]["GET"] ?? []), ...$_GET];
-//$_POST = [...($routes[$uri]["POST"] ?? []), ...$_POST];
-// It's up to you who gets the priority tho...
+// Programmed route data is authoritative over /$/ values and ordinary query data.
+// $route["GET"] >>> /$/ >>> ?query
 $_GET = [...$_GET, ...$routes[$uri]["GET"] ?? []];
 $_POST = [...$_POST, ...$routes[$uri]["POST"] ?? []];
 // Apply the route language after its parameters have been merged
