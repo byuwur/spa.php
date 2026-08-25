@@ -16,6 +16,22 @@ while (strlen($uri) > 1 && substr($uri, -1) == "/")
   $uri = substr($uri, 0, -1);
 // Store the processed URI
 $url = $uri;
+// Fail early with a useful message instead of allowing malformed routes to
+// produce obscure client-side errors later.
+if (!is_array($routes))
+  error_crash(500, "Routes must be an array.");
+foreach ($routes as $route_path => $route) {
+  if (!is_string($route_path) || !is_array($route))
+    error_crash(500, "Invalid route definition for \"{$route_path}\".");
+  if (!isset($route["URI"]) && !isset($route["FILE"]))
+    error_crash(500, "Route \"{$route_path}\" must define URI or FILE.");
+  foreach (["URI", "FILE"] as $field)
+    if (isset($route[$field]) && !is_string($route[$field]))
+      error_crash(500, "Route \"{$route_path}\" field {$field} must be a string.");
+  foreach (["GET", "POST", "COMPONENT"] as $field)
+    if (isset($route[$field]) && !is_array($route[$field]))
+      error_crash(500, "Route \"{$route_path}\" field {$field} must be an array.");
+}
 // Handle URI parameters if present
 if (strpos($uri, "/\$/") !== false) {
   list($uri, $params) = explode("/\$/", $uri, 2);
