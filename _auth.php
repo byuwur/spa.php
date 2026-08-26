@@ -104,5 +104,5 @@ function session_check()
     return logout();
   if (time() - $_SESSION["logintime"] > 3600)
     return logout();
-  return login(["logintime" => time()]);
+  return login(["logintime" => time()], false);
 }
