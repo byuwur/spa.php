@@ -53,6 +53,8 @@ if (array_key_exists($uri, $routes) && isset($routes[$uri]["FILE"])) {
   $file_path = is_file($file) ? $file : (is_file("{$TO_HOME}{$file}") ? "{$TO_HOME}{$file}" : null);
   if (!$file_path)
     error_crash(404, "File route \"{$uri}\" does not exist.");
+  while (ob_get_level() > 0)
+    ob_end_clean();
   header("Content-Type: " . get_mime_type($file_path));
   header("Content-Disposition: inline; filename=\"" . basename($file_path) . "\"");
   readfile($file_path);
