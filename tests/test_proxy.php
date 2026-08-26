@@ -17,6 +17,9 @@ proxy_assert(basename($THIS__FILE__) === "_init.php", "The renamed initializatio
 proxy_assert($SYSTEM_ROOT === $application_root && $HOME_PATH === $application_root && $TO_HOME === "..", "Nested entry-point paths remain application-relative.");
 proxy_assert(strpos($demo_home, '"./_init.php"') < strpos($demo_home, '"{$TO_HOME}/_routes.php"') && strpos($demo_home, '"{$TO_HOME}/_routes.php"') < strpos($demo_home, '"{$TO_HOME}/../_router.php"'), "Initialization runs before routes and the router.");
 proxy_assert(str_contains(file_get_contents(__DIR__ . "/../_init.php"), "global.byStorage"), "Early byStorage initialization remains available.");
+$init_source = file_get_contents(__DIR__ . "/../_init.php");
+proxy_assert(str_contains($init_source, 'rtrim($HOME_PATH, "/") . "/"'), "Browser storage is namespaced from the finalized application root.");
+proxy_assert(str_contains($init_source, "localStorage.removeItem(key)"), "Successful legacy storage migration removes the old key.");
 preg_match_all('/bySPA\.VERSION\s*=\s*"([^"]+)";/', $spa_runtime, $framework_versions);
 proxy_assert(count($framework_versions[1]) === 1 && $framework_versions[1][0] !== "", "The SPA runtime has one framework version source.");
 proxy_assert(str_contains($spa_runtime, 'bySPA.APP_VERSION = byStorage.getItem("APP_VERSION") ?? "0.1by";'), "The consuming application version remains unchanged.");

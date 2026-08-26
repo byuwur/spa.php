@@ -131,7 +131,7 @@ if (isset($setLocalStorage) && $setLocalStorage) { ?>
       global.byStorage = global.byStorage || {};
       const byStorage = global.byStorage;
       byStorage.memory = {};
-      byStorage.base = new URL(document.baseURI || global.location.href).pathname.replace(/\/[^/]*$/, "") || "/";
+      byStorage.base = new URL(<?= json_encode(rtrim($HOME_PATH, "/") . "/", $json_script_flags) ?>, document.baseURI).pathname.replace(/\/$/, "") || "/";
       byStorage.prefix = `bySPA:${byStorage.base}:`;
 
       /**
@@ -145,7 +145,15 @@ if (isset($setLocalStorage) && $setLocalStorage) { ?>
           if (value !== null) return value;
           // Migrate legacy unprefixed storage.
           const legacy = global.localStorage.getItem(key);
-          if (legacy !== null) global.localStorage.setItem(byStorage.prefix + key, legacy);
+          if (legacy !== null) {
+            byStorage.memory[key] = legacy;
+            global.localStorage.setItem(byStorage.prefix + key, legacy);
+            // Remove the old key only after storage confirms the migrated value.
+            if (global.localStorage.getItem(byStorage.prefix + key) === legacy)
+              try {
+                global.localStorage.removeItem(key);
+              } catch (_) { }
+          }
           return legacy;
         } catch (_) {
           return Object.prototype.hasOwnProperty.call(byStorage.memory, key) ? byStorage.memory[key] : null;
