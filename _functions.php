@@ -57,8 +57,12 @@ function api_respond(int $status, bool $error, string $message, array $data = []
  */
 function make_http_request(string $url, array $get = [], array $post = [], bool $json_decode = false, bool $clog_error = false)
 {
-  if (!validate_value($url, "url"))
-    return console_error("CURL ERROR: Invalid URL.");
+  if (!validate_value($url, "url")) {
+    if ($clog_error)
+      console_error("CURL ERROR: Invalid URL.");
+    error_log("CURL ERROR: Invalid URL.");
+    return null;
+  }
   global $TO_HOME, $SYSTEM_ROOT;
   $session_origin = rtrim((string) validate_value($_ENV["APP_URL"] ?? null, "url"), "/");
   $is_session_origin = $session_origin !== "" && ($url === $session_origin || str_starts_with($url, "{$session_origin}/"));
@@ -69,8 +73,16 @@ function make_http_request(string $url, array $get = [], array $post = [], bool 
     $post[session_name()] = session_id();
   }
   $req = curl_init();
-  if (count($get))
-    $url = $url . "?" . http_build_query($get);
+  if (count($get)) {
+    $fragment = "";
+    $fragment_position = strpos($url, "#");
+    if ($fragment_position !== false) {
+      $fragment = substr($url, $fragment_position);
+      $url = substr($url, 0, $fragment_position);
+    }
+    $separator = str_contains($url, "?") ? (str_ends_with($url, "?") || str_ends_with($url, "&") ? "" : "&") : "?";
+    $url .= $separator . http_build_query($get) . $fragment;
+  }
   curl_setopt($req, CURLOPT_URL, $url);
   curl_setopt($req, CURLOPT_POST, 1);
   curl_setopt($req, CURLOPT_POSTFIELDS, http_build_query($post));
@@ -101,7 +113,9 @@ function make_http_request(string $url, array $get = [], array $post = [], bool 
   $json_decoded = json_decode($response, true);
   if (json_last_error() === JSON_ERROR_NONE)
     return $json_decoded;
-  console_warn("Request ({$url}) couldn't be JSON decoded.");
+  if ($clog_error)
+    console_warn("Request ({$url}) couldn't be JSON decoded.");
+  error_log("Request ({$url}) couldn't be JSON decoded.");
   return $response;
 }
 
@@ -138,10 +152,11 @@ function remote_file_exists(string $url, bool $clog_error = false): bool
     curl_setopt($req, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
     curl_exec($req);
   }
-  if (curl_errno($req))
+  if (curl_errno($req)) {
     if ($clog_error)
       console_error("CURL HTTP1.1 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req));
-  error_log("CURL HTTP1.1 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req));
+    error_log("CURL HTTP1.1 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req));
+  }
   $http_code = curl_getinfo($req, CURLINFO_RESPONSE_CODE);
   //curl_close($req);
   return $http_code >= 200 && $http_code <= 299;
