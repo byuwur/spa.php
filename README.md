@@ -122,7 +122,7 @@ Set `APP_URL` to the public application URL behind a proxy. Alternatively enable
 
 Login regenerates the session ID by default. Applications remain responsible for authorization and for calling CSRF checks on state-changing endpoints. Validate or allowlist user-influenced outbound URLs to prevent SSRF. HTML fragments are trusted application HTML.
 
-`build_sql_query()` rejects `UPDATE` and `DELETE` when no valid condition is built. Intentional full-table mutations require the explicit `allow_full_table => true` option; relaxed validation does not grant destructive scope. 4. Configure your environment variables in the `.env` file using `.env.example`.
+`build_sql_query()` rejects `UPDATE` and `DELETE` when no valid condition is built. Intentional full-table mutations require the explicit `allow_full_table => true` option; relaxed validation does not grant destructive scope.
 
 ## Usage
 
@@ -130,7 +130,8 @@ Login regenerates the session ID by default. Applications remain responsible for
 2. Define your application's routes in its own `_routes.php`.
 3. Use the routing system to manage your SPA's navigation.
 4. Add custom functionality by creating new PHP files and adding them to the routes.
-5. Navigate. Suit yourself.
+5. Configure environment variables in `.env` using `.env.example` when the application needs them.
+6. Navigate. Suit yourself.
 
 ### Migration [v14]
 
