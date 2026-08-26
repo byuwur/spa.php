@@ -34,6 +34,8 @@
   bySPA.REQUEST_TIMEOUT = bySPA.REQUEST_TIMEOUT || 30000;
   // These properties can be previously initialized to be overriden
   byCommon.GLOBAL_TRANSITION_DURATION = byCommon.GLOBAL_TRANSITION_DURATION || 199;
+  // Prevent stale error-render cleanup from clearing state owned by a newer error.
+  let errorStateOwner = null;
 
   /**
    * Builds a fragment request URL while preserving query parameters already present in the route URI.
@@ -162,21 +164,35 @@
     const render = async function (data) {
       // A late error must not replace content belonging to a newer route.
       if (navigationId !== bySPA.NAVIGATION_ID) return null;
+
+      const owner = {};
+      errorStateOwner = owner;
       // Temporarily expose bySPA variables to the error page
       bySPA.ERROR_STATUS = status;
       bySPA.ERROR_MESSAGE = custom_error_message;
 
+      const clearErrorState = function () {
+        if (errorStateOwner !== owner) return;
+        delete bySPA.ERROR_STATUS;
+        delete bySPA.ERROR_MESSAGE;
+        errorStateOwner = null;
+      };
+      const reloadOnPopstate = function (event) {
+        // Only the error document that still owns navigation may force a clean reload.
+        if (navigationId !== bySPA.NAVIGATION_ID) return;
+        event.stopImmediatePropagation();
+        window.location.reload();
+      };
+      // Reload protection must exist while ordered error-page scripts are still pending.
+      window.addEventListener("popstate", reloadOnPopstate, { once: true, capture: true });
       // Full-document replacement is intentional; only the ordered script runner is shared with fragments.
       const inserted = await setHTML(document.documentElement, data, navigationId, true);
-      window.addEventListener(
-        "popstate",
-        function () {
-          window.location.reload();
-        },
-        { once: true }
-      );
-      delete bySPA.ERROR_STATUS;
-      delete bySPA.ERROR_MESSAGE;
+      if (inserted === null || navigationId !== bySPA.NAVIGATION_ID) {
+        window.removeEventListener("popstate", reloadOnPopstate, true);
+        clearErrorState();
+        return null;
+      }
+      clearErrorState();
       return inserted;
     };
     const requestError = function (path) {
@@ -197,6 +213,7 @@
     };
     const loadError = function (paths, index = 0) {
       return requestError(paths[index]).then(function (data) {
+        if (navigationId !== bySPA.NAVIGATION_ID) return null;
         if (data !== null || index + 1 >= paths.length) return data;
         return loadError(paths, index + 1);
       });
@@ -380,8 +397,8 @@
     if (historyMode.replace) historyReplace(`${url}`);
     // If routing fails, return early
     if (!routing)
-      return bySPA.errorPage(404, `Route "${url}" does not exist.`).always(function () {
-        $("#spa-loader").fadeOut(byCommon.GLOBAL_TRANSITION_DURATION);
+      return bySPA.errorPage(404, `Route "${url}" does not exist.`, navigationId).always(function () {
+        if (navigationId === bySPA.NAVIGATION_ID) $("#spa-loader").fadeOut(byCommon.GLOBAL_TRANSITION_DURATION);
       });
     $("#spa-content").html("");
     const { path, uri, file, get, post: routePost, component } = routing;
