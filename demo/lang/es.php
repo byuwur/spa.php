@@ -15,6 +15,7 @@ $LANG = [
   "nav.video" => "Demo Video Subtitulado",
   "nav.json" => "JSON",
   "nav.md" => "MarkDown",
+  "nav.pdf" => "PDF",
   "nav.error" => "Error",
 
   "sidebar.toggle" => "Alternar menú lateral",

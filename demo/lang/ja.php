@@ -15,6 +15,7 @@ $LANG = [
   "nav.video" => "字幕付き動画デモ",
   "nav.json" => "JSON",
   "nav.md" => "MarkDown",
+  "nav.pdf" => "PDF",
   "nav.error" => "エラー",
 
   "sidebar.toggle" => "サイドバーメニューを切り替え",

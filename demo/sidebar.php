@@ -36,6 +36,9 @@ require_once "{$TO_HOME}/common.example.php";
     <a class="bywr-sidebar-option" href="<?= "/{$ROUTE_MD}" ?>">
       <i class="fas fa-laptop-code"></i> <span><?= escape_html($LANG["nav.md"]) ?></span><i class="fas fa-angle-right ms-auto"></i>
     </a>
+    <a class="bywr-sidebar-option" href="<?= "/{$ROUTE_PDF}" ?>">
+      <i class="fas fa-file"></i> <span><?= escape_html($LANG["nav.pdf"]) ?></span><i class="fas fa-angle-right ms-auto"></i>
+    </a>
     <a class="bywr-sidebar-option" href="<?= "/{$ROUTE_ERROR}" ?>">
       <i class="fas fa-bug"></i> <span><?= escape_html($LANG["nav.error"]) ?></span><i class="fas fa-angle-right ms-auto"></i>
     </a>
