@@ -24,23 +24,27 @@
   byCommon.GLOBAL_TRANSITION_DURATION = byCommon.GLOBAL_TRANSITION_DURATION || 199;
   byCommon.COOKIE_CONSENT_READY = byCommon.COOKIE_CONSENT_READY || false;
   byCommon.SECTION_TOP_OVERHEAD = byCommon.SECTION_TOP_OVERHEAD || 0;
+  byCommon.INIT_WARNINGS = byCommon.INIT_WARNINGS ?? false;
 
   /**
    * Initializes the <Sidebar /> component in #spa-nav.
    */
-  function initSidebar() {
+  function initSidebar({ showWarn = true } = {}) {
     // Check it exists in the first place. Duh..
     const jqSidebar = $(byCommon.SIDEBAR_ID);
-    if (!jqSidebar.length) return console.warn("Can't load Sidebar if element ain't present.");
+    if (!jqSidebar.length) {
+      if (showWarn) console.warn("Can't load Sidebar if element ain't present.");
+      return;
+    }
     console.log("Init <Sidebar />");
     if (!get_cookie("SidebarExpand")) set_cookie("SidebarExpand", "on");
     // Init the rest of the elements
     const jqSidebarToggle = $(byCommon.SIDEBAR_TOGGLE_ID);
-    if (!jqSidebarToggle.length) console.warn(`Can't load Sidebar Element: "jqSidebarToggle". It doesn't exist.`);
+    if (!jqSidebarToggle.length && showWarn) console.warn(`Can't load Sidebar Element: "jqSidebarToggle". It doesn't exist.`);
     const jqSidebarHidden = $(byCommon.SIDEBAR_HIDDEN_ID);
-    if (!jqSidebarHidden.length) console.warn(`Can't load Sidebar Element: "jqSidebarHidden". It doesn't exist.`);
+    if (!jqSidebarHidden.length && showWarn) console.warn(`Can't load Sidebar Element: "jqSidebarHidden". It doesn't exist.`);
     const jqAppContainer = $(byCommon.APP_CONTAINER_SELECTOR);
-    if (!jqAppContainer.length) console.warn(`Can't load Sidebar Element: "jqAppContainer". It doesn't exist.`);
+    if (!jqAppContainer.length && showWarn) console.warn(`Can't load Sidebar Element: "jqAppContainer". It doesn't exist.`);
     // Ensure the overlay inside the sidebar follows it accordingly, due to being an absolute positioned inside another
     jqSidebar
       .off("scroll.byCommon")
@@ -121,8 +125,11 @@
    * Initializes all Bootstrap components within the #spa-content.
    * It should be called whenever the content of the #spa-page-content-container changes dynamically to ensure that all components function correctly.
    */
-  byCommon.initBootstrap = function () {
-    if (typeof bootstrap === "undefined" && !window.bootstrap) return console.warn("Can't load Bootstrap if script ain't present.");
+  byCommon.initBootstrap = function ({ showWarn = true } = {}) {
+    if (typeof bootstrap === "undefined" && !window.bootstrap) {
+      if (showWarn) console.warn("Can't load Bootstrap if script ain't present.");
+      return;
+    }
     try {
       const route = String(window.bySPA?.URL || window.location.pathname);
 
@@ -192,21 +199,27 @@
       // Add more as needed, in case BS drops another class
       console.log("Init bootstrap");
     } catch (e) {
-      console.warn("initBootstrap():", e);
+      if (showWarn) console.warn("initBootstrap():", e);
     }
   };
 
   /**
    * Reloads Google ReCaptcha if present
    */
-  function initCaptcha() {
+  function initCaptcha({ showWarn = true } = {}) {
     // Check it exists in the first place. Duh..
-    if (typeof grecaptcha === "undefined" && !window.grecaptcha) return console.warn("Can't load reCaptcha if script ain't present.");
+    if (typeof grecaptcha === "undefined" && !window.grecaptcha) {
+      if (showWarn) console.warn("Can't load reCaptcha if script ain't present.");
+      return;
+    }
     try {
-      [...document.querySelectorAll(".g-recaptcha")].forEach((captchaEl) => (grecaptcha.render ? grecaptcha.render(captchaEl) : console.warn("grecaptcha not ready...")));
+      [...document.querySelectorAll(".g-recaptcha")].forEach((captchaEl) => {
+        if (grecaptcha.render) grecaptcha.render(captchaEl);
+        else if (showWarn) console.warn("grecaptcha not ready...");
+      });
       console.log("Init captcha");
     } catch (e) {
-      console.warn("initCaptcha():", e);
+      if (showWarn) console.warn("initCaptcha():", e);
     }
   }
 
@@ -229,8 +242,11 @@
   /**
    * Reloads Cookie Consent if present
    */
-  function initCookieConsent() {
-    if (typeof cookieconsent === "undefined" && !window.cookieconsent) return console.warn("Can't load CookieConsent if script ain't present.");
+  function initCookieConsent({ showWarn = true } = {}) {
+    if (typeof cookieconsent === "undefined" && !window.cookieconsent) {
+      if (showWarn) console.warn("Can't load CookieConsent if script ain't present.");
+      return;
+    }
     if (byCommon.COOKIE_CONSENT_READY) return;
     try {
       cookieconsent.run({
@@ -244,17 +260,23 @@
       byCommon.COOKIE_CONSENT_READY = true;
       console.log("Init CookieConsent");
     } catch (e) {
-      console.warn("initCookieConsent():", e);
+      if (showWarn) console.warn("initCookieConsent():", e);
     }
   }
 
   /**
    * Reloads Particles if present
    */
-  function initParticles() {
-    if (typeof particlesJS === "undefined" && !window.particlesJS) return console.warn("Can't load Particles if script ain't present.");
+  function initParticles({ showWarn = true } = {}) {
+    if (typeof particlesJS === "undefined" && !window.particlesJS) {
+      if (showWarn) console.warn("Can't load Particles if script ain't present.");
+      return;
+    }
     const PARTICLES_CONTAINER_ID = "particles";
-    if (!$(`#${PARTICLES_CONTAINER_ID}`).length) return console.warn(`Can't find Particles.JS container (#${PARTICLES_CONTAINER_ID})`);
+    if (!$(`#${PARTICLES_CONTAINER_ID}`).length) {
+      if (showWarn) console.warn(`Can't find Particles.JS container (#${PARTICLES_CONTAINER_ID})`);
+      return;
+    }
     try {
       particlesJS(PARTICLES_CONTAINER_ID, {
         particles: {
@@ -273,23 +295,24 @@
       });
       console.log("Init Particles.JS");
     } catch (e) {
-      console.warn("initParticles():", e);
+      if (showWarn) console.warn("initParticles():", e);
     }
   }
 
   /**
    * Initializes all components that dynamically changes within the page
    */
-  byCommon.init = function () {
+  byCommon.init = function ({ showWarn = byCommon.INIT_WARNINGS } = {}) {
     if (typeof jQuery === "undefined" && !window.jQuery) return console.error("Init _common.js FAILED. No jQuery found.");
     $(() => {
       console.log("Init _common.js");
-      initCaptcha();
       initMisc();
-      byCommon.initBootstrap();
-      initSidebar();
-      initCookieConsent();
-      initParticles();
+      const options = { showWarn };
+      initCaptcha(options);
+      byCommon.initBootstrap(options);
+      initSidebar(options);
+      initCookieConsent(options);
+      initParticles(options);
       //byCommon.initTranslate(); //// Callback invoked in ?cb= on <script>
     });
   };

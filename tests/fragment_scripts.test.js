@@ -159,7 +159,7 @@ function createHarness(plans = {}) {
   const source = fs
     .readFileSync(path.join(__dirname, "..", "_spa.js"), "utf8")
     .replace("async function setHTML(", "bySPA.__setHTMLForTest = async function (")
-    .replace(/\n  init\(\);\n(?=\}\)\(typeof window)/, "\n");
+    .replace(/\r?\n  init\(\);\r?\n(?=\}\)\(typeof window)/, "\n");
   const window = { bySPA: {} };
   const consoleMessages = [];
   vm.runInNewContext(source, {

@@ -85,8 +85,7 @@
           const finish = function (failed) {
             script.removeEventListener("load", loaded);
             script.removeEventListener("error", failedToLoad);
-            if (failed && hasSource && navigationId === bySPA.NAVIGATION_ID)
-              console.error(`SPA fragment script failed to load: ${script.src || item.script.getAttribute("src")}`);
+            if (failed && hasSource && navigationId === bySPA.NAVIGATION_ID) console.error(`SPA fragment script failed to load: ${script.src || item.script.getAttribute("src")}`);
             resolve();
           };
           const loaded = function () {
