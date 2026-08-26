@@ -205,7 +205,7 @@
           if (index + 1 >= paths.length) return null;
           return loadError(paths, index + 1);
         }
-        return requestError(path);
+        return requestError(`${paths[index]}`);
       });
     };
     return loadError(paths);
