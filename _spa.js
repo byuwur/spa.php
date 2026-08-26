@@ -475,7 +475,7 @@
       if (href.startsWith("#") && !href.startsWith("#/")) return;
       let nextURL = href;
       try {
-        const absolute = new URL(href, window.location.href);
+        const absolute = new URL(this.href);
         if (absolute.origin != window.location.origin) return;
         const home = new URL(`${bySPA.HOME_PATH.replace(/\/$/, "")}/`, document.baseURI);
         const insideHome = absolute.pathname === home.pathname.replace(/\/$/, "") || absolute.pathname.startsWith(home.pathname);
