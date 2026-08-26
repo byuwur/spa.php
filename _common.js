@@ -28,7 +28,7 @@
   /**
    * Initializes the <Sidebar /> component in #spa-nav.
    */
-  byCommon.initSidebar = function () {
+  function initSidebar() {
     // Check it exists in the first place. Duh..
     const jqSidebar = $(byCommon.SIDEBAR_ID);
     if (!jqSidebar.length) return console.warn("Can't load Sidebar if element ain't present.");
@@ -86,12 +86,12 @@
       jqSidebar.addClass("bywr-sidebar-expanded");
       jqAppContainer.addClass("bywr-sidebar-expanded");
     }
-  };
+  }
 
   /**
    * Some other initializations for common resources in the page.
    */
-  byCommon.initMisc = function () {
+  function initMisc() {
     // Smooth scroll for links with hashes in their href (excluding empty hashes)
     $("a[href*='#']:not([href='#'])")
       .off("click.byCommon")
@@ -115,7 +115,7 @@
         }, 333);
       });
     console.log("Init misc");
-  };
+  }
 
   /**
    * Initializes all Bootstrap components within the #spa-content.
@@ -199,7 +199,7 @@
   /**
    * Reloads Google ReCaptcha if present
    */
-  byCommon.initCaptcha = function () {
+  function initCaptcha() {
     // Check it exists in the first place. Duh..
     if (typeof grecaptcha === "undefined" && !window.grecaptcha) return console.warn("Can't load reCaptcha if script ain't present.");
     try {
@@ -208,7 +208,7 @@
     } catch (e) {
       console.warn("initCaptcha():", e);
     }
-  };
+  }
 
   /**
    * Reloads Google Page Translator if present
@@ -229,7 +229,7 @@
   /**
    * Reloads Cookie Consent if present
    */
-  byCommon.initCookieConsent = function () {
+  function initCookieConsent() {
     if (typeof cookieconsent === "undefined" && !window.cookieconsent) return console.warn("Can't load CookieConsent if script ain't present.");
     if (byCommon.COOKIE_CONSENT_READY) return;
     try {
@@ -246,12 +246,12 @@
     } catch (e) {
       console.warn("initCookieConsent():", e);
     }
-  };
+  }
 
   /**
    * Reloads Particles if present
    */
-  byCommon.initParticles = function () {
+  function initParticles() {
     if (typeof particlesJS === "undefined" && !window.particlesJS) return console.warn("Can't load Particles if script ain't present.");
     const PARTICLES_CONTAINER_ID = "particles";
     if (!$(`#${PARTICLES_CONTAINER_ID}`).length) return console.warn(`Can't find Particles.JS container (#${PARTICLES_CONTAINER_ID})`);
@@ -275,7 +275,7 @@
     } catch (e) {
       console.warn("initParticles():", e);
     }
-  };
+  }
 
   /**
    * Initializes all components that dynamically changes within the page
@@ -284,12 +284,12 @@
     if (typeof jQuery === "undefined" && !window.jQuery) return console.error("Init _common.js FAILED. No jQuery found.");
     $(() => {
       console.log("Init _common.js");
-      byCommon.initCaptcha();
-      byCommon.initMisc();
+      initCaptcha();
+      initMisc();
       byCommon.initBootstrap();
-      byCommon.initSidebar();
-      byCommon.initCookieConsent();
-      byCommon.initParticles();
+      initSidebar();
+      initCookieConsent();
+      initParticles();
       //byCommon.initTranslate(); //// Callback invoked in ?cb= on <script>
     });
   };
