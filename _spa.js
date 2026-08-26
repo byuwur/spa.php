@@ -15,7 +15,7 @@
 (function (global) {
   global.bySPA = global.bySPA || {};
   const bySPA = global.bySPA;
-  bySPA.VERSION = "17.1";
+  bySPA.VERSION = "17.2";
   // Initializes values retrieved from localStorage and sets up environment variables.
   bySPA.URI = byStorage.getItem("URI") ?? "/";
   bySPA.URL = byStorage.getItem("URL") ?? bySPA.URI;
@@ -28,12 +28,11 @@
   bySPA.TO_HOME = byStorage.getItem("TO_HOME");
   bySPA.HOME_PATH = byStorage.getItem("HOME_PATH");
   bySPA.HISTORY_PATH = [];
-  // Monotonic route ownership prevents older asynchronous work from mutating a newer route.
   bySPA.NAVIGATION_ID = 0;
-  // Applications may override this before requests are started.
-  bySPA.REQUEST_TIMEOUT = bySPA.REQUEST_TIMEOUT || 30000;
   // These properties can be previously initialized to be overriden
+  bySPA.REQUEST_TIMEOUT = bySPA.REQUEST_TIMEOUT || 30000;
   byCommon.GLOBAL_TRANSITION_DURATION = byCommon.GLOBAL_TRANSITION_DURATION || 199;
+  let fileNavigation = false; // Flags if you come from a FILE route
 
   /**
    * Builds a fragment request URL while preserving query parameters already present in the route URI.
@@ -383,19 +382,22 @@
     if (bySPA.APP_ENV === "DEV") console.log(`loadSPA("${url}", ${parse_json(mode)})`);
     $("#spa-loader").fadeIn(1);
     const routing = routeURL(`${url}`);
-    if (historyMode.push) historyPush(`${url}`);
-    if (historyMode.replace) historyReplace(`${url}`);
     // If routing fails, return early
     if (!routing)
       return bySPA.errorPage(404, `Route "${url}" does not exist.`, navigationId).always(function () {
         if (navigationId === bySPA.NAVIGATION_ID) $("#spa-loader").fadeOut(byCommon.GLOBAL_TRANSITION_DURATION);
       });
-    $("#spa-content").html("");
     const { path, uri, file, get, post: routePost, component } = routing;
+    // If a file is specified in the route, navigate to it directly
+    if (file) {
+      fileNavigation = true;
+      return (window.location = `${bySPA.HOME_PATH}${path}`);
+    }
+    if (historyMode.push) historyPush(`${url}`);
+    if (historyMode.replace) historyReplace(`${url}`);
+    $("#spa-content").html("");
     const post = { ...routePost, ...(historyMode.post ?? {}) };
     if (bySPA.APP_ENV === "DEV") console.log("routeURL(): PATH=", path, "; URI=", uri, "; FILE=", file, "; _GET=", get, "; _POST=", post, "; COMPONENT=", component);
-    // If a file is specified in the route, navigate to it directly
-    if (file) return (window.location = `${bySPA.HOME_PATH}${path}`);
     // If the SPA container is missing, create the element
     if (!$("#spa-content").length) {
       // Checks for reloadComponent to continue, if not: reload completely
@@ -496,6 +498,12 @@
       }
       e.preventDefault();
       bySPA.load(nextURL);
+    });
+    // Reload the SPA when returning from a full FILE navigation via the browser cache.
+    window.addEventListener("pageshow", function (e) {
+      if (!e.persisted || !fileNavigation) return;
+      fileNavigation = false;
+      window.location.reload();
     });
     // Initial load of SPA content based on the stored URL.
     bySPA.load(`${bySPA.URL}`, { replace: true, post: bySPA._POST });
