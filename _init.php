@@ -152,7 +152,7 @@ if (isset($setLocalStorage) && $setLocalStorage) { ?>
             if (global.localStorage.getItem(byStorage.prefix + key) === legacy)
               try {
                 global.localStorage.removeItem(key);
-              } catch (_) {}
+              } catch (_) { }
           }
           return legacy;
         } catch (_) {
