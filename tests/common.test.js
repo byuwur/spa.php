@@ -46,17 +46,17 @@ test("byCommon.init can suppress warnings for one call", () => {
   assert.equal(harness.errors.length, 0);
 });
 
-test("byCommon.init warnings remain enabled by default", () => {
+test("byCommon.init remains quiet by default", () => {
   const harness = loadCommon();
-  harness.byCommon.init();
-  assert.ok(harness.warnings.length > 0);
-});
-
-test("INIT_WARNINGS controls automatic/default initialization", () => {
-  const harness = loadCommon();
-  harness.byCommon.INIT_WARNINGS = false;
   harness.byCommon.init();
   assert.equal(harness.warnings.length, 0);
+});
+
+test("INIT_WARNINGS can enable automatic initialization warnings", () => {
+  const harness = loadCommon();
+  harness.byCommon.INIT_WARNINGS = true;
+  harness.byCommon.init();
+  assert.ok(harness.warnings.length > 0);
 });
 
 test("initBootstrap supports the same one-call suppression", () => {
