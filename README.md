@@ -116,6 +116,8 @@ Navigation emits `bySPA:before-unload`, then `bySPA:load` on success or `bySPA:e
 
 Scripts in trusted route and component fragments execute as real browser `<script>` elements. Inline scripts and non-`async` external scripts keep source order; `defer` external scripts are treated as ordered fragment dependencies because dynamic fragments have no document-parser defer phase. Non-`async` module scripts are also awaited. Explicit external `async` scripts start independently and do not delay later fragment scripts or `bySPA:load`. Attributes, including CSP/SRI and data attributes, are preserved. External load failures are logged but do not fail navigation or stop later scripts; stale navigation stops the old fragment before it can continue. `bySPA:load` fires only after the current route and component fragments finish processing their ordered scripts.
 
+Error pages intentionally replace the full document rather than rendering inside the SPA shell. Their scripts use the same ordered execution rules; history navigation away triggers a full reload so the application starts with a clean runtime.
+
 Set `APP_URL` to the public application URL behind a proxy. Alternatively enable `TRUST_PROXY` and list exact proxy addresses in `TRUSTED_PROXIES`; forwarded headers from other clients are ignored.
 
 Login regenerates the session ID by default. Applications remain responsible for authorization and for calling CSRF checks on state-changing endpoints. Validate or allowlist user-influenced outbound URLs to prevent SSRF. HTML fragments are trusted application HTML.

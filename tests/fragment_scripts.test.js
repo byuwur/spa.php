@@ -93,6 +93,18 @@ class FakeTarget {
     });
   }
 
+  set innerHTML(html) {
+    this.nodes = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi)].map((match) => new FakeScript(this.document, parseAttributes(match[1]), match[2]));
+    this.nodes.forEach((node) => {
+      node.container = this;
+      node.isConnected = true;
+    });
+  }
+
+  querySelectorAll(selector) {
+    return selector === "script" ? this.nodes.filter((node) => node instanceof FakeScript) : [];
+  }
+
   replace(oldNode, newNode) {
     const index = this.nodes.indexOf(oldNode);
     this.nodes[index] = newNode;
@@ -194,6 +206,17 @@ test("mixed ordered scripts preserve source order and defer remains ordered", as
   assert.deepEqual(harness.order, ["A", "B", "C", "D", "E"]);
 });
 
+test("full-document error pages reuse ordered script processing", async () => {
+  const harness = createHarness({ "error-dependency.js": { delay: 10, label: "dependency" } });
+  await harness.bySPA.__setHTMLForTest(
+    harness.target,
+    '<html><body><script src="error-dependency.js"></script><script>record("dependent")</script></body></html>',
+    1,
+    true
+  );
+  assert.deepEqual(harness.order, ["dependency", "dependent"]);
+});
+
 test("missing and broken application scripts are non-fatal", async () => {
   const harness = createHarness({ "missing.js": { fail: true } });
   const result = await harness.bySPA.__setHTMLForTest(
@@ -234,6 +257,8 @@ test("route and component insertion share the private helper and lifecycle waits
   const source = fs.readFileSync(path.join(__dirname, "..", "_spa.js"), "utf8");
   assert.match(source, /setHTML\(document\.querySelector\(componentId\), data, navigationId\)/);
   assert.match(source, /setHTML\(document\.querySelector\("#spa-content"\), data, navigationId\)\.then/);
+  assert.match(source, /setHTML\(document\.documentElement, data, navigationId, true\)/);
+  assert.match(source, /window\.location\.reload\(\);[\s\S]*\{ once: true \}/);
   assert.ok(source.indexOf("Promise.allSettled(componentLoads") < source.indexOf("afterLoad({ ...routing, navigationId })"));
 });
 
