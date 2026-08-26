@@ -1013,6 +1013,8 @@ function change_location(string $location, int $status = 307): void
 {
   if ($status < 300 || $status > 399)
     $status = 307;
+  while (ob_get_level() > 0)
+    ob_end_clean();
   http_response_code($status);
   header("Location: {$location}");
   exit;
@@ -1065,7 +1067,11 @@ function error_crash(int $status, string $message, ?string $error_file = null): 
       $error_file = $candidate;
       break;
     }
+  while (ob_get_level() > 0)
+    ob_end_clean();
+  ob_start();
   console_warn("App crashed ({$status}): {$message}");
+  error_log("App crashed ({$status}): {$message}");
   $_GET["e"] = $status;
   $_POST["custom_error_message"] = $message;
   http_response_code($status);
@@ -1130,10 +1136,14 @@ function print_json($json): void
 /** 
  * Sends a JSON response and terminates the script. (Ideally called before sending headers)
  * @param mixed $json The data to encode and send as JSON.
+ * @param bool $rm_ob Whether it discards existing output buffers before sending JSON.
  * @return void
  */
-function exit_json($json): void
+function exit_json($json, bool $rm_ob = false): void
 {
+  if ($rm_ob)
+    while (ob_get_level() > 0)
+      ob_end_clean();
   if (!headers_sent())
     header("Content-Type: application/json");
   print_json($json);
