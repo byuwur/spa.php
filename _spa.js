@@ -281,7 +281,7 @@
     // If no file is provided, clear the component's content
     if (!file || file == "null") return $(componentId).html("");
     return $.ajax({
-      url: `${bySPA.HOME_PATH}${file}?${new URLSearchParams({ ...get, uri: false }).toString()}`,
+      url: bySPA.buildRequestURL(file, { ...get, uri: false }),
       type: "POST",
       data: { ...post },
       dataType: "text",
