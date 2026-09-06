@@ -12,6 +12,8 @@ Check repository-specific requirements and preserve unrelated work. If the imple
 
 See the README for [installation](./README.md#installation), [usage](./README.md#usage), and [runtime contracts](./README.md#runtime-contracts). The [CI workflow](./.github/workflows/ci.yml) defines PHP linting, PHP and JavaScript tests, JavaScript syntax checks, and Composer validation. Run its commands from the repository root, preserving the SQL test step's change into `tests/`.
 
+For changes shared with consuming applications, follow the README's [submodule integration workflow](./README.md#maintaining-a-submodule-integration).
+
 ## Make a focused change
 
 Keep the contribution centered on one conceptual outcome. Preserve public contracts unless changing them is part of the agreed scope. Include the tests and documentation needed to explain and validate that outcome.
