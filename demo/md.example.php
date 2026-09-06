@@ -21,6 +21,7 @@ require_once "{$TO_HOME}/common.example.php";
 </style>
 <div class="video-foreground app-container">
   <div class="container vh-100 d-flex flex-column align-items-center justify-content-center p-0">
+    <p class="small">Renderer: v1.2.final. HTML comments inside nested fenced code and quoted hidden markers have known limitations in this version.</p>
     <pre id="byMDrenderer" class="w-100"></pre>
   </div>
 </div>
