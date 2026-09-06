@@ -100,13 +100,22 @@
     $("a[href*='#']:not([href='#'])")
       .off("click.byCommon")
       .on("click.byCommon", function (event) {
-        if (this.hash && this.hash.startsWith("#/")) return;
+        if (event.defaultPrevented || event.isDefaultPrevented() || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        if (this.target || this.hasAttribute("download") || this.getAttribute("custom-folder") === "true") return;
+        const targetURL = new URL(this.href, document.baseURI);
+        const currentURL = new URL(window.location.href);
+        if (targetURL.origin !== currentURL.origin || targetURL.pathname !== currentURL.pathname || targetURL.search !== currentURL.search) return;
+        if (!targetURL.hash || targetURL.hash.startsWith("#/")) return;
+        let target;
+        try {
+          target = document.getElementById(decodeURIComponent(targetURL.hash.slice(1)));
+        } catch (_) { return; }
+        if (!target) return;
         event.preventDefault();
         // Scroll to the target element if it exists on the same page
-        if ($(this.hash).length)
-          $(`html, body, ${byCommon.APP_CONTAINER_SELECTOR}`)
-            .stop()
-            .animate({ scrollTop: $(this.hash).offset().top - byCommon.SECTION_TOP_OVERHEAD }, byCommon.GLOBAL_TRANSITION_DURATION, "swing");
+        $(`html, body, ${byCommon.APP_CONTAINER_SELECTOR}`)
+          .stop()
+          .animate({ scrollTop: $(target).offset().top - byCommon.SECTION_TOP_OVERHEAD }, byCommon.GLOBAL_TRANSITION_DURATION, "swing");
         // Collapse the navbar after clicking the link
         setTimeout(() => {
           $(".navbar-collapse").collapse("hide");

@@ -258,7 +258,6 @@ test("route and component insertion share the private helper and lifecycle waits
   assert.match(source, /setHTML\(document\.querySelector\(componentId\), data, navigationId\)/);
   assert.match(source, /setHTML\(document\.querySelector\("#spa-content"\), data, navigationId\)\.then/);
   assert.match(source, /setHTML\(document\.documentElement, data, navigationId, true\)/);
-  assert.match(source, /window\.location\.reload\(\);[\s\S]*\{ once: true \}/);
   assert.ok(source.indexOf("Promise.allSettled(componentLoads") < source.indexOf("afterLoad({ ...routing, navigationId })"));
   assert.match(source, /const absolute = new URL\(this\.href\);/);
 });

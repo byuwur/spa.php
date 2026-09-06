@@ -10,7 +10,7 @@ after(async () => { await browser?.close(); });
 async function application(t, preferences = {}) {
   const page = await browser.newPage();
   t.after(() => page.close());
-  await page.route("**/*", route => route.fulfill({ contentType: "text/html", body: '<main id="spa-content"></main><div id="spa-loader"></div><div id="component"></div><form id="form"><button type="submit"></button></form><form id="other"></form>' }));
+  await page.route("**/*", route => route.fulfill({ contentType: "text/html", body: '<main id="spa-content"></main><div id="spa-loader"></div><div id="component"></div><div id="section"></div><form id="form"><button type="submit"></button></form><form id="other"></form>' }));
   await page.goto("https://example.test/app/known?q=a?b");
   await initializePage(page, preferences);
   return page;
@@ -23,7 +23,7 @@ async function initializePage(page, preferences = {}) {
   await page.addScriptTag({ path: path.join(__dirname, "../js/jquery.min.js") });
   await page.addScriptTag({ path: path.join(__dirname, "../_functions.js") });
   await page.evaluate(() => {
-    const values = { HOME_PATH: "https://example.test/app", URL: location.pathname.slice(4) + location.search, ROUTES: JSON.stringify({ "/known": { URI: "/known.php" }, "/next": { URI: "/next.php" }, "/slow": { URI: "/slow.php" }, "/fail": { URI: "/fail.php" } }) };
+    const values = { HOME_PATH: "https://example.test/app", URL: location.pathname.slice(4) + location.search, ROUTES: JSON.stringify({ "/known": { URI: "/known.php" }, "/next": { URI: "/next.php" }, "/slow": { URI: "/slow.php" }, "/fail": { URI: "/fail.php" }, "/file": { FILE: "file.pdf" } }) };
     for (const [key, value] of Object.entries(values)) byStorage.setItem(key, value);
     window.events = [];
     window.requests = [];
@@ -116,4 +116,67 @@ test("navigation has one terminal outcome, including stale work and error-page f
     return window.events.map(event => [event.type, event.url]);
   });
   assert.deepEqual(events, [["bySPA:before-unload", "/slow"], ["bySPA:before-unload", "/next"], ["bySPA:load", "/next"]]);
+});
+
+test("both click handlers preserve native ownership and existing-target scrolling", async t => {
+  const page = await application(t);
+  const cases = [
+    ["https://elsewhere.test/page#section", {}, false], ["/sibling/page#section", {}, false],
+    ["/application/page", {}, false], ["#missing", {}, false], ["#section", {}, true],
+    ["#/next", {}, false], ["/app/next", {}, true], ["/app/next", { ctrlKey: true }, false],
+    ["/app/next", { button: 1 }, false], ["/app/next", { target: "named" }, false],
+    ["/app/next", { download: "file" }, false], ["/app/next#section", {}, false]
+  ];
+  for (const [href, options, expected] of cases) {
+    const prevented = await page.evaluate(async ({ href, options }) => {
+      history.replaceState({}, "", "/app/known?q=a?b");
+      const a = document.createElement("a");
+      a.href = href;
+      if (options.target) a.target = options.target;
+      if (options.download) a.download = options.download;
+      document.body.append(a);
+      byCommon.init();
+      await new Promise(resolve => $(resolve));
+      let intercepted;
+      // Observe after jQuery's delegated handler, then suppress native navigation for this matrix.
+      const observe = event => { intercepted = event.defaultPrevented; event.preventDefault(); };
+      document.addEventListener("click", observe, { once: true });
+      a.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, button: 0, ...options }));
+      a.remove();
+      return intercepted;
+    }, { href, options });
+    assert.equal(prevented, expected, href + JSON.stringify(options));
+  }
+});
+
+test("native external hash navigation reaches the destination", async t => {
+  const page = await application(t);
+  await page.evaluate(() => { document.body.insertAdjacentHTML("beforeend", '<a id="external" href="https://elsewhere.test/page#section">External</a>'); byCommon.init(); });
+  await page.click("#external");
+  await page.waitForURL("https://elsewhere.test/page#section");
+});
+
+test("rapid navigation, error, Back, FILE, Back returns to a clean application", async t => {
+  const page = await application(t);
+  await page.evaluate(async () => { await Promise.all([bySPA.load("/slow"), bySPA.load("/next")]); });
+  const navigationAttempts = [];
+  await page.exposeFunction("reportNavigation", url => navigationAttempts.push(url));
+  await page.evaluate(async () => {
+    document.addEventListener("bySPA:before-unload", event => reportNavigation(event.detail.url));
+    await bySPA.load("/unknown");
+  });
+  assert.equal(await page.locator("body").innerText(), "Error fixture");
+  await page.goBack();
+  await page.waitForFunction(() => typeof bySPA === "undefined");
+  assert.equal(new URL(page.url()).pathname, "/app/next");
+  assert.deepEqual(navigationAttempts, ["/unknown"]);
+  // The fixture server supplies the shell; execute its real bootstrap after the native reload.
+  await initializePage(page);
+  await page.evaluate(() => { bySPA.load("/file"); });
+  await page.waitForURL("https://example.test/app/file");
+  await page.goBack();
+  await page.waitForURL("https://example.test/app/next");
+  await page.waitForFunction(() => typeof bySPA === "undefined");
+  await initializePage(page);
+  assert.equal(await page.evaluate(() => events.filter(event => event.type === "bySPA:load").length), 1);
 });

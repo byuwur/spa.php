@@ -33,6 +33,7 @@
   bySPA.REQUEST_TIMEOUT = bySPA.REQUEST_TIMEOUT || 30000;
   byCommon.GLOBAL_TRANSITION_DURATION = byCommon.GLOBAL_TRANSITION_DURATION || 199;
   let fileNavigation = false; // Flags if you come from a FILE route
+  let errorNavigation = false; // A replaced document needs a clean runtime on Back.
 
   /**
    * Builds a fragment request URL while preserving query parameters already present in the route URI.
@@ -164,18 +165,11 @@
       // Temporarily expose bySPA variables to the error page.
       bySPA.ERROR_STATUS = status;
       bySPA.ERROR_MESSAGE = custom_error_message;
+      errorNavigation = true;
       // Full-document replacement is intentional.
       const inserted = await setHTML(document.documentElement, data, navigationId, true);
       // A newer navigation took ownership while error scripts were loading.
       if (inserted === null || navigationId !== bySPA.NAVIGATION_ID) return null;
-      // Preserve the original clean-reload behavior when leaving an error page.
-      window.addEventListener(
-        "popstate",
-        function () {
-          window.location.reload();
-        },
-        { once: true }
-      );
       delete bySPA.ERROR_STATUS;
       delete bySPA.ERROR_MESSAGE;
 
@@ -387,6 +381,8 @@
     // If routing fails, return early
     if (!routing) {
       const error = `Route "${url}" does not exist.`;
+      if (historyMode.push) historyPush(`${url}`);
+      if (historyMode.replace) historyReplace(`${url}`);
       document.dispatchEvent(new CustomEvent("bySPA:error", { detail: { navigationId, url, status: 404, error } }));
       return bySPA.errorPage(404, error, navigationId).always(function () {
         if (navigationId === bySPA.NAVIGATION_ID) $("#spa-loader").fadeOut(byCommon.GLOBAL_TRANSITION_DURATION);
@@ -475,6 +471,7 @@
     }
     // Handles the popstate event for navigating through browser history.
     window.addEventListener("popstate", function (e) {
+      if (errorNavigation) return window.location.reload();
       if (!e.state) return;
       bySPA.HISTORY_INDEX = e.state.index;
       bySPA.load(e.state.url ?? bySPA.HISTORY_PATH[bySPA.HISTORY_INDEX], { push: false });
@@ -482,8 +479,8 @@
     });
     // Attaches click event handlers to links for SPA navigation.
     $(document).on("click", "a[href]", function (e) {
-      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-      if (this.target === "_blank" || this.hasAttribute("download") || this.getAttribute("custom-folder") == "true") return;
+      if (e.defaultPrevented || e.isDefaultPrevented() || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      if (this.target || this.hasAttribute("download") || this.getAttribute("custom-folder") == "true") return;
       const href = this.getAttribute("href");
       if (!href || href.startsWith("javascript:")) return;
       if (href.startsWith("#")) return;
@@ -491,13 +488,12 @@
       try {
         const absolute = new URL(this.href);
         if (absolute.origin != window.location.origin) return;
-        // This whole block fucks up non-existing routes when a[custom-folder] already takes care of it
-        /* const home = new URL(`${bySPA.HOME_PATH.replace(/\/$/, "")}/`, document.baseURI);
+        // Ordinary anchors belong to the browser/common scrolling handler.
+        if (absolute.hash) return;
+        const home = new URL(`${bySPA.HOME_PATH.replace(/\/$/, "")}/`, document.baseURI);
         const insideHome = absolute.pathname === home.pathname.replace(/\/$/, "") || absolute.pathname.startsWith(home.pathname);
-        const candidate = bySPA.parseURL(`${absolute.pathname}${absolute.search}`).path;
-        // Preserve normal navigation to sibling applications. Root-relative virtual routes remain routable when they are explicitly configured.
-        if (!insideHome && !Object.prototype.hasOwnProperty.call(bySPA.ROUTES, candidate)) return; */
-        nextURL = bySPA.HOME_PATH && absolute.href.startsWith(bySPA.HOME_PATH) ? absolute.href.slice(bySPA.HOME_PATH.length) || "/" : `${absolute.pathname}${absolute.search}`;
+        if (!insideHome) return;
+        nextURL = (absolute.pathname.slice(home.pathname.length - 1) || "/") + absolute.search;
       } catch (error) {
         return;
       }
