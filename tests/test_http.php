@@ -60,6 +60,11 @@ try {
     http_assert(str_contains($headers, "content-type: text/plain") && str_contains($headers, "x-content-type-options: nosniff"), "Diagnostics declare inert text before output.");
     http_assert(str_contains($body, "<b>inert</b>"), "Local diagnostics preserve input as text.");
   }
+  [$truncated, $truncated_output] = captured_request(fn() => make_http_request("{$base}?truncated=1", [], ["mutation" => "once"]));
+  http_assert($truncated === false && $truncated_output === "", "Partial POST responses preserve the quiet false failure result.");
+  http_assert(substr_count(file_get_contents($log), "POST /http_fixture.php?truncated=1") === 1, "A received POST is never replayed after a partial response.");
+  $posted = make_http_request("{$base}?post=1", [], ["value" => "once"], true);
+  http_assert($posted === ["value" => "once"], "Successful POST preserves its body and decoded response.");
   $denied = @file_get_contents("http://127.0.0.1:{$port}/test_sql.php");
   http_assert($denied === false && str_contains($http_response_header[0], "403"), "CLI-only fixtures reject execution even on the local HTTP server.");
   $plain = json_decode(make_http_request($base, ["added" => "value"]), true);

@@ -156,6 +156,8 @@ Run the framework checks defined in the [CI workflow](./.github/workflows/ci.yml
 - Supplied Apache/nginx rules deny every `tests` path segment, including submodule mounts, before serving existing files. Keep the nginx denial before the PHP handler and outside any overriding `^~` location. Test suites intended for CLI also reject web execution.
 - For deliberate local HTTP diagnostics, use `php -S 127.0.0.1:8000 -t tests`. This bypasses production rewrite rules on loopback; `get_and_post.php` and `test_pass.php` return plain text with `nosniff`. Do not expose this development server publicly.
 
+- `make_http_request()` attempts POST once. An ambiguous transport error returns the existing cURL failure result (`false`, or the existing decoded result when requested); it never switches protocol and replays the mutation. Invalid URLs still return `null`; optional frontend diagnostics remain opt-in.
+
 - `_auth.php` enables strict sessions, secure cookies on HTTPS, and CSRF helpers.
 - Add the CSRF token to a meta tag or `sessionStorage` and `_functions.js` will include it in jQuery POST requests:
 

@@ -93,17 +93,11 @@ function make_http_request(string $url, array $get = [], array $post = [], bool 
   $cert_file = file_exists("{$TO_HOME}/spa.php/cacert.pem") ? "{$SYSTEM_ROOT}/spa.php/cacert.pem" : "{$SYSTEM_ROOT}/cacert.pem";
   curl_setopt($req, CURLOPT_CAINFO, $cert_file);
   $response = curl_exec($req);
+  // A transport error may follow a completed remote mutation. Never replay POST.
   if (curl_errno($req)) {
     if ($clog_error)
-      console_error("CURL HTTP2 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req) . " = Switching to HTTP1.1");
-    error_log("CURL HTTP2 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req) . " = Switching to HTTP1.1");
-    curl_setopt($req, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
-    $response = curl_exec($req);
-  }
-  if (curl_errno($req)) {
-    if ($clog_error)
-      console_error("CURL HTTP1.1 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req));
-    error_log("CURL HTTP1.1 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req));
+      console_error("CURL (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req));
+    error_log("CURL (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req));
   }
   //curl_close($req);
   if ($forward_session && session_status() == PHP_SESSION_NONE)
