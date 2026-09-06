@@ -706,7 +706,7 @@ function build_sql_query(string $method, string $columns, string $table, array $
 
   // Relaxed validation must never imply permission for a full-table mutation.
   // That destructive scope requires its own explicit authorization.
-  if (in_array($method, ["U", "D"], true) && !count($return->conditions) && !$allow_full_table)
+  if (in_array($method, ["U", "D"], true) && !count(array_diff($return->conditions, ["1 = 1"])) && !$allow_full_table)
     return $fail("Refusing to build an unscoped mutation.");
 
   // Build the SQL query. The trusted ending also applies to UPDATE/DELETE for LIMIT support.

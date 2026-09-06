@@ -124,6 +124,8 @@ Login regenerates the session ID by default. Applications remain responsible for
 
 `build_sql_query()` rejects `UPDATE` and `DELETE` when no valid condition is built. Intentional full-table mutations require the explicit `allow_full_table => true` option; relaxed validation does not grant destructive scope.
 
+The builder's empty `NOT IN []` sentinel is not restrictive scope. Relaxed mutations need a restrictive companion condition or explicit full-table permission; strict mutations continue to reject empty `NOT IN` even with a companion or permission. Empty `IN []` matches nothing. Trusted SQL fragments are not analyzed for arbitrary tautologies.
+
 ## Maintaining a submodule integration
 
 Keep shared framework changes in this framework repository, then update the consuming application's recorded submodule commit after reviewing and validating the change. A consumer pins a specific framework commit; updating this repository does not update its consumers automatically.

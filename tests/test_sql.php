@@ -279,4 +279,24 @@ $statement = new SqlTestStatement();
 sql_test_throws(fn() => execute_sql_query(new SqlTestConnection($statement), $multiple_updates, ["throw" => true]), InvalidArgumentException::class);
 sql_test_assert($statement->executions === 0 && $statement->closed, "Multiple UPDATE rows should fail before execution.");
 
+// Generated queries only: empty-set scope and binding matrix, without database execution.
+foreach (["R", "U", "D"] as $method)
+  foreach (["in", "not in"] as $operator)
+    foreach ([[], [2, 3]] as $ids)
+      foreach ([false, true] as $strict)
+        foreach ([false, true] as $companion)
+          foreach ([false, true] as $allow) {
+            $schema = $valid + ["ids" => ["column" => "ID", "type" => "i", "condition" => $operator]];
+            $conditions = ["ids" => $ids] + ($companion ? ["id" => 7] : []);
+            $built = build_sql_query($method, "*", "test", $method === "U" ? ["name"] : [], $conditions, "", $schema, $method === "U" ? [["name" => "Updated"]] : [], [], [], ["strict" => $strict, "allow_full_table" => $allow]);
+            $reject = $method !== "R" && $operator === "not in" && !$ids && ($strict || (!$companion && !$allow));
+            sql_test_assert((bool) $built->error === $reject, "Empty-set mutation scope matrix should preserve strict and relaxed contracts.");
+            if (!$reject) {
+              $expected_condition = $ids ? "ID " . strtoupper($operator) . " (?, ?)" : ($operator === "in" ? "0 = 1" : "1 = 1");
+              sql_test_assert(str_contains($built->query, $expected_condition), "Generated SQL must retain the operator's empty/nonempty set semantics.");
+              sql_test_assert($built->param_values === array_merge($companion ? [7] : [], $ids), "Condition values must preserve schema order.");
+              sql_test_assert($built->param_types === ($method === "U" ? "s" : "") . str_repeat("i", count($ids) + (int) $companion), "Binding types must include update fields before conditions.");
+            }
+          }
+
 echo "SQL helper tests passed ({$assertions})." . PHP_EOL;
