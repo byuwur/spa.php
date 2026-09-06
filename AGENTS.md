@@ -2,10 +2,10 @@
 
 Before significant work, read in this order:
 
-1. `README.md`.
+1. [README.md](./README.md).
 2. [CODING_STANDARDS.md](CODING_STANDARDS.md).
 3. [CONTRIBUTING.md](CONTRIBUTING.md).
-4. Relevant project-specific documentation and the existing implementation and tests.
+4. Relevant project-specific documentation and the existing implementation and tests. For framework changes, read the README's [application layout](./README.md#how-is-it-done) and [runtime contracts](./README.md#runtime-contracts).
 
 `CODING_STANDARDS.md` is the canonical engineering policy. This file provides orientation and workflow; it does not duplicate or override that policy. Follow its precedence rules and any explicit project requirements. If a listed document is absent, continue with the available guidance and disclose material uncertainty.
 

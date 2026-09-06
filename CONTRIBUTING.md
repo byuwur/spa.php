@@ -4,9 +4,13 @@
 
 ## Before changing code
 
-Read `README.md`, the coding standards, and relevant project documentation. Inspect the nearby implementation and tests, including existing helpers and the paths that call the behavior. Understand the requested outcome and current contract before proposing architectural changes.
+Read [README.md](./README.md), the coding standards, and relevant project documentation. Inspect the nearby implementation and tests, including existing helpers and the paths that call the behavior. Understand the requested outcome and current contract before proposing architectural changes.
 
 Check repository-specific requirements and preserve unrelated work. If the implementation differs intentionally from a general convention, understand the reason before changing it.
+
+## Repository workflow
+
+See the README for [installation](./README.md#installation), [usage](./README.md#usage), and [runtime contracts](./README.md#runtime-contracts). The [CI workflow](./.github/workflows/ci.yml) defines PHP linting, PHP and JavaScript tests, JavaScript syntax checks, and Composer validation. Run its commands from the repository root, preserving the SQL test step's change into `tests/`.
 
 ## Make a focused change
 
