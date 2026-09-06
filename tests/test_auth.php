@@ -1,4 +1,8 @@
 <?php
+if (PHP_SAPI !== "cli") {
+  http_response_code(403);
+  exit;
+}
 $_SERVER = ["REMOTE_ADDR" => "127.0.0.1", "HTTP_HOST" => "localhost", "SERVER_PORT" => "80", "SCRIPT_FILENAME" => __FILE__, "PHP_SELF" => "/tests/test_auth.php"];
 $_ENV = [];
 require_once __DIR__ . "/../_init.php";

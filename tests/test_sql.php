@@ -1,4 +1,8 @@
 <?php
+if (PHP_SAPI !== "cli") {
+  http_response_code(403);
+  exit;
+}
 require_once "../_init.php";
 require_once "{$TO_HOME}/_functions.php";
 

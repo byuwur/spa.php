@@ -7,6 +7,8 @@
 Options -Multiviews -Indexes
 # Enable URL rewriting
 RewriteEngine On
+# Development fixtures are available only through the local CLI test server.
+RewriteRule (^|/)tests(?:/|$) - [F,L,NC]
 # Block TRACE and TRACK HTTP methods
 RewriteCond %{REQUEST_METHOD} ^(?:TRACE|TRACK)$ [NC]
 RewriteRule ^ - [F,L]

@@ -1,4 +1,8 @@
 <?php
+if (PHP_SAPI !== "cli") {
+  http_response_code(403);
+  exit;
+}
 $_SERVER = ["REMOTE_ADDR" => "127.0.0.1", "HTTP_HOST" => "localhost", "SERVER_PORT" => "80", "SCRIPT_FILENAME" => __FILE__, "PHP_SELF" => "/tests/test_http.php"];
 $_ENV = ["APP_ENV" => "PROD"];
 require_once __DIR__ . "/../_init.php";
@@ -29,7 +33,7 @@ if (!$socket)
 $port = (int) substr(strrchr(stream_socket_get_name($socket, false), ":"), 1);
 fclose($socket);
 $log = tempnam(sys_get_temp_dir(), "spa-http-test-");
-$command = escapeshellarg(PHP_BINARY) . " -S 127.0.0.1:{$port} -t " . escapeshellarg(__DIR__);
+$command = [PHP_BINARY, "-S", "127.0.0.1:{$port}", "-t", __DIR__];
 $process = proc_open($command, [["pipe", "r"], ["file", $log, "a"], ["file", $log, "a"]], $pipes);
 if (!is_resource($process))
   throw new RuntimeException("Unable to start the local HTTP fixture.");
@@ -49,6 +53,15 @@ try {
     throw new RuntimeException("Local HTTP fixture did not start.");
 
   $base = "http://127.0.0.1:{$port}/http_fixture.php";
+  foreach (["get_and_post.php?testget=%3Cb%3Einert%3C%2Fb%3E", "test_pass.php?test=%3Cb%3Einert%3C%2Fb%3E"] as $diagnostic) {
+    $context = stream_context_create(["http" => ["method" => "POST", "header" => "Content-Type: application/x-www-form-urlencoded", "content" => "testpost=%3Cb%3Einert%3C%2Fb%3E"]]);
+    $body = file_get_contents("http://127.0.0.1:{$port}/{$diagnostic}", false, $context);
+    $headers = strtolower(implode("\n", $http_response_header));
+    http_assert(str_contains($headers, "content-type: text/plain") && str_contains($headers, "x-content-type-options: nosniff"), "Diagnostics declare inert text before output.");
+    http_assert(str_contains($body, "<b>inert</b>"), "Local diagnostics preserve input as text.");
+  }
+  $denied = @file_get_contents("http://127.0.0.1:{$port}/test_sql.php");
+  http_assert($denied === false && str_contains($http_response_header[0], "403"), "CLI-only fixtures reject execution even on the local HTTP server.");
   $plain = json_decode(make_http_request($base, ["added" => "value"]), true);
   http_assert(($plain["added"] ?? null) === "value", "GET data is appended to URLs without a query.");
   $merged = json_decode(make_http_request("{$base}?fixed=1#section", ["added" => "value"]), true);
