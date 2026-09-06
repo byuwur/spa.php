@@ -27,6 +27,7 @@ async function initializePage(page, preferences = {}) {
     for (const [key, value] of Object.entries(values)) byStorage.setItem(key, value);
     window.events = [];
     window.requests = [];
+    window.cookieconsent = { run: options => { window.consent = options; } };
     window.remote_file_exists = () => $.Deferred().resolve(true).promise();
     for (const type of ["bySPA:before-unload", "bySPA:load", "bySPA:error"]) document.addEventListener(type, event => events.push({ type, ...event.detail }));
     $.ajax = options => {
@@ -88,4 +89,11 @@ test("request rebinding preserves real jQuery consumer events and independent el
     return { consumer, count: requests.length - count };
   });
   assert.deepEqual(result, { consumer: 2, count: 4 });
+});
+
+test("consent consumes namespaced preferences and retains defaults", async t => {
+  const page = await application(t);
+  assert.deepEqual(await page.evaluate(() => [consent.palette, consent.language]), ["dark", "es"]);
+  const migrated = await application(t, { APP_THEME: "light", APP_LANG: "en" });
+  assert.deepEqual(await migrated.evaluate(() => [consent.palette, consent.language, localStorage.getItem("APP_THEME")]), ["light", "en", null]);
 });

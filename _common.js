@@ -252,8 +252,8 @@
       cookieconsent.run({
         notice_banner_type: "simple",
         consent_type: "express",
-        palette: localStorage.getItem("APP_THEME") ?? "dark",
-        language: localStorage.getItem("APP_LANG") ?? "es",
+        palette: byStorage.getItem("APP_THEME") ?? "dark",
+        language: byStorage.getItem("APP_LANG") ?? "es",
         website_name: "[Mateus] byUwUr",
         change_preferences_selector: "#cookiePrefs"
       });
