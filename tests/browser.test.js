@@ -55,3 +55,20 @@ test("component transport preserves existing queries and helper precedence", asy
     assert.equal(url, "https://example.test/app/part.php?" + (file.includes("?") ? "fixed=1&repeat=new&added=x" : "added=x&repeat=new") + "&uri=false");
   }
 });
+
+test("initial and later query entry points preserve complete suffixes", async t => {
+  const page = await application(t);
+  assert.equal(await page.evaluate(() => requests[0].url.includes("q=a%3Fb")), true);
+  for (const query of ["q=a?b", "q=a%3Fb", "q=first&q=last", "q=%ZZ", "", "q="]) {
+    const actual = await page.evaluate(async query => {
+      await bySPA.load("/known?" + query, { push: false });
+      return bySPA._GET.q ?? null;
+    }, query);
+    assert.equal(actual, Object.fromEntries(new URLSearchParams(query)).q ?? null);
+  }
+  const result = await page.evaluate(async () => {
+    history.replaceState({}, "", "/app/known#/known?q=a?b");
+    return get_url_param("q");
+  });
+  assert.equal(result, "a?b");
+});

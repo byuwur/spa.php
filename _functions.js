@@ -289,7 +289,7 @@ function get_url_param(name) {
   if (directValue !== null) return directValue;
   const hash = locationURL.hash || "";
   if (!hash.startsWith("#/") || !hash.includes("?")) return null;
-  return new URLSearchParams(hash.split("?", 2)[1]).get(name);
+  return new URLSearchParams(hash.slice(hash.indexOf("?") + 1)).get(name);
 }
 
 /**

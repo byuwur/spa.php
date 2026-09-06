@@ -114,6 +114,8 @@ Navigation emits `bySPA:before-unload`, then `bySPA:load` on success or `bySPA:e
 
 Component requests preserve existing queries and replace overlapping keys with supplied GET values; their `uri=false` flag remains authoritative.
 
+Only the first `?` separates route path and query. Later literal question marks remain query content, including hash-query values read by `get_url_param()`.
+
 `byCommon` initialization is quiet by default. Set `byCommon.INIT_WARNINGS = true` to enable optional sidebar, Bootstrap, captcha, cookie-consent, and particles diagnostics, or pass `{ showWarn: true }` for one call. Required-runtime errors and warnings outside that initialization chain remain visible.
 
 Scripts in trusted route and component fragments execute as real browser `<script>` elements. Inline scripts and non-`async` external scripts keep source order; `defer` external scripts are treated as ordered fragment dependencies because dynamic fragments have no document-parser defer phase. Non-`async` module scripts are also awaited. Explicit external `async` scripts start independently and do not delay later fragment scripts or `bySPA:load`. Attributes, including CSP/SRI and data attributes, are preserved. External load failures are logged but do not fail navigation or stop later scripts; stale navigation stops the old fragment before it can continue. `bySPA:load` fires only after the current route and component fragments finish processing their ordered scripts.

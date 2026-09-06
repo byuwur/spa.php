@@ -316,7 +316,9 @@
       }
     }
     uri = uri.split("#", 1)[0] || "/";
-    const [pathInput, queryInput = ""] = uri.split("?", 2);
+    const queryIndex = uri.indexOf("?");
+    const pathInput = queryIndex < 0 ? uri : uri.slice(0, queryIndex);
+    const queryInput = queryIndex < 0 ? "" : uri.slice(queryIndex + 1);
     // Ensure the URI starts with a "/" and doesn't end with one
     let pathUri = pathInput || "/";
     if (!pathUri.startsWith("/")) pathUri = `/${pathUri.replace(/^\/+/, "")}`;
