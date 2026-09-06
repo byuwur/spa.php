@@ -23,7 +23,7 @@ async function initializePage(page, preferences = {}) {
   await page.addScriptTag({ path: path.join(__dirname, "../js/jquery.min.js") });
   await page.addScriptTag({ path: path.join(__dirname, "../_functions.js") });
   await page.evaluate(() => {
-    const values = { HOME_PATH: "https://example.test/app", URL: location.pathname.slice(4) + location.search, ROUTES: JSON.stringify({ "/known": { URI: "/known.php" } }) };
+    const values = { HOME_PATH: "https://example.test/app", URL: location.pathname.slice(4) + location.search, ROUTES: JSON.stringify({ "/known": { URI: "/known.php" }, "/next": { URI: "/next.php" }, "/slow": { URI: "/slow.php" }, "/fail": { URI: "/fail.php" } }) };
     for (const [key, value] of Object.entries(values)) byStorage.setItem(key, value);
     window.events = [];
     window.requests = [];
@@ -96,4 +96,24 @@ test("consent consumes namespaced preferences and retains defaults", async t => 
   assert.deepEqual(await page.evaluate(() => [consent.palette, consent.language]), ["dark", "es"]);
   const migrated = await application(t, { APP_THEME: "light", APP_LANG: "en" });
   assert.deepEqual(await migrated.evaluate(() => [consent.palette, consent.language, localStorage.getItem("APP_THEME")]), ["light", "en", null]);
+});
+
+test("navigation has one terminal outcome, including stale work and error-page failure", async t => {
+  for (const [url, expected] of [["/next", "bySPA:load"], ["/fail", "bySPA:error"], ["/unknown", "bySPA:error"]]) {
+    const page = await application(t);
+    const events = await page.evaluate(async url => {
+      events.length = 0;
+      window.errorFails = true;
+      await bySPA.load(url);
+      return window.events.map(event => event.type);
+    }, url);
+    assert.deepEqual(events, ["bySPA:before-unload", expected]);
+  }
+  const page = await application(t);
+  const events = await page.evaluate(async () => {
+    events.length = 0;
+    await Promise.all([bySPA.load("/slow"), bySPA.load("/next")]);
+    return window.events.map(event => [event.type, event.url]);
+  });
+  assert.deepEqual(events, [["bySPA:before-unload", "/slow"], ["bySPA:before-unload", "/next"], ["bySPA:load", "/next"]]);
 });

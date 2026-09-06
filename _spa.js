@@ -385,10 +385,13 @@
     $("#spa-loader").fadeIn(1);
     const routing = routeURL(`${url}`);
     // If routing fails, return early
-    if (!routing)
-      return bySPA.errorPage(404, `Route "${url}" does not exist.`, navigationId).always(function () {
+    if (!routing) {
+      const error = `Route "${url}" does not exist.`;
+      document.dispatchEvent(new CustomEvent("bySPA:error", { detail: { navigationId, url, status: 404, error } }));
+      return bySPA.errorPage(404, error, navigationId).always(function () {
         if (navigationId === bySPA.NAVIGATION_ID) $("#spa-loader").fadeOut(byCommon.GLOBAL_TRANSITION_DURATION);
       });
+    }
     const { path, uri, file, get, post: routePost, component } = routing;
     // If a file is specified in the route, navigate to it directly
     if (file) {
