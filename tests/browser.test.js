@@ -10,7 +10,7 @@ after(async () => { await browser?.close(); });
 async function application(t, preferences = {}) {
   const page = await browser.newPage();
   t.after(() => page.close());
-  await page.route("**/*", route => route.fulfill({ contentType: "text/html", body: '<main id="spa-content"></main><div id="spa-loader"></div><div id="component"></div>' }));
+  await page.route("**/*", route => route.fulfill({ contentType: "text/html", body: '<main id="spa-content"></main><div id="spa-loader"></div><div id="component"></div><form id="form"><button type="submit"></button></form><form id="other"></form>' }));
   await page.goto("https://example.test/app/known?q=a?b");
   await initializePage(page, preferences);
   return page;
@@ -71,4 +71,21 @@ test("initial and later query entry points preserve complete suffixes", async t 
     return get_url_param("q");
   });
   assert.equal(result, "a?b");
+});
+
+test("request rebinding preserves real jQuery consumer events and independent elements", async t => {
+  const page = await application(t);
+  const result = await page.evaluate(async () => {
+    let consumer = 0;
+    $("#form").on("submit.consumer change.consumer", () => consumer++);
+    const options = { $elementId: "#form", $url: "/request", $trigger: "submit change" };
+    element_make_http_request(options);
+    element_make_http_request(options);
+    element_make_http_request({ $elementId: "#other", $url: "/other-change", $trigger: "change" });
+    element_make_http_request({ $elementId: "#other", $url: "/other" });
+    const count = requests.length;
+    for (const [id, type] of [["form", "submit"], ["form", "change"], ["other", "submit"], ["other", "change"]]) document.getElementById(id).dispatchEvent(new Event(type, { bubbles: true, cancelable: true }));
+    return { consumer, count: requests.length - count };
+  });
+  assert.deepEqual(result, { consumer: 2, count: 4 });
 });

@@ -469,10 +469,12 @@ function element_make_http_request(options) {
   if ($url.includes("?")) console.warn(`URL (${elementId}) shouldn't have GET in itself since they're ignored. Use $_get Object instead.`);
   const inputUrl = $url.match(/^[^?]+/);
   const urlGet = `${inputUrl[0]}?${new URLSearchParams($_get).toString()}`;
+  // Replace only this helper's registrations, including multi-event triggers.
+  const requestEvents = $trigger.trim().split(/\s+/).map((event) => `${event}.byRequest`).join(" ");
   // Start request
   $(elementId)
-    .off($trigger)
-    .on($trigger, function (event) {
+    .off(requestEvents)
+    .on(requestEvents, function (event) {
       event.preventDefault();
       submitBtn.attr("disabled", true);
       spinner.fadeIn(111);
