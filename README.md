@@ -146,6 +146,27 @@ Keep application-owned initialization, routes, and configuration in the applicat
 
 Run the framework checks defined in the [CI workflow](./.github/workflows/ci.yml) from the framework checkout, then validate the affected integration in the consuming application. Record the consumer's submodule update separately from the framework change, with any required application adjustments.
 
+### Shared SPA maintenance
+
+spa.php and spa.js deliberately maintain selected equivalent browser helpers and contracts. Neither repository automatically synchronizes the other. The changing framework owns its implementation; maintainers review the corresponding contract separately. No complete runtime file is currently guaranteed byte-identical.
+
+| Artifact | Responsibility |
+| --- | --- |
+| `_functions.js` | Intentional behavioral mirror for query parsing and request-listener ownership; comments and local names may differ. |
+| `_common.js` | Shared consent namespace and ordinary-click intent, with host/application configuration preserved. |
+| `_spa.js` | Shared query, eligible-click, success/error, stale-navigation and bounded error-fallback contracts; PHP/static transport, history and routing implementations differ. |
+| `_init.php` / `_init.js` | Shared storage authority contract, host-specific bootstrap, and copied-initializer responsibility. |
+| `_router.php` / `_router.js` | Host-specific implementations; no source parity requirement. |
+
+When shared browser behavior changes:
+
+1. Identify affected mirrors/shared contracts and review the corresponding repository separately.
+2. Compare explicit immutable commits, never an uncontrolled moving `main`.
+3. Run the relevant [shared contract checks](tests/SPA_PARITY.md), recording revisions and intentional differences.
+4. Reconcile application-owned initializers while preserving host/application configuration, then run consumer integration tests.
+
+A framework/submodule/version update does **not** update copied application `_init.php` or `_init.js` behavior. Consumers must explicitly review storage and bootstrap changes even when framework tests pass. Storage reconciliation includes per-key authority after failed writes, deletion tombstones after failed removals, live reads for unaffected keys, and release only after a successful explicit write/removal. Migration follows the same rules; there is no global memory-first cache, automatic replay, or stale-disk resurrection.
+
 ## Usage
 
 1. Copy `_init.php` into the application root and keep that application-specific initialization there.

@@ -3,17 +3,19 @@ const assert = require("node:assert/strict");
 const { execFileSync } = require("node:child_process");
 const vm = require("node:vm");
 const path = require("node:path");
+const { source, reference } = require("./parity-source");
 
 function initialize(storage, app = "app", copy = "root") {
-  const html = execFileSync(process.env.PHP_BINARY || "php", [path.join(__dirname, "render_init.php"), copy, `https://example.test/${app}`], { encoding: "utf8" });
-  const context = { localStorage: storage, document: { baseURI: `https://example.test/${app}/` }, URL, console };
+  const html = reference ? null : execFileSync(process.env.PHP_BINARY || "php", [path.join(__dirname, "render_init.php"), copy, `https://example.test/${app}`], { encoding: "utf8" });
+  const context = { localStorage: storage, location: new URL(`https://example.test/${app}/`), document: { baseURI: `https://example.test/${app}/` }, URL, console };
   context.window = context;
   vm.createContext(context);
-  for (const script of html.matchAll(/<script>([\s\S]*?)<\/script>/g)) vm.runInContext(script[1], context);
+  const scripts = reference ? [source("_init.js")] : [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(script => script[1]);
+  for (const script of scripts) vm.runInContext(script, context);
   return context.byStorage;
 }
 
-for (const copy of ["root", "demo"]) {
+for (const copy of reference ? ["static"] : ["root", "demo"]) {
   test(`${copy} emitted initializer preserves per-key authority and recovery`, () => {
     const disk = new Map([["APP_THEME", "light"]]);
     let failWrite = false, failRead = false;
