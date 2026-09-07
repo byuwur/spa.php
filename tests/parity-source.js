@@ -2,7 +2,7 @@ const { execFileSync } = require("node:child_process");
 const fs = require("node:fs");
 const path = require("node:path");
 
-const SPA_JS_REVISION = "8a3df8aca9e92b5dcfa32f495f9ce005ccbbfb69";
+const SPA_JS_REVISION = "6b37270c852cd9393e645227df122523548ecd11";
 const reference = process.env.SPA_JS_TREE;
 
 function source(file) {

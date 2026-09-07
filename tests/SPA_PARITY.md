@@ -1,6 +1,6 @@
 # Shared SPA contract checks
 
-Comparison baseline: spa.php `e899d4fec55e8a596120118f4d83344983f3d368` and spa.js `8a3df8aca9e92b5dcfa32f495f9ce005ccbbfb69`. These are review references, not dependency upgrades. The README classifies responsibilities; no source-byte equality is asserted.
+Comparison baseline: spa.php `e899d4fec55e8a596120118f4d83344983f3d368` and spa.js `6b37270c852cd9393e645227df122523548ecd11`. These are review references, not dependency upgrades. The README classifies responsibilities; no source-byte equality is asserted. The previous spa.js baseline, `8a3df8aca9e92b5dcfa32f495f9ce005ccbbfb69`, predates F8 and F10b.
 
 The existing browser and storage suites are also executable against the recorded spa.js Git objects. `SPA_JS_TREE` supplies a local Git object store only: its branch, HEAD and uncommitted files are ignored. There is no fetch, clone, or external checkout requirement in CI. The local default tests remain the spa.php authority.
 
@@ -19,8 +19,10 @@ The same vectors exercise complete query suffixes, real jQuery request ownership
 
 ## Recorded differences and follow-up
 
-- The approved spa.js baseline lacks F8: successful disk reads can override failed local writes, and failed removal lacks a tombstone. Its storage check is expected to fail, not be skipped or treated as parity success.
-- It also lacks F10b's terminal error for unknown routes. The shared navigation check is expected to fail. Both gaps require a separately reviewed spa.js revision and a new comparison; this maintenance change does not repair spa.js.
+- A. Intentional mirrors: `_functions.js` and `_common.js`; query parsing, request-listener ownership, consent namespacing, and ordinary-click ownership pass the reference vectors.
+- B. Shared behavioral contracts with host-specific implementations: `_spa.js` and storage in `_init.php` / `_init.js`; F8 passes against the recorded spa.js object. F10b browser verification remains locally unverified because Playwright is unavailable.
+- C. Host-specific: `_router.php` / `_router.js`, PHP/static transport, history, route modes, error handoff, and bootstrap configuration; no source-byte parity is required.
+- D. Copied-initializer responsibility: application-owned `_init.php` / `_init.js` copies must be reviewed separately when the framework or parity baseline changes.
 - PHP uses POST fragments, path history and PHP error candidates. Static SPA uses GET fragments, hash/path modes and an optional `ERROR_PATH` before HTML fallback candidates. Bounded fallback and success-only load events are shared requirements, not equal request URLs or source text.
 - Static SPA accepts `#/` routing, explicit `_self` targets, and configured route paths outside its mount. PHP preserves native handling for hashes/any target and limits interception to `HOME_PATH`. The click fixture explicitly exercises the allowed hash and target differences; mount/route configuration remains host-owned. Both preserve external/unowned sibling navigation and modified/download/named-target clicks.
 - PHP can reject an initial route server-side before a browser lifecycle starts. Static bootstrap has its own route-error handoff. PHP's full-document error/Back recovery test is host-specific.
@@ -30,6 +32,4 @@ Passing these selected vectors does not establish full runtime equivalence or au
 
 ## Baseline validation
 
-The local suite passed 18 Node tests and 12 browser tests (including navigation subtests). Against the recorded spa.js objects, both helper tests passed; storage failed at the first failed-write authority assertion (`disk` instead of `local`), so later storage assertions were not reached. Shared browser checks passed query, request ownership, consent, click policy, success, transport failure, bounded fallback and stale navigation. Both unknown-route cases lacked `bySPA:error` (two failed subtests and their parent). These are recorded failures, not accepted alternative contracts.
-
-Local validation used PHP 8.4.15 and installed Edge through Playwright. All 41 PHP files passed lint; the SQL (386 assertions), proxy, auth, HTTP and API response checks passed, as did JavaScript syntax checks, Composer validation and `git diff --check`. Auth used a writable temporary session directory. PHP's Xdebug log-path warnings did not fail these checks. Linux CI's PHP 8.1 / downloaded Chromium environment was not executed locally; no new dependency was installed. Consumer integration tests and the static repository's full host-specific suite were not run by this closure pass.
+The local Node suite passed 18 tests, including query suffixes, request ownership, consent, routing, fragment scripts, storage, and parity vectors. Against spa.js `6b37270c852cd9393e645227df122523548ecd11`, the reference helper and storage suite passed all 3 tests, including F8. The reference browser suite was attempted but could not start because the local environment has no Playwright module; F10b is therefore locally unverified, not a pass or an accepted alternative. PHP SQL tests passed 386 assertions; proxy, HTTP, and API response checks passed; JavaScript syntax checks and Composer validation passed. Checked PHP entrypoints passed lint. `git diff --check` passed. Xdebug log-path warnings were environmental and non-fatal. The CI browser environment (downloaded Chromium) was not executed locally; no new dependency was installed. Consumer integration tests and the static repository's full host-specific suite were not run.
