@@ -1,3 +1,10 @@
+<!--
+  File: CODING_STANDARDS.md
+  Desc: Defines the canonical engineering policy for repository contributions.
+
+  Copyright (c) 2026 Andrés Trujillo [Mateus] byUwUr
+-->
+
 # Coding standards
 
 **Simple is complicated enough.**

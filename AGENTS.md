@@ -1,3 +1,10 @@
+<!--
+  File: AGENTS.md
+  Desc: Orients automated contributors to the repository guidance and task workflow.
+
+  Copyright (c) 2026 Andrés Trujillo [Mateus] byUwUr
+-->
+
 # Agent instructions
 
 Before significant work, read in this order:

@@ -1,3 +1,10 @@
+<!--
+  File: CONTRIBUTING.md
+  Desc: Describes the contribution workflow and validation expectations.
+
+  Copyright (c) 2026 Andrés Trujillo [Mateus] byUwUr
+-->
+
 # Contributing
 
 [CODING_STANDARDS.md](CODING_STANDARDS.md) is the canonical engineering policy. This document describes how to prepare and submit a contribution.
