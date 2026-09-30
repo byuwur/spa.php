@@ -492,8 +492,8 @@
         if (absolute.hash) return;
         const home = new URL(`${bySPA.HOME_PATH.replace(/\/$/, "")}/`, document.baseURI);
         const insideHome = absolute.pathname === home.pathname.replace(/\/$/, "") || absolute.pathname.startsWith(home.pathname);
-        if (!insideHome) return;
-        nextURL = (absolute.pathname.slice(home.pathname.length - 1) || "/") + absolute.search;
+        // Same-origin virtual routes may be root-relative, including unknown routes for SPA errors.
+        nextURL = (insideHome ? absolute.pathname.slice(home.pathname.length - 1) || "/" : absolute.pathname) + absolute.search;
       } catch (error) {
         return;
       }

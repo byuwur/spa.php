@@ -127,7 +127,7 @@ test("shared: both click handlers preserve native ownership and existing-target 
   const page = await application(t);
   const cases = [
     ["https://elsewhere.test/page#section", {}, false], ["/sibling/page#section", {}, false],
-    ["/application/page", {}, false], ["#missing", {}, false], ["#section", {}, true],
+    ["#missing", {}, false], ["#section", {}, true],
     ["#/next", {}, Boolean(reference)], ["/app/next", { target: "_self" }, Boolean(reference)],
     ["/app/next", {}, true], ["/app/next", { ctrlKey: true }, false],
     ["/app/next", { button: 1 }, false], ["/app/next", { target: "named" }, false],
@@ -185,4 +185,35 @@ test("rapid navigation, error, Back, FILE, Back returns to a clean application",
   await page.waitForFunction(() => typeof bySPA === "undefined");
   await initializePage(page);
   assert.equal(await page.evaluate(() => events.filter(event => event.type === "bySPA:load").length), 1);
+});
+
+test("PHP root-relative links retain virtual-route navigation and native opt-outs", { skip: Boolean(reference) }, async t => {
+  const page = await application(t);
+  for (const [href, attributes, expected] of [
+    ["/next?q=a%3Fb", {}, "/next?q=a%3Fb"],
+    ["/app/next?q=a%3Fb", {}, "/next?q=a%3Fb"],
+    ["/missing", {}, "/missing"],
+    ["/application/page", {}, "/application/page"],
+    ["/next", { "custom-folder": "true" }, null],
+    ["/next", { target: "_self" }, null],
+    ["/next", { download: "sample" }, null],
+    ["https://elsewhere.test/next", {}, null],
+    ["/next#section", {}, null]
+  ]) {
+    const result = await page.evaluate(({ href, attributes }) => {
+      const a = document.createElement("a");
+      a.href = href;
+      for (const [key, value] of Object.entries(attributes)) a.setAttribute(key, value);
+      document.body.append(a);
+      const load = bySPA.load;
+      let routed = null;
+      bySPA.load = url => { routed = url; };
+      document.addEventListener("click", event => event.preventDefault(), { once: true });
+      a.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, button: 0 }));
+      bySPA.load = load;
+      a.remove();
+      return routed;
+    }, { href, attributes });
+    assert.equal(result, expected, href + JSON.stringify(attributes));
+  }
 });
