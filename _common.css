@@ -433,26 +433,6 @@ th {
 .text-tertiary-color * {
   color: var(--text-tertiary-color) !important;
 }
-.light-links a:hover,
-.light-links a:hover * {
-  color: var(--light-links) !important;
-}
-.dark-links a:hover,
-.dark-links a:hover * {
-  color: var(--dark-links) !important;
-}
-.uncolor-links,
-.uncolor-links * {
-  color: inherit !important;
-}
-.uncolor-links:hover,
-.uncolor-links:hover * {
-  color: inherit !important;
-}
-.uncolor-links-hover:hover,
-.uncolor-links-hover:hover * {
-  color: inherit !important;
-}
 .text-smallest,
 .text-smallest * {
   font-size: 0.25rem;
@@ -480,6 +460,35 @@ th {
 .text-largest,
 .text-largest * {
   font-size: 5rem;
+}
+.text-center,
+.text-center * {
+  text-align: center !important;
+}
+.text-bg-primary,
+.text-bg-primary * {
+  color: var(--light-color) !important;
+  background-color: var(--primary-color) !important;
+}
+.light-links a:hover,
+.light-links a:hover * {
+  color: var(--light-links) !important;
+}
+.dark-links a:hover,
+.dark-links a:hover * {
+  color: var(--dark-links) !important;
+}
+.uncolor-links,
+.uncolor-links * {
+  color: inherit !important;
+}
+.uncolor-links:hover,
+.uncolor-links:hover * {
+  color: inherit !important;
+}
+.uncolor-links-hover:hover,
+.uncolor-links-hover:hover * {
+  color: inherit !important;
 }
 .hidden {
   display: none;
@@ -551,6 +560,80 @@ th {
 .btn.btn-quarternary:hover * {
   text-shadow: 0 0 var(--transparent) !important;
 }
+.progress {
+  --bs-progress-bar-bg: var(--primary-color);
+}
+.pagination {
+  --bs-pagination-color: var(--primary-color);
+  --bs-pagination-hover-color: var(--primary-color);
+  --bs-pagination-focus-color: var(--primary-color);
+  --bs-pagination-active-bg: var(--primary-color);
+  --bs-pagination-active-border-color: var(--primary-color);
+}
+.nav {
+  --bs-nav-link-color: var(--primary-color);
+  --bs-nav-link-hover-color: var(--tertiary-color);
+}
+.list-group {
+  --bs-list-group-active-bg: var(--primary-color);
+  --bs-list-group-active-border-color: var(--primary-color);
+}
+.page-item.active .page-link {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+.btn.btn-outline-primary {
+  color: var(--primary-color);
+  background-color: transparent;
+  border-color: var(--primary-color);
+  box-shadow: none;
+}
+.btn.btn-outline-primary:not(:disabled):not(.disabled):is(:hover, :active, .active),
+.show > .btn.btn-outline-primary.dropdown-toggle {
+  color: var(--light-color);
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+.btn.btn-primary:focus-visible,
+.btn.btn-outline-primary:focus,
+.btn.btn-outline-primary.focus,
+.form-check-input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.25rem color-mix(in srgb, var(--primary-color) 25%, transparent) !important;
+}
+.form-check-input:checked,
+.form-check-input[type="checkbox"]:indeterminate {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+.form-range::-webkit-slider-thumb {
+  background-color: var(--primary-color);
+}
+.form-range::-moz-range-thumb {
+  background-color: var(--primary-color);
+}
+.form-range::-webkit-slider-thumb:active {
+  background-color: color-mix(in srgb, var(--primary-color) 70%, white);
+}
+.form-range::-moz-range-thumb:active {
+  background-color: color-mix(in srgb, var(--primary-color) 70%, white);
+}
+.form-range:focus::-webkit-slider-thumb {
+  box-shadow:
+    0 0 0 1px var(--bs-body-bg),
+    0 0 0 0.25rem color-mix(in srgb, var(--primary-color) 25%, transparent);
+}
+.form-range:focus::-moz-range-thumb {
+  box-shadow:
+    0 0 0 1px var(--bs-body-bg),
+    0 0 0 0.25rem color-mix(in srgb, var(--primary-color) 25%, transparent);
+}
+.color-preview {
+  display: block;
+  width: 1.5em;
+  height: 1.5em;
+  flex-shrink: 0;
+}
 /* === INPUTS === */
 :disabled,
 :disabled * {
@@ -585,18 +668,114 @@ th {
   width: 1.5rem !important;
   margin: 0 0.5rem !important;
 }
-/* === NAVBAR === */
-.dropdown:hover .dropdown-menu,
-.dropup:hover .dropdown-menu {
+/* === DROPZONE === */
+.dropzone .dz-preview {
+  width: 160px;
+  margin-bottom: 3rem;
+}
+.dropzone .dz-preview .dz-image {
+  width: 160px;
+  height: 160px;
+}
+.dropzone .dz-preview .dz-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.dropzone .dz-preview:hover .dz-image img {
+  transform: none;
+  filter: none;
+}
+.dropzone .dz-preview .dz-details {
+  top: 0;
+  padding: 0.5rem;
+  opacity: 1;
+  background: var(--light-opaque);
+  border-radius: 20px 20px 0 0;
+}
+.dropzone .dz-preview .dz-details .dz-size {
+  margin-bottom: 0.25rem;
+  font-size: 0.75rem;
+}
+.dropzone .dz-preview .dz-details .dz-filename {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap !important;
+}
+.dropzone .dz-preview .dz-progress,
+.dropzone .dz-preview .dz-success-mark,
+.dropzone .dz-preview .dz-error-mark,
+.dropzone .dz-preview .dz-error-message {
+  top: auto;
+  bottom: 0.5rem;
+  margin: 0;
+  opacity: 1;
+  animation: none !important;
+}
+.dropzone .dz-preview .dz-progress {
+  display: none;
+  left: 0.5rem;
+  width: calc(100% - 1rem);
+  height: 0.5rem;
+  background: var(--light-color);
+  transform: none;
+}
+.dropzone .dz-preview.dz-processing:not(.dz-complete) .dz-progress {
+  display: block;
+}
+.dropzone .dz-preview .dz-progress .dz-upload {
+  background: var(--primary-color);
+}
+.dropzone .dz-preview .dz-success-mark,
+.dropzone .dz-preview .dz-error-mark,
+.dropzone .dz-preview .dz-error-message {
+  display: none;
+}
+.dropzone .dz-preview.dz-success .dz-success-mark,
+.dropzone .dz-preview.dz-error .dz-error-mark,
+.dropzone .dz-preview.dz-error .dz-error-message {
   display: block;
   opacity: 1;
 }
-.dropup .dropdown-menu {
-  top: auto;
-  bottom: 100%;
-  position: fixed !important;
-  max-width: 66%;
-  margin-bottom: -1rem;
+.dropzone .dz-preview .dz-success-mark,
+.dropzone .dz-preview .dz-error-mark {
+  left: 0.5rem;
+  padding: 0.125rem;
+  background: var(--light-opaque);
+  border-radius: 50%;
+}
+.dropzone .dz-preview .dz-success-mark svg,
+.dropzone .dz-preview .dz-error-mark svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+.dropzone .dz-preview .dz-error-message {
+  left: 2.25rem;
+  width: calc(100% - 2.75rem);
+  max-height: 3.5rem;
+  padding: 0.25rem 0.5rem;
+  overflow: auto;
+  overflow-wrap: anywhere;
+  pointer-events: auto;
+}
+.dropzone .dz-preview .dz-error-message:after {
+  display: none;
+}
+.dropzone .dz-preview .dz-remove {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+/* === NAVBAR === */
+@media (hover: hover) and (pointer: fine) {
+  .dropdown:hover > .dropdown-menu,
+  .dropup:hover > .dropdown-menu {
+    display: block;
+    opacity: 1;
+  }
 }
 .dropdown-menu-end {
   right: 0;
@@ -606,44 +785,30 @@ th {
   border-radius: 0.5rem;
   border: none;
   box-shadow: none;
+  max-height: 50vh;
   overflow-x: hidden;
   overflow-y: auto;
 }
-@media (min-width: 992px) {
-  .dropdown-menu {
-    max-height: 50vh;
-    max-width: 500px;
-  }
+.navbar-nav > .nav-item {
+  padding: 0.25rem;
 }
-.nav-item {
-  padding: 0.25rem !important;
+.navbar-nav .nav-link {
+  padding: 0.5rem;
 }
-.nav-link {
-  padding: 0 0.5rem !important;
+/* Otherwise, Bootstrap owns positioning through navbar-expand-* and Popper. */
+.dropdown-floating > .dropdown-menu {
+  position: absolute !important;
+  width: max-content;
+  max-width: min(500px, calc(100vw - 2rem));
 }
-@media (max-width: 991.98px) {
-  .navbar-nav {
-    max-height: 50vh;
-    overflow-x: hidden;
-    overflow-y: auto;
-    margin-top: 1rem !important;
-  }
-  .nav-item,
-  .nav-link,
-  .dropdown-menu {
-    width: 100%;
-  }
-  .nav-item {
-    padding: 0.5rem 0.25rem !important;
-  }
-  .nav-link {
-    padding: 0.5rem 0.5rem !important;
-  }
-  .dropdown-menu {
-    position: relative !important;
-    margin-left: 0;
-  }
+.dropdown-embedded > .dropdown-menu {
+  position: static !important;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  transform: none !important;
 }
+
 /* === BACKGROUNDS AND IMAGES === */
 .has-background-cover {
   position: relative;
@@ -815,6 +980,13 @@ th {
   .swiper_1-1 {
     height: 66vh;
   }
+  .swiper-controls {
+    grid-template-columns: 1fr 1fr;
+  }
+  .swiper-controls > .swiper-pagination-bullets {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
 }
 .swiper-slide {
   display: flex;
@@ -850,6 +1022,22 @@ th {
 }
 .swiper_thumbs .swiper-slide-thumb-active {
   opacity: 1 !important;
+}
+.swiper-controls {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1rem;
+}
+.swiper-controls > .btn {
+  justify-self: start;
+}
+.swiper-controls > .btn:last-child {
+  justify-self: end;
+}
+.swiper-controls > .swiper-pagination-bullets {
+  width: auto;
+  --swiper-pagination-color: var(--primary-color);
 }
 .swiper-button-next,
 .swiper-button-prev {
