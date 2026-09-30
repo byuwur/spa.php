@@ -71,6 +71,7 @@ require_once "{$TO_HOME}/common.example.php";
   <link rel="stylesheet" href="<?= "{$HOME_PATH}/../css/swiper.min.css" ?>" />
   <link rel="stylesheet" href="<?= "{$HOME_PATH}/../css/video.min.css" ?>" />
   <link rel="stylesheet" href="<?= "{$HOME_PATH}/../css/select2.min.css" ?>" />
+  <link rel="stylesheet" href="<?= "{$HOME_PATH}/../css/pickr.min.css" ?>" />
   <link rel="stylesheet" href="<?= "{$HOME_PATH}/../css/dropzone.min.css" ?>" />
   <link rel="stylesheet" href="<?= "{$HOME_PATH}/../_common.css" ?>" />
   <script src="<?= "{$HOME_PATH}/../js/jquery.min.js" ?>" defer></script>
@@ -81,6 +82,7 @@ require_once "{$TO_HOME}/common.example.php";
   <script src="<?= "{$HOME_PATH}/../js/swiper.min.js" ?>" defer></script>
   <script src="<?= "{$HOME_PATH}/../js/video.min.js" ?>" defer></script>
   <script src="<?= "{$HOME_PATH}/../js/select2.full.min.js" ?>" defer></script>
+  <script src="<?= "{$HOME_PATH}/../js/pickr.min.js" ?>" defer></script>
   <script src="<?= "{$HOME_PATH}/../js/dropzone.min.js" ?>" defer></script>
   <script src="<?= "{$HOME_PATH}/../js/typed.min.js" ?>" defer></script>
   <script src="<?= "{$HOME_PATH}/../js/particles-ui.min.js" ?>" defer></script>
