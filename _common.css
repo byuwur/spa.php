@@ -495,6 +495,51 @@ th {
   visibility: hidden;
   opacity: 0;
 }
+/* === THEME TOGGLE === */
+.theme-toggle {
+  position: relative;
+  flex-shrink: 0;
+  width: 3rem;
+  height: 1.5rem;
+  padding: .25rem;
+  margin: 0;
+  border: 1px solid currentColor;
+  border-radius: 1rem;
+  background: transparent;
+  color: inherit;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-variant-emoji: text;
+  font-size: 1.25rem;
+  line-height: 1rem;
+  letter-spacing: 0;
+  white-space: nowrap !important;
+  text-align: justify;
+  cursor: pointer;
+}
+.theme-toggle::after {
+  content: "";
+  position: absolute;
+  top: .2rem;
+  left: .2rem;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background: currentColor;
+  transition: transform .3s;
+}
+.theme-toggle[aria-pressed="true"]::after {
+  transform: translateX(1.5rem);
+}
+.theme-toggle:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .theme-toggle::after {
+    transition: none;
+  }
+}
+
 /* === BUTTONS === */
 .btn {
   padding: 0.25rem 0.5rem;
