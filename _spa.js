@@ -15,7 +15,7 @@
 (function (global) {
   global.bySPA = global.bySPA || {};
   const bySPA = global.bySPA;
-  bySPA.VERSION = "17.3";
+  bySPA.VERSION = "18";
   // Initializes values retrieved from localStorage and sets up environment variables.
   bySPA.URI = byStorage.getItem("URI") ?? "/";
   bySPA.URL = byStorage.getItem("URL") ?? bySPA.URI;
