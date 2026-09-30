@@ -21,7 +21,7 @@
   byCommon.SIDEBAR_HIDDEN_ID = "#bywr-sidebar-hidden";
   byCommon.APP_CONTAINER_SELECTOR = ".app-container";
   // These properties can be previously initialized to be overriden
-  byCommon.GLOBAL_TRANSITION_DURATION = byCommon.GLOBAL_TRANSITION_DURATION || 199;
+  byCommon.GLOBAL_TRANSITION_DURATION = byCommon.GLOBAL_TRANSITION_DURATION || 999;
   byCommon.COOKIE_CONSENT_READY = byCommon.COOKIE_CONSENT_READY || false;
   byCommon.SECTION_TOP_OVERHEAD = byCommon.SECTION_TOP_OVERHEAD || 0;
   byCommon.INIT_WARNINGS = byCommon.INIT_WARNINGS ?? false;
@@ -117,7 +117,7 @@
         // Scroll to the target element if it exists on the same page
         $(`html, body, ${byCommon.APP_CONTAINER_SELECTOR}`)
           .stop()
-          .animate({ scrollTop: $(target).offset().top - byCommon.SECTION_TOP_OVERHEAD }, byCommon.GLOBAL_TRANSITION_DURATION, "swing");
+          .animate({ scrollTop: $(target).offset().top - byCommon.SECTION_TOP_OVERHEAD }, byCommon.GLOBAL_TRANSITION_DURATION, "easeInOutExpo");
         // Collapse the navbar after clicking the link
         setTimeout(() => {
           $(".navbar-collapse").collapse("hide");

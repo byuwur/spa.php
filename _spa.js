@@ -31,7 +31,6 @@
   bySPA.NAVIGATION_ID = 0;
   // These properties can be previously initialized to be overriden
   bySPA.REQUEST_TIMEOUT = bySPA.REQUEST_TIMEOUT || 30000;
-  byCommon.GLOBAL_TRANSITION_DURATION = byCommon.GLOBAL_TRANSITION_DURATION || 199;
   let fileNavigation = false; // Flags if you come from a FILE route
   let errorNavigation = false; // A replaced document needs a clean runtime on Back.
 
