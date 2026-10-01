@@ -5,6 +5,7 @@
   --primary-color: #600;
   --secondary-color: #123;
   --tertiary-color: #900;
+  --quarternary-color: #456;
   --text-primary-color: #101010;
   --text-secondary-color: #202020;
   --text-tertiary-color: #303030;
@@ -309,6 +310,9 @@ th {
 .bg-tertiary {
   background: var(--tertiary-color) !important;
 }
+.bg-quarternary {
+  background: var(--quarternary-color) !important;
+}
 .bg-black {
   background: #000 !important;
 }
@@ -420,6 +424,10 @@ th {
 .text-tertiary,
 .text-tertiary * {
   color: var(--tertiary-color) !important;
+}
+.text-quarternary,
+.text-quarternary * {
+  color: var(--quarternary-color) !important;
 }
 .text-primary-color,
 .text-primary-color * {
@@ -639,6 +647,28 @@ th {
   background-color: var(--primary-color);
   border-color: var(--primary-color);
 }
+.btn.btn-outline-light:not(:disabled):not(.disabled):is(:hover, :active, .active),
+.btn.btn-outline-light:not(:disabled):not(.disabled):is(:hover, :active, .active) *,
+.show > .btn.btn-outline-light.dropdown-toggle {
+  color: var(--dark-color) !important;
+  background-color: var(--light-color);
+  border-color: var(--light-color);
+}
+.btn.btn-outline-secondary {
+  color: var(--secondary-color);
+  background-color: transparent;
+  border-color: var(--secondary-color);
+  box-shadow: none;
+}
+.btn.btn-outline-secondary:not(:disabled):not(.disabled):is(:hover, :active, .active),
+.show > .btn.btn-outline-secondary.dropdown-toggle {
+  color: var(--light-color);
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+.btn.btn-outline-secondary:focus-visible {
+  box-shadow: 0 0 0 0.25rem color-mix(in srgb, var(--secondary-color) 25%, transparent) !important;
+}
 .btn.btn-primary:focus-visible,
 .btn.btn-outline-primary:focus,
 .btn.btn-outline-primary.focus,
@@ -650,6 +680,20 @@ th {
 .form-check-input[type="checkbox"]:indeterminate {
   background-color: var(--primary-color);
   border-color: var(--primary-color);
+}
+.form-switch.form-switch-lg {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 1.75rem;
+  padding-left: 0;
+}
+.form-switch.form-switch-lg .form-check-input {
+  float: none;
+  flex-shrink: 0;
+  width: 2.75rem;
+  height: 1.5rem;
+  margin: 0;
 }
 .form-range::-webkit-slider-thumb {
   background-color: var(--primary-color);
