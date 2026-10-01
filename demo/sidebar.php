@@ -25,11 +25,11 @@ require_once "{$TO_HOME}/common.example.php";
       <i class="fas fa-home"></i> <span><?= escape_html($LANG["nav.home"]) ?></span><i class="fas fa-angle-right ms-auto"></i>
     </a>
     <a class="bywr-sidebar-option" href="<?= "/{$ROUTE_KIT}" ?>">
-      <i class="fas fa-layer-group"></i><span>UI Kit</span><i class="fas fa-angle-right ms-auto"></i>
+      <i class="fas fa-layer-group"></i><span><?= escape_html("UI Kit") ?></span><i class="fas fa-angle-right ms-auto"></i>
     </a>
-    <a class="bywr-sidebar-option" href="<?= "/{$ROUTE_PAGE}" ?>">
+    <!--a class="bywr-sidebar-option" href="<?= "/{$ROUTE_PAGE}" ?>">
       <i class="fas fa-dice-one"></i> <span><?= escape_html($LANG["nav.page"]) ?></span><i class="fas fa-angle-right ms-auto"></i>
-    </a>
+    </a-->
     <a class="bywr-sidebar-option" href="<?= "/{$ROUTE_VIDEO}" ?>">
       <i class="fas fa-video"></i> <span><?= escape_html($LANG["nav.video"]) ?></span><i class="fas fa-angle-right ms-auto"></i>
     </a>

@@ -19,7 +19,7 @@ require_once "{$TO_HOME}/common.example.php";
       <p><?= escape_html($LANG["demo.this_is"] . " " . $LANG["nav.home"] . ".") ?></p>
       <p><?= escape_html($LANG["nav.home"] . ": ") ?><b><i>"<?= escape_html($LANG["demo.home.description"]) ?>"</i></b></p>
       <hr class="w-100" />
-      <a href="<?= escape_html("/{$ROUTE_VIDEO}") ?>" class="link"><?= escape_html($LANG["nav.video"]) ?></a>
+      <a href="<?= escape_html("/{$ROUTE_KIT}") ?>" class="link"><?= escape_html("UI Kit") ?></a> | <a href="<?= escape_html("/{$ROUTE_VIDEO}") ?>" class="link"><?= escape_html($LANG["nav.video"]) ?></a>
     </div>
   </div>
 </div>
