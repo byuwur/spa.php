@@ -3763,8 +3763,8 @@ a.badge {
 }
 
 .progress-bar {
-  height: 0.625rem;
-  line-height: 0.625rem;
+  height: 0.925rem;
+  line-height: 0.925rem;
   color: #fff;
   background-color: #007bff;
   transition: width 0.6s ease;
