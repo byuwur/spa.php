@@ -24,6 +24,9 @@ require_once "{$TO_HOME}/common.example.php";
     <a class="bywr-sidebar-option" href="<?= "/{$ROUTE_HOME}" ?>">
       <i class="fas fa-home"></i> <span><?= escape_html($LANG["nav.home"]) ?></span><i class="fas fa-angle-right ms-auto"></i>
     </a>
+    <a class="bywr-sidebar-option" href="<?= "/{$ROUTE_KIT}" ?>">
+      <i class="fas fa-layer-group"></i><span>UI Kit</span><i class="fas fa-angle-right ms-auto"></i>
+    </a>
     <a class="bywr-sidebar-option" href="<?= "/{$ROUTE_PAGE}" ?>">
       <i class="fas fa-dice-one"></i> <span><?= escape_html($LANG["nav.page"]) ?></span><i class="fas fa-angle-right ms-auto"></i>
     </a>

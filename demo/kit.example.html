@@ -1,0 +1,794 @@
+<!-- Keep this presentation-only fragment identical in spa.js and spa.php. -->
+<div class="bg-body-tertiary text-body app-container" lang="en" data-demo-surface data-bs-theme="light" id="ui-kit">
+  <header class="py-5 bg-body border-bottom">
+    <div class="container px-4">
+      <button
+        type="button"
+        class="theme-toggle float-end"
+        data-demo-theme
+        title="Switch to dark theme"
+        aria-label="Switch to dark theme"
+        aria-pressed="false">
+        <span aria-hidden="true">&#9790;&#65038; &#9728;&#65038;</span>
+      </button>
+      <h1 class="display-1 fw-bold my-4">BONYUR's SPA UI kit.</h1>
+      <blockquote class="blockquote border-start border-3 ps-4 mt-4 mb-0">
+        <p>Simple is complicated enough.</p>
+        <footer class="blockquote-footer">Our approach to building</footer>
+      </blockquote>
+      <nav class="d-flex flex-wrap gap-3 mt-4" aria-label="UI kit sections">
+        <a href="#kit-colors" class="link-body-emphasis small"><i class="fas fa-chevron-right"></i>Colors</a>
+        <a href="#kit-typography" class="link-body-emphasis small"><i class="fas fa-chevron-right"></i>Typography</a>
+        <a href="#kit-icons" class="link-body-emphasis small"><i class="fas fa-chevron-right"></i>Icons</a>
+        <a href="#kit-buttons" class="link-body-emphasis small"><i class="fas fa-chevron-right"></i>Buttons</a>
+        <a href="#kit-forms" class="link-body-emphasis small"><i class="fas fa-chevron-right"></i>Forms</a>
+        <a href="#kit-cards" class="link-body-emphasis small"><i class="fas fa-chevron-right"></i>Cards</a>
+        <a href="#kit-navigation" class="link-body-emphasis small"><i class="fas fa-chevron-right"></i>Navigation</a>
+        <a href="#kit-feedback" class="link-body-emphasis small"><i class="fas fa-chevron-right"></i>Feedback</a>
+        <a href="#kit-overlays" class="link-body-emphasis small"><i class="fas fa-chevron-right"></i>Overlays</a>
+        <a href="#libraries-demo" class="link-body-emphasis small"><i class="fas fa-chevron-right"></i>Libraries</a>
+      </nav>
+    </div>
+  </header>
+  <div class="container px-4">
+    <section id="kit-colors" class="py-5 border-bottom" aria-labelledby="kit-colors-title">
+      <span class="small text-uppercase fw-bold text-body-secondary">01</span>
+      <h2 id="kit-colors-title" class="h3 mt-2 mb-3">Colors</h2>
+      <p class="text-body-secondary mb-4">The semantic palette, from primary actions to quiet backgrounds.</p>
+      <div class="row row-cols-5 g-3">
+        <div class="col">
+          <div class="overflow-hidden border rounded bg-body">
+            <div class="bg-primary p-5"></div>
+            <p class="small p-3 mb-0">Primary</p>
+          </div>
+        </div>
+        <div class="col">
+          <div class="overflow-hidden border rounded bg-body">
+            <div class="bg-secondary p-5"></div>
+            <p class="small p-3 mb-0">Secondary</p>
+          </div>
+        </div>
+        <div class="col">
+          <div class="overflow-hidden border rounded bg-body">
+            <div class="bg-tertiary p-5"></div>
+            <p class="small p-3 mb-0">Tertiary</p>
+          </div>
+        </div>
+        <div class="col">
+          <div class="overflow-hidden border rounded bg-body">
+            <div class="bg-quarternary p-5"></div>
+            <p class="small p-3 mb-0">Quarternary</p>
+          </div>
+        </div>
+        <div class="col">
+          <div class="overflow-hidden border rounded bg-body">
+            <div class="bg-success p-5"></div>
+            <p class="small p-3 mb-0">Success</p>
+          </div>
+        </div>
+        <div class="col">
+          <div class="overflow-hidden border rounded bg-body">
+            <div class="bg-danger p-5"></div>
+            <p class="small p-3 mb-0">Danger</p>
+          </div>
+        </div>
+        <div class="col">
+          <div class="overflow-hidden border rounded bg-body">
+            <div class="bg-warning p-5"></div>
+            <p class="small p-3 mb-0">Warning</p>
+          </div>
+        </div>
+        <div class="col">
+          <div class="overflow-hidden border rounded bg-body">
+            <div class="bg-info p-5"></div>
+            <p class="small p-3 mb-0">Info</p>
+          </div>
+        </div>
+        <div class="col">
+          <div class="overflow-hidden border rounded bg-body">
+            <div class="bg-light p-5"></div>
+            <p class="small p-3 mb-0">Light</p>
+          </div>
+        </div>
+        <div class="col">
+          <div class="overflow-hidden border rounded bg-body">
+            <div class="bg-dark p-5"></div>
+            <p class="small p-3 mb-0">Dark</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="kit-typography" class="py-5 border-bottom" aria-labelledby="kit-typography-title">
+      <span class="small text-uppercase fw-bold text-body-secondary">02</span>
+      <h2 id="kit-typography-title" class="h3 mt-2 mb-3">Typography</h2>
+      <p class="text-body-secondary mb-4">A scale for everything from a first impression to the fine print.</p>
+      <div class="p-4 bg-body border rounded mb-3">
+        <h3 class="h6 mb-4">Type scale</h3>
+        <dl class="mb-0">
+          <div class="row py-3 border-bottom">
+            <dt class="col-sm-3 small fw-normal text-body-secondary">Display</dt>
+            <dd class="display-4 col-sm-9 mb-0">Less, but better.</dd>
+          </div>
+          <div class="row py-3 border-bottom">
+            <dt class="col-sm-3 small fw-normal text-body-secondary">Heading 1</dt>
+            <dd class="h1 col-sm-9 mb-0">A clear beginning.</dd>
+          </div>
+          <div class="row py-3 border-bottom">
+            <dt class="col-sm-3 small fw-normal text-body-secondary">Heading 2</dt>
+            <dd class="h2 col-sm-9 mb-0">Room for ideas.</dd>
+          </div>
+          <div class="row py-3 border-bottom">
+            <dt class="col-sm-3 small fw-normal text-body-secondary">Heading 3</dt>
+            <dd class="h3 col-sm-9 mb-0">Every detail matters.</dd>
+          </div>
+          <div class="row py-3 border-bottom">
+            <dt class="col-sm-3 small fw-normal text-body-secondary">Heading 4</dt>
+            <dd class="h4 col-sm-9 mb-0">Make it readable.</dd>
+          </div>
+          <div class="row py-3 border-bottom">
+            <dt class="col-sm-3 small fw-normal text-body-secondary">Heading 5</dt>
+            <dd class="h5 col-sm-9 mb-0">Keep it simple.</dd>
+          </div>
+          <div class="row py-3 border-bottom">
+            <dt class="col-sm-3 small fw-normal text-body-secondary">Heading 6</dt>
+            <dd class="h6 col-sm-9 mb-0">Down to the smallest detail.</dd>
+          </div>
+          <div class="row py-3 border-bottom">
+            <dt class="col-sm-3 small fw-normal text-body-secondary">Body</dt>
+            <dd class="col-sm-9 mb-0">
+              Good interfaces give content room to breathe. Use <strong>weight</strong>, <em>emphasis</em>, and <mark>highlights</mark> with purpose.
+            </dd>
+          </div>
+          <div class="row py-3 border-bottom">
+            <dt class="col-sm-3 small fw-normal text-body-secondary">Small / muted</dt>
+            <dd class="small text-body-secondary col-sm-9 mb-0">A little context goes a long way.</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+    <section id="kit-icons" class="py-5 border-bottom" aria-labelledby="kit-icons-title">
+      <span class="small text-uppercase fw-bold text-body-secondary">03</span>
+      <h2 id="kit-icons-title" class="h3 mt-2 mb-3">Icons</h2>
+      <p class="text-body-secondary mb-4">Small visual cues from the bundled Font Awesome collection.</p>
+      <div class="p-4 bg-body border rounded mb-3 row row-cols-6 g-4 text-center">
+        <div class="col"><i class="fas fa-house d-block fs-2 mb-3 mx-auto" aria-hidden="true"></i><span class="small text-body-secondary">Home</span></div>
+        <div class="col"><i class="fas fa-magnifying-glass d-block fs-2 mb-3 mx-auto" aria-hidden="true"></i><span class="small text-body-secondary">Search</span></div>
+        <div class="col"><i class="fas fa-heart d-block fs-2 mb-3 mx-auto" aria-hidden="true"></i><span class="small text-body-secondary">Favorite</span></div>
+        <div class="col"><i class="fas fa-bell d-block fs-2 mb-3 mx-auto" aria-hidden="true"></i><span class="small text-body-secondary">Notification</span></div>
+        <div class="col"><i class="fas fa-user d-block fs-2 mb-3 mx-auto" aria-hidden="true"></i><span class="small text-body-secondary">Profile</span></div>
+        <div class="col"><i class="fas fa-gear d-block fs-2 mb-3 mx-auto" aria-hidden="true"></i><span class="small text-body-secondary">Settings</span></div>
+      </div>
+    </section>
+    <section id="kit-buttons" class="py-5 border-bottom" aria-labelledby="kit-buttons-title">
+      <span class="small text-uppercase fw-bold text-body-secondary">04</span>
+      <h2 id="kit-buttons-title" class="h3 mt-2 mb-3">Buttons</h2>
+      <p class="text-body-secondary mb-4">Filled, outlined, rounded, and sized to fit the moment.</p>
+      <div class="p-4 bg-body border rounded mb-3">
+        <h3 class="h6 mb-4">Theme &amp; semantic variants</h3>
+        <div class="d-flex flex-wrap align-items-center gap-3">
+          <button type="button" class="btn btn-primary">Primary</button>
+          <button type="button" class="btn btn-secondary">Secondary</button>
+          <button type="button" class="btn btn-tertiary">Tertiary</button>
+          <button type="button" class="btn btn-quarternary">Quaternary</button>
+          <button type="button" class="btn btn-success">Success</button>
+          <button type="button" class="btn btn-danger">Danger</button>
+          <button type="button" class="btn btn-warning">Warning</button>
+          <button type="button" class="btn btn-info">Info</button>
+          <button type="button" class="btn btn-light">Light</button>
+          <button type="button" class="btn btn-dark">Dark</button>
+        </div>
+      </div>
+      <div class="p-4 bg-body border rounded mb-3">
+        <h3 class="h6 mb-4">Outline</h3>
+        <div class="d-flex flex-wrap align-items-center gap-3">
+          <button type="button" class="btn btn-outline-primary">Primary</button>
+          <button type="button" class="btn btn-outline-secondary">Secondary</button>
+          <button type="button" class="btn btn-outline-success">Success</button>
+          <button type="button" class="btn btn-outline-danger">Danger</button>
+          <button type="button" class="btn btn-outline-warning">Warning</button>
+          <button type="button" class="btn btn-outline-info">Info</button>
+          <button type="button" class="btn btn-outline-dark">Dark</button>
+          <div class="bg-dark text-white rounded p-2 d-flex flex-wrap align-items-center gap-2">
+            <span class="small">Light on dark surface</span>
+            <button type="button" class="btn btn-outline-light">Light</button>
+          </div>
+        </div>
+      </div>
+      <div class="p-4 bg-body border rounded mb-3">
+        <h3 class="h6 mb-4">Shapes, sizes &amp; states</h3>
+        <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
+          <button type="button" class="btn btn-primary rounded-0">Squared</button><button type="button" class="btn btn-primary rounded-pill">Pill-shaped</button>
+          <button type="button" class="btn btn-outline-primary rounded-pill"><i class="fas fa-arrow-down me-2" aria-hidden="true"></i>Download</button><button type="button" class="btn btn-primary" disabled="">Disabled</button>
+          <button type="button" class="btn btn-dark btn-lg">Large</button><button type="button" class="btn btn-dark">Default</button><button type="button" class="btn btn-dark btn-sm">Small</button>
+          <div class="btn-group" role="group" aria-label="Alignment examples">
+            <button type="button" class="btn btn-outline-secondary">Left</button><button type="button" class="btn btn-outline-secondary">Center</button><button type="button" class="btn btn-outline-secondary">Right</button>
+          </div>
+        </div>
+      </div>
+      <div class="p-4 bg-body border rounded mb-3">
+        <h3 class="h6 mb-4">Shared color utilities</h3>
+        <div class="d-flex flex-wrap gap-3 mb-3">
+          <span class="bg-primary text-white rounded p-3">Primary background</span>
+          <span class="bg-secondary text-white rounded p-3">Secondary background</span>
+          <span class="bg-tertiary text-white rounded p-3">Tertiary background</span>
+          <span class="bg-quarternary text-white rounded p-3">Quaternary background</span>
+        </div>
+        <div class="d-flex flex-wrap gap-3">
+          <span class="text-primary">Primary text</span>
+          <span class="text-secondary">Secondary text</span>
+          <span class="text-tertiary">Tertiary text</span>
+          <span class="text-quarternary">Quaternary text</span>
+        </div>
+      </div>
+    </section>
+    <section id="kit-forms" class="py-5 border-bottom" aria-labelledby="kit-forms-title">
+      <span class="small text-uppercase fw-bold text-body-secondary">05</span>
+      <h2 id="kit-forms-title" class="h3 mt-2 mb-3">Form controls</h2>
+      <p class="text-body-secondary mb-4">Everyday inputs and their states. Try the controls; nothing is submitted.</p>
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <div class="p-4 bg-body border rounded mb-3">
+            <h3 class="h6 mb-4">The essentials</h3>
+            <label for="kit-name" class="form-label">Name</label><input id="kit-name" class="form-control mb-3" placeholder="Alex Morgan" autocomplete="off" />
+            <label for="kit-email" class="form-label">Email address</label>
+            <div class="input-group mb-3">
+              <span class="input-group-text">@</span><input id="kit-email" type="email" class="form-control" placeholder="alex@example.com" autocomplete="off" />
+            </div>
+            <label for="kit-select" class="form-label">Choose a category</label><select id="kit-select" class="form-select mb-3">
+              <option>Design</option>
+              <option>Development</option>
+              <option>Photography</option>
+            </select>
+            <label for="kit-message" class="form-label">Message</label><textarea id="kit-message" class="form-control" rows="3" placeholder="A little room for your thoughts..."></textarea>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="p-4 bg-body border rounded mb-3">
+            <h3 class="h6 mb-4">States &amp; feedback</h3>
+            <label for="kit-valid" class="form-label">Valid input</label><input id="kit-valid" class="form-control is-valid" value="Available username" aria-describedby="kit-valid-help" />
+            <div id="kit-valid-help" class="valid-feedback mb-3">Looks good!</div>
+            <label for="kit-invalid" class="form-label">Invalid input</label><input id="kit-invalid" class="form-control is-invalid" value="not-an-email" aria-invalid="true" aria-describedby="kit-invalid-help" />
+            <div id="kit-invalid-help" class="invalid-feedback mb-3">Please enter a valid email address.</div>
+            <label for="kit-disabled" class="form-label">Disabled</label><input id="kit-disabled" class="form-control mb-3" value="Not available" disabled="" />
+            <label for="kit-readonly" class="form-label">Read only</label><input id="kit-readonly" class="form-control" value="You can read and select this text" readonly="" />
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="p-4 bg-body border rounded mb-3">
+            <h3 class="h6 mb-4">Checks, radios &amp; switches</h3>
+            <div class="row g-3">
+              <div class="col-sm-6">
+                <div class="form-check">
+                  <input id="kit-check" type="checkbox" class="form-check-input" checked="" /><label for="kit-check" class="form-check-label">Selected</label>
+                </div>
+                <div class="form-check">
+                  <input id="kit-check-off" type="checkbox" class="form-check-input" /><label for="kit-check-off" class="form-check-label">Unselected</label>
+                </div>
+                <div class="form-check">
+                  <input id="kit-check-disabled" type="checkbox" class="form-check-input" disabled="" /><label for="kit-check-disabled" class="form-check-label">Disabled</label>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-check">
+                  <input id="kit-radio-one" name="kit-radio" type="radio" class="form-check-input" checked="" /><label
+                    for="kit-radio-one"
+                    class="form-check-label">First option</label>
+                </div>
+                <div class="form-check">
+                  <input id="kit-radio-two" name="kit-radio" type="radio" class="form-check-input" /><label for="kit-radio-two" class="form-check-label">Second option</label>
+                </div>
+              </div>
+            </div>
+            <hr />
+            <div class="row g-3">
+              <div class="col-sm-6">
+                <div class="small text-body-secondary mb-2">Standard</div>
+                <div class="form-check form-switch">
+                  <input id="kit-switch" type="checkbox" role="switch" class="form-check-input" checked="" /><label for="kit-switch" class="form-check-label">Notifications</label>
+                </div>
+                <div class="form-check form-switch">
+                  <input id="kit-switch-off" type="checkbox" role="switch" class="form-check-input" /><label for="kit-switch-off" class="form-check-label">Weekly digest</label>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="small text-body-secondary mb-2">Thick</div>
+                <div class="form-check form-switch form-switch-lg">
+                  <input id="kit-switch-lg" type="checkbox" role="switch" class="form-check-input" checked="" /><label for="kit-switch-lg" class="form-check-label">Notifications</label>
+                </div>
+                <div class="form-check form-switch form-switch-lg">
+                  <input id="kit-switch-lg-off" type="checkbox" role="switch" class="form-check-input" /><label for="kit-switch-lg-off" class="form-check-label">Weekly digest</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="p-4 bg-body border rounded mb-3">
+            <h3 class="h6 mb-4">Range, date &amp; file</h3>
+            <label for="kit-range" class="form-label">Volume</label><input id="kit-range" type="range" class="form-range mb-0" min="0" max="100" value="40" />
+            <div class="d-flex justify-content-between small text-body-secondary mb-3" aria-hidden="true"><span>0</span><span>100</span></div>
+            <label for="kit-date" class="form-label">Date</label><input id="kit-date" type="date" class="form-control mb-3" value="2026-09-30" />
+            <label for="kit-file" class="form-label">Choose a file</label><input id="kit-file" type="file" class="form-control" aria-describedby="kit-file-help" />
+            <div id="kit-file-help" class="form-text">Local selection only. No file is uploaded.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="kit-cards" class="py-5 border-bottom" aria-labelledby="kit-cards-title">
+      <span class="small text-uppercase fw-bold text-body-secondary">06</span>
+      <h2 id="kit-cards-title" class="h3 mt-2 mb-3">Cards</h2>
+      <p class="text-body-secondary mb-4">A flexible frame for a story, a collection, or a little inspiration.</p>
+      <div class="row g-4">
+        <div class="col-lg-4">
+          <article class="card h-100">
+            <div class="text-center p-5 display-4 bg-light text-primary" aria-hidden="true"><i class="fas fa-layer-group"></i></div>
+            <div class="card-body">
+              <span class="badge text-bg-dark mb-3">Collection</span>
+              <h3 class="h5 card-title">Start with the essentials.</h3>
+              <p class="card-text">A title, a short description, and just enough space to let the content speak.</p>
+              <button type="button" class="btn btn-outline-primary btn-sm">Explore</button>
+            </div>
+            <div class="card-footer text-body-secondary small">Collection card / with footer</div>
+          </article>
+        </div>
+        <div class="col-lg-4">
+          <article class="card h-100">
+            <div class="text-center p-5 display-4 bg-secondary text-white" aria-hidden="true"><i class="fas fa-moon"></i></div>
+            <div class="card-body">
+              <span class="badge text-bg-dark mb-3">Editorial</span>
+              <h3 class="h5 card-title">Space to slow down.</h3>
+              <p class="card-text">Pair a bold visual with a quiet surface. A small contrast makes a big difference.</p>
+              <button type="button" class="btn btn-outline-primary btn-sm">Read story</button>
+            </div>
+            <div class="card-footer text-body-secondary small">Editorial card / with footer</div>
+          </article>
+        </div>
+        <div class="col-lg-4">
+          <article class="card h-100">
+            <div class="text-center p-5 display-4 bg-primary text-white" aria-hidden="true"><i class="fas fa-heart"></i></div>
+            <div class="card-body">
+              <span class="badge text-bg-dark mb-3">Featured</span>
+              <h3 class="h5 card-title">Made with a little care.</h3>
+              <p class="card-text">Familiar pieces, thoughtful details. Build something that feels good to use.</p>
+              <button type="button" class="btn btn-outline-primary btn-sm">Take a look</button>
+            </div>
+            <div class="card-footer text-body-secondary small">Featured card / with footer</div>
+          </article>
+        </div>
+      </div>
+    </section>
+    <section id="kit-navigation" class="py-5 border-bottom" aria-labelledby="kit-navigation-title">
+      <span class="small text-uppercase fw-bold text-body-secondary">07</span>
+      <h2 id="kit-navigation-title" class="h3 mt-2 mb-3">Navigation</h2>
+      <p class="text-body-secondary mb-4">Menus, tabs, and small signposts that bring order to a page.</p>
+      <div class="p-4 bg-body border rounded mb-3">
+        <h3 class="h6 mb-4">Navbar &amp; dropdown</h3>
+        <nav class="navbar bg-light rounded px-3 gap-3" aria-label="Sample navbar">
+          <span class="navbar-brand mb-0">Studio</span>
+          <div class="d-flex flex-wrap align-items-center gap-3">
+            <button type="button" class="btn btn-sm btn-dark">Overview</button><button type="button" class="btn btn-sm btn-outline-secondary">Projects</button>
+            <div class="dropdown">
+              <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">More</button>
+              <ul class="dropdown-menu">
+                <li><button type="button" class="dropdown-item">About</button></li>
+                <li><button type="button" class="dropdown-item">Contact</button></li>
+                <li>
+                  <hr class="dropdown-divider" />
+                </li>
+                <li><button type="button" class="dropdown-item" disabled="">Unavailable</button></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+      </div>
+      <div class="p-4 bg-body border rounded mb-3">
+        <h3 class="h6 mb-4">Tabs</h3>
+        <div class="nav nav-tabs" role="tablist" aria-label="Sample tabs">
+          <button
+            id="kit-tab-preview"
+            type="button"
+            class="nav-link active"
+            data-bs-toggle="tab"
+            data-bs-target="#kit-preview"
+            role="tab"
+            aria-controls="kit-preview"
+            aria-selected="true">
+            Preview</button><button
+            id="kit-tab-details"
+            type="button"
+            class="nav-link"
+            data-bs-toggle="tab"
+            data-bs-target="#kit-details"
+            role="tab"
+            aria-controls="kit-details"
+            aria-selected="false">
+            Details</button><button type="button" class="nav-link" role="tab" aria-selected="false" disabled="">Disabled</button>
+        </div>
+        <div class="tab-content pt-4">
+          <div id="kit-preview" class="tab-pane fade show active" role="tabpanel" aria-labelledby="kit-tab-preview" tabindex="0">
+            A place for the main view. Switch tabs to see another content state.
+          </div>
+          <div id="kit-details" class="tab-pane fade" role="tabpanel" aria-labelledby="kit-tab-details" tabindex="0">
+            The details view uses the same space, with a different perspective.
+          </div>
+        </div>
+      </div>
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <div class="p-4 bg-body border rounded mb-3">
+            <h3 class="h6 mb-4">Breadcrumb &amp; pagination</h3>
+            <nav aria-label="Sample breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item">Home</li>
+                <li class="breadcrumb-item">Library</li>
+                <li class="breadcrumb-item active" aria-current="page">Components</li>
+              </ol>
+            </nav>
+            <nav aria-label="Sample pagination">
+              <ul class="pagination mb-0">
+                <li class="page-item disabled"><button type="button" class="page-link" disabled="" aria-label="Previous page">‹</button></li>
+                <li class="page-item active"><button type="button" class="page-link" aria-current="page">1</button></li>
+                <li class="page-item"><button type="button" class="page-link">2</button></li>
+                <li class="page-item"><button type="button" class="page-link">3</button></li>
+                <li class="page-item"><button type="button" class="page-link" aria-label="Next page">›</button></li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="p-4 bg-body border rounded mb-3">
+            <h3 class="h6 mb-4">List group</h3>
+            <ul class="list-group">
+              <li class="list-group-item active d-flex justify-content-between align-items-center">
+                Inbox <span class="badge text-bg-light rounded-pill">12</span>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                Drafts <span class="badge text-bg-secondary rounded-pill">3</span>
+              </li>
+              <li class="list-group-item disabled">Archive unavailable</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="kit-feedback" class="py-5 border-bottom" aria-labelledby="kit-feedback-title">
+      <span class="small text-uppercase fw-bold text-body-secondary">08</span>
+      <h2 id="kit-feedback-title" class="h3 mt-2 mb-3">Feedback</h2>
+      <p class="text-body-secondary mb-4">Make the current state easy to recognize.</p>
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <div class="p-4 bg-body border rounded mb-3">
+            <h3 class="h6 mb-4">Alerts</h3>
+            <div class="alert alert-primary" role="status">A little information before you begin.</div>
+            <div class="alert alert-success" role="status">All set. Everything looks good.</div>
+            <div class="alert alert-warning" role="status">Heads up. Check the details.</div>
+            <div class="alert alert-danger" role="status">Something went wrong. Please try again.</div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="p-4 bg-body border rounded mb-3">
+            <h3 class="h6 mb-4">Badges</h3>
+            <div class="d-flex flex-wrap align-items-center gap-3">
+              <span class="badge text-bg-primary">Primary</span>
+              <span class="badge text-bg-secondary">Secondary</span>
+              <span class="badge bg-tertiary text-white">Tertiary</span>
+              <span class="badge bg-quarternary text-white">Quaternary</span>
+              <span class="badge text-bg-success">Success</span>
+              <span class="badge text-bg-danger">Danger</span>
+              <span class="badge text-bg-warning">Warning</span>
+              <span class="badge text-bg-info">Info</span>
+              <span class="badge text-bg-light">Light</span>
+              <span class="badge text-bg-dark">Dark</span><span class="badge text-bg-dark rounded-pill">Pill badge</span>
+            </div>
+          </div>
+          <div class="p-4 bg-body border rounded mb-3">
+            <h3 class="h6 mb-4">Progress &amp; loading</h3>
+            <div class="progress mb-3" role="progressbar" aria-label="Example progress" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+              <div class="progress-bar w-25">25%</div>
+            </div>
+            <div class="progress mb-3" role="progressbar" aria-label="Example success progress" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+              <div class="progress-bar bg-success w-50">50%</div>
+            </div>
+            <div class="progress mb-4" role="progressbar" aria-label="Example striped progress" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
+              <div class="progress-bar progress-bar-striped bg-warning text-dark w-75">75%</div>
+            </div>
+            <div class="d-flex flex-wrap align-items-center gap-3">
+              <div class="spinner-border position-static text-primary" role="status"><span class="visually-hidden">Loading example</span></div>
+              <div class="spinner-grow position-static text-body-secondary" role="status"><span class="visually-hidden">Growing loading example</span></div>
+              <span class="text-body-secondary small">Waiting for something good.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="kit-overlays" class="py-5 border-bottom" aria-labelledby="kit-overlays-title">
+      <span class="small text-uppercase fw-bold text-body-secondary">09</span>
+      <h2 id="kit-overlays-title" class="h3 mt-2 mb-3">A little more context</h2>
+      <p class="text-body-secondary mb-4">Reveal the right amount of information, right where it belongs.</p>
+      <div class="p-4 bg-body border rounded mb-3">
+        <h3 class="h6 mb-4">Modal, tooltips &amp; popovers</h3>
+        <div class="d-flex flex-wrap align-items-center gap-3">
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kit-modal">Open sample modal</button><button type="button" class="btn btn-outline-secondary" data-bs-toggle="tooltip" data-bs-placement="top"
+            title="A little extra context.">
+            Tooltip above</button><button
+            type="button"
+            class="btn btn-outline-secondary"
+            data-bs-toggle="tooltip"
+            data-bs-placement="bottom"
+            title="Details, right where you need them.">
+            Tooltip below</button><button
+            type="button"
+            class="btn btn-outline-secondary"
+            data-bs-toggle="popover"
+            data-bs-trigger="focus"
+            data-bs-placement="top"
+            data-bs-title="One more thing"
+            data-bs-content="A small space for helpful context. Click elsewhere to dismiss.">
+            Show popover
+          </button>
+        </div>
+      </div>
+      <div class="p-4 bg-body border rounded mb-3">
+        <h3 class="h6 mb-4">Accordion</h3>
+        <div id="kit-accordion" class="accordion">
+          <div class="accordion-item">
+            <h4 class="accordion-header">
+              <button
+                type="button"
+                class="accordion-button"
+                data-bs-toggle="collapse"
+                data-bs-target="#kit-answer-one"
+                aria-expanded="true"
+                aria-controls="kit-answer-one">
+                What is in this collection?
+              </button>
+            </h4>
+            <div id="kit-answer-one" class="accordion-collapse collapse show" data-bs-parent="#kit-accordion">
+              <div class="accordion-body">The visual building blocks used across our SPAs, collected on a single page.</div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h4 class="accordion-header">
+              <button
+                type="button"
+                class="accordion-button collapsed"
+                data-bs-toggle="collapse"
+                data-bs-target="#kit-answer-two"
+                aria-expanded="false"
+                aria-controls="kit-answer-two">
+                Can I try the components?
+              </button>
+            </h4>
+            <div id="kit-answer-two" class="accordion-collapse collapse" data-bs-parent="#kit-accordion">
+              <div class="accordion-body">Yes. Open a menu, change a tab, or adjust a control. The examples do not submit data or save changes.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="libraries-demo" class="py-5 border-bottom" aria-labelledby="libraries-title">
+      <div>
+        <h2 id="libraries-title" class="h3">Libraries</h2>
+        <p class="lead text-body-secondary">A few useful extras, ready to try.</p>
+        <div class="row g-4 mt-3">
+          <section class="col-lg-6" aria-labelledby="demo-pickr-title">
+            <div class="card h-100">
+              <div class="card-body">
+                <h2 id="demo-pickr-title" class="h4">Pickr</h2>
+                <p class="text-body-secondary">Choose a color and adjust its opacity.</p>
+                <div class="input-group">
+                  <button id="demo-color" type="button" class="input-group-text" aria-label="Choose color" title="Choose color">
+                    <svg class="color-preview" viewBox="0 0 16 16" aria-hidden="true">
+                      <circle id="demo-color-dot" cx="8" cy="8" r="7" fill="#660000" />
+                    </svg>
+                  </button>
+                  <output id="demo-color-value" class="form-control" aria-live="polite">#660000</output>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section class="col-lg-6" aria-labelledby="demo-select-title">
+            <div class="card h-100">
+              <div class="card-body">
+                <h2 id="demo-select-title" class="h4">Select2</h2>
+                <label for="demo-select" class="form-label">Search and select your tools</label>
+                <select id="demo-select" class="form-select" multiple>
+                  <option value="bootstrap">Bootstrap</option>
+                  <option value="jquery">jQuery</option>
+                  <option value="pickr">Pickr</option>
+                  <option value="select2">Select2</option>
+                  <option value="dropzone">Dropzone</option>
+                  <option value="swiper">Swiper</option>
+                </select>
+              </div>
+            </div>
+          </section>
+          <section class="col-12" aria-labelledby="demo-dropzone-title">
+            <div class="card">
+              <div class="card-body">
+                <h2 id="demo-dropzone-title" class="h4">Dropzone</h2>
+                <p id="demo-upload-help" class="text-body-secondary">Simulated upload progress. Nothing is uploaded. Up to four files, 5 MB each.</p>
+                <div id="demo-dropzone" class="dropzone rounded bg-white text-dark" aria-describedby="demo-upload-help">
+                  <div class="dz-message"><button type="button" class="dz-button">Drop files here or click to preview</button></div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section class="col-12" aria-labelledby="demo-swiper-title">
+            <div class="card">
+              <div class="card-body">
+                <h2 id="demo-swiper-title" class="h4">Swiper</h2>
+                <p class="text-body-secondary">Swipe or use the controls to explore three slides.</p>
+                <div id="demo-swiper" class="swiper">
+                  <div class="swiper-wrapper">
+                    <div class="swiper-slide bg-primary text-white rounded p-5">
+                      <div>
+                        <i class="fas fa-layer-group fs-1 mb-3" aria-hidden="true"></i>
+                        <h3 class="h4">Build with familiar pieces.</h3>
+                        <p>Slide 1 / Components</p>
+                      </div>
+                    </div>
+                    <div class="swiper-slide bg-secondary text-white rounded p-5">
+                      <div>
+                        <i class="fas fa-palette fs-1 mb-3" aria-hidden="true"></i>
+                        <h3 class="h4">Make it your own.</h3>
+                        <p>Slide 2 / Color</p>
+                      </div>
+                    </div>
+                    <div class="swiper-slide bg-dark text-white rounded p-5">
+                      <div>
+                        <i class="fas fa-heart fs-1 mb-3" aria-hidden="true"></i>
+                        <h3 class="h4">Keep it simple.</h3>
+                        <p>Slide 3 / Details</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="swiper-controls mt-3">
+                  <button id="demo-slide-prev" type="button" class="btn btn-outline-secondary" aria-label="Previous slide"><i class="fas fa-chevron-left me-2" aria-hidden="true"></i>Previous</button>
+                  <div id="demo-pagination" class="text-center bg-light rounded-pill px-3 py-2" aria-label="Slide selection"></div>
+                  <button id="demo-slide-next" type="button" class="btn btn-outline-secondary" aria-label="Next slide">Next<i class="fas fa-chevron-right ms-2" aria-hidden="true"></i></button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+    <footer class="py-4 text-body-secondary small">One collection. The same components in SPA.js and SPA.php.</footer>
+  </div>
+</div>
+<div id="kit-modal" class="modal fade" lang="en" data-demo-surface data-bs-theme="light" tabindex="-1" aria-labelledby="kit-modal-title" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="kit-modal-title" class="modal-title fs-5">A moment of focus.</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class="mb-0">A simple dialog for a message that deserves its own space. This is a visual example; both buttons just close it.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button><button type="button" class="btn btn-primary" data-bs-dismiss="modal">Got it</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  $(() => {
+    "use strict";
+    const disposers = [];
+    const cleanup = () => {
+      for (const dispose of disposers.splice(0)) dispose();
+    };
+    // This route owns initialization; auto-discovery can race the first PHP fragment.
+    Dropzone.options.demoDropzone = false;
+
+    const themeButton = document.querySelector("[data-demo-theme]");
+    themeButton.addEventListener("click", () => {
+      const theme = byCommon.toggleTheme("[data-demo-surface]", { button: themeButton });
+      byStorage.setItem("DEMO_THEME", theme);
+    });
+    byCommon.toggleTheme("[data-demo-surface]", {
+      theme: byStorage.getItem("DEMO_THEME") === "dark" ? "dark" : "light",
+      button: themeButton
+    });
+
+    document.addEventListener("bySPA:before-unload", () => cleanup(), { once: true });
+
+    const range = document.getElementById("kit-range");
+    if (range) {
+      const tooltip = new bootstrap.Tooltip(range, {
+        title: () => range.value, trigger: "hover focus", placement: "top", animation: false, container: range.parentElement,
+        popperConfig: config => ({
+          ...config,
+          modifiers: [...config.modifiers, {
+            name: "rangeThumb", enabled: true, phase: "beforeRead",
+            fn: ({ state }) => {
+              const min = Number(range.min || 0);
+              const max = Number(range.max || 100);
+              let fraction = max > min ? (Number(range.value) - min) / (max - min) : 0;
+              if (getComputedStyle(range).direction === "rtl") fraction = 1 - fraction;
+              // Bootstrap's range thumb is 1rem; its center stops half a thumb from each edge.
+              const thumb = parseFloat(getComputedStyle(document.documentElement).fontSize);
+              state.rects.reference.x += thumb / 2 + fraction * (state.rects.reference.width - thumb);
+              state.rects.reference.width = 0;
+            }
+          }]
+        })
+      });
+      const update = () => {
+        const value = document.getElementById(range.getAttribute("aria-describedby"))?.querySelector(".tooltip-inner");
+        if (value) value.textContent = range.value;
+        tooltip.update();
+      };
+      range.addEventListener("input", update);
+      disposers.push(() => { range.removeEventListener("input", update); tooltip.dispose(); });
+    }
+
+    const libraries = document.getElementById("libraries-demo");
+    if (!libraries) return;
+
+    const picker = Pickr.create({
+      el: "#demo-color", useAsButton: true, theme: "classic", default: "#660000",
+      components: { preview: true, opacity: true, hue: true, interaction: { hex: true, rgba: true, input: true, save: true } }
+    });
+    picker.on("change", color => {
+      const value = color.toHEXA().toString();
+      document.getElementById("demo-color-value").textContent = value;
+      document.getElementById("demo-color-dot").setAttribute("fill", value);
+    });
+    picker.on("save", () => picker.hide());
+    disposers.push(() => picker.destroyAndRemove());
+
+    const select = $("#demo-select").select2({ width: "100%", placeholder: "Choose your tools" });
+    select.next(".select2-container").addClass("text-dark");
+    disposers.push(() => select.select2("destroy"));
+
+    const previewTimers = new Map();
+    const dropzone = new Dropzone("#demo-dropzone", {
+      url: bySPA.HOME_PATH + "/preview-only",
+      autoProcessQueue: false, autoQueue: false, addRemoveLinks: true,
+      maxFiles: 4, maxFilesize: 5,
+      dictDefaultMessage: "Drop files here or click to preview",
+      accept(file, done) {
+        done();
+        let progress = 0;
+        // Demonstrate Dropzone states locally without making an upload request.
+        const timer = setInterval(() => {
+          if (progress === 0) {
+            file.status = Dropzone.UPLOADING;
+            this.emit("processing", file);
+          }
+          progress += 10;
+          this.emit("uploadprogress", file, progress, file.size * progress / 100);
+          if (progress === 100) {
+            clearInterval(timer);
+            previewTimers.delete(file);
+            file.status = Dropzone.SUCCESS;
+            this.emit("success", file);
+            this.emit("complete", file);
+          }
+        }, 150);
+        previewTimers.set(file, timer);
+      }
+    });
+    dropzone.on("removedfile", file => {
+      clearInterval(previewTimers.get(file));
+      previewTimers.delete(file);
+    });
+    disposers.push(() => {
+      previewTimers.forEach(timer => clearInterval(timer));
+      previewTimers.clear();
+      dropzone.destroy();
+    });
+
+    const swiper = new Swiper("#demo-swiper", {
+      slidesPerView: 1, spaceBetween: 16,
+      navigation: { nextEl: "#demo-slide-next", prevEl: "#demo-slide-prev" },
+      pagination: { el: "#demo-pagination", clickable: true },
+      a11y: { enabled: true }
+    });
+    disposers.push(() => swiper.destroy(true, true));
+  });
+</script>
