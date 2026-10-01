@@ -324,7 +324,7 @@
       <div class="row g-4">
         <div class="col-lg-4">
           <article class="card h-100">
-            <div class="text-center p-5 display-4 bg-light text-primary" aria-hidden="true"><i class="fas fa-layer-group"></i></div>
+            <div data-bs-theme="light" class="text-center p-5 display-4 bg-light text-primary" aria-hidden="true"><i class="fas fa-layer-group"></i></div>
             <div class="card-body">
               <span class="badge text-bg-dark mb-3">Collection</span>
               <h3 class="h5 card-title">Start with the essentials.</h3>
@@ -366,7 +366,7 @@
       <p class="text-body-secondary mb-4">Menus, tabs, and small signposts that bring order to a page.</p>
       <div class="p-4 bg-body border rounded mb-3">
         <h3 class="h6 mb-4">Navbar &amp; dropdown</h3>
-        <nav class="navbar text-bg-light rounded px-3 gap-3" aria-label="Sample navbar">
+        <nav class="navbar bg-body-tertiary rounded px-3 gap-3" aria-label="Sample navbar">
           <span class="navbar-brand mb-0">Studio</span>
           <div class="d-flex flex-wrap align-items-center gap-3">
             <button type="button" class="btn btn-sm btn-dark">Overview</button><button type="button" class="btn btn-sm btn-outline-secondary">Projects</button>
@@ -611,7 +611,7 @@
               <div class="card-body">
                 <h2 id="demo-dropzone-title" class="h4">Dropzone</h2>
                 <p id="demo-upload-help" class="text-body-secondary">Simulated upload progress. Nothing is uploaded. Up to four files, 5 MB each.</p>
-                <div id="demo-dropzone" class="dropzone rounded bg-white text-dark" aria-describedby="demo-upload-help">
+                <div id="demo-dropzone" class="dropzone rounded bg-body text-body border" aria-describedby="demo-upload-help">
                   <div class="dz-message"><button type="button" class="dz-button">Drop files here or click to preview</button></div>
                 </div>
               </div>
@@ -649,7 +649,7 @@
                 </div>
                 <div class="swiper-controls mt-3">
                   <button id="demo-slide-prev" type="button" class="btn btn-outline-secondary" aria-label="Previous slide"><i class="fas fa-chevron-left me-2" aria-hidden="true"></i>Previous</button>
-                  <div id="demo-pagination" class="text-center bg-light rounded-pill px-3 py-2" aria-label="Slide selection"></div>
+                  <div id="demo-pagination" class="text-center bg-body-tertiary rounded-pill px-3 py-2" aria-label="Slide selection"></div>
                   <button id="demo-slide-next" type="button" class="btn btn-outline-secondary" aria-label="Next slide">Next<i class="fas fa-chevron-right ms-2" aria-hidden="true"></i></button>
                 </div>
               </div>
@@ -733,9 +733,13 @@
     if (!libraries) return;
 
     const picker = Pickr.create({
-      el: "#demo-color", useAsButton: true, theme: "classic", default: "#660000",
-      components: { preview: true, opacity: true, hue: true, interaction: { hex: true, rgba: true, input: true, save: true } }
+      el: "#demo-color", useAsButton: true, position: "bottom-start", theme: "classic", default: "#660000", defaultRepresentation: "HEX",
+      components: { preview: true, opacity: true, hue: true, interaction: { input: true, save: true } }
     });
+    const pickerSurface = picker.getRoot().app;
+    pickerSurface.setAttribute("data-demo-surface", "");
+    byCommon.toggleTheme(pickerSurface, { theme: document.getElementById("ui-kit").getAttribute("data-bs-theme") });
+    picker.on("init", instance => instance.setColor(instance.options.default));
     picker.on("change", color => {
       const value = color.toHEXA().toString();
       document.getElementById("demo-color-value").textContent = value;
@@ -744,8 +748,7 @@
     picker.on("save", () => picker.hide());
     disposers.push(() => picker.destroyAndRemove());
 
-    const select = $("#demo-select").select2({ width: "100%", placeholder: "Choose your tools" });
-    select.next(".select2-container").addClass("text-dark");
+    const select = $("#demo-select").select2({ width: "100%", placeholder: "Choose your tools", dropdownParent: $("#libraries-demo") });
     disposers.push(() => select.select2("destroy"));
 
     const previewTimers = new Map();

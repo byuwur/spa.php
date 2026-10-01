@@ -415,19 +415,19 @@ th {
 }
 .text-primary,
 .text-primary * {
-  color: var(--primary-color) !important;
+  color: var(--primary-foreground, var(--primary-color)) !important;
 }
 .text-secondary,
 .text-secondary * {
-  color: var(--secondary-color) !important;
+  color: var(--secondary-foreground, var(--secondary-color)) !important;
 }
 .text-tertiary,
 .text-tertiary * {
-  color: var(--tertiary-color) !important;
+  color: var(--tertiary-foreground, var(--tertiary-color)) !important;
 }
 .text-quarternary,
 .text-quarternary * {
-  color: var(--quarternary-color) !important;
+  color: var(--quarternary-foreground, var(--quarternary-color)) !important;
 }
 .text-primary-color,
 .text-primary-color * {
@@ -617,15 +617,15 @@ th {
   --bs-progress-bar-bg: var(--primary-color);
 }
 .pagination {
-  --bs-pagination-color: var(--primary-color);
-  --bs-pagination-hover-color: var(--primary-color);
-  --bs-pagination-focus-color: var(--primary-color);
+  --bs-pagination-color: var(--primary-foreground, var(--primary-color));
+  --bs-pagination-hover-color: var(--primary-foreground, var(--primary-color));
+  --bs-pagination-focus-color: var(--primary-foreground, var(--primary-color));
   --bs-pagination-active-bg: var(--primary-color);
   --bs-pagination-active-border-color: var(--primary-color);
 }
 .nav {
-  --bs-nav-link-color: var(--primary-color);
-  --bs-nav-link-hover-color: var(--tertiary-color);
+  --bs-nav-link-color: var(--primary-foreground, var(--primary-color));
+  --bs-nav-link-hover-color: var(--tertiary-foreground, var(--tertiary-color));
 }
 .list-group {
   --bs-list-group-active-bg: var(--primary-color);
@@ -636,9 +636,9 @@ th {
   border-color: var(--primary-color);
 }
 .btn.btn-outline-primary {
-  color: var(--primary-color);
+  color: var(--primary-foreground, var(--primary-color));
   background-color: transparent;
-  border-color: var(--primary-color);
+  border-color: var(--primary-foreground, var(--primary-color));
   box-shadow: none;
 }
 .btn.btn-outline-primary:not(:disabled):not(.disabled):is(:hover, :active, .active),
@@ -654,10 +654,17 @@ th {
   background-color: var(--light-color);
   border-color: var(--light-color);
 }
+.btn.btn-outline-dark:not(:disabled):not(.disabled):is(:hover, :active, .active),
+.btn.btn-outline-dark:not(:disabled):not(.disabled):is(:hover, :active, .active) *,
+.show > .btn.btn-outline-dark.dropdown-toggle {
+  color: var(--light-color) !important;
+  background-color: var(--dark-color);
+  border-color: var(--dark-color);
+}
 .btn.btn-outline-secondary {
-  color: var(--secondary-color);
+  color: var(--secondary-foreground, var(--secondary-color));
   background-color: transparent;
-  border-color: var(--secondary-color);
+  border-color: var(--secondary-foreground, var(--secondary-color));
   box-shadow: none;
 }
 .btn.btn-outline-secondary:not(:disabled):not(.disabled):is(:hover, :active, .active),
@@ -723,6 +730,86 @@ th {
   height: 1.5em;
   flex-shrink: 0;
 }
+/* Separate readable foregrounds from solid brand fills. Reset for nested light surfaces. */
+[data-bs-theme="light"] {
+  --primary-foreground: var(--primary-color);
+  --secondary-foreground: var(--secondary-color);
+  --tertiary-foreground: var(--tertiary-color);
+  --quarternary-foreground: var(--quarternary-color);
+}
+[data-bs-theme="dark"] {
+  --primary-foreground: color-mix(in srgb, var(--primary-color) 35%, white);
+  --secondary-foreground: color-mix(in srgb, var(--secondary-color) 35%, white);
+  --tertiary-foreground: color-mix(in srgb, var(--tertiary-color) 35%, white);
+  --quarternary-foreground: color-mix(in srgb, var(--quarternary-color) 35%, white);
+}
+[data-bs-theme="dark"] .form-control[readonly] {
+  color: var(--bs-body-color);
+  background-color: var(--bs-tertiary-bg);
+}
+[data-bs-theme="dark"] .page-item.disabled .page-link {
+  color: var(--bs-pagination-disabled-color);
+  background-color: var(--bs-pagination-disabled-bg);
+  border-color: var(--bs-pagination-disabled-border-color);
+}
+[data-bs-theme="dark"] .btn.btn-outline-primary:focus-visible,
+[data-bs-theme="dark"] .btn.btn-outline-secondary:focus-visible {
+  outline: 2px solid var(--bs-body-color);
+  outline-offset: 2px;
+}
+.pcr-app[data-bs-theme="dark"],
+[data-bs-theme="dark"] .pcr-app {
+  background: var(--bs-body-bg);
+}
+.pcr-app[data-bs-theme="dark"] .pcr-interaction .pcr-result,
+[data-bs-theme="dark"] .pcr-app .pcr-interaction .pcr-result {
+  color: var(--bs-body-color);
+  background: var(--bs-tertiary-bg);
+}
+[data-bs-theme="dark"] .btn-dark {
+  --bs-btn-border-color: var(--bs-border-color);
+}
+[data-bs-theme="dark"] .btn-outline-success {
+  --bs-btn-color: var(--bs-success-text-emphasis);
+  --bs-btn-border-color: var(--bs-success-text-emphasis);
+}
+[data-bs-theme="dark"] .btn-outline-danger {
+  --bs-btn-color: var(--bs-danger-text-emphasis);
+  --bs-btn-border-color: var(--bs-danger-text-emphasis);
+}
+[data-bs-theme="dark"] .swiper-controls > .swiper-pagination-bullets {
+  --swiper-pagination-color: var(--primary-foreground);
+  --swiper-pagination-bullet-inactive-color: var(--bs-body-color);
+}
+[data-bs-theme="dark"] .select2-container--default .select2-selection,
+[data-bs-theme="dark"] .select2-dropdown,
+[data-bs-theme="dark"] .select2-container--default .select2-search__field {
+  color: var(--bs-body-color);
+  background-color: var(--bs-body-bg);
+  border-color: var(--bs-border-color);
+}
+[data-bs-theme="dark"] .select2-container--default .select2-selection__rendered,
+[data-bs-theme="dark"] .select2-container--default .select2-search__field::placeholder,
+[data-bs-theme="dark"] .select2-container--default .select2-selection__placeholder {
+  color: var(--bs-body-color);
+}
+[data-bs-theme="dark"] .select2-container--default .select2-selection__choice,
+[data-bs-theme="dark"] .select2-container--default .select2-results__option[aria-selected="true"] {
+  color: var(--bs-body-color);
+  background-color: var(--bs-secondary-bg);
+  border-color: var(--bs-border-color);
+}
+[data-bs-theme="dark"] .select2-container--default .select2-selection__choice__remove {
+  color: var(--bs-body-color);
+}
+[data-bs-theme="dark"] .select2-container--default .select2-results__option--highlighted[aria-selected] {
+  color: var(--light-color);
+  background-color: var(--primary-color);
+}
+[data-bs-theme="dark"] .select2-container--default.select2-container--focus .select2-selection {
+  border-color: var(--primary-foreground);
+}
+
 /* === INPUTS === */
 :disabled,
 :disabled * {
