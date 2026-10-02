@@ -688,6 +688,18 @@ th {
   background-color: var(--primary-color);
   border-color: var(--primary-color);
 }
+.form-check-input,
+input[role="switch"],
+.form-check-label,
+.form-switch label,
+label:has(input[type="checkbox"], input[role="switch"]) {
+  cursor: pointer;
+}
+.form-check:has(.form-check-input:disabled) .form-check-label,
+.form-switch:has(.form-check-input:disabled) label,
+label:has(input[type="checkbox"]:disabled, input[role="switch"]:disabled) {
+  cursor: not-allowed;
+}
 .form-switch.form-switch-lg {
   display: flex;
   align-items: center;
