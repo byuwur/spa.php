@@ -1687,7 +1687,7 @@ label:has(input[type="checkbox"]:disabled, input[role="switch"]:disabled) {
 .app-content .container-fluid {
   padding: 2rem 4rem;
 }
-@media (max-width: 61.99875rem) {
+@media (max-width: 62rem) {
   .app-content .container-fluid {
     padding: 1rem 2rem;
   }
