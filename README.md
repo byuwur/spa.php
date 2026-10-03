@@ -1,194 +1,133 @@
 # byuwur/spa.php
 
-**byUwUr's Easy PHP SPA**
+A small PHP framework for single-page applications. PHP handles routes; jQuery loads pages and shared components without a full refresh.
 
-~ SPA made easy, with love, and PHP. ~
-
-Test it out at: [byuwur.co/spa.php/](https://byuwur.co/spa.php/)
-
-Looking for a static SPA micro-framework? Check out [byuwur/spa.js](https://github.com/byuwur/spa.js).
-
-## What's this about?
-
-This project is a simple, easy-to-use framework for building single-page applications (SPAs) using PHP. It provides a structure for handling routing, modals, and basic operations required for an SPA. The framework is designed to be lightweight and easy to integrate into existing projects.
-
-**[NEW!]** Try use this repository as a git submodule: See how it's used at [github.com/byuwur/byuwur.github.io](https://github.com/byuwur/byuwur.github.io). Easier than a package, because sometimes you don't need a package.
+Try it at [byuwur.co/spa.php](https://byuwur.co/spa.php/). For static HTML pages, use [spa.js](https://github.com/byuwur/spa.js).
 
 ## What does it do?
 
-- **Client-Side Routing:** Use PHP to manage SPA routes, supporting both GET and POST methods.
-- **Compatible:** Add everything you want on top of it. It's meant to be flexible for you.
-- **Local Storage Management:** Automatically saves and retrieves necessary variables using the browser's local storage.
-- **Bootstrap Integration:** Easily create modals with custom content, titles, and behaviors.
-- **AJAX Support:** Built-in support for making AJAX requests to load content dynamically without full page reloads thanks to jQuery.
-- **Custom Error Handling:** Set up custom error pages for various HTTP status codes.
-
-## How is it done?
-
-### What "SPA root" means
-
-- The **application root** is the public directory that owns one independently routed SPA, such as the root of `byuwur.github.io` or this repository's `demo/` directory.
-- The **framework root** is the `spa.php/` checkout or submodule consumed by that application. It normally lives at `application-root/spa.php/`; the repository demo uses the parent directory as the equivalent framework root. Reusable files stay there and are referenced from the application.
-
-The old `(root)` and `(main)` labels mixed location with responsibility. The distinction used here is **application-owned** versus **framework-owned**, followed by whether the file is required by the default setup.
-
-### REQUIRED at each application root
-
-The default PHP SPA layout requires:
-
-```text
-application-root/
-|-- home.php        # REQUIRED application shell and router entry point
-|-- _init.php       # REQUIRED application-specific SPA initialization
-|-- _routes.php     # REQUIRED application route table
-|-- .htaccess       # REQUIRED on Apache; use equivalent server rules on nginx
-`-- spa.php/        # REQUIRED framework checkout/submodule
-```
-
-- **home.php:** Sets `$setLocalStorage`, loads the application and framework files in order, renders the shell, and is the rewrite target for SPA routes. It may be renamed only when the server rules are updated with it.
-- **\_init.php:** Copy this application-specific initialization file into each SPA root. Its filesystem and entry-point context establish `$SYSTEM_ROOT`, `$HOME_PATH`, `$TO_HOME`, environment values, browser storage, and related runtime state. Loading `spa.php/_init.php` directly would derive application paths from the framework directory instead of the consuming application.
-- **\_routes.php:** Must define `$routes` before `spa.php/_router.php` is included. It can be stored elsewhere only if `home.php` explicitly loads that location first.
-- **.htaccess or equivalent server configuration:** Must route non-file requests to `home.php?uri=...`. Apache uses an application-root `.htaccess`; nginx uses equivalent `try_files` configuration based on `spa.php/nginx.conf`.
-- **spa.php/:** In a normal consumer, the framework directory must remain reachable by PHP includes and browser asset URLs at this application-root path. The repository demo references the parent directory instead because it already is the framework checkout. A normal Git submodule still checks out the full directory.
-
-Framework files are reusable implementation; `_init.php` and `_routes.php` are application-owned copies/configuration. If a project has multiple independent SPA roots, each root needs its own `_init.php` and route table because initialization belongs to that entry-point context.
-
-### Framework/Core files [in priority order]
-
-- **\_init.php:** Provides the starting implementation to copy as the required application-owned `_init.php`; it initializes application and browser paths, environment values, namespaced storage, and runtime state before routes and the router load.
-- **\_functions.php:** Provides shared PHP utilities for API responses, HTTP requests, validation, escaping, error handling, files, and other common work used by routes and application endpoints.
-- **\_common.php:** Establishes the default common request state, including language and theme, before the application shell and route are rendered. The default shell uses it; an application can add its own `_common.php` after it.
-- **\_plugins.php:** Optionally loads the consuming application's Composer autoloader so its libraries are available to SPA endpoints; application-specific plugin setup remains outside the framework.
-- **\_config.php:** Optionally creates the environment-configured MySQL connection used by application endpoints and returns a safe API error if the connection fails.
-- **\_auth.php:** Optionally supplies strict session setup plus login, logout, session-validation, and CSRF helpers for authenticated SPA endpoints.
-- **\_router.php:** Resolves the incoming URI against the application's route table, merges route parameters, serves direct file routes, and passes the resulting route state to the browser.
-- **\_spa.js:** Handles browser history, link interception, route requests, page/component replacement, and the lifecycle that runs after dynamically loaded content.
-- **\_functions.js:** Provides browser-side request, JSON, cookie, modal, validation, and other reusable helpers for SPA pages and application scripts.
-- **\_common.js:** Reinitializes shared sidebar, accessibility, Bootstrap, tooltip, and modal behavior after the initial page and each dynamic route load.
-- **\_common.css:** Supplies the reusable loader, sidebar, accessibility, and base interface styles used by the application shell and dynamically loaded content.
-- **\_error.php:** Renders the reusable server-side HTTP error page used when routing or an endpoint fails.
-- **css/** and **js/**: Reusable vendor assets used by the demo and available to applications. `_spa.js` requires jQuery, while Bootstrap and the other libraries are required only by the helpers or UI an application enables.
-- **img/**: Shared loader and interface assets referenced by framework styles.
-- **cacert.pem:** Certificate bundle used by the `_functions.php` cURL helpers when the application makes outbound HTTPS requests.
-- **composer.json:** Declares the optional Composer dependencies that an application may load through `_plugins.php`.
-
-### Application-owned optional files
-
-- **\_common.php:** Application-specific common variables, dictionaries, or initialization layered after the framework preset.
-- **\_plugins.php:** Application-specific Composer library initialization layered after the framework autoloader helper.
-- **\_config.php:** Application-specific database or service connections when the framework's MySQL helper is not sufficient.
-- **\_auth.php:** Application authorization rules layered around the optional framework session helpers.
-- **lang/**: Application dictionaries when the SPA renders translated PHP fragments. The repository demo supplies `demo/lang/`.
-- **.env**, **vendor/**, and **composer.lock:** Required only when the application loads environment files or Composer dependencies; they belong to the consuming application rather than the submodule.
-
-### Repository compatibility files
-
-- **home.php:** Redirects requests made to the deployed repository root into `demo/`; it is not the application shell consumers should copy.
-- **index.html:** Provides the same static fallback redirect when PHP `DirectoryIndex` handling is unavailable.
-- **.htaccess:** Routes repository-root requests through the compatibility entry point and retains the repository's security and error directives. Consumer applications need their own application-root routing rules.
-- **nginx.conf:** Shows the equivalent nginx route fallback that a consuming application can adapt in its server configuration.
-- **.env.example:** Documents optional environment values consumed by database, authentication, request, and development behavior; the actual environment belongs to the application.
-- **.nojekyll:** Keeps static files unchanged when the repository is published through GitHub Pages; it is not part of the PHP runtime.
-
-### Demo
-
-The runnable showcase is fully contained in `demo/`: its application initialization, shell, routes, page fragments, sidebar, dictionaries, background, flags, sample PDF, and sample video. It owns `$SYSTEM_ROOT` and `$HOME_PATH` like a real consumer and loads reusable framework files from the parent directory, which takes the place a submodule folder would have in another repository. Visiting `https://byuwur.co/spa.php/` redirects to it.
-
-The root `img/icon-back.png`, `img/icon-fore.png`, and `img/byuwur.png` remain beside `_common.css` because shared CSS references them.
+- Routes PHP pages with GET and POST data.
+- Loads shared components and reinitializes their UI after navigation.
+- Provides request, storage, modal, validation, session, and error-page helpers.
+- Works with Bootstrap and optional bundled integrations.
 
 ## Installation
 
-1. Clone the repository to your local machine.
-2. Ensure your web server has PHP installed.
-3. Update `.htaccess` or `nginx.conf` to match your server mount path.
+You need PHP 8.1+, jQuery, and the core framework scripts. Bootstrap and other libraries are needed only for the features you use.
 
-## Runtime contracts
+```bash
+git clone https://github.com/byuwur/spa.php.git
+```
 
-`spa.php` is a hybrid SPA micro-framework. PHP 8.1+, jQuery, and the core framework scripts are hard runtime dependencies; Bootstrap and other bundled integrations are optional unless used by the application.
-
-`bySPA.VERSION` is the framework/runtime version and can be read with `console.log(bySPA.VERSION)`. `bySPA.APP_VERSION` remains the consuming application's version.
-
-Route data precedence is fixed: route-defined `GET`/`POST` values override `/$/` path parameters, which override ordinary query parameters. Route state is namespaced from the finalized application root and falls back to memory when browser storage is unavailable; successfully migrated legacy values are removed so they cannot reappear later.
-
-Navigation emits `bySPA:before-unload`, then `bySPA:load` on success or `bySPA:error` on failure. Older slow responses are ignored. `bySPA.REQUEST_TIMEOUT` defaults to 30 seconds.
-
-Component requests preserve existing queries and replace overlapping keys with supplied GET values; their `uri=false` flag remains authoritative.
-
-Only the first `?` separates route path and query. Later literal question marks remain query content, including hash-query values read by `get_url_param()`.
-
-Consent defaults read theme and language through `byStorage`, sharing the application namespace and legacy migration used by their writers.
-
-`bySPA:load` is success-only. Unknown routes emit one `bySPA:error` before requesting the standalone error page; failure to render that page does not emit another terminal event. Error details contain `navigationId`, `url`, `status` (0 for an unavailable transport status), and `error`. Superseded requests emit no terminal event. Initial browser loading uses the same contract; unknown initial requests rejected by PHP never start a browser SPA lifecycle. FILE routes leave the document without a SPA success event.
-
-`HOME_PATH` resolves application requests and history URLs. Unmodified primary clicks on same-origin links are routed: links inside `HOME_PATH` have that prefix removed, while root-relative virtual links such as `/home` retain their route path, including unknown routes for SPA error handling. Use `custom-folder="true"` for same-origin links that should leave the SPA. Links with a target, download, `custom-folder="true"`, or a hash retain browser navigation. Common smooth scrolling handles only existing same-document ID targets, with matching origin, path, and query. PHP routing uses path URLs; `#/` links remain native here.
-
-`byStorage` keeps a failed write locally authoritative for that key until a successful explicit write or removal. Failed removals retain a null tombstone. Recovery does not replay writes or reconcile other tabs automatically; unaffected keys keep live persistent reads. Removal also clears the legacy unprefixed key so migration cannot resurrect it. Memory fallback lasts only for the current runtime.
-
-`byCommon` initialization is quiet by default. Set `byCommon.INIT_WARNINGS = true` to enable optional sidebar, Bootstrap, captcha, cookie-consent, and particles diagnostics, or pass `{ showWarn: true }` for one call. Required-runtime errors and warnings outside that initialization chain remain visible.
-
-Scripts in trusted route and component fragments execute as real browser `<script>` elements. Inline scripts and non-`async` external scripts keep source order; `defer` external scripts are treated as ordered fragment dependencies because dynamic fragments have no document-parser defer phase. Non-`async` module scripts are also awaited. Explicit external `async` scripts start independently and do not delay later fragment scripts or `bySPA:load`. Attributes, including CSP/SRI and data attributes, are preserved. External load failures are logged but do not fail navigation or stop later scripts; stale navigation stops the old fragment before it can continue. `bySPA:load` fires only after the current route and component fragments finish processing their ordered scripts.
-
-Error pages intentionally replace the full document rather than rendering inside the SPA shell. Their scripts use the same ordered execution rules; history navigation away triggers a full reload so the application starts with a clean runtime.
-
-Set `APP_URL` to the public application URL behind a proxy. Alternatively enable `TRUST_PROXY` and list exact proxy addresses in `TRUSTED_PROXIES`; forwarded headers from other clients are ignored.
-
-Login regenerates the session ID by default. Applications remain responsible for authorization and for calling CSRF checks on state-changing endpoints. Validate or allowlist user-influenced outbound URLs to prevent SSRF. HTML fragments are trusted application HTML.
-
-`build_sql_query()` rejects `UPDATE` and `DELETE` when no valid condition is built. Intentional full-table mutations require the explicit `allow_full_table => true` option; relaxed validation does not grant destructive scope.
-
-The builder's empty `NOT IN []` sentinel is not restrictive scope. Relaxed mutations need a restrictive companion condition or explicit full-table permission; strict mutations continue to reject empty `NOT IN` even with a companion or permission. Empty `IN []` matches nothing. Trusted SQL fragments are not analyzed for arbitrary tautologies.
-
-## Maintaining a submodule integration
-
-Keep shared framework changes in this framework repository, then update the consuming application's recorded submodule commit after reviewing and validating the change. A consumer pins a specific framework commit; updating this repository does not update its consumers automatically.
-
-Keep application-owned initialization, routes, and configuration in the application root as described in the [application layout](./README.md#how-is-it-done). A submodule update does not update those files: review the application's `_init.php` and `_routes.php` against the framework's documented migration and runtime contracts while preserving application-specific settings.
-
-Run the framework checks defined in the [CI workflow](./.github/workflows/ci.yml) from the framework checkout, then validate the affected integration in the consuming application. Record the consumer's submodule update separately from the framework change, with any required application adjustments.
-
-### Shared SPA maintenance
-
-spa.php and spa.js deliberately maintain selected equivalent browser helpers and contracts. Neither repository automatically synchronizes the other. The changing framework owns its implementation; maintainers review the corresponding contract separately. No complete runtime file is currently guaranteed byte-identical.
-
-| Artifact | Responsibility |
-| --- | --- |
-| `_functions.js` | Intentional behavioral mirror for query parsing and request-listener ownership; comments and local names may differ. |
-| `_common.js` | Shared consent namespace and ordinary-click intent, with host/application configuration preserved. |
-| `_spa.js` | Shared query, eligible-click, success/error, stale-navigation and bounded error-fallback contracts; PHP/static transport, history and routing implementations differ. |
-| `_init.php` / `_init.js` | Shared storage authority contract, host-specific bootstrap, and copied-initializer responsibility. |
-| `_router.php` / `_router.js` | Host-specific implementations; no source parity requirement. |
-
-When shared browser behavior changes:
-
-1. Identify affected mirrors/shared contracts and review the corresponding repository separately.
-2. Compare explicit immutable commits, never an uncontrolled moving `main`.
-3. Run the relevant [shared contract checks](tests/SPA_PARITY.md), recording revisions and intentional differences.
-4. Reconcile application-owned initializers while preserving host/application configuration, then run consumer integration tests.
-
-A framework/submodule/version update does **not** update copied application `_init.php` or `_init.js` behavior. Consumers must explicitly review storage and bootstrap changes even when framework tests pass. Storage reconciliation includes per-key authority after failed writes, deletion tombstones after failed removals, live reads for unaffected keys, and release only after a successful explicit write/removal. Migration follows the same rules; there is no global memory-first cache, automatic replay, or stale-disk resurrection.
+Serve the checkout with PHP and open `demo/`. The repository's root entry points redirect there. For your own application, follow the layout below and adapt the Apache or Nginx rules to your mount path.
 
 ## Usage
 
-1. Copy `_init.php` into the application root and keep that application-specific initialization there.
-2. Define your application's routes in its own `_routes.php`.
-3. Use the routing system to manage your SPA's navigation.
-4. Add custom functionality by creating new PHP files and adding them to the routes.
-5. Configure environment variables in `.env` using `.env.example` when the application needs them.
-6. Navigate. Suit yourself.
+1. Start with the demo shell and copy `_init.php` into your application's root.
+2. Define your route table in the application's `_routes.php`.
+3. Load initialization and routes before the framework router, as the demo does.
+4. Add PHP pages and point routes and components at them.
+5. Use `.env.example` for environment settings when your application needs them.
+
+Keep application settings outside the framework directory. Each independently routed application needs its own initializer and route table.
 
 ### Migration [v14]
 
-`_var.php` was renamed to `_init.php`. Existing applications must rename their copied file and update every include from `_var.php` to `_init.php`; no compatibility alias is provided.
+`_var.php` became `_init.php`. Rename the application's copy and update its includes. There is no compatibility alias.
+
+## How is it done?
+
+The **application root** owns the shell, initialization, routes, and configuration. The **framework root** holds reusable code, normally as a `spa.php/` submodule.
+
+```text
+application-root/
+|-- home.php        # Application shell and route entry point
+|-- _init.php       # Application initialization
+|-- _routes.php     # Application route table
+|-- .htaccess       # Apache routing; use equivalent Nginx rules
+`-- spa.php/        # Framework checkout or submodule
+```
+
+These are required by the default setup. Copy `_init.php` into the application root: loading the framework copy directly derives paths from the wrong directory. Define `$routes` before including `_router.php`. Route non-file requests to `home.php?uri=...`; if you rename the shell, update the server rules too.
+
+The demo uses its parent directory as the framework root. Regular consumers keep the full framework checkout at `spa.php/`, reachable by PHP includes and browser asset URLs.
+
+### Framework files
+
+| File                        | Purpose                                                                                     |
+| --------------------------- | ------------------------------------------------------------------------------------------- |
+| `_init.php`                 | Template for the application's initializer: paths, environment, storage, and runtime state. |
+| `_functions.php`            | PHP request, API response, validation, escaping, error, and file helpers.                   |
+| `_common.php`               | Default language, theme, and common request state.                                          |
+| `_plugins.php`              | Optional application Composer autoloader.                                                   |
+| `_config.php`               | Optional environment-based MySQL connection, with safe connection errors.                   |
+| `_auth.php`                 | Optional sessions, login/logout, session checks, and CSRF helpers.                          |
+| `_router.php`               | URI resolution, route data, direct file routes, and browser route state.                    |
+| `_spa.js`                   | Navigation, history, page/component requests, and route lifecycle.                          |
+| `_functions.js`             | Browser request, JSON, cookie, modal, and validation helpers.                               |
+| `_common.js`, `_common.css` | Shared UI initialization and styles.                                                        |
+| `_error.php`                | Server-side HTTP error page.                                                                |
+| `css/`, `js/`, `img/`       | Bundled libraries and shared interface assets.                                              |
+| `cacert.pem`                | Certificate bundle for outbound cURL HTTPS requests.                                        |
+| `composer.json`             | Optional Composer dependencies.                                                             |
+
+### Application and demo files
+
+Application-specific `_common.php`, `_plugins.php`, `_config.php`, and `_auth.php` can extend the framework setup. Dictionaries go in `lang/`. `.env`, `vendor/`, and `composer.lock` belong to the application when it uses those dependencies.
+
+`demo/` contains the runnable shell, routes, pages, sidebar, dictionaries, background, flags, sample PDF, and video. Shared images referenced by `_common.css` stay in the framework's `img/` directory.
+
+Root `home.php` and `index.html` are redirects, not shells to copy. Root `.htaccess` handles that compatibility entry point; `nginx.conf` is an example for consumers. `.nojekyll` is for static GitHub Pages publishing, not PHP execution.
+
+### Bundled libraries
+
+Libraries are included in `css/` and `js/` and loaded from local paths. The intention is to avoid depending on CDNs or external resources for these assets. Load only the libraries your application uses.
+
+- **Interface:** Bootstrap, Popper, jQuery, jQuery UI, and Shards UI.
+- **Forms:** Select2, Pickr, and Dropzone.
+- **Media:** Swiper and Video.js.
+- **Animation:** Animate.css, Typed.js, particles.js, GSAP, and MorphSVGPlugin.
+- **Consent:** Cookie Consent (`js/cookies.min.js`).
+- **Icons and fonts:** Font Awesome with local webfonts, Archivo, Bahnschrift, and OpenDyslexic in `css/webfonts/`.
+
+Keeping these files local gives you control over updates and availability. Update the bundled copies when needed; optional integrations that call external services still need those services.
+
+## Runtime contracts
+
+### Routes and navigation
+
+- `bySPA.VERSION` identifies the framework; `bySPA.APP_VERSION` identifies your application.
+- Route-defined GET/POST data overrides `/$/` path parameters, which override query parameters.
+- Only the first `?` separates path and query. Later question marks stay in the value, including hash-query values read by `get_url_param()`.
+- Component GET data replaces overlapping query keys; `uri=false` stays authoritative.
+- Navigation emits `bySPA:before-unload`, then `bySPA:load` on success or `bySPA:error` on failure. The timeout is 30 seconds (`bySPA.REQUEST_TIMEOUT`).
+- Unknown routes emit one error before loading the standalone error page. A failed error-page load adds no second terminal event. Error details are `{ navigationId, url, status, error }`; status `0` means no transport status.
+- Superseded requests cannot update the newer page or emit a terminal event. Initial browser loading follows the same rules; initial requests rejected by PHP never begin a browser SPA lifecycle. FILE routes leave the document without a success event.
+
+`HOME_PATH` resolves requests and history. Ordinary primary clicks on same-origin links are routed; the application prefix is removed for links inside it. Root-relative virtual links such as `/home` keep their route path, including unknown routes. Targets, downloads, hashes, and `custom-folder="true"` retain browser navigation. PHP uses path routing; `#/` links remain native. Smooth scrolling applies only to an existing same-document ID with the same origin, path, and query.
+
+### Storage and shared UI
+
+Storage keys use the finalized application root as a namespace. Legacy values are removed after successful migration. Consent reads theme and language through the same `byStorage` helper.
+
+A failed write keeps that key's local value until a successful explicit write or removal. A failed removal keeps a local null marker. Other keys still read persistent storage. Removing a key also removes its legacy unprefixed copy. There is no automatic replay or cross-tab reconciliation; memory fallback lasts for the current runtime only.
+
+`byCommon.init()` is quiet by default. Use `byCommon.INIT_WARNINGS = true` or `{ showWarn: true }` for optional sidebar, Bootstrap, captcha, consent, and particles diagnostics. Required-runtime errors still appear.
+
+### Fragment scripts and error pages
+
+Trusted page and component scripts execute as real script elements. Inline and non-async external scripts keep their order; `defer` fragments and non-async modules are awaited too. Explicit external `async` scripts run independently. Script attributes, including CSP/SRI and data attributes, are preserved.
+
+External script failures are logged but do not stop later scripts or fail navigation. Superseded fragments stop processing. `bySPA:load` waits for the current page and components' ordered scripts.
+
+Error pages replace the full document and use the same script rules. History navigation away reloads the application with a clean runtime.
 
 ## Security basics
 
-- Supplied Apache/nginx rules deny every `tests` path segment, including submodule mounts, before serving existing files. Keep the nginx denial before the PHP handler and outside any overriding `^~` location. Test suites intended for CLI also reject web execution.
-- For deliberate local HTTP diagnostics, use `php -S 127.0.0.1:8000 -t tests`. This bypasses production rewrite rules on loopback; `get_and_post.php` and `test_pass.php` return plain text with `nosniff`. Do not expose this development server publicly.
+Authorization belongs to your application. Keep role and tenant checks explicit at each endpoint; HTML fragments are trusted application content.
 
-- `make_http_request()` attempts POST once. An ambiguous transport error returns the existing cURL failure result (`false`, or the existing decoded result when requested); it never switches protocol and replays the mutation. Invalid URLs still return `null`; optional frontend diagnostics remain opt-in.
-
-- `_auth.php` enables strict sessions, secure cookies on HTTPS, and CSRF helpers.
-- Add the CSRF token to a meta tag or `sessionStorage` and `_functions.js` will include it in jQuery POST requests:
+- `_auth.php` uses strict sessions and secure cookies on HTTPS. Login regenerates the session ID by default; call CSRF checks on state-changing endpoints.
+- Supply a CSRF token in a meta tag or `sessionStorage`; `_functions.js` includes it in jQuery POST requests:
 
 ```php
 <meta name="csrf-token" content="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, "UTF-8") ?>" />
@@ -198,21 +137,58 @@ A framework/submodule/version update does **not** update copied application `_in
 sessionStorage.setItem("CSRF_TOKEN", token);
 ```
 
-- `make_http_request()` does not forward the PHP session ID unless `ALLOW_POST_SESSION_ID` is explicitly enabled and the URL matches `APP_URL`. Keep it disabled unless a controlled same-application request truly needs the same session.
-- `session_check()` validates the session; it does not rewrite `$_GET` or `$_POST`. Application tenant scope stays explicit.
-- A form POST sent to an SPA route is forwarded once to the routed PHP file and is not stored in browser history.
-- Public, authenticated, role, and tenant authorization belong to the consuming application. Keep those rules explicit at the endpoint.
-- Track `composer.lock` in applications so dependency installs are reproducible.
+- `session_check()` validates the session without rewriting `$_GET` or `$_POST`. A form POST to an SPA route is forwarded once and never stored in history.
+- `make_http_request()` attempts POST once and does not replay ambiguous failures with another protocol. Transport failure returns `false` or the existing decoded result; invalid URLs return `null`.
+- Session IDs are forwarded only with `ALLOW_POST_SESSION_ID` enabled and a URL matching `APP_URL`. Leave it disabled unless a controlled same-application request needs it.
+- Set `APP_URL` behind a proxy, or enable `TRUST_PROXY` with exact `TRUSTED_PROXIES` addresses. Other forwarded headers are ignored. Validate user-influenced outbound URLs to prevent SSRF.
+- `build_sql_query()` rejects UPDATE/DELETE without a valid condition. Full-table changes require `allow_full_table => true`; relaxed validation does not grant that permission.
+- Empty `NOT IN []` is not a restrictive condition. Relaxed mutations need another restrictive condition or full-table permission; strict mutations reject it even with either. Empty `IN []` matches nothing. Trusted SQL fragments are not checked for arbitrary tautologies.
+- Keep the supplied denial of all `tests` path segments, including submodules. In Nginx it must precede the PHP handler and sit outside overriding `^~` locations. CLI tests also reject web execution.
+- Track `composer.lock` in applications for reproducible installs.
 
-## Some other things I've made and used here
+For local HTTP diagnostics only:
 
-- [easy-http-error](https://github.com/byuwur/easy-http-error) - Custom error page with server configurations.
-- [easy-sidebar-bootstrap](https://github.com/byuwur/easy-sidebar-bootstrap) - Sidebar component using Bootstrap and jQuery.
+```bash
+php -S 127.0.0.1:8000 -t tests
+```
+
+This bypasses production rewrites on loopback. `get_and_post.php` and `test_pass.php` return plain text with `nosniff`; do not expose this server publicly.
+
+`byCommon.accessibilityText("plus")` and `byCommon.accessibilityText("minus")` change body text size by `0.25rem`, within `0.5rem` to `3rem`. Calling it without a mode resets text to `1rem`.
+
+## Maintaining a submodule integration
+
+Framework changes belong here. Consumers pin a commit, so they must review and record their own submodule update separately.
+
+1. Review the old and new framework commits.
+2. Reconcile application-owned `_init.php` and `_routes.php`, preserving application settings. Updating the submodule does not update copied initialization.
+3. Run the framework's [CI checks](.github/workflows/ci.yml).
+4. Test affected behavior in the consuming application before recording its upgrade.
+
+### Shared SPA maintenance
+
+SPA.php and SPA.js share selected behavior, not entire runtime files. Neither automatically synchronizes the other.
+
+| Files                        | Shared behavior / difference                                                                                             |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `_functions.js`              | Query parsing and request-listener behavior; comments and local names may differ.                                        |
+| `_common.js`                 | Consent namespace and ordinary-click handling, with host settings preserved.                                             |
+| `_spa.js`                    | Query, click, success/error, stale-navigation, and bounded error fallback rules; transport, history, and routing differ. |
+| `_init.php` / `_init.js`     | Storage behavior and application-owned bootstrap copies.                                                                 |
+| `_router.php` / `_router.js` | Host-specific; no source parity requirement.                                                                             |
+
+Compare reviewed immutable commits and run the [shared contract checks](tests/SPA_PARITY.md). Record intentional differences and reconcile consumer initializers. Storage upgrades must preserve per-key fallback, failed-removal markers, legacy migration, live reads for unaffected keys, and recovery only through successful explicit changes.
+
+## Related tools
+
+- [easy-md-viewer](https://github.com/byuwur/easy-md-viewer): Readable, themed Markdown with rich formatting and zero dependencies.
+- [easy-json-viewer](https://github.com/byuwur/easy-json-viewer): Explore large JSON documents with collapsible trees and responsive rendering.
+- [easy-http-error](https://github.com/byuwur/easy-http-error): Friendly bilingual error pages that work even when PHP fails.
+- [easy-sidebar-bootstrap](https://github.com/byuwur/easy-sidebar-bootstrap): Responsive Bootstrap navigation that remembers your sidebar preferences.
 
 ## Contributing
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for the contribution workflow and
-[CODING_STANDARDS.md](./CODING_STANDARDS.md) for this project's engineering standards.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow and [CODING_STANDARDS.md](CODING_STANDARDS.md) for engineering standards.
 
 ## License
 
