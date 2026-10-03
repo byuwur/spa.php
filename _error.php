@@ -187,6 +187,15 @@ function e(string $value): string
         filter 0.3s ease !important;
     }
 
+    html {
+      font-size: 16px;
+    }
+
+    body {
+      font-size: 1rem;
+    }
+
+
     html,
     body {
       margin: 0;
@@ -226,45 +235,45 @@ function e(string $value): string
       align-items: center;
       text-align: center;
       left: 45%;
-      padding: 24px;
+      padding: 1.5rem;
       overflow-y: auto;
     }
 
     #message-box a {
       color: #fff;
-      font-size: 16px;
-      margin: 8px 0 24px;
+      font-size: 1rem;
+      margin: 0.5rem 0 1.5rem;
     }
 
     #message-box span {
-      font-size: 16px;
-      margin-bottom: 4px;
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
     }
 
     #message-box h1 {
-      font-size: clamp(96px, 18vw, 192px);
+      font-size: clamp(6rem, 18vw, 12rem);
       margin: 0;
       line-height: 1;
     }
 
     #message-box p {
-      font-size: clamp(24px, 4vw, 40px);
-      margin: 4px;
+      font-size: clamp(1.5rem, 4vw, 2.5rem);
+      margin: 0.25rem;
       line-height: 1;
     }
 
     #action-link-wrap {
-      margin: 32px 0;
+      margin: 2rem 0;
     }
 
     #action-link-wrap .btn {
       background: #600;
       border: 0;
       color: #fff;
-      font-size: 20px;
-      margin: 0 4px;
-      padding: 12px 24px;
-      border-radius: 4px;
+      font-size: 1.25rem;
+      margin: 0 0.25rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.25rem;
       font-weight: 700;
       cursor: pointer;
       text-transform: uppercase;
@@ -275,8 +284,8 @@ function e(string $value): string
     }
 
     #action-link-wrap .btn:focus-visible {
-      outline: 2px solid #fff;
-      outline-offset: 3px;
+      outline: 0.125rem solid #fff;
+      outline-offset: 0.1875rem;
     }
 
     #poly1,
@@ -305,11 +314,11 @@ function e(string $value): string
 
     @keyframes floatCubes {
       100% {
-        transform: translateY(24px);
+        transform: translateY(1.5rem);
       }
     }
 
-    @media (max-width: 880px) {
+    @media (max-width: 55rem) {
 
       #cubes,
       #message-box {
@@ -328,7 +337,7 @@ function e(string $value): string
 </head>
 
 <body>
-  <!-- [Mateus] byUwUr --- Easy HTTP Error Page --- 2026. https://github.com/byuwur/easy-http-error -->
+  <!-- [Mateus] byUwUr --- Easy HTTP Error Page --- 2026 v7. https://github.com/byuwur/easy-http-error -->
   <div id="body">
     <svg id="cubes" viewBox="0 0 837 1045" aria-hidden="true" focusable="false">
       <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
