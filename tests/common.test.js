@@ -7,6 +7,7 @@ const vm = require("node:vm");
 function loadCommon() {
   const warnings = [];
   const errors = [];
+  const styles = {};
   const chain = {
     length: 0,
     off() {
@@ -18,7 +19,14 @@ function loadCommon() {
   };
   const $ = function (value) {
     if (typeof value === "function") value();
-    return chain;
+    return {
+      ...chain,
+      css(property, setting) {
+        styles[value] ??= {};
+        styles[value][property] = setting;
+        return this;
+      }
+    };
   };
   const window = { byCommon: {}, jQuery: $ };
   vm.runInNewContext(fs.readFileSync(path.join(__dirname, "..", "_common.js"), "utf8"), {
@@ -36,7 +44,7 @@ function loadCommon() {
       }
     }
   });
-  return { byCommon: window.byCommon, warnings, errors };
+  return { byCommon: window.byCommon, warnings, errors, styles };
 }
 
 test("byCommon.init can suppress warnings for one call", () => {
@@ -63,4 +71,31 @@ test("initBootstrap supports the same one-call suppression", () => {
   const harness = loadCommon();
   harness.byCommon.initBootstrap({ showWarn: false });
   assert.equal(harness.warnings.length, 0);
+});
+
+test("accessibility text uses quarter-rem steps and resets", () => {
+  const { byCommon, styles } = loadCommon();
+  assert.equal(byCommon.fontSize, 1);
+  byCommon.accessibilityText("plus");
+  assert.equal(byCommon.fontSize, 1.25);
+  assert.equal(styles.body["font-size"], "1.25rem");
+  byCommon.accessibilityText("mas");
+  assert.equal(styles.body["font-size"], "1.5rem");
+  byCommon.accessibilityText("minus");
+  assert.equal(styles.body["font-size"], "1.25rem");
+  byCommon.accessibilityText("menos");
+  assert.equal(styles.body["font-size"], "1rem");
+  byCommon.accessibilityText();
+  assert.equal(styles.body["font-size"], "1rem");
+  assert.equal(styles.html, undefined);
+});
+
+test("accessibility text stays within half-rem and three-rem limits", () => {
+  const { byCommon, styles } = loadCommon();
+  for (let i = 0; i < 30; i++) byCommon.accessibilityText("plus");
+  assert.equal(styles.body["font-size"], "3rem");
+  for (let i = 0; i < 30; i++) byCommon.accessibilityText("minus");
+  assert.equal(styles.body["font-size"], "0.5rem");
+  byCommon.accessibilityText();
+  assert.equal(styles.body["font-size"], "1rem");
 });
