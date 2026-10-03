@@ -409,24 +409,24 @@
   /**
    * * --- ACCESSIBILITY --- *
    */
-  byCommon.fontSize = 16;
+  byCommon.fontSize = 1; // 1rem
   byCommon.accessibilityToggle = () => $("#bywr-accessibility-buttons").toggleClass("hide");
-  byCommon.accessibilityText = (mode = "") => {
+  byCommon.accessibilityText = (mode = "") => { 
+    // 0.5rem min, 3rem max, 0.25rem step
     switch (mode) {
       case "plus":
       case "mas":
-        if (byCommon.fontSize <= 80) byCommon.fontSize += 2;
+        byCommon.fontSize = Math.max(0.5, Math.min(3, byCommon.fontSize + 0.25));
         break;
       case "minus":
       case "menos":
-        if (byCommon.fontSize >= 8) byCommon.fontSize -= 2;
+        byCommon.fontSize = Math.max(0.5, Math.min(3, byCommon.fontSize - 0.25));
         break;
       default:
-        byCommon.fontSize = 16;
+        byCommon.fontSize = 1;
         break;
     }
-    $("html").css("font-size", `${byCommon.fontSize}px`);
-    $("body").css("font-size", `${byCommon.fontSize}px`);
+    $("body").css("font-size", `${byCommon.fontSize}rem`);
   };
   byCommon.accessibilityMotion = () => $("html").toggleClass("no-motion");
   byCommon.accessibilityDyslexia = () => $("body").toggleClass("dyslexia");
