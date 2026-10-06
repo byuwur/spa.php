@@ -23,5 +23,5 @@ $post = [
 ];
 echo make_http_request("{$HOME_PATH}/test/get_and_post.php", $get, $post);
 echo "<br>";
-echo "remote_file_exists(): " . (remote_file_exists("https://byuwur.co/img/logo.png") ? "true" : "false");
+echo "remote_file_exists(): " . (remote_file_exists("https://byuwur.github.io/img/logo.png") ? "true" : "false");
 exit;

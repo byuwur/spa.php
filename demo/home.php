@@ -36,7 +36,7 @@ require_once "{$TO_HOME}/common.example.php";
   <meta charset="utf-8" />
   <meta property="og:title" content="<?= escape_html($LANG["title.default"]) ?>" />
   <meta property="og:type" content="website" />
-  <meta property="og:image" content="https://byuwur.co/img/logo.png" />
+  <meta property="og:image" content="https://byuwur.github.io/img/logo.png" />
   <meta property="og:image:alt" content="SPA.php | byUwUr" />
   <meta property="og:url" content="<?= escape_html($LANG["meta.url"]) ?>" />
   <meta property="og:site_name" content="SPA.php | byUwUr" />
@@ -52,7 +52,7 @@ require_once "{$TO_HOME}/common.example.php";
   <meta name="twitter:creator" content="@byUwUr" />
   <meta name="twitter:title" content="<?= escape_html($LANG["title.default"]) ?>" />
   <meta name="twitter:description" content="<?= escape_html($LANG["meta.description"]) ?>" />
-  <meta name="twitter:image" content="https://byuwur.co/img/logo.png" />
+  <meta name="twitter:image" content="https://byuwur.github.io/img/logo.png" />
   <meta name="twitter:image:alt" content="SPA.php | byUwUr" />
   <meta name="theme-color" content="#300" />
   <link rel="canonical" href="<?= escape_html($LANG["meta.url"]) ?>" />
