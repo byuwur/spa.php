@@ -502,4 +502,53 @@
     }
     return next;
   };
+
+  /**
+   *  * --- CTA --- *
+   */
+  byCommon.CTA_BONYUR_BANK ??= {
+    common: {
+      weight: 65,
+      messages: ["Let's do this", "You got this", "Ready when you are", "Your move", "Make it yours", "Go for it", "Have at it", "Here we go", "Let's roll", "Do your thing", "All yours", "Why wait?", "Take it away", "Go ahead"]
+    },
+    playful: {
+      weight: 30,
+      messages: [
+        "Go on then",
+        "Might as well",
+        "Do the thing",
+        "No pressure",
+        "Press the thing",
+        "There. That button.",
+        "Well? We're waiting",
+        "This counts as progress",
+        "Very official",
+        "Important business",
+        "It'll be fine. Probably.",
+        "Let's cook"
+      ]
+    },
+    rare: {
+      weight: 5,
+      messages: ["Add a little BONYUR", "byUwUr was here", "Made easy, with love", "UwU responsibly", "Hágale pues", "De una", "Yogurt approves", "Peak engineering", "An important moment in computing", "For the bit", "Clip farming"]
+    }
+  };
+
+  /**
+   * Returns a random message from a weighted message bank.
+   * Selects a group based on its weight, then randomly picks one of its messages.
+   *
+   * @param {Object} [options] Selection options.
+   * @param {Object} [options.bank=byCommon.CTA_BONYUR_BANK] Weighted message bank.
+   * @returns {string|null} Selected message, or null if no valid groups exist.
+   */
+  byCommon.randomCTAMessage = function ({ bank = byCommon.CTA_BONYUR_BANK } = {}) {
+    const groups = Object.values(bank).filter((group) => group.weight > 0 && group.messages?.length);
+    let roll = Math.random() * groups.reduce((total, group) => total + group.weight, 0);
+    for (const { weight, messages } of groups) {
+      roll -= weight;
+      if (roll < 0) return messages[Math.floor(Math.random() * messages.length)];
+    }
+    return null;
+  };
 })(typeof window !== "undefined" ? window : this);
