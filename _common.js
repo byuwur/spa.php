@@ -530,7 +530,7 @@
     },
     rare: {
       weight: 5,
-      messages: ["Add a little BONYUR", "byUwUr was here", "Made easy, with love", "UwU responsibly", "Hágale pues", "De una", "Yogurt approves", "Peak engineering", "An important moment in computing", "For the bit", "Clip farming"]
+      messages: ["Add a little BONYUR", "byUwUr was here", "Made easy, with love", "UwU responsibly", "HÃ¡gale pues", "De una", "Yogurt approves", "Peak engineering", "An important moment in computing", "For the bit", "Clip farming"]
     }
   };
 
@@ -550,5 +550,46 @@
       if (roll < 0) return messages[Math.floor(Math.random() * messages.length)];
     }
     return null;
+  };
+
+  /**
+   *  * --- COLOR --- *
+   */
+  byCommon.ACCENT_COLOR_BANK ??= {
+    light: { weight: 30, saturation: 35, lightness: 95 },
+    neutral: { weight: 30, saturation: 10, lightness: 85 },
+    pastel: { weight: 35, saturation: 55, lightness: 85 },
+    dark: { weight: 5, saturation: 25, lightness: 25 }
+  };
+
+  /**
+   * Generates a random accent color or harmonious CSS gradient.
+   * @param {Object} [options] Color generation options.
+   * @param {Object} [options.bank=byCommon.ACCENT_COLOR_BANK] Weighted saturation/lightness presets.
+   * @param {"light"|"neutral"|"pastel"|"dark"|"random"} [options.tone="pastel"] Tone; random selects by weight.
+   * @param {boolean} [options.gradient=false] Generate a gradient with hue offsets of 15 to 45 degrees.
+   * @param {number} [options.angle=135] Gradient angle in degrees.
+   * @returns {string|null} CSS color/gradient, or null for invalid gradient options or no valid preset.
+   */
+  byCommon.randomAccentColor = function ({ bank = byCommon.ACCENT_COLOR_BANK, tone = "pastel", gradient = false, angle = 135 } = {}) {
+    if (typeof gradient !== "boolean" || !Number.isFinite(angle)) return null;
+    const groups = Object.entries(bank ?? {}).filter(
+      ([name, group]) =>
+        (tone === "random" || tone === name) &&
+        Number.isFinite(group?.weight) &&
+        group.weight > 0 &&
+        Number.isFinite(group.saturation) &&
+        group.saturation >= 0 &&
+        group.saturation <= 100 &&
+        Number.isFinite(group.lightness) &&
+        group.lightness >= 0 &&
+        group.lightness <= 100
+    );
+    let roll = Math.random() * groups.reduce((total, [, group]) => total + group.weight, 0);
+    const preset = groups.find(([, group]) => (roll -= group.weight) < 0)?.[1];
+    if (!preset) return null;
+    const hue = Math.floor(Math.random() * 360);
+    const color = (offset = 0) => `hsl(${(hue + offset) % 360} ${preset.saturation}% ${preset.lightness}%)`;
+    return gradient ? `linear-gradient(${angle}deg, ${color()}, ${color(15 + Math.floor(Math.random() * 31))})` : color();
   };
 })(typeof window !== "undefined" ? window : this);
