@@ -753,7 +753,7 @@
 
     const previewTimers = new Map();
     const dropzone = new Dropzone("#demo-dropzone", {
-      url: bySPA.HOME_PATH + "/preview-only",
+      url: `${bySPA.HOME_PATH}/preview-only`,
       autoProcessQueue: false, autoQueue: false, addRemoveLinks: true,
       maxFiles: 4, maxFilesize: 5,
       dictDefaultMessage: "Drop files here or click to preview",

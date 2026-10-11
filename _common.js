@@ -36,7 +36,7 @@
       if (showWarn) console.warn("Can't load Sidebar if element ain't present.");
       return;
     }
-    console.log("Init <Sidebar />");
+    console.log(`Init <Sidebar />`);
     if (!get_cookie("SidebarExpand")) set_cookie("SidebarExpand", "on");
     // Init the rest of the elements
     const jqSidebarToggle = $(byCommon.SIDEBAR_TOGGLE_ID);

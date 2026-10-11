@@ -66,32 +66,32 @@ $INVOKER__FILE__ = isset($INVOKER__FILE__) ? std_dir_separator($INVOKER__FILE__)
 if ($INVOKER__FILE__ && realpath($INVOKER__FILE__))
   $INVOKER__FILE__ = std_dir_separator(realpath($INVOKER__FILE__));
 if (isset($debug) && $debug)
-  echo "INVOKER__FILE__: " . $INVOKER__FILE__ . " <br>\n";
+  echo "INVOKER__FILE__: {$INVOKER__FILE__} <br>\n";
 $INVOKER__DIR__ = isset($INVOKER__DIR__) ? std_dir_separator($INVOKER__DIR__) : dirname($INVOKER__FILE__);
 if (isset($debug) && $debug)
-  echo "INVOKER__DIR__: " . $INVOKER__DIR__ . " <br>\n";
+  echo "INVOKER__DIR__: {$INVOKER__DIR__} <br>\n";
 $THIS__FILE__ = std_dir_separator(__FILE__);
 if (isset($debug) && $debug)
-  echo "THIS__FILE__: " . $THIS__FILE__ . " <br>\n";
+  echo "THIS__FILE__: {$THIS__FILE__} <br>\n";
 $SERVER_SCRIPT_FILENAME = std_dir_separator($_SERVER["SCRIPT_FILENAME"] ?? $INVOKER__FILE__);
 $SERVER_PHP_SELF = std_dir_separator($_SERVER["PHP_SELF"] ?? $INVOKER__FILE__);
 $IS_PHP_ON_SERVER = isset($IS_PHP_ON_SERVER) ? $IS_PHP_ON_SERVER : php_sapi_name() != 'cli';
 // Set the root directory of the system
 $SYSTEM_ROOT = dirname($THIS__FILE__);
 if (isset($debug) && $debug)
-  echo "SYSTEM_ROOT: " . $SYSTEM_ROOT . " <br>\n";
+  echo "SYSTEM_ROOT: {$SYSTEM_ROOT} <br>\n";
 // Determine the protocol (HTTP or HTTPS)
 $PROTOCOL = public_scheme() . "://";
 if (isset($debug) && $debug)
-  echo "PROTOCOL: " . $PROTOCOL . " <br>\n";
+  echo "PROTOCOL: {$PROTOCOL} <br>\n";
 // Calculate the difference in directory depth between the current script and the root directory
 $PATH_DIFF = count(explode("/", ($IS_PHP_ON_SERVER ? $SERVER_SCRIPT_FILENAME : $INVOKER__FILE__))) - count(explode("/", $THIS__FILE__));
 if (isset($debug) && $debug)
-  echo "PATH_DIFF: " . $PATH_DIFF . " <br>\n";
+  echo "PATH_DIFF: {$PATH_DIFF} <br>\n";
 // Set the relative path to the home directory
 $TO_HOME = $PATH_DIFF > 0 ? substr(str_repeat("../", $PATH_DIFF), 0, -1) : ".";
 if (isset($debug) && $debug)
-  echo "TO_HOME: " . $TO_HOME . " <br>\n";
+  echo "TO_HOME: {$TO_HOME} <br>\n";
 // Get the current script's directory path
 $public_host = $_SERVER["HTTP_HOST"] ?? "localhost";
 // Forwarded hosts are user-controlled unless the immediate proxy is trusted.
@@ -100,16 +100,16 @@ if (is_trusted_proxy()) {
   if (preg_match("/^[a-z0-9.-]+(?::\d+)?$/i", $forwarded_host))
     $public_host = $forwarded_host;
 }
-$THIS_PATH = $IS_PHP_ON_SERVER ? dirname($PROTOCOL . $public_host . $SERVER_PHP_SELF) : dirname($INVOKER__FILE__);
+$THIS_PATH = $IS_PHP_ON_SERVER ? dirname("{$PROTOCOL}{$public_host}{$SERVER_PHP_SELF}") : dirname($INVOKER__FILE__);
 if (isset($debug) && $debug)
-  echo "THIS_PATH: " . $THIS_PATH . " <br>\n";
+  echo "THIS_PATH: {$THIS_PATH} <br>\n";
 // Set the absolute path to the home directory
 $HOME_PATH = $PATH_DIFF > 0 ? implode("/", array_slice(explode("/", $THIS_PATH), 0, -$PATH_DIFF)) : $THIS_PATH;
 $configured_app_url = filter_var($_ENV["APP_URL"] ?? null, FILTER_VALIDATE_URL);
 if ($configured_app_url)
   $HOME_PATH = rtrim($configured_app_url, "/");
 if (isset($debug) && $debug)
-  echo "HOME_PATH: " . $HOME_PATH . " <br>\n";
+  echo "HOME_PATH: {$HOME_PATH} <br>\n";
 // _storaje.js code only exists in first invokation
 $json_script_flags = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE;
 if (isset($setLocalStorage) && $setLocalStorage) { ?>

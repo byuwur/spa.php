@@ -11,7 +11,7 @@ after(async () => { await browser?.close(); });
 async function application(t, preferences = {}) {
   const page = await browser.newPage();
   t.after(() => page.close());
-  await page.route("**/*", route => route.fulfill({ contentType: "text/html", body: '<main id="spa-content"></main><div id="spa-loader"></div><div id="component"></div><div id="section"></div><form id="form"><button type="submit"></button></form><form id="other"></form>' }));
+  await page.route("**/*", route => route.fulfill({ contentType: "text/html", body: /* HTML */ `<main id="spa-content"></main><div id="spa-loader"></div><div id="component"></div><div id="section"></div><form id="form"><button type="submit"></button></form><form id="other"></form>` }));
   await page.goto("https://example.test/app/known?q=a?b");
   await initializePage(page, preferences);
   return page;
@@ -37,7 +37,7 @@ async function initializePage(page, preferences = {}) {
       const pending = $.Deferred();
       setTimeout(() => {
         if (options.url.includes("fail.php") || (window.errorFails && /_error\.(php|html)/.test(options.url))) pending.reject({ status: 500 }, "error", "fixture failure");
-        else pending.resolve(/_error\.(php|html)/.test(options.url) ? "<html><body>Error fixture</body></html>" : "<p>Fragment</p>");
+        else pending.resolve(/_error\.(php|html)/.test(options.url) ? /* HTML */ `<html><body>Error fixture</body></html>` : /* HTML */ `<p>Fragment</p>`);
       }, options.url.includes("slow.php") ? 100 : 0);
       return pending.promise();
     };
@@ -55,7 +55,7 @@ test("component transport preserves existing queries and helper precedence", asy
       await bySPA.reloadComponent("#component", file, { added: "x", repeat: "new" });
       return requests.at(-1).url;
     }, file);
-    assert.equal(url, "https://example.test/app/part.php?" + (file.includes("?") ? "fixed=1&repeat=new&added=x" : "added=x&repeat=new") + "&uri=false");
+    assert.equal(url, `https://example.test/app/part.php?${file.includes("?") ? "fixed=1&repeat=new&added=x" : "added=x&repeat=new"}&uri=false`);
   }
 });
 
@@ -64,7 +64,7 @@ test("shared: initial and later query entry points preserve complete suffixes", 
   assert.equal(await page.evaluate(() => requests[0].url.includes("q=a%3Fb")), true);
   for (const query of ["q=a?b", "q=a%3Fb", "q=first&q=last", "q=%ZZ", "", "q="]) {
     const actual = await page.evaluate(async query => {
-      await bySPA.load("/known?" + query, { push: false });
+      await bySPA.load(`/known?${query}`, { push: false });
       return bySPA._GET.q ?? null;
     }, query);
     assert.equal(actual, Object.fromEntries(new URLSearchParams(query)).q ?? null);
@@ -157,7 +157,7 @@ test("shared: both click handlers preserve native ownership and existing-target 
 
 test("native external hash navigation reaches the destination", async t => {
   const page = await application(t);
-  await page.evaluate(() => { document.body.insertAdjacentHTML("beforeend", '<a id="external" href="https://elsewhere.test/page#section">External</a>'); byCommon.init(); });
+  await page.evaluate(() => { document.body.insertAdjacentHTML("beforeend", /* HTML */ `<a id="external" href="https://elsewhere.test/page#section">External</a>`); byCommon.init(); });
   await page.click("#external");
   await page.waitForURL("https://elsewhere.test/page#section");
 });

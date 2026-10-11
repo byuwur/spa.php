@@ -27,7 +27,7 @@ for (const copy of reference ? ["static"] : ["root", "demo"]) {
     const local = initialize(storage, "app", copy);
     assert.equal(local.getItem("APP_THEME"), "light");
     assert.equal(disk.has("APP_THEME"), false);
-    disk.set(local.prefix + "live", "one");
+    disk.set(`${local.prefix}live`, "one");
     local.setItem("old", "disk");
     failWrite = true;
     local.setItem("old", "local");
@@ -37,13 +37,13 @@ for (const copy of reference ? ["static"] : ["root", "demo"]) {
     local.removeItem("old");
     assert.equal(local.getItem("old"), null);
     failWrite = false;
-    disk.set(local.prefix + "old", "other-tab");
-    disk.set(local.prefix + "live", "two");
+    disk.set(`${local.prefix}old`, "other-tab");
+    disk.set(`${local.prefix}live`, "two");
     assert.equal(local.getItem("old"), null);
     assert.equal(local.getItem("live"), "two");
     local.setItem("old", "restored");
     assert.equal(local.getItem("old"), "restored");
-    disk.set(local.prefix + "old", "live-again");
+    disk.set(`${local.prefix}old`, "live-again");
     assert.equal(local.getItem("old"), "live-again");
     disk.set("old", "legacy");
     local.removeItem("old");

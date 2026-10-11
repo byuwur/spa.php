@@ -16,8 +16,8 @@ require_once "{$TO_HOME}/common.example.php";
   <div
     class="container vh-100 d-flex flex-column align-items-center justify-content-center text-white text-dark-shadow">
     <p><?= escape_html($LANG["demo.description"]) ?></p>
-    <p><?= escape_html($LANG["demo.this_is"] . " " . $LANG["nav.page"] . ".") ?></p>
-    <p><?= escape_html($LANG["nav.page"] . ": ") ?><b><i>"<?= escape_html($LANG["demo.page.description"]) ?>"</i></b></p>
+    <p><?= escape_html("{$LANG["demo.this_is"]} {$LANG["nav.page"]}.") ?></p>
+    <p><?= escape_html("{$LANG["nav.page"]}: ") ?><b><i>"<?= escape_html($LANG["demo.page.description"]) ?>"</i></b></p>
   </div>
 </div>
 <script>

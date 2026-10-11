@@ -191,7 +191,7 @@ function createHarness(plans = {}) {
 test("cold and cached external dependencies execute before dependent inline scripts", async () => {
   for (const delay of [25, 0]) {
     const harness = createHarness({ "viewer.js": { delay, label: "viewer" } });
-    await harness.bySPA.__setHTMLForTest(harness.target, '<script src="viewer.js"></script><script>record("inline")</script>', 1);
+    await harness.bySPA.__setHTMLForTest(harness.target, /* HTML */ `<script src="viewer.js"></script><script>record("inline")</script>`, 1);
     assert.deepEqual(harness.order, ["viewer", "inline"]);
   }
 });
@@ -200,7 +200,7 @@ test("mixed ordered scripts preserve source order and defer remains ordered", as
   const harness = createHarness({ "b.js": { delay: 10, label: "B" }, "d.js": { label: "D" } });
   await harness.bySPA.__setHTMLForTest(
     harness.target,
-    '<script>record("A")</script><script src="b.js"></script><script>record("C")</script><script src="d.js" defer></script><script>record("E")</script>',
+    /* HTML */ `<script>record("A")</script><script src="b.js"></script><script>record("C")</script><script src="d.js" defer></script><script>record("E")</script>`,
     1
   );
   assert.deepEqual(harness.order, ["A", "B", "C", "D", "E"]);
@@ -210,7 +210,7 @@ test("full-document error pages reuse ordered script processing", async () => {
   const harness = createHarness({ "error-dependency.js": { delay: 10, label: "dependency" } });
   await harness.bySPA.__setHTMLForTest(
     harness.target,
-    '<html><body><script src="error-dependency.js"></script><script>record("dependent")</script></body></html>',
+    /* HTML */ `<html><body><script src="error-dependency.js"></script><script>record("dependent")</script></body></html>`,
     1,
     true
   );
@@ -221,7 +221,7 @@ test("missing and broken application scripts are non-fatal", async () => {
   const harness = createHarness({ "missing.js": { fail: true } });
   const result = await harness.bySPA.__setHTMLForTest(
     harness.target,
-    '<script src="missing.js"></script><script>throw new Error("application error")</script><script>const =</script><script>record("later")</script>',
+    /* HTML */ `<script src="missing.js"></script><script>throw new Error("application error")</script><script>const =</script><script>record("later")</script>`,
     1
   );
   assert.equal(result.includes("missing.js"), true);
@@ -232,7 +232,7 @@ test("missing and broken application scripts are non-fatal", async () => {
 
 test("stale navigation stops remaining scripts and lifecycle work", async () => {
   const harness = createHarness({ "slow.js": { delay: 20, label: "slow" } });
-  const insertion = harness.bySPA.__setHTMLForTest(harness.target, '<script src="slow.js"></script><script>record("stale")</script>', 1);
+  const insertion = harness.bySPA.__setHTMLForTest(harness.target, /* HTML */ `<script src="slow.js"></script><script>record("stale")</script>`, 1);
   harness.bySPA.NAVIGATION_ID = 2;
   assert.equal(await insertion, null);
   assert.deepEqual(harness.order, ["slow"]);
@@ -240,7 +240,7 @@ test("stale navigation stops remaining scripts and lifecycle work", async () => 
 
 test("components, modules, attributes, async scripts, and repeat insertion keep their semantics", async () => {
   const harness = createHarness({ "async.js": { delay: 20, label: "async" } });
-  const html = '<script src="async.js" async integrity="sha256-test" data-owner="component"></script><script>record("component")</script><script type="module">record("module")</script>';
+  const html = /* HTML */ `<script src="async.js" async integrity="sha256-test" data-owner="component"></script><script>record("component")</script><script type="module">record("module")</script>`;
   await harness.bySPA.__setHTMLForTest(harness.target, html, 1);
   assert.deepEqual(harness.order, ["component", "module"]);
   assert.equal(harness.createdScripts[0].getAttribute("integrity"), "sha256-test");
@@ -248,7 +248,7 @@ test("components, modules, attributes, async scripts, and repeat insertion keep 
   await new Promise((resolve) => setTimeout(resolve, 25));
   assert.deepEqual(harness.order, ["component", "module", "async"]);
 
-  await harness.bySPA.__setHTMLForTest(harness.target, '<script>record("repeat")</script>', 1);
+  await harness.bySPA.__setHTMLForTest(harness.target, /* HTML */ `<script>record("repeat")</script>`, 1);
   assert.deepEqual(harness.order, ["component", "module", "async", "repeat"]);
   assert.ok(harness.createdScripts.every((script) => script.listeners.size === 0));
 });

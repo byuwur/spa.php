@@ -262,10 +262,10 @@
    * @return {Promise<string|null>|jQuery|undefined} Component request or immediate clear/validation result.
    */
   bySPA.reloadComponent = function (component, file, get, post, navigationId = bySPA.NAVIGATION_ID) {
-    if (!component.includes("#")) return console.warn(`Can't use Component: ID${bySPA.APP_ENV === "DEV" ? " " + component : ""} isn't valid`);
+    if (!component.includes("#")) return console.warn(`Can't use Component: ID${bySPA.APP_ENV === "DEV" ? ` ${component}` : ""} isn't valid`);
     if (!validateQuerySelector(component)) return console.warn(`Can't use Component: ${bySPA.APP_ENV === "DEV" ? component : ""} isn't valid`);
     if (!componentIdExists(component)) {
-      console.warn(`Component ${bySPA.APP_ENV === "DEV" ? "(" + component + ")" : " "} missing. Creating and appending to the body...`);
+      console.warn(`Component ${bySPA.APP_ENV === "DEV" ? `(${component})` : " "} missing. Creating and appending to the body...`);
       if ($("#spa-content").length) $(parseQuerySelector(component)).insertBefore("#spa-content");
       else $("body").append(parseQuerySelector(component));
     }
@@ -404,7 +404,7 @@
       if (!bySPA.reloadComponent) return window.location.reload();
       console.warn("Main Component (main#spa-content) missing. Creating and appending to the body...");
       $("body").append(
-        $("<main>", {
+        $(/* HTML */ `<main>`, {
           id: "spa-content"
         })
       );
@@ -435,7 +435,7 @@
         if (navigationId !== bySPA.NAVIGATION_ID) return null;
         console.error(`Error (SPA): ${xhr?.status} ${status} ${error}`, bySPA.APP_ENV == "DEV" ? xhr : "");
         document.dispatchEvent(new CustomEvent("bySPA:error", { detail: { navigationId, url, status: xhr?.status || 0, error } }));
-        $("#spa-content").html(xhr?.responseText || `<pre>Error ${xhr?.status || 0}</pre>`);
+        $("#spa-content").html(xhr?.responseText || /* HTML */ `<pre>Error ${xhr?.status || 0}</pre>`);
         return null;
       })
       .always(function () {
