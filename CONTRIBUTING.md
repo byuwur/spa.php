@@ -15,12 +15,6 @@ Read [README.md](./README.md), the coding standards, and relevant project docume
 
 Check repository-specific requirements and preserve unrelated work. If the implementation differs intentionally from a general convention, understand the reason before changing it.
 
-## Repository workflow
-
-See the README for [installation](./README.md#installation), [usage](./README.md#usage), and [runtime contracts](./README.md#runtime-contracts). The [CI workflow](./.github/workflows/ci.yml) defines PHP linting, PHP and JavaScript tests, JavaScript syntax checks, and Composer validation. Run its commands from the repository root, preserving the SQL test step's change into `tests/`.
-
-For changes shared with consuming applications, follow the README's [submodule integration workflow](./README.md#maintaining-a-submodule-integration).
-
 ## Make a focused change
 
 Keep the contribution centered on one conceptual outcome. Preserve public contracts unless changing them is part of the agreed scope. Include the tests and documentation needed to explain and validate that outcome.
@@ -43,9 +37,9 @@ A review description should explain what changed, why it was needed, any compati
 
 Before submitting:
 
-- [ ] The change addresses the requested outcome without unrelated work.
-- [ ] Ownership, state transitions, and affected entry paths were checked.
-- [ ] Public contracts are preserved or intentional changes are explained.
-- [ ] Relevant tests and documentation reflect the final behavior.
-- [ ] Validation results and limitations are recorded.
-- [ ] The final diff was reviewed for mistakes and unnecessary complexity.
+- [ ] The change addresses the requested outcome without unrelated work?
+- [ ] Ownership, state transitions, and affected entry paths were checked?
+- [ ] Public contracts are preserved or intentional changes are explained?
+- [ ] Relevant tests and documentation reflect the final behavior?
+- [ ] Validation results and limitations are recorded?
+- [ ] The final diff was reviewed for mistakes and unnecessary complexity?

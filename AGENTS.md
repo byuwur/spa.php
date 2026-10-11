@@ -27,3 +27,30 @@ For each task:
 - Report the result, validation performed, and material limitations accurately.
 
 > **Do not make the code look more sophisticated than the problem requires.**
+> SIMPLE IS COMPLICATED ENOUGH.
+
+Never create `.agents/` or `.codex/` or similar folders inside project repositories.
+
+Keep configuration, skills, plugins, hooks, and temporary files outside repositories.
+
+Be concise and execution-focused.
+
+Work first. Do not narrate reasoning, progress, or obvious implementation details unless necessary.
+
+Ask questions only when information is required to proceed correctly. Otherwise make reasonable assumptions.
+
+Do not create documentation files unless explicitly requested or genuinely required.
+
+Do not create testing files unless explicitly requested or genuinely required.
+
+Use comments sparingly. Comment only non-obvious intent, constraints, workarounds, or edge cases. Prefer clear naming and clean code.
+
+For ordinary tasks, the final response should contain only:
+
+- What changed
+- Whether it succeeded
+- Any critical caveat or required action.
+
+Use string interporlation whenever possible.
+
+Everytime changes are made, ignore every minified file, vendor file, module file, submodule file ,bundle file, and the likes. Those don't need it.
