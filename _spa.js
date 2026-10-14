@@ -258,7 +258,7 @@
    * @param {object} get The GET parameters to pass.
    * @param {object} post The POST parameters to pass.
    * @param {number} navigationId Navigation generation that owns the component request.
-   * @return {Promise<string|null>|jQuery|undefined} Component request or immediate clear/validation result.
+   * @return {jQuery.Promise<string|null>|jQuery|undefined} Component request or immediate clear/validation result.
    */
   bySPA.reloadComponent = function (component, file, get, post, navigationId = bySPA.NAVIGATION_ID) {
     if (!component.includes("#")) return console.warn(`Can't use Component: ID${bySPA.APP_ENV === "DEV" ? ` ${component}` : ""} isn't valid`);
@@ -366,7 +366,7 @@
    * Each call owns a new navigation generation; older page, component, error, loader, and lifecycle results are prevented from mutating the current route.
    * Emits bySPA:before-unload, followed by bySPA:load or bySPA:error.
    * @param {object} mode History handling options (`push`, `replace`, and optional `post`).
-   * @return {Promise<string|null>|void} Page request, error request, or direct file navigation.
+   * @return {jQuery.Promise<string|null>|void} Page request, error request, or direct file navigation.
    */
   bySPA.load = function (url, mode = { push: true }) {
     const navigationId = ++bySPA.NAVIGATION_ID;
@@ -411,6 +411,8 @@
     // Reload each component associated with the route
     const componentLoads = [];
     for (let key in component || {}) componentLoads.push(bySPA.reloadComponent(key, component[key], get, post, navigationId));
+    // Observe failures immediately while the page request and scripts continue independently.
+    const componentsReady = Promise.allSettled(componentLoads);
     // Retrieve the page data
     return $.ajax({
       url: bySPA.buildRequestURL(uri ?? "/null", get),
@@ -419,16 +421,14 @@
       dataType: "text",
       timeout: bySPA.REQUEST_TIMEOUT
     })
-      .then(function (data) {
-        // Correctness does not depend on aborting XHR: stale responses simply lose ownership of all DOM and lifecycle side effects.
+      .then(async function (data) {
+        // Only the current navigation may insert content or complete the route lifecycle.
         if (navigationId !== bySPA.NAVIGATION_ID) return null;
-        return setHTML(document.querySelector("#spa-content"), data, navigationId).then(function (inserted) {
-          if (inserted === null) return null;
-          return Promise.allSettled(componentLoads.map((load) => Promise.resolve(load))).then(function () {
-            if (navigationId === bySPA.NAVIGATION_ID) afterLoad({ ...routing, navigationId });
-            return data;
-          });
-        });
+        const inserted = await setHTML($("#spa-content")[0], data, navigationId);
+        if (inserted === null) return null;
+        await componentsReady;
+        if (navigationId === bySPA.NAVIGATION_ID) afterLoad({ ...routing, navigationId });
+        return data;
       })
       .catch(function (xhr, status, error) {
         if (navigationId !== bySPA.NAVIGATION_ID) return null;

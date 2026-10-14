@@ -217,3 +217,29 @@ test("PHP root-relative links retain virtual-route navigation and native opt-out
     assert.equal(result, expected, href + JSON.stringify(attributes));
   }
 });
+
+
+test("component failures settle independently and navigation retains jQuery promise methods", async t => {
+  const page = await application(t);
+  const result = await page.evaluate(async () => {
+    const unhandled = [];
+    window.addEventListener("unhandledrejection", event => unhandled.push(event.reason?.message));
+    events = [];
+    bySPA.ROUTES["/known"].COMPONENT = { "#component": "/broken" };
+    bySPA.reloadComponent = () => Promise.reject(new Error("Component fixture failure"));
+    $.ajax = () => {
+      const response = $.Deferred();
+      setTimeout(() => response.resolve(/* HTML */ `<p>Page survives</p>`), 25);
+      return response.promise();
+    };
+    const request = bySPA.load("/known", { push: false });
+    const jqueryMethods = ["done", "fail", "always"].every(method => typeof request[method] === "function");
+    const html = await request;
+    await new Promise(resolve => setTimeout(resolve, 0));
+    return { unhandled, jqueryMethods, html, events: events.map(event => event.type) };
+  });
+  assert.deepEqual(result, {
+    unhandled: [], jqueryMethods: true, html: "<p>Page survives</p>",
+    events: ["bySPA:before-unload", "bySPA:load"]
+  });
+});

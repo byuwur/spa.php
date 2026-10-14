@@ -138,6 +138,8 @@ For dynamic controls, call `byFont.init(container)` after insertion and `byFont.
 
 Trusted page and component scripts execute as real script elements. Inline and non-async external scripts keep their order; `defer` fragments and non-async modules are awaited too. Explicit external `async` scripts run independently. Script attributes, including CSP/SRI and data attributes, are preserved.
 
+Fragment sequencing uses `async`/`await`; public AJAX/navigation results retain their jQuery promise interface.
+
 External script failures are logged but do not stop later scripts or fail navigation. Superseded fragments stop processing. `bySPA:load` waits for the current page and components' ordered scripts.
 
 Error pages replace the full document and use the same script rules. History navigation away reloads the application with a clean runtime.

@@ -262,9 +262,9 @@ test("components, modules, attributes, async scripts, and repeat insertion keep 
 test("route and component insertion share the private helper and lifecycle waits for both", () => {
   const source = fs.readFileSync(path.join(__dirname, "..", "_spa.js"), "utf8");
   assert.match(source, /setHTML\(document\.querySelector\(componentId\), data, navigationId\)/);
-  assert.match(source, /setHTML\(document\.querySelector\("#spa-content"\), data, navigationId\)\.then/);
+  assert.match(source, /await setHTML\(\$\("#spa-content"\)\[0\], data, navigationId\)/);
   assert.match(source, /setHTML\(document\.documentElement, data, navigationId, true\)/);
-  assert.ok(source.indexOf("Promise.allSettled(componentLoads") < source.indexOf("afterLoad({ ...routing, navigationId })"));
+  assert.ok(source.indexOf("await componentsReady") < source.indexOf("afterLoad({ ...routing, navigationId })"));
   assert.match(source, /const absolute = new URL\(this\.href\);/);
 });
 
