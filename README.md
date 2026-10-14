@@ -123,7 +123,7 @@ Modal cleanup calls the optional `byFont.destroy(element)` before removing the c
 
 ### Optional Google Fonts
 
-Load `_fonts.js` after jQuery and before the SPA runtime, and mark font inputs or selects with `data-font-picker`. The loader uses native Promises; optional pickers also use Select2 and `_common.css`. The jQuery modules validate the dependency at entry before publishing APIs or attaching handlers.
+`_fonts.js` loads fonts with native browser APIs and Promises, so standalone pages can use it without jQuery or the SPA runtime. Optional pickers require jQuery, Select2, and `_common.css`; load those before calling `byFont.init()` and mark font inputs or selects with `data-font-picker`. The font helper may load before its UI libraries; picker methods leave controls unchanged until those libraries are available.
 
 ```html
 <script src="./spa.php/_fonts.js" defer></script>

@@ -1,13 +1,12 @@
 /**
  * File: _fonts.js
- * Shared Google Fonts loading requires jQuery; optional pickers also use Select2.
+ * Native Google Fonts loading; optional pickers require jQuery and Select2.
  * Keep the SPA.php and SPA.js implementations in sync.
  * Copyright (c) 2026 Andrés Trujillo [Mateus] byUwUr
  */
 (function (global) {
-  if (typeof jQuery === "undefined" && !global.jQuery) return console.error("Init _fonts.js FAILED. No jQuery found.");
-  const $ = global.jQuery;
-
+  // Keep font loading native so standalone overlays can reuse it without the SPA or jQuery.
+  // Resolve jQuery only in picker methods, allowing their UI libraries to load afterward.
   global.byFont = global.byFont || {};
   const byFont = global.byFont;
   if (typeof byFont.init === "function") return;
@@ -472,7 +471,7 @@
     label.textContent = option.text;
     label.dataset.font = option.id;
     label.style.fontFamily = byFont.stack(option.id);
-    return $(label);
+    return global.jQuery(label);
   }
 
   /**
@@ -487,7 +486,8 @@
    * @returns {HTMLInputElement|HTMLSelectElement} The enhanced select, or the original without UI libraries.
    */
   byFont.picker = function (field, { initSelect2, fallback = "system-ui, sans-serif", emptyFont = "", weight = 400, previewText = "Aa Bb 0123456789" } = {}) {
-    if (!field || typeof $.fn.select2 !== "function" || !field.matches("input, select")) return field;
+    const $ = global.jQuery;
+    if (!field || typeof $?.fn?.select2 !== "function" || !field.matches("input, select")) return field;
     const previous = pickers.get(field);
     if (previous && $(previous.select).data("select2")) return previous.select;
     if (previous) byFont.destroy(previous.select);
@@ -599,7 +599,8 @@
 
   /** Enhance explicitly marked fields; repeated SPA initialization keeps existing controls. */
   byFont.init = function (root = document) {
-    if (!root || typeof $.fn.select2 !== "function") return;
+    const $ = global.jQuery;
+    if (!root || typeof $?.fn?.select2 !== "function") return;
     // Dispose routed controls; modal removal calls destroy directly.
     $(document)
       .off("bySPA:before-unload.byFont")
@@ -612,7 +613,8 @@
 
   /** Release samples, observers, and event handlers before removing a field or subtree. */
   byFont.destroy = function (root = document) {
-    if (!root) return;
+    const $ = global.jQuery;
+    if (!root || !$) return;
     const fields = pickers.has(root) || $(root).is("[data-font-picker]") ? [root] : $(root).find("[data-font-picker]").toArray();
     for (const field of fields) {
       const state = pickers.get(field);

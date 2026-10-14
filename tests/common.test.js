@@ -101,11 +101,11 @@ test("accessibility text stays within half-rem and three-rem limits", () => {
 });
 
 test("jQuery modules stop before publishing APIs or reading application state when the dependency is missing", () => {
-  const files = ["_common.js", "_spa.js", "_fonts.js"];
+  const files = ["_common.js", "_spa.js"];
   for (const file of files) {
     const errors = [];
     const window = {};
-    const context = {window, console: {error: message => errors.push(message)}};
+    const context = { window, console: { error: (message) => errors.push(message) } };
     vm.runInNewContext(fs.readFileSync(path.join(__dirname, "..", file), "utf8"), context);
     assert.deepEqual(Object.keys(window), [], file + " published a partial namespace");
     assert.deepEqual(errors, ["Init " + file + " FAILED. No jQuery found."]);

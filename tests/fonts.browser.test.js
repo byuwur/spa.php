@@ -34,7 +34,13 @@ async function fontPage(t, markup) {
   });
   await page.goto("https://example.test/app/");
   for (const file of ["css/bootstrap.min.css", "css/select2.min.css", "_common.css"]) await page.addStyleTag({ path: path.join(root, file) });
-  for (const file of ["js/jquery.min.js", "js/select2.full.min.js", "js/popper.min.js", "js/bootstrap.min.js", "_fonts.js", "_common.js"]) await page.addScriptTag({ path: path.join(root, file) });
+  await page.addScriptTag({ path: path.join(root, "_fonts.js") });
+  assert.equal(await page.evaluate(() => typeof window.jQuery), "undefined");
+  await page.evaluate(() => {
+    byFont.init();
+    byFont.destroy();
+  });
+  for (const file of ["js/jquery.min.js", "js/select2.full.min.js", "js/popper.min.js", "js/bootstrap.min.js", "_common.js"]) await page.addScriptTag({ path: path.join(root, file) });
   return { page, requests, errors };
 }
 

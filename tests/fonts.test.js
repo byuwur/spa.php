@@ -5,12 +5,6 @@ const path = require("node:path");
 const vm = require("node:vm");
 const source = fs.readFileSync(path.join(__dirname, "..", "_fonts.js"), "utf8");
 
-function jqueryFixture() {
-  const jquery = function () {};
-  jquery.fn = {};
-  return jquery;
-}
-
 function loadFonts(namespace = {}) {
   const links = [],
     timers = new Map(),
@@ -26,7 +20,7 @@ function loadFonts(namespace = {}) {
     }
   };
   const context = vm.createContext({
-    window: { byFont: namespace, jQuery: jqueryFixture() },
+    window: { byFont: namespace },
     document,
     Promise,
     CSS: { supports: (_, value) => !value.includes(";") },
@@ -55,7 +49,7 @@ function loadFonts(namespace = {}) {
   };
 }
 
-test("font namespace preserves host properties and works without picker libraries or eager downloads", () => {
+test("font namespace preserves host properties and works without jQuery or eager downloads", () => {
   const namespace = { hostFont: "Arial" };
   const { fonts, links } = loadFonts(namespace);
   assert.equal(fonts, namespace);
@@ -66,6 +60,7 @@ test("font namespace preserves host properties and works without picker librarie
   const field = {};
   assert.equal(fonts.picker(field), field);
   fonts.init();
+  fonts.destroy();
   assert.equal(links.length, 0);
 });
 
@@ -125,14 +120,16 @@ test("failed font-face loads are handled without throwing", async () => {
   assert.equal(await ready, false);
 });
 
-
 test("glyph readiness shares the deadline and ignores completion after timeout", async () => {
   const harness = loadFonts();
   let finishGlyphs;
-  harness.document.fonts.load = () => new Promise(resolve => { finishGlyphs = resolve; });
+  harness.document.fonts.load = () =>
+    new Promise((resolve) => {
+      finishGlyphs = resolve;
+    });
   const ready = harness.fonts.ready("Inter");
   harness.links[0].onload();
-  await new Promise(resolve => setImmediate(resolve));
+  await new Promise((resolve) => setImmediate(resolve));
   assert.equal(typeof finishGlyphs, "function");
   harness.expire(3000);
   assert.equal(await ready, false);
