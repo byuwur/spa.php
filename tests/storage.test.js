@@ -10,7 +10,7 @@ function initialize(storage, app = "app", copy = "root") {
   const context = { localStorage: storage, location: new URL(`https://example.test/${app}/`), document: { baseURI: `https://example.test/${app}/` }, URL, console };
   context.window = context;
   vm.createContext(context);
-  const scripts = reference ? [source("_init.js")] : [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(script => script[1]);
+  const scripts = reference ? [source("_init.js")] : [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((script) => script[1]);
   for (const script of scripts) vm.runInContext(script, context);
   return context.byStorage;
 }
@@ -18,11 +18,21 @@ function initialize(storage, app = "app", copy = "root") {
 for (const copy of reference ? ["static"] : ["root", "demo"]) {
   test(`${copy} emitted initializer preserves per-key authority and recovery`, () => {
     const disk = new Map([["APP_THEME", "light"]]);
-    let failWrite = false, failRead = false;
+    let failWrite = false,
+      failRead = false;
     const storage = {
-      getItem(key) { if (failRead) throw Error("denied"); return disk.get(key) ?? null; },
-      setItem(key, value) { if (failWrite) throw Error("quota"); disk.set(key, String(value)); },
-      removeItem(key) { if (failWrite) throw Error("denied"); disk.delete(key); }
+      getItem(key) {
+        if (failRead) throw Error("denied");
+        return disk.get(key) ?? null;
+      },
+      setItem(key, value) {
+        if (failWrite) throw Error("quota");
+        disk.set(key, String(value));
+      },
+      removeItem(key) {
+        if (failWrite) throw Error("denied");
+        disk.delete(key);
+      }
     };
     const local = initialize(storage, "app", copy);
     assert.equal(local.getItem("APP_THEME"), "light");
