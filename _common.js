@@ -150,6 +150,8 @@
           return $(this).attr("data-byspa-route") !== route;
         })
         .each(function () {
+          if (global.byFont && typeof global.byFont.destroy === "function") global.byFont.destroy(this);
+
           if ($.fn.select2) $(this).find("select.select2-hidden-accessible").select2("destroy");
           bootstrap.Modal.getInstance(this)?.dispose();
           $(this).remove();
@@ -325,6 +327,8 @@
       initCookieConsent(options);
       initParticles(options);
       //byCommon.initTranslate(); //// Callback invoked in ?cb= on <script>
+
+      if (global.byFont && typeof global.byFont.init === "function") global.byFont.init();
     });
   };
 

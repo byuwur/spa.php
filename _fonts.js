@@ -600,6 +600,10 @@
   /** Enhance explicitly marked fields; repeated SPA initialization keeps existing controls. */
   byFont.init = function (root = document) {
     if (!root || typeof $.fn.select2 !== "function") return;
+    // Dispose routed controls; modal removal calls destroy directly.
+    $(document)
+      .off("bySPA:before-unload.byFont")
+      .on("bySPA:before-unload.byFont", () => byFont.destroy($("#spa-content")[0]));
     $(root)
       .find("[data-font-picker]")
       .addBack("[data-font-picker]")
