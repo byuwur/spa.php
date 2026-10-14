@@ -84,3 +84,55 @@ test("case-insensitive families and repeated script imports share one request ca
   assert.match(links[0].href, /^https:\/\/fonts\.googleapis\.com\/css2\?family=Inter:wght@/);
   assert.ok(links[0].href.endsWith("&display=swap"));
 });
+
+test("font readiness waits for its stylesheet and the requested rendering weight", async () => {
+  const { fonts, links, fontCalls } = loadFonts();
+  const ready = fonts.ready("Inter", 700, "Overlay text");
+  assert.equal(fontCalls.length, 0);
+  links[0].onload();
+  assert.equal(await ready, true);
+  assert.deepEqual(fontCalls, [['700 16px "Inter"', "Overlay text"]]);
+});
+
+test("offline failures retain fallbacks and do not retry while browsing", async () => {
+  const { fonts, links } = loadFonts();
+  const ready = fonts.ready("Inter");
+  links[0].onerror();
+  assert.equal(await ready, false);
+  fonts.family("Inter");
+  assert.equal(await fonts.ready("Inter"), false);
+  assert.equal(links.length, 1);
+});
+
+test("stylesheet and measurement timeouts settle without blocking overlays", async () => {
+  const harness = loadFonts();
+  const ready = harness.fonts.ready("Inter");
+  harness.expire(3000);
+  assert.equal(await ready, false);
+  harness.expire(8000);
+  assert.equal(await harness.fonts.ready("Inter"), false);
+  assert.equal(harness.links.length, 1);
+});
+
+test("failed font-face loads are handled without throwing", async () => {
+  const { fonts, links, document } = loadFonts();
+  document.fonts.load = () => Promise.reject(new Error("Unavailable font"));
+  const ready = fonts.ready("Inter");
+  links[0].onload();
+  assert.equal(await ready, false);
+});
+
+
+test("glyph readiness shares the deadline and ignores completion after timeout", async () => {
+  const harness = loadFonts();
+  let finishGlyphs;
+  harness.document.fonts.load = () => new Promise(resolve => { finishGlyphs = resolve; });
+  const ready = harness.fonts.ready("Inter");
+  harness.links[0].onload();
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(typeof finishGlyphs, "function");
+  harness.expire(3000);
+  assert.equal(await ready, false);
+  finishGlyphs([{}]);
+  assert.equal(await ready, false);
+});

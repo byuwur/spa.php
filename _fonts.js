@@ -430,4 +430,30 @@
     load(value);
     return byFont.stack(value, fallback);
   };
+
+  /**
+   * Bound the wait for renderers that measure text before starting an animation.
+   * @param {string} value Family name or existing CSS font stack.
+   * @param {number|string} [weight=400] Current rendering weight.
+   * @param {string} [text] Glyphs needed for the measurement.
+   * @returns {Promise<boolean>} Whether the font loaded; failures leave CSS fallbacks usable.
+   */
+  byFont.ready = async function (value, weight = 400, text = "Aa 0123") {
+    const name = googleFamily(value);
+    if (!name || !document.fonts) return true;
+    let timer;
+    // One deadline covers both stylesheet loading and glyph readiness.
+    const expiry = new Promise((resolve) => {
+      timer = setTimeout(() => resolve(false), 3000);
+    });
+    try {
+      if (!(await Promise.race([load(value), expiry]))) return false;
+      const fonts = await Promise.race([document.fonts.load(`${weight} 16px "${name}"`, text), expiry]);
+      return fonts?.length > 0;
+    } catch {
+      return false;
+    } finally {
+      clearTimeout(timer);
+    }
+  };
 })(typeof window !== "undefined" ? window : this);
