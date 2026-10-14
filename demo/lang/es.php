@@ -12,9 +12,9 @@ $LANG = [
 
   "nav.home" => "Inicio",
   "nav.page" => "Página",
-  "nav.video" => "Demo Video Subtitulado",
+  "nav.video" => "Demo de video subtitulado",
   "nav.json" => "JSON",
-  "nav.md" => "MarkDown",
+  "nav.md" => "Markdown",
   "nav.pdf" => "PDF",
   "nav.error" => "Error",
 
@@ -22,7 +22,7 @@ $LANG = [
   "sidebar.menu" => "menu",
   "sidebar.logo_alt" => "Logo de byuwur/spa.php",
 
-  "language.selector" => "Idiomas:",
+  "language.selector" => "Idioma:",
   "language.spanish" => "Español",
   "language.english" => "English",
 
@@ -45,9 +45,20 @@ $LANG = [
   "accessibility.deuteranopia" => "Usar filtro de deuteranopía",
   "accessibility.tritanopia" => "Usar filtro de tritanopía",
 
-  "demo.description" => "Lo siguiente es un test para este framework y enrutador casero y hecho a mano. Disfrútense.",
+  "demo.description" => "Explora este framework y su enrutador. Cambia de demostración sin recargar la página.",
   "demo.this_is" => "Este es",
-  "demo.home.description" => "Bienvenido a nuestro sitio web. Explora nuestros servicios y productos.",
+  "demo.home.heading" => "Tus páginas.",
+  "demo.home.subheading" => "Una aplicación.",
+  "demo.home.description" => "SPA sin complicaciones, con amor y PHP.",
+  "demo.home.routes" => "Rutas y componentes",
+  "demo.home.languages" => "Varios idiomas",
+  "demo.home.setup" => "Sin compilación",
+  "demo.home.explore" => "Explora el UI Kit",
+  "demo.home.docs" => "Lee la documentación",
+  "demo.home.demos" => "Más demostraciones",
+  "demo.home.try" => "Pruébalo con",
+  "demo.home.video" => "Video",
+  "demo.home.continuity" => "Mira el video de fondo mientras navegas. El contenido cambia; la página sigue siendo la misma.",
   "demo.page.description" => "Descubre nuestras últimas noticias y actualizaciones aquí.",
 
   "meta.description" => "Un framework PHP ligero con enrutador para crear aplicaciones de una sola página.",
@@ -55,10 +66,10 @@ $LANG = [
   "meta.locale" => "es_CO",
   "meta.url" => "https://byuwur.co/spa.php/demo/es",
 
-  "title.default" => "SPA.PHP | byUwUr",
+  "title.default" => "SPA.php | byUwUr",
   "title.home" => "SPA Inicio | byUwUr",
   "title.page" => "SPA Página | byUwUr",
-  "title.video" => "SPA Demo Video Subtitulado | byUwUr",
+  "title.video" => "SPA Demo de Video Subtitulado | byUwUr",
   "title.socket_server" => "SPA Socket Server | byUwUr",
   "title.socket_client" => "SPA Socket Client | byUwUr",
 ];

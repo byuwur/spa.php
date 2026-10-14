@@ -1,5 +1,7 @@
 # byuwur/spa.php
 
+![SPA.php demo preview](prev.jpg)
+
 A small PHP framework for single-page applications. PHP handles routes; jQuery loads pages and shared components without a full refresh.
 
 Try it at [byuwur.co/spa.php](https://byuwur.co/spa.php/). For static HTML pages, use [spa.js](https://github.com/byuwur/spa.js).

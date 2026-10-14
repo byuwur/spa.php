@@ -12,9 +12,9 @@ $LANG = [
 
   "nav.home" => "Home",
   "nav.page" => "Page",
-  "nav.video" => "Subbed Video Demo",
+  "nav.video" => "Subtitled video demo",
   "nav.json" => "JSON",
-  "nav.md" => "MarkDown",
+  "nav.md" => "Markdown",
   "nav.pdf" => "PDF",
   "nav.error" => "Error",
 
@@ -22,7 +22,7 @@ $LANG = [
   "sidebar.menu" => "menu",
   "sidebar.logo_alt" => "byuwur/spa.php logo",
 
-  "language.selector" => "Languages:",
+  "language.selector" => "Language:",
   "language.spanish" => "Español",
   "language.english" => "English",
 
@@ -45,9 +45,20 @@ $LANG = [
   "accessibility.deuteranopia" => "Use deuteranopia filter",
   "accessibility.tritanopia" => "Use tritanopia filter",
 
-  "demo.description" => "The following is a test for this home-handmade SPA framework and router. Enjoy yourselves.",
+  "demo.description" => "Explore this SPA framework and router. Switch demos without reloading the page.",
   "demo.this_is" => "This is",
-  "demo.home.description" => "Welcome to our website. Explore our services and products.",
+  "demo.home.heading" => "Your pages.",
+  "demo.home.subheading" => "One application.",
+  "demo.home.description" => "SPA made easy, with love and PHP.",
+  "demo.home.routes" => "Routes & components",
+  "demo.home.languages" => "Multiple languages",
+  "demo.home.setup" => "No build step",
+  "demo.home.explore" => "Explore the UI kit",
+  "demo.home.docs" => "Read the docs",
+  "demo.home.demos" => "More demos",
+  "demo.home.try" => "Try it with",
+  "demo.home.video" => "Video",
+  "demo.home.continuity" => "Watch the background video as you navigate. The content changes; the page stays.",
   "demo.page.description" => "Discover our latest news and updates here.",
 
   "meta.description" => "A lightweight PHP framework and router for building single-page applications.",
@@ -55,10 +66,10 @@ $LANG = [
   "meta.locale" => "en_US",
   "meta.url" => "https://byuwur.co/spa.php/demo/en",
 
-  "title.default" => "SPA.PHP | byUwUr",
+  "title.default" => "SPA.php | byUwUr",
   "title.home" => "SPA Home | byUwUr",
   "title.page" => "SPA Page | byUwUr",
-  "title.video" => "SPA Subbed Video Demo | byUwUr",
+  "title.video" => "SPA Subtitled Video Demo | byUwUr",
   "title.socket_server" => "SPA Socket Server | byUwUr",
   "title.socket_client" => "SPA Socket Client | byUwUr",
 ];
