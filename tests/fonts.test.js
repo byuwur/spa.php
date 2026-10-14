@@ -63,6 +63,9 @@ test("font namespace preserves host properties and works without picker librarie
   assert.ok(fonts.families.length >= 300);
   assert.ok(fonts.families.includes("Inter"));
   assert.equal(links.length, 0);
+  const field = {};
+  assert.equal(fonts.picker(field), field);
+  fonts.init();
   assert.equal(links.length, 0);
 });
 

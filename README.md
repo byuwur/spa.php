@@ -117,9 +117,16 @@ A failed write keeps that key's local value until a successful explicit write or
 
 ### Optional Google Fonts
 
-Load `_fonts.js` after jQuery. The optional module exposes `byFont` independently of the SPA runtime.
+Load `_fonts.js` after jQuery and before the SPA runtime, and mark font inputs or selects with `data-font-picker`. The loader uses native Promises; optional pickers also use Select2 and `_common.css`.
+
+```html
+<script src="./spa.php/_fonts.js" defer></script>
+<input name="fontFamily" data-font-picker value="Inter" />
+```
 
 `byFont.family(value, fallback)` requests a selected Google family and returns its CSS stack. Use `await byFont.ready(value, weight, text)` before measuring animated text; it returns a native `Promise<boolean>`. The bundled catalog contains 350 families; only selected families and visible dropdown samples load, with `display=swap`, cached requests, and offline fallbacks. Applications retain ownership of font values and persistence.
+
+For dynamic controls, call `byFont.init(container)` after insertion and `byFont.destroy(container)` before removal. `byFont.picker(field, { weight, previewText, fallback })` returns the enhanced select; `weight` can be a form control. Maintain `_fonts.js` here as the shared source and keep the SPA.js implementation in sync. Other projects load the module from a SPA checkout rather than maintaining their own copies.
 
 ### Fragment scripts and error pages
 

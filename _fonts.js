@@ -10,7 +10,7 @@
 
   global.byFont = global.byFont || {};
   const byFont = global.byFont;
-  if (typeof byFont.family === "function") return;
+  if (typeof byFont.init === "function") return;
   // ==========
   // ==== VERIFIED GOOGLE FONTS CATALOG ====
   // ==========
@@ -454,6 +454,169 @@
       return false;
     } finally {
       clearTimeout(timer);
+    }
+  };
+
+  // ==========
+  // ==== OPTIONAL FONT PICKERS ====
+  // ==========
+
+  const pickers = new WeakMap();
+  const systemFonts = ["system-ui", "sans-serif", "serif", "monospace", "Arial", "Arial Black", "Verdana", "Tahoma", "Trebuchet MS", "Georgia", "Times New Roman", "Courier New", "Impact"];
+
+  /** Render labels safely without downloading offscreen Google families. */
+  function fontOption(option) {
+    if (option.children || option.id == null) return option.text;
+    const label = document.createElement("span");
+    label.className = "font-option d-block text-truncate";
+    label.textContent = option.text;
+    label.dataset.font = option.id;
+    label.style.fontFamily = byFont.stack(option.id);
+    return $(label);
+  }
+
+  /**
+   * Enhance one native field, preserving its name, saved value, and form Reset.
+   * @param {HTMLInputElement|HTMLSelectElement} field Input or select to enhance.
+   * @param {Object} [options] Optional host settings; no application state is stored here.
+   * @param {Function} [options.initSelect2] Host initializer accepting a select and Select2 options.
+   * @param {string} [options.fallback] Font stack used while a family is unavailable.
+   * @param {string} [options.emptyFont] Font used for an empty selection.
+   * @param {number|string|HTMLElement} [options.weight=400] Weight or form control that supplies it.
+   * @param {string} [options.previewText] Plain text for the sample beneath the control.
+   * @returns {HTMLInputElement|HTMLSelectElement} The enhanced select, or the original without UI libraries.
+   */
+  byFont.picker = function (field, { initSelect2, fallback = "system-ui, sans-serif", emptyFont = "", weight = 400, previewText = "Aa Bb 0123456789" } = {}) {
+    if (!field || typeof $.fn.select2 !== "function" || !field.matches("input, select")) return field;
+    const previous = pickers.get(field);
+    if (previous && $(previous.select).data("select2")) return previous.select;
+    if (previous) byFont.destroy(previous.select);
+
+    const initial = field.value;
+    const maxLength = Number(field.getAttribute("maxlength")) || 240;
+    const select = field.tagName === "SELECT" ? field : document.createElement("select");
+    const existing = field.tagName === "SELECT" ? [...field.options].filter((option) => !families.includes(option.value)).map((option) => [option.value, option.text]) : [];
+    if ($(select).data("select2")) $(select).select2("close").select2("destroy");
+    if (select !== field) {
+      for (const { name, value } of field.attributes) {
+        if (!["type", "value"].includes(name)) select.setAttribute(name, value);
+      }
+      select.classList.replace("form-control", "form-select");
+      field.replaceWith(select);
+    }
+    select.classList.add("font-picker");
+    select.setAttribute("data-font-picker", "");
+    if (!select.hasAttribute("aria-label") && !select.labels.length) select.setAttribute("aria-label", "Font family");
+    select.replaceChildren();
+    const installed = document.createElement("optgroup");
+    installed.label = "Installed and system fonts";
+    const choices = new Map([["", "Default font"], ...systemFonts.map((name) => [name, name]), ...existing]);
+    if (!families.includes(initial) && !choices.has(initial)) choices.set(initial, initial);
+    for (const [value, title] of choices) installed.append(new Option(title, value, value === initial, value === initial));
+    const google = document.createElement("optgroup");
+    google.label = "Google Fonts";
+    for (const name of families) google.append(new Option(name, name, name === initial, name === initial));
+    select.append(installed, google);
+    select.value = initial;
+    const modal = select.closest(".modal, dialog");
+    const widgetOptions = {
+      width: "100%",
+      dropdownParent: $(modal || document.body),
+      tags: true,
+      templateResult: fontOption,
+      templateSelection: (option, container) => {
+        // A stable selection node survives Select2's removal of unused custom tags.
+        $(container).css("font-family", byFont.stack(option.id));
+        return option.text;
+      },
+      createTag: ({ term }) => {
+        const value = term.trim();
+        return value && value.length <= maxLength ? { id: value, text: value } : null;
+      }
+    };
+    if (initSelect2) initSelect2(select, widgetOptions);
+    else $(select).select2(widgetOptions);
+
+    const widget = $(select).data("select2");
+    widget.dropdown.$dropdown.addClass("font-picker-dropdown");
+    let observer;
+    if (window.IntersectionObserver) {
+      observer = new IntersectionObserver(
+        (entries) => {
+          if (!widget.isOpen()) return;
+          for (const entry of entries) {
+            if (!entry.isIntersecting || !entry.target.isConnected) continue;
+            byFont.family(entry.target.dataset.font);
+            observer.unobserve(entry.target);
+          }
+        },
+        { root: widget.$results[0] }
+      );
+      widget.on("results:all", () => {
+        observer.disconnect();
+        if (widget.isOpen()) widget.$results.find(".font-option").each((_, option) => observer.observe(option));
+      });
+      $(select).on("select2:close.byFont", () => observer.disconnect());
+    }
+
+    const sample = document.createElement("span");
+    sample.className = "font-preview d-block mt-1 fs-5 text-break";
+    sample.textContent = previewText;
+    select.parentElement.append(sample);
+    const weightField = typeof weight === "object" ? weight : null;
+    const update = () => {
+      sample.style.fontFamily = byFont.family(select.value || emptyFont, fallback);
+      sample.style.fontWeight = weightField ? weightField.value || 400 : weight;
+    };
+    $(select).on("change.byFont", update);
+    if (weightField) $(weightField).on("input.byFont change.byFont", update);
+    let resetTimer;
+    const reset = () => {
+      clearTimeout(resetTimer);
+      resetTimer = setTimeout(() => {
+        $(select).val(initial).trigger("change.select2");
+        update();
+      }, 0);
+    };
+    const form = select.form;
+    if (form) $(form).on("reset.byFont", reset);
+    pickers.set(select, {
+      select,
+      field,
+      dispose() {
+        clearTimeout(resetTimer);
+        if (observer && typeof observer.disconnect === "function") observer.disconnect();
+        $(select).off(".byFont");
+        if (weightField) $(weightField).off("input.byFont change.byFont", update);
+        if (form) $(form).off("reset.byFont", reset);
+        sample.remove();
+      }
+    });
+    if (select !== field) pickers.set(field, pickers.get(select));
+    update();
+    return select;
+  };
+
+  /** Enhance explicitly marked fields; repeated SPA initialization keeps existing controls. */
+  byFont.init = function (root = document) {
+    if (!root || typeof $.fn.select2 !== "function") return;
+    $(root)
+      .find("[data-font-picker]")
+      .addBack("[data-font-picker]")
+      .each((_, field) => byFont.picker(field));
+  };
+
+  /** Release samples, observers, and event handlers before removing a field or subtree. */
+  byFont.destroy = function (root = document) {
+    if (!root) return;
+    const fields = pickers.has(root) || $(root).is("[data-font-picker]") ? [root] : $(root).find("[data-font-picker]").toArray();
+    for (const field of fields) {
+      const state = pickers.get(field);
+      if (!state) continue;
+      if ($(state.select).data("select2")) $(state.select).select2("close").select2("destroy");
+      state.dispose();
+      pickers.delete(state.select);
+      pickers.delete(state.field);
     }
   };
 })(typeof window !== "undefined" ? window : this);
