@@ -14,9 +14,7 @@ require_once "{$TO_HOME}/common.example.php";
 <nav id="bywr-sidebar" class="bywr-sidebar accordion bywr-accordion bg-dark-transparent bg-blurred text-white">
   <div class="overlay"></div>
   <div class="bywr-sidebar-header">
-    <div class="navbar-brand has-background-contain" role="img"
-      aria-label="<?= escape_html($LANG["sidebar.logo_alt"]) ?>"
-      style="height:3rem;width:3rem;background-image:url('<?= "{$HOME_PATH}/../img/byuwur.png" ?>');">
+    <div class="navbar-brand has-background-contain" role="img" aria-label="<?= escape_html($LANG["sidebar.logo_alt"]) ?>" style="height:3rem;width:3rem;background-image:url('<?= "{$HOME_PATH}/../img/byuwur.png" ?>');">
     </div>
     <span class="ms-2 me-4 pe-5">byuwur/spa.php</span>
   </div>
@@ -47,8 +45,7 @@ require_once "{$TO_HOME}/common.example.php";
     </a>
   </div>
   <div class="bywr-sidebar-content accordion-item flex-grow-0">
-    <button class="accordion-header accordion-button p-2o5 collapsed" data-bs-toggle="collapse"
-      data-bs-target="#lang-drop" aria-expanded="false" aria-controls="lang-drop">
+    <button class="accordion-header accordion-button p-2o5 collapsed" data-bs-toggle="collapse" data-bs-target="#lang-drop" aria-expanded="false" aria-controls="lang-drop">
       <i class="fas fa-language"></i><span><?= escape_html($LANG["language.selector"]) ?></span>
     </button>
     <div id="lang-drop" class="accordion-collapse collapse bg-dark-transparent" data-bs-parent="#bywr-sidebar">
@@ -76,9 +73,7 @@ require_once "{$TO_HOME}/common.example.php";
     <i class="fas fa-bars"></i><span><?= escape_html($LANG["sidebar.menu"]) ?></span>
   </a>
   <div id="bywr-sidebar-hidden" class="bywr-sidebar-hidden">
-    <div class="navbar-brand has-background-contain mt-auto" role="img"
-      aria-label="<?= escape_html($LANG["sidebar.logo_alt"]) ?>"
-      style="height:3rem;width:3rem;background-image:url('<?= "{$HOME_PATH}/../img/byuwur.png" ?>');">
+    <div class="navbar-brand has-background-contain mt-auto" role="img" aria-label="<?= escape_html($LANG["sidebar.logo_alt"]) ?>" style="height:3rem;width:3rem;background-image:url('<?= "{$HOME_PATH}/../img/byuwur.png" ?>');">
     </div>
   </div>
 </nav>
