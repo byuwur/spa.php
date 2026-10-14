@@ -262,3 +262,77 @@ test("video initialization enhances only the player's shortcut controls", async 
   await page.evaluate(() => videojs.getPlayer("player").dispose());
   assert.deepEqual(errors, []);
 });
+
+test("modal dismissal cleans fonts and preserves a replacement with the same ID", async (t) => {
+  const { page, errors } = await fontPage(t, /* HTML */ ` <div id="dismiss" class="modal"><input id="retired-font" data-font-picker value="Arial" /></div>`);
+  await page.addScriptTag({ path: path.join(root, "_functions.js") });
+  await page.evaluate(() => {
+    byFont.init();
+    window.retiredFont = document.getElementById("retired-font");
+    // Modal cleanup uses the optional font module without requiring common UI.
+    delete window.byCommon;
+    destroy_modal_front("dismiss");
+    const replacement = document.createElement("div");
+    replacement.id = "dismiss";
+    replacement.className = "modal";
+    replacement.innerHTML = /* HTML */ `<input id="replacement-font" data-font-picker value="Georgia" />`;
+    document.body.append(replacement);
+    byFont.init(replacement);
+    window.replacementWidget = $("#replacement-font").data("select2");
+  });
+  await page.waitForFunction(() => document.querySelectorAll("#dismiss").length === 1);
+  assert.equal(await page.locator("#replacement-font").count(), 1);
+  assert.equal(await page.evaluate(() => $("#replacement-font").data("select2") === replacementWidget), true);
+  assert.equal(await page.evaluate(() => retiredFont.classList.contains("select2-hidden-accessible")), false);
+  assert.equal(await page.locator(".font-preview").count(), 1);
+  assert.deepEqual(errors, []);
+});
+
+test("PHP-rendered modal dismissal cleans font pickers", async (t) => {
+  const { execFileSync } = require("node:child_process");
+  const { page, errors } = await fontPage(t, /* HTML */ `<main id="spa-content"></main>`);
+  const markup = execFileSync(
+    process.env.PHP_BINARY || "php",
+    [
+      "-d",
+      "xdebug.mode=off",
+      "-r",
+      `
+    require '_functions.php';
+    show_modal_back(message: '<input id="server-font" data-font-picker value="Arial">');
+  `
+    ],
+    { cwd: root, encoding: "utf8" }
+  );
+  await page.evaluate((markup) => {
+    window.modalShown = new Promise((resolve) => $(document).one("shown.bs.modal", resolve));
+    $("body").append(markup);
+    byFont.init();
+    window.serverFont = document.getElementById("server-font");
+  }, markup);
+  await page.evaluate(async () => {
+    await modalShown;
+  });
+  assert.equal(await page.locator(".font-preview").count(), 1);
+  await page.evaluate(() => destroy_modal_back());
+  await page.waitForFunction(() => !document.getElementById("modal_back"));
+  assert.equal(await page.evaluate(() => serverFont.classList.contains("select2-hidden-accessible")), false);
+  assert.equal(await page.locator(".font-preview").count(), 0);
+  for (const namespace of [null, {}, { destroy: true }]) {
+    await page.evaluate(
+      ({ markup, namespace }) => {
+        if (namespace) window.byFont = namespace;
+        else delete window.byFont;
+        window.modalShown = new Promise((resolve) => $(document).one("shown.bs.modal", resolve));
+        $("body").append(markup);
+      },
+      { markup, namespace }
+    );
+    await page.evaluate(async () => {
+      await modalShown;
+    });
+    await page.evaluate(() => destroy_modal_back());
+    await page.waitForFunction(() => !document.getElementById("modal_back"));
+  }
+  assert.deepEqual(errors, []);
+});

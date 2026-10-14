@@ -312,9 +312,20 @@ function debounce(func, wait = 250) {
  * @param {boolean} $delay Whether delays its detruction or not.
  */
 function destroy_modal_front($modalId, $delay = true) {
-  if (!$(`#${$modalId}`).length) return console.log(`Modal #${$modalId} doesn't exist...`);
-  $(`#${$modalId}`).modal("hide");
-  setTimeout(() => $(`#${$modalId}`).remove(), $delay ? 333 : 1);
+  const $modal = $(`#${$modalId}`);
+  if (!$modal.length) return console.log(`Modal #${$modalId} doesn't exist...`);
+  $modal.modal("hide");
+  // Capture the old modal so a delayed dismissal cannot remove its replacement.
+  setTimeout(
+    () => {
+      if (!$modal[0].isConnected) return;
+
+      if (window.byFont && typeof window.byFont.destroy === "function") window.byFont.destroy($modal[0]);
+
+      $modal.remove();
+    },
+    $delay ? 333 : 1
+  );
 }
 
 /**

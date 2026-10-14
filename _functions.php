@@ -1190,8 +1190,13 @@ function show_modal_back($state = "success", $title = "INFO.", $message = "Messa
       <script>
       "use strict";
       function destroy_modal_back() {
-          \$("#modal_back").modal("hide");
-          setTimeout(() => \$("#modal_back").remove(), 999);
+        const modal = \$("#modal_back");
+        modal.modal("hide");
+        setTimeout(() => {
+          if (!modal[0] || !modal[0].isConnected) return;
+          if (window.byFont && typeof window.byFont.destroy === "function") window.byFont.destroy(modal[0]);
+          modal.remove();
+        }, 999);
       }
       \$(() => {
           {$cancel_script}
