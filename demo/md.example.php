@@ -31,7 +31,15 @@ require_once "{$TO_HOME}/common.example.php";
    * remain declared and cause redeclaration errors when a fragment loads again.
    */
   $(() => {
-    const renderFetched = (e, n = {}) => { fetch(e).then(e => (e.ok || console.warn("Something went wrong", e.statusText), e.text())).then(e => { byMDviewer(document.getElementById("byMDrenderer"), e, n) }).catch(e => { console.warn("Something went wrong", e) }) };
+    const renderFetched = async (url, options = {}) => {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) console.warn("Something went wrong", response.statusText);
+        byMDviewer(document.getElementById("byMDrenderer"), await response.text(), options);
+      } catch (error) {
+        console.warn("Something went wrong", error);
+      }
+    };
     renderFetched("https://raw.githubusercontent.com/byuwur/easy-md-viewer/main/test.md");
   });
 </script>
