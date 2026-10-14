@@ -194,8 +194,8 @@
       // Keep form modals above the SPA stacking context and Select2 inside its modal.
       $("#spa-content .modal").each(function () {
         const $modal = $(this).attr({ "data-byspa-modal": "true", "data-byspa-route": route }).appendTo("body");
-        if (!$.fn.select2) return;
-        $modal.find("select").each(function () {
+        if (typeof $.fn.select2 !== "function") return;
+        $modal.find("select:not(.select2-hidden-accessible)").each(function () {
           $(this).select2({ dropdownParent: $modal, width: "100%" });
         });
       });

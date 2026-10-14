@@ -84,6 +84,64 @@ test("common initialization preserves saved fonts, reuses widgets, and resets pr
   assert.deepEqual(errors, []);
 });
 
+test("modal initialization retains font templates and removes old-route controls", async (t) => {
+  const { page, errors } = await fontPage(
+    t,
+    /* HTML */ ` <main id="spa-content"
+      ><div id="font-modal" class="modal" tabindex="-1">
+        <div class="modal-dialog"
+          ><div class="modal-content"
+            ><form>
+              <label
+                >Font
+                <select id="font" name="font" data-font-picker
+                  ><option selected value="Arial">Arial</option></select
+                ></label
+              >
+              <label>Other font <input id="font-input" data-font-picker value="Georgia" /></label>
+              <select id="ordinary"
+                ><option>Ordinary</option></select
+              >
+              <select id="custom"
+                ><option>Custom</option></select
+              >
+            </form></div
+          ></div
+        >
+      </div></main
+    >`
+  );
+  await page.evaluate(() => {
+    window.bySPA = { URL: "/first" };
+    $("#custom").select2({ dropdownParent: $("#font-modal"), templateSelection: (option) => `Existing: ${option.text}` });
+    window.customWidget = $("#custom").data("select2");
+    byCommon.init({ showWarn: false });
+  });
+  await page.waitForFunction(() => $("#font").data("select2"));
+  await page.evaluate(() => {
+    window.initialWidget = $("#font").data("select2");
+    byCommon.init({ showWarn: false });
+    bootstrap.Modal.getOrCreateInstance(document.getElementById("font-modal")).show();
+  });
+  await page.locator("#font-modal").waitFor({ state: "visible" });
+  assert.equal(await page.evaluate(() => $("#font").data("select2") === initialWidget), true);
+  assert.equal(await page.evaluate(() => $("#custom").data("select2") === customWidget && !!$("#ordinary").data("select2")), true);
+  assert.equal(await page.locator("#custom + .select2-container").innerText(), "Existing: Custom");
+  assert.equal(await page.locator("#font-input").evaluate((node) => node.tagName), "SELECT");
+  assert.equal(await page.locator(".font-preview").count(), 2);
+  await page.locator("#font + .select2-container").click();
+  assert.equal(await page.locator("#font-modal .select2-dropdown").count(), 1);
+  await page.locator(".select2-search__field").fill("Inter");
+  assert.ok((await page.locator(".select2-results .font-option").count()) > 0);
+  await page.evaluate(() => {
+    bySPA.URL = "/second";
+    byCommon.init({ showWarn: false });
+  });
+  await page.waitForFunction(() => !document.getElementById("font-modal"));
+  assert.equal(await page.locator(".font-preview, .select2-dropdown, .modal-backdrop").count(), 0);
+  assert.deepEqual(errors, []);
+});
+
 test("dynamic font fields load visible samples only and dispose on SPA navigation", async (t) => {
   const { page, requests, errors } = await fontPage(
     t,

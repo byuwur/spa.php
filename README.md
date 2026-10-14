@@ -126,7 +126,7 @@ Load `_fonts.js` after jQuery and before the SPA runtime, and mark font inputs o
 <input name="fontFamily" data-font-picker value="Inter" />
 ```
 
-`byCommon.init()` calls `byFont.init()` to enhance marked font controls. `_fonts.js` cleans routed controls on `bySPA:before-unload`; modal removal calls `byFont.destroy(modal)` directly. Repeated initialization preserves existing widgets; without the optional module or Select2, ordinary controls remain usable.
+`byCommon.init()` calls `byFont.init()` to enhance marked font controls. `_fonts.js` cleans routed controls on `bySPA:before-unload`; modal removal calls `byFont.destroy(modal)` directly. Bootstrap setup preserves already enhanced selects. Repeated initialization preserves existing widgets; without the optional module or Select2, ordinary controls remain usable.
 
 `byFont.family(value, fallback)` requests a selected Google family and returns its CSS stack. Use `await byFont.ready(value, weight, text)` before measuring animated text; it returns a native `Promise<boolean>`. The bundled catalog contains 350 families; only selected families and visible dropdown samples load, with `display=swap`, cached requests, and offline fallbacks. Applications retain ownership of font values and persistence.
 
