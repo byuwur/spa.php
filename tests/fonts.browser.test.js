@@ -200,6 +200,48 @@ test("font cleanup preserves unrelated widgets", async (t) => {
   assert.deepEqual(errors, []);
 });
 
+test("Bootstrap modal controls remain usable without optional font methods", async (t) => {
+  for (const [name, namespace] of [
+    ["module absent", null],
+    ["methods absent", {}],
+    ["methods not callable", { init: true, destroy: true }]
+  ]) {
+    await t.test(name, async (t) => {
+      const { page, errors } = await fontPage(
+        t,
+        /* HTML */ ` <main id="spa-content"
+            ><div id="font-modal" class="modal"
+              ><div class="modal-dialog"
+                ><div class="modal-content">
+                  <label
+                    >Font
+                    <select id="font" data-font-picker
+                      ><option>Arial</option></select
+                    ></label
+                  >
+                </div></div
+              ></div
+            ></main
+          >
+          <div id="stale-modal" class="modal" data-byspa-modal="true" data-byspa-route="previous"></div>`
+      );
+      await page.evaluate((namespace) => {
+        if (namespace) window.byFont = namespace;
+        else delete window.byFont;
+        byCommon.init({ showWarn: false });
+      }, namespace);
+      await page.waitForFunction(() => $("#font").data("select2"));
+      assert.equal(await page.locator("#stale-modal").count(), 0);
+      assert.equal(await page.locator(".font-preview").count(), 0);
+      assert.equal(await page.locator("#font option").count(), 1);
+      await page.addScriptTag({ path: path.join(root, "_functions.js") });
+      await page.evaluate(() => destroy_modal_front("font-modal", false));
+      await page.waitForFunction(() => !document.getElementById("font-modal"));
+      assert.deepEqual(errors, []);
+    });
+  }
+});
+
 test("scoped tooltips preserve application handlers and translated native titles", async (t) => {
   const { page, errors } = await fontPage(
     t,

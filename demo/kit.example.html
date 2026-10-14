@@ -721,7 +721,8 @@
         })
       });
       const update = () => {
-        const value = document.getElementById(range.getAttribute("aria-describedby"))?.querySelector(".tooltip-inner");
+        const tipElement = document.getElementById(range.getAttribute("aria-describedby"));
+        const value = tipElement && typeof tipElement.querySelector === "function" ? tipElement.querySelector(".tooltip-inner") : null;
         if (value) value.textContent = range.value;
         tooltip.update();
       };

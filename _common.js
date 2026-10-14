@@ -184,8 +184,13 @@
         .each(function () {
           if (global.byFont && typeof global.byFont.destroy === "function") global.byFont.destroy(this);
 
-          if ($.fn.select2) $(this).find("select.select2-hidden-accessible").select2("destroy");
-          bootstrap.Modal.getInstance(this)?.dispose();
+          if (typeof $.fn.select2 === "function")
+            $(this)
+              .find("select.select2-hidden-accessible")
+              .each((_, select) => $(select).select2("destroy"));
+          const modal = bootstrap.Modal.getInstance(this);
+          if (modal && typeof modal.dispose === "function") modal.dispose();
+
           $(this).remove();
         });
 
@@ -343,7 +348,7 @@
       initMisc();
       const options = { showWarn };
       initCaptcha(options);
-      byCommon.initBootstrap(options);
+      if (typeof byCommon.initBootstrap === "function") byCommon.initBootstrap(options);
       initSidebar(options);
       initCookieConsent(options);
       initParticles(options);
@@ -489,7 +494,7 @@
     if (!elements.length) return null;
     const link = typeof stylesheet === "string" ? $(stylesheet)[0] : stylesheet;
     if ((stylesheet || stylesheets) && (!link || link.tagName !== "LINK")) throw new TypeError("Provide an existing stylesheet link.");
-    const href = link?.getAttribute("href") || "";
+    const href = link && typeof link.getAttribute === "function" ? link.getAttribute("href") || "" : "";
     const themeSuffix = /\.(light|dark)\.css(?=[?#]|$)/i;
     if (link && !stylesheets && themeSuffix.test(href)) {
       stylesheets = {

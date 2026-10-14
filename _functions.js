@@ -177,7 +177,7 @@ function init_websocket(options) {
   };
 
   function connect() {
-    if (ws && ws?.readyState === WebSocket.OPEN) return;
+    if (ws && ws.readyState === WebSocket.OPEN) return;
     console.log(`ws${appIsDEV ? `: ${ws_path}` : `.`}`);
     ws = new WebSocket(ws_path);
     logToEl(`ws`, `Connecting...`);
@@ -234,7 +234,7 @@ function init_websocket(options) {
     close: () => {
       closedManually = true;
       retries = maxRetries;
-      ws?.close();
+      if (ws && typeof ws.close === "function") ws.close();
     },
     retry: () => {
       closedManually = false;
@@ -249,7 +249,7 @@ function init_websocket(options) {
       let parsedData = data;
       if (check_json(data)) parsedData = JSON.stringify(JSON.parse(parsedData), null, 2);
       else parsedData = JSON.stringify(parsedData, null, 2);
-      ws?.send(parsedData);
+      if (ws && typeof ws.send === "function") ws.send(parsedData);
     }
   };
 }
