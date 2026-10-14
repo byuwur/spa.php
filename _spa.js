@@ -153,7 +153,7 @@
    * @param {number} status HTTP status code.
    * @param {string} custom_error_message A custom error message to display.
    * @param {number} navigationId Navigation generation that owns the error.
-   * @return {Promise<string|null>} Error-fragment request result.
+   * @return {jQuery.Promise<string|null>} Error-fragment request result.
    */
   bySPA.errorPage = function (status, custom_error_message = "", navigationId = bySPA.NAVIGATION_ID) {
     const paths = [`${bySPA.HOME_PATH}/_error.php`, `${bySPA.HOME_PATH}/spa.php/_error.php`, `${bySPA.HOME_PATH}/../_error.php`];
@@ -189,17 +189,15 @@
           return null;
         });
     };
-    const loadError = function (paths, index = 0) {
-      return remote_file_exists(`${paths[index]}?probe=1`).then(function (exists) {
+    const loadError = async function () {
+      for (const path of paths) {
+        const exists = await remote_file_exists(`${path}?probe=1`);
         if (navigationId !== bySPA.NAVIGATION_ID) return null;
-        if (!exists) {
-          if (index + 1 >= paths.length) return null;
-          return loadError(paths, index + 1);
-        }
-        return requestError(`${paths[index]}`);
-      });
+        if (exists) return requestError(path);
+      }
+      return null;
     };
-    return loadError(paths);
+    return $.when(loadError());
   };
 
   /**
