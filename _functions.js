@@ -66,7 +66,7 @@ function is_object(value) {
  * @return {string} HTML-safe string.
  */
 function escape_html(value) {
-  return $(/* HTML */ `<div>`)
+  return $(/* HTML */ `<div></div>`)
     .text(value ?? "")
     .html();
 }
@@ -172,7 +172,7 @@ function init_websocket(options) {
     let content = data;
     if (check_json(content)) content = JSON.stringify(JSON.parse(content), null, 2);
     const now = new Date().toISOString().replace("T", "_").replace(/:/g, "-").split(".")[0];
-    const $pre = $(/* HTML */ `<pre>`).text(`${label}: [${now}]\n${data}`);
+    const $pre = $(/* HTML */ `<pre></pre>`).text(`${label}: [${now}]\n${data}`);
     $(elId).append($pre);
   };
 
@@ -338,18 +338,20 @@ function show_modal_front($modalId, $state = "success", $title = "INFO.", $messa
   // If already exist, destroy it with no delay
   if ($(`#${$modalId}`).length) destroy_modal_front($modalId, false);
   // HTML structure for the modal
-  const modal_front = /* HTML */ `<div id="${$modalId}" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel">
-        <div id="${$modalId}_container" class="modal-dialog modal-dialog-scrollable">
-            <div class="modal-content">
-                <div id="${$modalId}_title" class="modal-header m-0 fs-5 alert alert-${$state}">${$title}</div>
-                <div id="${$modalId}_body" class="modal-body text-dark">${$message}</div>
-                <div class="modal-footer">
-                    <a id="${$modalId}_back" class="btn btn-dark" href="javascript:destroy_modal_front('${$modalId}');" onclick="javascript:destroy_modal_front('${$modalId}');">CANCEL</a>
-                    <a id="${$modalId}_ok" class="btn btn-success" href="${$redirect}">OK</a>
-                </div>
-            </div>
+  const modal_front = /* HTML */ `
+    <div id="${$modalId}" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel">
+      <div id="${$modalId}_container" class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+          <div id="${$modalId}_title" class="modal-header m-0 fs-5 alert alert-${$state}">${$title}</div>
+          <div id="${$modalId}_body" class="modal-body text-dark">${$message}</div>
+          <div class="modal-footer">
+            <a id="${$modalId}_back" class="btn btn-dark" href="javascript:destroy_modal_front('${$modalId}');" onclick="javascript:destroy_modal_front('${$modalId}');">CANCEL</a>
+            <a id="${$modalId}_ok" class="btn btn-success" href="${$redirect}">OK</a>
+          </div>
         </div>
-    </div>`;
+      </div>
+    </div>
+  `;
   // Append it to the <body>
   $("body").append(modal_front);
   $hideCancelBtn ? $(`#${$modalId}_back`).addClass("d-none") : $(`#${$modalId}_back`).removeClass("d-none");
@@ -428,12 +430,13 @@ function make_http_request(options) {
     .then(function (response) {
       if (appIsDEV) console.log(`Response (${elementId}):`, response);
       if (loudFail && ![200, 201, 202].includes(response?.status))
-        return show_modal_front("modal_front", "danger", "ERROR", /* HTML */ `Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(${escape_html(response?.message)})</code>`, true);
+        return show_modal_front("modal_front", "danger", "ERROR", /* HTML */ `Ocurrió un error.<br />Disculpe las molestias, intente nuevamente.<br /><code>(${escape_html(response?.message)})</code>`, true);
       return response?.data ?? response;
     })
     .catch(function (xhr, status, error) {
       console.error(`Error (${elementId}): ${xhr?.status} ${status} ${error} "${xhr?.responseJSON?.message ?? xhr?.responseText}"`, appIsDEV ? xhr : "");
-      if (loudFail) show_modal_front("modal_front", "danger", "ERROR", /* HTML */ `Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(${escape_html(xhr?.responseJSON?.message ?? xhr?.responseText)})</code>`, true);
+      if (loudFail)
+        show_modal_front("modal_front", "danger", "ERROR", /* HTML */ `Ocurrió un error.<br />Disculpe las molestias, intente nuevamente.<br /><code>(${escape_html(xhr?.responseJSON?.message ?? xhr?.responseText)})</code>`, true);
       return null;
     });
 }
@@ -509,13 +512,14 @@ function element_make_http_request(options) {
         .then(function (response) {
           if (appIsDEV) console.log(`Response (${elementId}):`, response);
           if (loudFail && ![200, 201, 202].includes(response?.status))
-            return show_modal_front("modal_front", "danger", "ERROR", /* HTML */ `Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(${escape_html(response?.message)})</code>`, true);
+            return show_modal_front("modal_front", "danger", "ERROR", /* HTML */ `Ocurrió un error.<br />Disculpe las molestias, intente nuevamente.<br /><code>(${escape_html(response?.message)})</code>`, true);
           doneFn(response?.data ?? response);
           return response?.data ?? response;
         })
         .catch(function (xhr, status, error) {
           console.error(`Error (${elementId}): ${xhr?.status} ${status} ${error} "${xhr?.responseJSON?.message ?? xhr?.responseText}"`, appIsDEV ? xhr : "");
-          if (loudFail) show_modal_front("modal_front", "danger", "ERROR", /* HTML */ `Ocurrió un error.<br>Disculpe las molestias, intente nuevamente.<br><code>(${escape_html(xhr?.responseJSON?.message ?? xhr?.responseText)})</code>`, true);
+          if (loudFail)
+            show_modal_front("modal_front", "danger", "ERROR", /* HTML */ `Ocurrió un error.<br />Disculpe las molestias, intente nuevamente.<br /><code>(${escape_html(xhr?.responseJSON?.message ?? xhr?.responseText)})</code>`, true);
           failFn();
           return null;
         })

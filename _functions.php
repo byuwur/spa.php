@@ -1175,19 +1175,19 @@ function show_modal_back($state = "success", $title = "INFO.", $message = "Messa
 {
   $cancel_script = $hideCancelBtn ? '$("#modal_back_back").addClass("d-none");' : '$("#modal_back_back").removeClass("d-none");';
   echo /* HTML */ <<<HTML
-  <div id="modal_back" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel">
-          <div id="modal_back_container" class="modal-dialog modal-dialog-scrollable">
-              <div class="modal-content">
-                  <div id="modal_back_title" class="modal-header m-0 fs-5 alert alert-{$state}">{$title}</div>
-                  <div id="modal_back_body" class="modal-body text-dark">{$message}</div>
-                  <div class="modal-footer">
-                      <a id="modal_back_back" class="btn btn-dark" href="javascript:destroy_modal_back();" onclick="javascript:destroy_modal_back();">CANCEL</a>
-                      <a id="modal_back_ok" class="btn btn-success" href="{$redirect}">OK</a>
-                  </div>
-              </div>
+    <div id="modal_back" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel">
+      <div id="modal_back_container" class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+          <div id="modal_back_title" class="modal-header m-0 fs-5 alert alert-{$state}">{$title}</div>
+          <div id="modal_back_body" class="modal-body text-dark">{$message}</div>
+          <div class="modal-footer">
+            <a id="modal_back_back" class="btn btn-dark" href="javascript:destroy_modal_back();" onclick="javascript:destroy_modal_back();">CANCEL</a>
+            <a id="modal_back_ok" class="btn btn-success" href="{$redirect}">OK</a>
           </div>
+        </div>
       </div>
-      <script>
+    </div>
+    <script>
       "use strict";
       function destroy_modal_back() {
         const modal = \$("#modal_back");
@@ -1199,11 +1199,13 @@ function show_modal_back($state = "success", $title = "INFO.", $message = "Messa
         }, 999);
       }
       \$(() => {
-          {$cancel_script}
-          window.innerWidth < 992 ? \$("#modal_back_container").addClass("modal-dialog-centered") : \$("#modal_back_container").removeClass("modal-dialog-centered");
-          \$("#modal_back").modal("show");
+        {$cancel_script}
+        window.innerWidth < 992
+          ? \$("#modal_back_container").addClass("modal-dialog-centered")
+          : \$("#modal_back_container").removeClass("modal-dialog-centered");
+        \$("#modal_back").modal("show");
       });
-      </script>
+    </script>
   HTML;
 }
 

@@ -401,7 +401,7 @@
       if (!bySPA.reloadComponent) return window.location.reload();
       console.warn("Main Component (main#spa-content) missing. Creating and appending to the body...");
       $("body").append(
-        $(/* HTML */ `<main>`, {
+        $(/* HTML */ `<main></main>`, {
           id: "spa-content"
         })
       );
