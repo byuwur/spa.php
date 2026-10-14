@@ -66,6 +66,7 @@ The demo uses its parent directory as the framework root. Regular consumers keep
 | `_spa.js`                   | Navigation, history, page/component requests, and route lifecycle.                          |
 | `_functions.js`             | Browser request, JSON, cookie, modal, and validation helpers.                               |
 | `_common.js`, `_common.css` | Shared UI initialization and styles.                                                        |
+| `_fonts.js`                 | Optional Google Fonts loading and searchable font pickers.                                  |
 | `_error.php`                | Server-side HTTP error page.                                                                |
 | `css/`, `js/`, `img/`       | Bundled libraries and shared interface assets.                                              |
 | `cacert.pem`                | Certificate bundle for outbound cURL HTTPS requests.                                        |
@@ -113,6 +114,12 @@ Storage keys use the finalized application root as a namespace. Legacy values ar
 A failed write keeps that key's local value until a successful explicit write or removal. A failed removal keeps a local null marker. Other keys still read persistent storage. Removing a key also removes its legacy unprefixed copy. There is no automatic replay or cross-tab reconciliation; memory fallback lasts for the current runtime only.
 
 `byCommon.init()` is quiet by default. Use `byCommon.INIT_WARNINGS = true` or `{ showWarn: true }` for optional sidebar, Bootstrap, captcha, consent, and particles diagnostics. Required-runtime errors still appear.
+
+### Optional Google Fonts
+
+Load `_fonts.js` after jQuery. The optional module exposes `byFont` independently of the SPA runtime.
+
+`byFont.family(value, fallback)` requests a selected Google family and returns its CSS stack. The bundled catalog contains 350 families; only selected families and visible dropdown samples load, with `display=swap`, cached requests, and offline fallbacks. Applications retain ownership of font values and persistence.
 
 ### Fragment scripts and error pages
 
