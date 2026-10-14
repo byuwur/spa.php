@@ -243,3 +243,36 @@ test("component failures settle independently and navigation retains jQuery prom
     events: ["bySPA:before-unload", "bySPA:load"]
   });
 });
+
+test("resource probes preserve HEAD fallback and jQuery promise compatibility", async t => {
+  const page = await application(t);
+  await page.addScriptTag({ content: source("_functions.js") });
+  const result = await page.evaluate(async () => {
+    const results = [];
+    for (const [headStatus, getFails, expected] of [[200, false, true], [405, false, true], [501, true, false], [500, false, false]]) {
+      const methods = [];
+      $.ajax = ({ type }) => {
+        methods.push(type);
+        const response = $.Deferred();
+        if (type === "HEAD" && headStatus !== 200) response.reject({ status: headStatus });
+        else if (type === "GET" && getFails) response.reject({ status: 404 });
+        else response.resolve();
+        return response.promise();
+      };
+      const request = remote_file_exists("/asset");
+      results.push({
+        actual: await request, expected, methods,
+        jqueryMethods: ["done", "fail", "always"].every(method => typeof request[method] === "function")
+      });
+    }
+    const invalid = remote_file_exists("http://[");
+    return { results, invalid: await invalid, invalidHasAlways: typeof invalid.always === "function" };
+  });
+  assert.deepEqual(result.results.map(item => item.methods), [["HEAD"], ["HEAD", "GET"], ["HEAD", "GET"], ["HEAD"]]);
+  for (const item of result.results) {
+    assert.equal(item.actual, item.expected);
+    assert.equal(item.jqueryMethods, true);
+  }
+  assert.equal(result.invalid, false);
+  assert.equal(result.invalidHasAlways, true);
+});

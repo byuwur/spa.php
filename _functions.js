@@ -74,14 +74,15 @@ function escape_html(value) {
 /**
  * Makes an HTTP request to check if a remote URL responds correctly (200 - 299).
  * @param {string} url The URL to check.
- * @return {Promise<boolean>} The resource existence.
+ * @return {jQuery.Promise<boolean>|undefined} The resource existence, or no result without jQuery.
  */
 function remote_file_exists(url) {
+  if (typeof jQuery === "undefined" && !window.jQuery) return console.error("remote_file_exists() FAILED. No jQuery found.");
   try {
     url = new URL(url, window.location.href).href;
   } catch {
     console.error("HTTP ERROR: Invalid URL.");
-    return Promise.resolve(false);
+    return $.when(false);
   }
   return $.ajax({
     url,
@@ -90,18 +91,14 @@ function remote_file_exists(url) {
     .then(function () {
       return true;
     })
-    .catch(function (xhr) {
+    .catch(async function (xhr) {
       if (![405, 501].includes(xhr?.status)) return false;
-      return $.ajax({
-        url,
-        type: "GET"
-      })
-        .then(function () {
-          return true;
-        })
-        .catch(function () {
-          return false;
-        });
+      try {
+        await $.ajax({ url, type: "GET" });
+        return true;
+      } catch {
+        return false;
+      }
     });
 }
 
