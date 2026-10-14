@@ -88,6 +88,7 @@ require_once "{$TO_HOME}/common.example.php";
   <script src="<?= "{$HOME_PATH}/../js/particles-ui.min.js" ?>" defer></script>
   <script src="<?= "{$HOME_PATH}/../js/cookies.min.js" ?>" defer></script>
   <script src="<?= "{$HOME_PATH}/../_functions.js" ?>" defer></script>
+  <script src="<?= "{$HOME_PATH}/../_fonts.js" ?>" defer></script>
   <script src="<?= "{$HOME_PATH}/../_common.js" ?>" defer></script>
   <script src="<?= "{$HOME_PATH}/../_spa.js" ?>" defer></script>
   <script src="https://www.google.com/recaptcha/api.js" defer></script>
