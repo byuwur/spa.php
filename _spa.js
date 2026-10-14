@@ -280,7 +280,7 @@
       .then(function (data) {
         // Ignore a slow component after the user has moved to another route.
         if (navigationId !== bySPA.NAVIGATION_ID) return null;
-        return setHTML(document.querySelector(componentId), data, navigationId);
+        return setHTML($(componentId)[0], data, navigationId);
       })
       .catch(function (xhr, status, error) {
         if (navigationId !== bySPA.NAVIGATION_ID) return null;
@@ -465,7 +465,8 @@
       console.log("HISTORY_PATH=", bySPA.HISTORY_PATH);
     }
     // Handles the popstate event for navigating through browser history.
-    window.addEventListener("popstate", function (e) {
+    $(window).on("popstate.bySPA", function (event) {
+      const e = event.originalEvent || event;
       if (errorNavigation) return window.location.reload();
       if (!e.state) return;
       bySPA.HISTORY_INDEX = e.state.index;
@@ -496,7 +497,8 @@
       bySPA.load(nextURL);
     });
     // Reload the SPA when returning from a full FILE navigation via the browser cache.
-    window.addEventListener("pageshow", function (e) {
+    $(window).on("pageshow.bySPA", function (event) {
+      const e = event.originalEvent || event;
       if (!e.persisted || !fileNavigation) return;
       fileNavigation = false;
       window.location.reload();

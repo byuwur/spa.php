@@ -204,31 +204,31 @@
       });
 
       // Initialize Alert components
-      [...document.querySelectorAll(".alert")].forEach((alertEl) => bootstrap.Alert.getInstance(alertEl) ?? new bootstrap.Alert(alertEl));
+      $(".alert").each((_, alertEl) => bootstrap.Alert.getInstance(alertEl) ?? new bootstrap.Alert(alertEl));
       // Initialize Carousel components
-      [...document.querySelectorAll(".carousel")].forEach((carouselEl) => bootstrap.Carousel.getInstance(carouselEl) ?? new bootstrap.Carousel(carouselEl));
+      $(".carousel").each((_, carouselEl) => bootstrap.Carousel.getInstance(carouselEl) ?? new bootstrap.Carousel(carouselEl));
       // Initialize Collapse components
-      [...document.querySelectorAll(".collapse")].forEach((collapseEl) => bootstrap.Collapse.getInstance(collapseEl) ?? new bootstrap.Collapse(collapseEl, { toggle: false }));
+      $(".collapse").each((_, collapseEl) => bootstrap.Collapse.getInstance(collapseEl) ?? new bootstrap.Collapse(collapseEl, { toggle: false }));
       // Initialize Dropdown components
-      [...document.querySelectorAll(".dropdown-toggle")].forEach((dropdownEl) => bootstrap.Dropdown.getInstance(dropdownEl) ?? new bootstrap.Dropdown(dropdownEl));
+      $(".dropdown-toggle").each((_, dropdownEl) => bootstrap.Dropdown.getInstance(dropdownEl) ?? new bootstrap.Dropdown(dropdownEl));
       // Initialize Modal components
-      [...document.querySelectorAll(".modal")].forEach((modalEl) => bootstrap.Modal.getInstance(modalEl) ?? new bootstrap.Modal(modalEl));
+      $(".modal").each((_, modalEl) => bootstrap.Modal.getInstance(modalEl) ?? new bootstrap.Modal(modalEl));
       // Initialize Offcanvas components
-      [...document.querySelectorAll(".offcanvas")].forEach((offcanvasEl) => bootstrap.Offcanvas.getInstance(offcanvasEl) ?? new bootstrap.Offcanvas(offcanvasEl));
+      $(".offcanvas").each((_, offcanvasEl) => bootstrap.Offcanvas.getInstance(offcanvasEl) ?? new bootstrap.Offcanvas(offcanvasEl));
       // Initialize Popover components
-      [...document.querySelectorAll("[data-bs-toggle='popover']")].forEach((popoverEl) => bootstrap.Popover.getInstance(popoverEl) ?? new bootstrap.Popover(popoverEl, { animation: false }));
+      $("[data-bs-toggle='popover']").each((_, popoverEl) => bootstrap.Popover.getInstance(popoverEl) ?? new bootstrap.Popover(popoverEl, { animation: false }));
       // Initialize ScrollSpy components
-      [...document.querySelectorAll(".scrollspy")].forEach((scrollspyEl) => bootstrap.ScrollSpy.getInstance(scrollspyEl) ?? new bootstrap.ScrollSpy(scrollspyEl));
+      $(".scrollspy").each((_, scrollspyEl) => bootstrap.ScrollSpy.getInstance(scrollspyEl) ?? new bootstrap.ScrollSpy(scrollspyEl));
       // Initialize Tab components
-      [...document.querySelectorAll(".nav-tabs .nav-link")].forEach((tabEl) => bootstrap.Tab.getInstance(tabEl) ?? new bootstrap.Tab(tabEl));
+      $(".nav-tabs .nav-link").each((_, tabEl) => bootstrap.Tab.getInstance(tabEl) ?? new bootstrap.Tab(tabEl));
       // Initialize Toast components
-      [...document.querySelectorAll(".toast")].forEach((toastEl) => bootstrap.Toast.getInstance(toastEl) ?? new bootstrap.Toast(toastEl));
+      $(".toast").each((_, toastEl) => bootstrap.Toast.getInstance(toastEl) ?? new bootstrap.Toast(toastEl));
       // Keep aria-pressed synchronized without creating a Button instance on tooltip elements
-      [...document.querySelectorAll(".btn")].forEach((buttonEl) => {
+      $(".btn").each((_, buttonEl) => {
         $(buttonEl)
           .off("click.byCommonBootstrap")
           .on("click.byCommonBootstrap", function () {
-            buttonEl.setAttribute("aria-pressed", buttonEl.classList.contains("active"));
+            $(buttonEl).attr("aria-pressed", $(buttonEl).hasClass("active"));
           });
       });
       // Add more as needed, in case BS drops another class
@@ -248,7 +248,7 @@
       return;
     }
     try {
-      [...document.querySelectorAll(".g-recaptcha")].forEach((captchaEl) => {
+      $(".g-recaptcha").each((_, captchaEl) => {
         if (grecaptcha.render) grecaptcha.render(captchaEl);
         else if (showWarn) console.warn("grecaptcha not ready...");
       });
@@ -485,9 +485,9 @@
    * Event binding and persistence belong to the caller; stylesheet loading is asynchronous.
    */
   byCommon.toggleTheme = function (target, { theme, button, properties, stylesheet, stylesheets } = {}) {
-    const elements = typeof target === "string" ? [...document.querySelectorAll(target)] : target ? [target] : [];
+    const elements = $(target).toArray();
     if (!elements.length) return null;
-    const link = typeof stylesheet === "string" ? document.querySelector(stylesheet) : stylesheet;
+    const link = typeof stylesheet === "string" ? $(stylesheet)[0] : stylesheet;
     if ((stylesheet || stylesheets) && (!link || link.tagName !== "LINK")) throw new TypeError("Provide an existing stylesheet link.");
     const href = link?.getAttribute("href") || "";
     const themeSuffix = /\.(light|dark)\.css(?=[?#]|$)/i;
@@ -501,14 +501,12 @@
     // The selected stylesheet owns the current theme when its URL matches a configured variant.
     const current = link
       ? ["light", "dark"].find((name) => {
-          const candidate = document.createElement("a");
-          candidate.href = stylesheets[name];
-          return candidate.href === link.href;
+          return new URL(stylesheets[name], document.baseURI).href === link.href;
         })
       : null;
     const next = theme ?? ((current || elements[0].getAttribute("data-bs-theme")) === "dark" ? "light" : "dark");
     if (next !== "light" && next !== "dark") throw new TypeError("Theme must be light or dark.");
-    const buttons = typeof button === "string" ? [...document.querySelectorAll(button)] : button ? [button] : [];
+    const buttons = $(button).toArray();
     const keys = new Set([...Object.keys(properties?.light || {}), ...Object.keys(properties?.dark || {})]);
     for (const element of elements) {
       element.setAttribute("data-bs-theme", next);

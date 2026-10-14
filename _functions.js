@@ -444,7 +444,7 @@ function make_http_request(options) {
  * Originally meant for use with <forms />
  * @param {Object} options The options for the HTTP request.
  * @param {string} options.$elementId The element selector to serialize and send.
- * @param {string} [options.$trigger="submit"] The event listener added to the element.
+ * @param {string} [options.$trigger="submit"] Whitespace-separated event tokens; rebinding replaces only their helper-owned .byRequest listeners.
  * @param {string} options.$url The URL to which the HTTP request is sent.
  * @param {string} [options.$type="POST"] The query type (e.g., "POST", "GET", "PUT").
  * @param {string} [options.$returnType="json"] The expected return type (e.g., "json", "text", "html").
@@ -477,12 +477,15 @@ function element_make_http_request(options) {
   if ($url.includes("?")) console.warn(`URL (${elementId}) shouldn't have GET in itself since they're ignored. Use $_get Object instead.`);
   const inputUrl = $url.match(/^[^?]+/);
   const urlGet = `${inputUrl[0]}?${new URLSearchParams($_get).toString()}`;
-  // Replace only this helper's registrations, including multi-event triggers.
-  const requestEvents = $trigger.trim().split(/\s+/).map((event) => `${event}.byRequest`).join(" ");
-  // Start request
+  const events = $trigger
+    .trim()
+    .split(/\s+/)
+    .map((event) => `${event}.byRequest`)
+    .join(" ");
+  // Rebinding replaces only this helper's listeners for the requested events.
   $(elementId)
-    .off(requestEvents)
-    .on(requestEvents, function (event) {
+    .off(events)
+    .on(events, function (event) {
       event.preventDefault();
       submitBtn.attr("disabled", true);
       spinner.fadeIn(111);
