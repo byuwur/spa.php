@@ -847,6 +847,27 @@ label:has(input[type="checkbox"]:disabled, input[role="switch"]:disabled) {
   padding-left: 3rem !important;
   padding-right: 3rem !important;
 }
+/* Optional font controls must not animate as Select2 hides or measures them. */
+[data-font-picker],
+.font-picker + .select2-container,
+.font-picker + .select2-container *,
+.font-picker-dropdown,
+.font-picker-dropdown * {
+  transition: none !important;
+}
+.font-picker-dropdown .font-option {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+.font-preview {
+  min-height: 2rem;
+  font-size: 1.25rem;
+  overflow-wrap: anywhere;
+}
 .select2-container .select2-selection--single {
   height: 2rem !important;
 }
