@@ -283,3 +283,10 @@ test("implementation-only common initializers stay private", () => {
   assert.match(source, /byCommon\.initBootstrap\s*=/);
   assert.match(source, /byCommon\.init\s*=/);
 });
+
+test("the final ordered script cannot report success after navigation ownership changes", async () => {
+  const harness = createHarness({ "last.js": { delay: 25 } });
+  const pending = harness.bySPA.__setHTMLForTest(harness.target, /* HTML */ `<script src="last.js"></script>`, 1);
+  harness.bySPA.NAVIGATION_ID = 2;
+  assert.equal(await pending, null);
+});

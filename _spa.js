@@ -89,7 +89,6 @@
       const isModule = (item.script.getAttribute("type") || "").trim().toLowerCase() === "module";
       const waitForScript = hasSource || isModule;
       let settled;
-
       if (waitForScript)
         settled = new Promise(function (resolve) {
           const finish = function (failed) {
@@ -109,13 +108,10 @@
         });
 
       item.placeholder.replaceWith(script);
-      // Explicit async external scripts keep independent browser timing and do not delay lifecycle completion.
-      if (waitForScript && !(hasSource && item.script.hasAttribute("async"))) {
-        await settled;
-        if (navigationId !== bySPA.NAVIGATION_ID) return null;
-      }
+      // Explicit async external scripts keep independent timing and do not delay the route.
+      if (waitForScript && !(hasSource && item.script.hasAttribute("async"))) await settled;
     }
-    return html;
+    return navigationId === bySPA.NAVIGATION_ID ? html : null;
   }
 
   /**
