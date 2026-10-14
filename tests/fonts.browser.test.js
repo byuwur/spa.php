@@ -141,3 +141,66 @@ test("font cleanup preserves unrelated widgets", async (t) => {
   assert.equal(await page.locator(".font-preview").count(), 1);
   assert.deepEqual(errors, []);
 });
+
+test("scoped tooltips preserve application handlers and translated native titles", async (t) => {
+  const { page, errors } = await fontPage(
+    t,
+    /* HTML */ ` <section id="scope"><button id="tip" data-bs-toggle="tooltip" title="Original">Tip</button></section>
+      <button id="outside" data-bs-toggle="tooltip" title="Outside">Outside</button>`
+  );
+  const result = await page.evaluate(() => {
+    byCommon.initBootstrap({ tooltipsOnly: true });
+    const tip = document.getElementById("tip"),
+      outside = document.getElementById("outside");
+    const original = bootstrap.Tooltip.getInstance(tip),
+      untouched = bootstrap.Tooltip.getInstance(outside);
+    const modal = document.createElement("div");
+    modal.className = "modal";
+    modal.setAttribute("data-byspa-modal", "true");
+    modal.setAttribute("data-byspa-route", "previous");
+    document.body.append(modal);
+    let applicationCalls = 0,
+      dismissals = 0;
+    $(tip).on("pointerdown.application pointerleave.application", () => applicationCalls++);
+    original.hide = () => dismissals++;
+    byCommon.initBootstrap({ tooltipsOnly: true, root: document.getElementById("scope") });
+    byCommon.initBootstrap({ tooltipsOnly: true, root: tip });
+    $(tip).trigger("pointerdown").trigger("pointerleave");
+    tip.setAttribute("title", "Translated");
+    tip.setAttribute("data-bs-title", "Translated");
+    byCommon.initBootstrap({ tooltipsOnly: true, root: tip, refreshTooltips: true });
+    const refreshed = bootstrap.Tooltip.getInstance(tip);
+    refreshed.show();
+    return {
+      applicationCalls,
+      dismissals,
+      modalPreserved: modal.isConnected,
+      outsidePreserved: bootstrap.Tooltip.getInstance(outside) === untouched,
+      recreated: refreshed !== original,
+      nativeTitle: tip.getAttribute("data-bs-original-title")
+    };
+  });
+  assert.deepEqual(result, { applicationCalls: 2, dismissals: 2, modalPreserved: true, outsidePreserved: true, recreated: true, nativeTitle: "Translated" });
+  assert.equal(await page.locator(".tooltip-inner").textContent(), "Translated");
+  assert.deepEqual(errors, []);
+});
+
+test("video initialization enhances only the player's shortcut controls", async (t) => {
+  const { page, errors } = await fontPage(
+    t,
+    /* HTML */ ` <button id="outside" class="vjs-play-control" data-bs-toggle="tooltip" title="Outside">Outside</button>
+      <video id="player" class="video-js"></video>`
+  );
+  await page.addScriptTag({ path: path.join(root, "js/video.min.js") });
+  await page.evaluate(() => {
+    byCommon.initBootstrap({ tooltipsOnly: true, root: document.getElementById("outside") });
+    window.outsideTooltip = bootstrap.Tooltip.getInstance(document.getElementById("outside"));
+    byCommon.initVideo("player", { autoplay: false, preload: "none" });
+  });
+  assert.equal(await page.locator("#player .vjs-play-control").getAttribute("data-bs-title"), "Play/Pause (K)");
+  assert.equal(await page.locator("#outside").getAttribute("data-bs-title"), null);
+  assert.equal(await page.evaluate(() => bootstrap.Tooltip.getInstance(document.getElementById("outside")) === outsideTooltip), true);
+  assert.equal(await page.evaluate(() => !!bootstrap.Tooltip.getInstance(document.querySelector("#player .vjs-play-control"))), true);
+  await page.evaluate(() => videojs.getPlayer("player").dispose());
+  assert.deepEqual(errors, []);
+});

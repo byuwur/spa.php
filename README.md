@@ -115,6 +115,8 @@ A failed write keeps that key's local value until a successful explicit write or
 
 `byCommon.init()` is quiet by default. Use `byCommon.INIT_WARNINGS = true` or `{ showWarn: true }` for optional sidebar, Bootstrap, captcha, consent, and particles diagnostics. Required-runtime errors still appear.
 
+`byCommon.initBootstrap()` owns Bootstrap components and tooltip dismissal handlers. Video shortcut labels and SPA.js translations use `{ tooltipsOnly: true, root }` to initialize tooltips within a subtree, including its root, without rerunning modal or other component setup. Add `refreshTooltips: true` to preserve updated titles while recreating tooltip instances.
+
 ### Optional Google Fonts
 
 Load `_fonts.js` after jQuery and before the SPA runtime, and mark font inputs or selects with `data-font-picker`. The loader uses native Promises; optional pickers also use Select2 and `_common.css`.

@@ -132,16 +132,45 @@
     console.log("Init misc");
   }
 
+  // ==========
+  // ==== BOOTSTRAP LIFECYCLE ====
+  // ==========
+
   /**
-   * Initializes all Bootstrap components within the #spa-content.
-   * It should be called whenever the content of the #spa-page-content-container changes dynamically to ensure that all components function correctly.
+   * Initializes Bootstrap components, or only tooltips within a DOM subtree.
+   * @param {Object} [options={}]
+   * @param {boolean} [options.showWarn=true] Report missing Bootstrap or initialization failures.
+   * @param {boolean} [options.tooltipsOnly=false] Skip other components and modal setup.
+   * @param {Document|Element} [options.root=document] Tooltip subtree, including its root.
+   * @param {boolean} [options.refreshTooltips=false] Recreate tooltips after their titles change.
    */
-  byCommon.initBootstrap = function ({ showWarn = true } = {}) {
+  byCommon.initBootstrap = function ({ showWarn = true, tooltipsOnly = false, root = document, refreshTooltips = false } = {}) {
     if (typeof bootstrap === "undefined" && !window.bootstrap) {
       if (showWarn) console.warn("Can't load Bootstrap if script ain't present.");
       return;
     }
     try {
+      // Initialize Tooltip components
+      const tooltipSelector = "[data-bs-toggle='tooltip']";
+      const tooltipElements = bootstrap.Tooltip && root ? [...root.querySelectorAll(tooltipSelector)] : [];
+      if (bootstrap.Tooltip && root && typeof root.matches === "function" && root.matches(tooltipSelector)) tooltipElements.unshift(root);
+      tooltipElements.forEach((tooltipEl) => {
+        if (refreshTooltips) {
+          // Bootstrap restores the old native title on disposal; keep the translated value.
+          const title = tooltipEl.getAttribute("title");
+          const tooltip = bootstrap.Tooltip.getInstance(tooltipEl);
+          if (tooltip && typeof tooltip.dispose === "function") tooltip.dispose();
+          if (title !== null) tooltipEl.setAttribute("title", title);
+        }
+        const tooltip = bootstrap.Tooltip.getInstance(tooltipEl) ?? new bootstrap.Tooltip(tooltipEl, { animation: false });
+        $(tooltipEl)
+          .off("pointerdown.tooltipDismiss pointerleave.tooltipDismiss")
+          .on("pointerdown.tooltipDismiss pointerleave.tooltipDismiss", function () {
+            tooltip.hide();
+          });
+      });
+      if (tooltipsOnly) return;
+
       const route = String(window.bySPA?.URL || window.location.pathname);
 
       // Body-mounted modals outlive SPA content, so remove only those from the previous route.
@@ -183,16 +212,6 @@
       [...document.querySelectorAll(".modal")].forEach((modalEl) => bootstrap.Modal.getInstance(modalEl) ?? new bootstrap.Modal(modalEl));
       // Initialize Offcanvas components
       [...document.querySelectorAll(".offcanvas")].forEach((offcanvasEl) => bootstrap.Offcanvas.getInstance(offcanvasEl) ?? new bootstrap.Offcanvas(offcanvasEl));
-      // Initialize Tooltip components
-      [...document.querySelectorAll("[data-bs-toggle='tooltip']")].forEach((tooltipEl) => {
-        const tooltip = bootstrap.Tooltip.getInstance(tooltipEl) ?? new bootstrap.Tooltip(tooltipEl, { animation: false });
-        $(tooltipEl)
-          .off("pointerdown pointerleave pointerdown.tooltipDismiss pointerleave.tooltipDismiss")
-          .on("pointerdown pointerleave pointerdown.tooltipDismiss pointerleave.tooltipDismiss", function () {
-            tooltip.hide();
-          });
-        return tooltip;
-      });
       // Initialize Popover components
       [...document.querySelectorAll("[data-bs-toggle='popover']")].forEach((popoverEl) => bootstrap.Popover.getInstance(popoverEl) ?? new bootstrap.Popover(popoverEl, { animation: false }));
       // Initialize ScrollSpy components
@@ -398,13 +417,12 @@
             actions[key]();
           }
         });
-      // Initialize Tooltip components for shortcuts if bootstrap exists
-      if (typeof bootstrap != "undefined" && window.bootstrap) {
-        $(".vjs-play-control").attr({ "data-bs-toggle": "tooltip", "data-bs-title": "Play/Pause (K)" });
-        $(".vjs-volume-panel").attr({ "data-bs-toggle": "tooltip", "data-bs-title": "Mute (M)" });
-        $(".vjs-fullscreen-control").attr({ "data-bs-toggle": "tooltip", "data-bs-title": "Fullscreen (F)" });
-        [...document.querySelectorAll("[data-bs-toggle='tooltip']")].forEach((tooltipEl) => bootstrap.Tooltip.getInstance(tooltipEl) ?? new bootstrap.Tooltip(tooltipEl, { animation: false }));
-      }
+      // Video owns its shortcut labels; Bootstrap owns the tooltip instances.
+      const controls = byVideoPlayer.el();
+      $(controls).find(".vjs-play-control").attr({ "data-bs-toggle": "tooltip", "data-bs-title": "Play/Pause (K)" });
+      $(controls).find(".vjs-volume-panel").attr({ "data-bs-toggle": "tooltip", "data-bs-title": "Mute (M)" });
+      $(controls).find(".vjs-fullscreen-control").attr({ "data-bs-toggle": "tooltip", "data-bs-title": "Fullscreen (F)" });
+      if (typeof byCommon.initBootstrap === "function") byCommon.initBootstrap({ showWarn: false, tooltipsOnly: true, root: controls });
     } catch (e) {
       console.warn("initVideo():", e);
     }
