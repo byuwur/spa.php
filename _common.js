@@ -13,6 +13,9 @@
  * @param {Object} global - The global object, usually `window` in a browser.
  */
 (function (global) {
+  if (typeof jQuery === "undefined" && !global.jQuery) return console.error("Init _common.js FAILED. No jQuery found.");
+  const $ = global.jQuery;
+
   global.byCommon = global.byCommon || {};
   const byCommon = global.byCommon;
   // Common selectors
@@ -335,7 +338,6 @@
    * Initializes all components that dynamically changes within the page
    */
   byCommon.init = function ({ showWarn = byCommon.INIT_WARNINGS } = {}) {
-    if (typeof jQuery === "undefined" && !window.jQuery) return console.error("Init _common.js FAILED. No jQuery found.");
     $(() => {
       console.log("Init _common.js");
       initMisc();

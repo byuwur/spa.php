@@ -13,6 +13,9 @@
  * @param {Object} global - The global object, usually `window` in a browser.
  */
 (function (global) {
+  if (typeof jQuery === "undefined" && !global.jQuery) return console.error("Init _spa.js FAILED. No jQuery found.");
+  const $ = global.jQuery;
+
   global.bySPA = global.bySPA || {};
   const bySPA = global.bySPA;
   bySPA.VERSION = "19.4"; // 2026-10-08
@@ -453,7 +456,6 @@
   }
 
   function init() {
-    if (typeof jQuery === "undefined" && !window.jQuery) return console.error("Init _spa.js FAILED. No jQuery found.");
     // Log debug information if in development mode
     console.log("SPA_VERSION=", bySPA.VERSION);
     console.log("APP_VERSION=", bySPA.APP_VERSION);

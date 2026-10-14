@@ -118,6 +118,12 @@ function parseAttributes(source) {
   return [...source.matchAll(/([^\s=]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+)))?/g)].map((match) => [match[1], match[2] ?? match[3] ?? match[4] ?? ""]);
 }
 
+function jqueryFixture() {
+  const jquery = function () {};
+  jquery.fn = {};
+  return jquery;
+}
+
 function createHarness(plans = {}) {
   const order = [];
   const errors = [];
@@ -172,7 +178,7 @@ function createHarness(plans = {}) {
     .readFileSync(path.join(__dirname, "..", "_spa.js"), "utf8")
     .replace("async function setHTML(", "bySPA.__setHTMLForTest = async function (")
     .replace(/\r?\n  init\(\);\r?\n(?=\}\)\(typeof window)/, "\n");
-  const window = { bySPA: {} };
+  const window = { bySPA: {}, jQuery: jqueryFixture() };
   const consoleMessages = [];
   vm.runInNewContext(source, {
     window,
