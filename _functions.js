@@ -52,6 +52,51 @@ function print_json(json) {
 }
 
 /**
+ * Compresses UTF-8 text to unpadded Base64url using native raw DEFLATE.
+ * @param {string} value Text to compress; serialize JSON before calling.
+ * @return {Promise<string>} URL-safe token. Rejects invalid input or unavailable native compression.
+ */
+async function compress_url_data(value) {
+  if (typeof value !== "string") throw new TypeError("Expected a string to compress.");
+  const stream = new Blob([value]).stream().pipeThrough(new CompressionStream("deflate-raw"));
+  const bytes = new Uint8Array(await new Response(stream).arrayBuffer());
+  let binary = "";
+  for (const byte of bytes) binary += String.fromCharCode(byte);
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+/**
+ * Restores UTF-8 text from an unpadded Base64url raw-DEFLATE token.
+ * @param {string} value Token returned by compress_url_data().
+ * @param {number} [maxBytes=1048576] Positive safe-integer limit for decompressed UTF-8 bytes.
+ * @return {Promise<string>} Original text. Rejects malformed data, exceeded limits, or unavailable native decompression.
+ */
+async function decompress_url_data(value, maxBytes = 1048576) {
+  if (typeof value !== "string" || !/^[A-Za-z0-9_-]+$/.test(value) || value.length % 4 === 1) throw new TypeError("Expected an unpadded Base64url token.");
+  if (!Number.isSafeInteger(maxBytes) || maxBytes < 1) throw new RangeError("maxBytes must be a positive safe integer.");
+  const binary = atob(value.replace(/-/g, "+").replace(/_/g, "/"));
+  const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
+  const reader = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw")).getReader();
+  const chunks = [];
+  let size = 0;
+  try {
+    while (true) {
+      const { value: chunk, done } = await reader.read();
+      if (done) break;
+      size += chunk.byteLength;
+      if (size > maxBytes) {
+        await reader.cancel();
+        throw new RangeError("Decompressed data exceeds maxBytes.");
+      }
+      chunks.push(chunk);
+    }
+  } finally {
+    reader.releaseLock();
+  }
+  return new TextDecoder("utf-8", { fatal: true, ignoreBOM: true }).decode(await new Blob(chunks).arrayBuffer());
+}
+
+/**
  * Returns if a variable is an object.
  * @param {any} value The data to check.
  * @return {boolean} Whether the input is an object or not.

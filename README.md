@@ -121,6 +121,17 @@ A failed write keeps that key's local value until a successful explicit write or
 
 Modal cleanup calls the optional `byFont.destroy(element)` before removing the captured element. Delayed dismissal keeps that element reference so it cannot remove a newer modal with the same ID.
 
+### Compressed URL data
+
+`compress_url_data(text)` and `decompress_url_data(token, maxBytes = 1048576)` use native raw DEFLATE, unpadded Base64url, and Promises without jQuery or SPA initialization.
+
+```js
+const token = await compress_url_data(JSON.stringify(settings));
+const restored = JSON.parse(await decompress_url_data(token));
+```
+
+Requires native `CompressionStream`/`DecompressionStream` support for `deflate-raw`. Decompression rejects malformed data/UTF-8 and output exceeding the positive safe-integer UTF-8 byte limit. Callers own JSON, validation, URL parameters, and format markers.
+
 ### Optional Google Fonts
 
 `_fonts.js` loads fonts with native browser APIs and Promises, so standalone pages can use it without jQuery or the SPA runtime. Optional pickers require jQuery, Select2, and `_common.css`; load those before calling `byFont.init()` and mark font inputs or selects with `data-font-picker`. The font helper may load before its UI libraries; picker methods leave controls unchanged until those libraries are available.

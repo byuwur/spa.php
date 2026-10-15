@@ -12,6 +12,29 @@ after(async () => {
   await browser?.close();
 });
 
+test("local URL helpers work without jQuery or SPA initialization", async (t) => {
+  const page = await browser.newPage();
+  t.after(() => page.close());
+  await page.addScriptTag({ path: path.join(__dirname, "../_functions.js") });
+  const result = await page.evaluate(async () => {
+    const text = JSON.stringify([{ platform: "twitch", handle: "/byUwUr 😀" }]);
+    const token = await compress_url_data(text);
+    let limited = false;
+    try {
+      await decompress_url_data(token, 1);
+    } catch (error) {
+      limited = error instanceof RangeError;
+    }
+    return {
+      roundTrip: (await decompress_url_data(new URLSearchParams({ data: token }).get("data"))) === text,
+      urlSafe: /^[A-Za-z0-9_-]+$/.test(token),
+      limited,
+      standalone: typeof jQuery === "undefined" && typeof bySPA === "undefined"
+    };
+  });
+  assert.deepEqual(result, { roundTrip: true, urlSafe: true, limited: true, standalone: true });
+});
+
 async function application(t, preferences = {}) {
   const page = await browser.newPage();
   t.after(() => page.close());
