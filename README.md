@@ -121,6 +121,8 @@ A failed write keeps that key's local value until a successful explicit write or
 
 Modal cleanup calls the optional `byFont.destroy(element)` before removing the captured element. Delayed dismissal keeps that element reference so it cannot remove a newer modal with the same ID.
 
+Data, HTML-text escaping, and CSRF utilities are native. UI and HTTP/form helpers use jQuery; modals also need Bootstrap. WebSocket transport is native, with jQuery DOM logging.
+
 ### Compressed URL data
 
 `compress_url_data(text)` and `decompress_url_data(token, maxBytes = 1048576)` use native raw DEFLATE, unpadded Base64url, and Promises without jQuery or SPA initialization.
@@ -202,17 +204,9 @@ Framework changes belong here. Consumers pin a commit, so they must review and r
 
 ### Shared SPA maintenance
 
-SPA.php and SPA.js share selected behavior, not entire runtime files. Neither automatically synchronizes the other.
+Keep `_fonts.js`, `_functions.js`, `_common.js`, and `_common.css` identical across both SPAs; SPA.php owns the shared source. `_spa.js`, routing, transport, history, and application bootstrap retain host-specific behavior.
 
-| Files                        | Shared behavior / difference                                                                                             |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `_functions.js`              | Query parsing and request-listener behavior; comments and local names may differ.                                        |
-| `_common.js`                 | Consent namespace and ordinary-click handling, with host settings preserved.                                             |
-| `_spa.js`                    | Query, click, success/error, stale-navigation, and bounded error fallback rules; transport, history, and routing differ. |
-| `_init.php` / `_init.js`     | Storage behavior and application-owned bootstrap copies.                                                                 |
-| `_router.php` / `_router.js` | Host-specific; no source parity requirement.                                                                             |
-
-Compare reviewed immutable commits and run the [shared contract checks](tests/SPA_PARITY.md). Record intentional differences and reconcile consumer initializers. Storage upgrades must preserve per-key fallback, failed-removal markers, legacy migration, live reads for unaffected keys, and recovery only through successful explicit changes.
+Neither repository synchronizes the other automatically. Compare reviewed immutable commits, preserve application-owned initializer settings, and test affected consumers.
 
 ## Related tools
 

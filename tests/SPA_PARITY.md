@@ -19,7 +19,7 @@ The same vectors exercise complete query suffixes, real jQuery request ownership
 
 ## Recorded differences and follow-up
 
-- A. Intentional mirrors: `_functions.js` and `_common.js`; query parsing, request-listener ownership, consent namespacing, and ordinary-click ownership pass the reference vectors.
+- A. Shared files: `_fonts.js`, `_functions.js`, `_common.js`, and `_common.css` stay synchronized. Reference vectors cover query parsing, request-listener ownership, consent namespacing, and ordinary-click ownership; local browser checks also cover native HTML-text and CSRF utilities without jQuery.
 - B. Shared behavioral contracts with host-specific implementations: `_spa.js` and storage in `_init.php` / `_init.js`; F8 passes against the recorded spa.js object. F10b browser verification remains locally unverified because Playwright is unavailable.
 - C. Host-specific: `_router.php` / `_router.js`, PHP/static transport, history, route modes, error handoff, and bootstrap configuration; no source-byte parity is required.
 - D. Copied-initializer responsibility: application-owned `_init.php` / `_init.js` copies must be reviewed separately when the framework or parity baseline changes.

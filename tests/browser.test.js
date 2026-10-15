@@ -35,6 +35,40 @@ test("local URL helpers work without jQuery or SPA initialization", async (t) =>
   assert.deepEqual(result, { roundTrip: true, urlSafe: true, limited: true, standalone: true });
 });
 
+test("local HTML and CSRF utilities work without jQuery or SPA initialization", async (t) => {
+  const page = await browser.newPage();
+  t.after(() => page.close());
+  await page.route("https://utilities.test/**", (route) => route.fulfill({ contentType: "text/html", body: "<!doctype html><head></head><body></body>" }));
+  await page.goto("https://utilities.test/");
+  await page.addScriptTag({ path: path.join(__dirname, "../_functions.js") });
+  const result = await page.evaluate(() => {
+    const escaped = [escape_html('<img src=x onerror="alert(1)">&'), escape_html(null), escape_html(undefined), escape_html(0), escape_html(false), escape_html("Caf\u00e9 \u{1f600}")];
+    sessionStorage.setItem("CSRF_TOKEN", "stored-token");
+    const meta = document.createElement("meta");
+    meta.name = "csrf-token";
+    meta.content = "meta-token";
+    document.head.append(meta);
+    const preferred = get_csrf_token();
+    const payload = [{ name: "message", value: "Hello" }];
+    const sameArray = add_csrf_token(payload) === payload;
+    add_csrf_token(payload);
+    const explicit = [{ name: "_csrf", value: "explicit-token" }];
+    add_csrf_token(explicit);
+    const readOnly = add_csrf_token([], "get");
+    meta.content = "";
+    const fallback = get_csrf_token();
+    meta.remove();
+    sessionStorage.removeItem("CSRF_TOKEN");
+    return { escaped, preferred, fallback, missing: get_csrf_token(), payload, explicit, readOnly, sameArray, standalone: typeof jQuery === "undefined" && typeof bySPA === "undefined" };
+  });
+  assert.deepEqual(result, {
+    escaped: ['&lt;img src=x onerror="alert(1)"&gt;&amp;', "", "", "0", "false", "Caf\u00e9 \u{1f600}"],
+    preferred: "meta-token", fallback: "stored-token", missing: "",
+    payload: [{ name: "message", value: "Hello" }, { name: "_csrf", value: "meta-token" }],
+    explicit: [{ name: "_csrf", value: "explicit-token" }], readOnly: [], sameArray: true, standalone: true
+  });
+});
+
 async function application(t, preferences = {}) {
   const page = await browser.newPage();
   t.after(() => page.close());

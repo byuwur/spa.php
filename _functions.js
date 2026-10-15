@@ -2,7 +2,7 @@
 /*
  * File: _functions.js
  * Desc: Contains common standalone functions that are used project-wide. In hopes that the function names doesn't collide with global.
- * Deps: jQuery
+ * Deps: Native browser APIs; jQuery for UI/HTTP helpers, Bootstrap for modals, byStorage for request/WebSocket helpers.
  * Copyright (c) 2026 Andrés Trujillo [Mateus] byUwUr
  */
 
@@ -106,14 +106,14 @@ function is_object(value) {
 }
 
 /**
- * Escapes a value for safe HTML interpolation.
+ * Escapes a value for HTML text content.
  * @param {any} value The value to escape.
  * @return {string} HTML-safe string.
  */
 function escape_html(value) {
-  return $(/* HTML */ `<div></div>`)
-    .text(value ?? "")
-    .html();
+  const element = document.createElement("div");
+  element.textContent = value ?? "";
+  return element.innerHTML;
 }
 
 /**
@@ -410,7 +410,7 @@ function show_modal_front($modalId, $state = "success", $title = "INFO.", $messa
  * @returns {string} CSRF token or an empty string.
  */
 function get_csrf_token() {
-  return $("meta[name='csrf-token']").attr("content") || sessionStorage.getItem("CSRF_TOKEN") || "";
+  return document.querySelector("meta[name='csrf-token']")?.getAttribute("content") || sessionStorage.getItem("CSRF_TOKEN") || "";
 }
 
 /**
