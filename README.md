@@ -2,124 +2,72 @@
 
 ![SPA.php demo preview](prev.jpg)
 
-A small PHP framework for single-page applications. PHP handles routes; jQuery loads pages and shared components without a full refresh.
+A PHP single-page application framework with server-side routing, jQuery page/component loading, shared UI, and request/session helpers.
 
-Try it at [byuwur.co/spa.php](https://byuwur.co/spa.php/). For static HTML pages, use [spa.js](https://github.com/byuwur/spa.js).
-
-## What does it do?
-
-- Routes PHP pages with GET and POST data.
-- Loads shared components and reinitializes their UI after navigation.
-- Provides request, storage, modal, validation, session, and error-page helpers.
-- Works with Bootstrap and optional bundled integrations.
+[Demo](https://byuwur.co/spa.php/) · [Static HTML version: SPA.js](https://github.com/byuwur/spa.js)
 
 ## Installation
 
-You need PHP 8.1+, jQuery, and the core framework scripts. Bootstrap and other libraries are needed only for the features you use.
+Requires PHP 8.1+ and jQuery. Optional features need their bundled libraries.
 
 ```bash
 git clone https://github.com/byuwur/spa.php.git
 ```
 
-Serve the checkout with PHP and open `demo/`. The repository's root entry points redirect there. For your own application, follow the layout below and adapt the Apache or Nginx rules to your mount path.
-
-## Usage
-
-1. Start with the demo shell and copy `_init.php` into your application's root.
-2. Define your route table in the application's `_routes.php`.
-3. Load initialization and routes before the framework router, as the demo does.
-4. Add PHP pages and point routes and components at them.
-5. Use `.env.example` for environment settings when your application needs them.
-
-Keep application settings outside the framework directory. Each independently routed application needs its own initializer and route table.
-
-### Migration [v14]
-
-`_var.php` became `_init.php`. Rename the application's copy and update its includes. There is no compatibility alias.
+Serve the checkout with PHP and open `demo/`; the root entry points redirect there.
 
 ## How is it done?
 
-The **application root** owns the shell, initialization, routes, and configuration. The **framework root** holds reusable code, normally as a `spa.php/` submodule.
+The application owns its shell, configuration, pages, components, and dictionaries. The framework normally lives in a submodule:
 
 ```text
 application-root/
-|-- home.php        # Application shell and route entry point
-|-- _init.php       # Application initialization
-|-- _routes.php     # Application route table
-|-- .htaccess       # Apache routing; use equivalent Nginx rules
-`-- spa.php/        # Framework checkout or submodule
+|-- home.php        # Shell and route entry point
+|-- _init.php       # Application initializer
+|-- _routes.php     # Route table
+|-- .htaccess       # Rewrite rules, or equivalent Nginx configuration
+`-- spa.php/        # Framework
 ```
 
-These are required by the default setup. Copy `_init.php` into the application root: loading the framework copy directly derives paths from the wrong directory. Define `$routes` before including `_router.php`. Route non-file requests to `home.php?uri=...`; if you rename the shell, update the server rules too.
+1. Copy the demo shell and framework `_init.php` into your application. Each SPA needs its own initializer and routes.
+2. Load `_init.php` and `_routes.php` (which defines `$routes`) before `_router.php`; map routes/components to PHP pages.
+3. Route non-file requests to `home.php?uri=...`. Update server rules if you rename the shell.
 
-The demo uses its parent directory as the framework root. Regular consumers keep the full framework checkout at `spa.php/`, reachable by PHP includes and browser asset URLs.
+The framework's initializer is a template; loading it directly derives the wrong application paths. The demo uses its parent as the framework root. Keep application `.env`, Composer files, and configuration outside the framework; use `.env.example` when needed.
 
-### Framework files
+| Files                                      | Purpose                                              |
+| ------------------------------------------ | ---------------------------------------------------- |
+| `_init.php`, `_router.php`                 | Bootstrap, route resolution, and browser state.      |
+| `_spa.js`                                  | AJAX navigation, history, components, and lifecycle. |
+| `_functions.php`, `_functions.js`          | Server/browser utilities and request helpers.        |
+| `_common.php`, `_common.js`, `_common.css` | Defaults, shared UI, and styles.                     |
+| `_fonts.js`                                | Optional Google Fonts loading and pickers.           |
+| `_auth.php`, `_config.php`, `_plugins.php` | Optional sessions/CSRF, MySQL, and Composer setup.   |
+| `_error.php`                               | Standalone HTTP error page.                          |
+| `css/`, `js/`, `img/`, `cacert.pem`        | Bundled libraries, assets, and cURL certificates.    |
 
-| File                        | Purpose                                                                                     |
-| --------------------------- | ------------------------------------------------------------------------------------------- |
-| `_init.php`                 | Template for the application's initializer: paths, environment, storage, and runtime state. |
-| `_functions.php`            | PHP request, API response, validation, escaping, error, and file helpers.                   |
-| `_common.php`               | Default language, theme, and common request state.                                          |
-| `_plugins.php`              | Optional application Composer autoloader.                                                   |
-| `_config.php`               | Optional environment-based MySQL connection, with safe connection errors.                   |
-| `_auth.php`                 | Optional sessions, login/logout, session checks, and CSRF helpers.                          |
-| `_router.php`               | URI resolution, route data, direct file routes, and browser route state.                    |
-| `_spa.js`                   | Navigation, history, page/component requests, and route lifecycle.                          |
-| `_functions.js`             | Browser request, JSON, cookie, modal, and validation helpers.                               |
-| `_common.js`, `_common.css` | Shared UI initialization and styles.                                                        |
-| `_fonts.js`                 | Optional Google Fonts loading and searchable font pickers.                                  |
-| `_error.php`                | Server-side HTTP error page.                                                                |
-| `css/`, `js/`, `img/`       | Bundled libraries and shared interface assets.                                              |
-| `cacert.pem`                | Certificate bundle for outbound cURL HTTPS requests.                                        |
-| `composer.json`             | Optional Composer dependencies.                                                             |
+Application `_common.php`, `_auth.php`, `_config.php`, and `_plugins.php` can extend framework setup. Load only the libraries you use; remote integrations still require their services. Shared CSS images stay in the framework's `img/` directory.
 
-### Application and demo files
-
-Application-specific `_common.php`, `_plugins.php`, `_config.php`, and `_auth.php` can extend the framework setup. Dictionaries go in `lang/`. `.env`, `vendor/`, and `composer.lock` belong to the application when it uses those dependencies.
-
-`demo/` contains the runnable shell, routes, pages, sidebar, dictionaries, background, flags, sample PDF, and video. Shared images referenced by `_common.css` stay in the framework's `img/` directory.
-
-Root `home.php` and `index.html` are redirects, not shells to copy. Root `.htaccess` handles that compatibility entry point; `nginx.conf` is an example for consumers. `.nojekyll` is for static GitHub Pages publishing, not PHP execution.
-
-### Bundled libraries
-
-Libraries are included in `css/` and `js/` and loaded from local paths. The intention is to avoid depending on CDNs or external resources for these assets. Load only the libraries your application uses.
-
-- **Interface:** Bootstrap, Popper, jQuery, jQuery UI, and Shards UI.
-- **Forms:** Select2, Pickr, and Dropzone.
-- **Media:** Swiper and Video.js.
-- **Animation:** Animate.css, Typed.js, particles.js, GSAP, and MorphSVGPlugin.
-- **Consent:** Cookie Consent (`js/cookies.min.js`).
-- **Icons and fonts:** Font Awesome with local webfonts, Archivo, Bahnschrift, and OpenDyslexic in `css/webfonts/`.
-
-Keeping these files local gives you control over updates and availability. Update the bundled copies when needed; optional integrations that call external services still need those services.
+Since v14, `_var.php` is `_init.php`; update old includes. No compatibility alias exists.
 
 ## Runtime contracts
 
 ### Routes and navigation
 
-- `bySPA.VERSION` identifies the framework; `bySPA.APP_VERSION` identifies your application.
-- Route-defined GET/POST data overrides `/$/` path parameters, which override query parameters.
-- Only the first `?` separates path and query. Later question marks stay in the value, including hash-query values read by `get_url_param()`.
-- Component GET data replaces overlapping query keys; `uri=false` stays authoritative.
-- Navigation emits `bySPA:before-unload`, then `bySPA:load` on success or `bySPA:error` on failure. The timeout is 30 seconds (`bySPA.REQUEST_TIMEOUT`).
-- Unknown routes emit one error before loading the standalone error page. A failed error-page load adds no second terminal event. Error details are `{ navigationId, url, status, error }`; status `0` means no transport status.
-- Superseded requests cannot update the newer page or emit a terminal event, including when synchronous lifecycle listeners start another navigation. Initial browser loading follows the same rules; initial requests rejected by PHP never begin a browser SPA lifecycle. FILE routes leave the document without a success event.
-
-`HOME_PATH` resolves requests and history. Ordinary primary clicks on same-origin links are routed; the application prefix is removed for links inside it. Root-relative virtual links such as `/home` keep their route path, including unknown routes. Targets, downloads, hashes, and `custom-folder="true"` retain browser navigation. PHP uses path routing; `#/` links remain native. Smooth scrolling applies only to an existing same-document ID with the same origin, path, and query.
+- Fragments use POST and path history. Route GET/POST values override `/$/` parameters, which override queries. Component GET values override URI queries; `uri=false` remains authoritative.
+- Only the first `?` separates path/query; later question marks remain in values. `get_url_param()` also reads hash queries.
+- Navigation emits `bySPA:before-unload`, then one `bySPA:load` or `bySPA:error`. Error details are `{ navigationId, url, status, error }`; status `0` means no transport status. `bySPA.REQUEST_TIMEOUT` defaults to 30 seconds.
+- Superseded work stops, including when lifecycle listeners start another navigation. Unknown routes report one error; failed error-page loading adds none. FILE routes leave without a load event; initial routes rejected by PHP never begin a browser lifecycle.
+- `HOME_PATH` resolves requests/history. Ordinary same-origin clicks route, including root-relative virtual paths. Modified/middle clicks, targets, downloads, hashes, and `custom-folder="true"` stay native. Smooth scrolling requires an existing ID in the same document, origin, path, and query.
+- `bySPA.VERSION` identifies the framework; `bySPA.APP_VERSION` identifies the application.
 
 ### Storage and shared UI
 
-Storage keys use the finalized application root as a namespace. Legacy values are removed after successful migration. Consent reads theme and language through the same `byStorage` helper.
+`byStorage` namespaces keys by application root and removes legacy keys after migration. Failed writes/removals give only that key a local value/null marker until a successful explicit change; other keys keep reading persistent storage. Removal also clears legacy copies. Memory fallback lasts for this runtime, without automatic replay or cross-tab synchronization.
 
-A failed write keeps that key's local value until a successful explicit write or removal. A failed removal keeps a local null marker. Other keys still read persistent storage. Removing a key also removes its legacy unprefixed copy. There is no automatic replay or cross-tab reconciliation; memory fallback lasts for the current runtime only.
+`byCommon.init()` initializes shared UI after navigation. Optional warnings are off; enable `byCommon.INIT_WARNINGS` or `{ showWarn: true }`. `byCommon.initBootstrap({ tooltipsOnly: true, root, refreshTooltips: true })` refreshes scoped tooltips without rerunning other components.
 
-`byCommon.init()` is quiet by default. Use `byCommon.INIT_WARNINGS = true` or `{ showWarn: true }` for optional sidebar, Bootstrap, captcha, consent, and particles diagnostics. Required-runtime errors still appear.
-
-`byCommon.initBootstrap()` owns Bootstrap components and tooltip dismissal handlers. Video shortcut labels and SPA.js translations use `{ tooltipsOnly: true, root }` to initialize tooltips within a subtree, including its root, without rerunning modal or other component setup. Add `refreshTooltips: true` to preserve updated titles while recreating tooltip instances.
-
-Modal cleanup calls the optional `byFont.destroy(element)` before removing the captured element. Delayed dismissal keeps that element reference so it cannot remove a newer modal with the same ID.
+Modal cleanup destroys optional font controls and removes the captured element, preserving replacements with the same ID. `byCommon.accessibilityText(mode)` adjusts root size by `0.25rem` for `"plus"`/`"minus"`, within `0.5rem`–`3rem`; no argument resets `1rem`.
 
 Data, HTML-text escaping, and CSRF utilities are native. UI and HTTP/form helpers use jQuery; modals also need Bootstrap. WebSocket transport is native, with jQuery DOM logging.
 
@@ -136,89 +84,60 @@ Requires native `CompressionStream`/`DecompressionStream` support for `deflate-r
 
 ### Optional Google Fonts
 
-`_fonts.js` loads fonts with native browser APIs and Promises, so standalone pages can use it without jQuery or the SPA runtime. Optional pickers require jQuery, Select2, and `_common.css`; load those before calling `byFont.init()` and mark font inputs or selects with `data-font-picker`. The font helper may load before its UI libraries; picker methods leave controls unchanged until those libraries are available.
+`_fonts.js` loads fonts natively with caching and offline fallbacks. Optional pickers need jQuery, Select2, `_common.css`, and `data-font-picker` controls:
 
 ```html
 <script src="./spa.php/_fonts.js" defer></script>
 <input name="fontFamily" data-font-picker value="Inter" />
 ```
 
-`byCommon.init()` calls `byFont.init()` to enhance marked font controls. `_fonts.js` cleans routed controls on `bySPA:before-unload`; modal removal calls `byFont.destroy(modal)` directly. Bootstrap setup preserves already enhanced selects. Repeated initialization preserves existing widgets; without the optional module or Select2, ordinary controls remain usable.
+`byFont.family(value, fallback)` returns a CSS stack; `await byFont.ready(value, weight, text)` returns readiness before measurement. Use `byFont.init(container)` / `byFont.destroy(container)` for dynamic fields, or `byFont.picker(field, { weight, previewText, fallback })` for one control; `weight` can be a control.
 
-`byFont.family(value, fallback)` requests a selected Google family and returns its CSS stack. Use `await byFont.ready(value, weight, text)` before measuring animated text; it returns a native `Promise<boolean>`. The bundled catalog contains 350 families; only selected families and visible dropdown samples load, with `display=swap`, cached requests, and offline fallbacks. Applications retain ownership of font values and persistence.
-
-For dynamic controls, call `byFont.init(container)` after insertion and `byFont.destroy(container)` before removal. `byFont.picker(field, { weight, previewText, fallback })` returns the enhanced select; `weight` can be a form control. Maintain `_fonts.js` here as the shared source and keep the SPA.js implementation in sync. Other projects load the module from a SPA checkout rather than maintaining their own copies.
+`byCommon.init()` enhances marked fields; navigation/modal cleanup disposes them. Repeated initialization preserves widgets; absent optional libraries leave ordinary controls usable. Applications own font values and persistence.
 
 ### Fragment scripts and error pages
 
-Trusted page and component scripts execute as real script elements. Inline and non-async external scripts keep their order; `defer` fragments and non-async modules are awaited too. Explicit external `async` scripts run independently. Script attributes, including CSP/SRI and data attributes, are preserved.
+Fragments are trusted application HTML. Ordered external/inline scripts, `defer`, and modules preserve source order and attributes; explicit external `async` scripts run independently. Failures log and continue; stale fragments stop. `bySPA:load` waits for ordered page/component scripts. Sequencing uses `async`/`await`; public requests retain jQuery promises.
 
-Fragment sequencing uses `async`/`await`; public AJAX/navigation results retain their jQuery promise interface.
-
-External script failures are logged but do not stop later scripts or fail navigation. Superseded fragments stop processing. `bySPA:load` waits for the current page and components' ordered scripts.
-
-Error pages replace the full document and use the same script rules. History navigation away reloads the application with a clean runtime.
+Error pages replace the full document. Back reloads a clean runtime, including while error-page scripts load.
 
 ## Security basics
 
-Authorization belongs to your application. Keep role and tenant checks explicit at each endpoint; HTML fragments are trusted application content.
-
-- `_auth.php` uses strict sessions and secure cookies on HTTPS. Login regenerates the session ID by default; call CSRF checks on state-changing endpoints.
-- Supply a CSRF token in a meta tag or `sessionStorage`; `_functions.js` includes it in jQuery POST requests:
+Applications own authorization and must sanitize untrusted HTML. `_auth.php` uses strict sessions and regenerates login session IDs; require CSRF checks on state-changing endpoints. Browser request helpers prefer a meta token, then `sessionStorage.CSRF_TOKEN`:
 
 ```php
 <meta name="csrf-token" content="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, "UTF-8") ?>" />
 ```
 
-```js
-sessionStorage.setItem("CSRF_TOKEN", token);
-```
-
-- `session_check()` validates the session without rewriting `$_GET` or `$_POST`. A form POST to an SPA route is forwarded once and never stored in history.
-- `make_http_request()` attempts POST once and does not replay ambiguous failures with another protocol. Transport failure returns `false` or the existing decoded result; invalid URLs return `null`.
-- Session IDs are forwarded only with `ALLOW_POST_SESSION_ID` enabled and a URL matching `APP_URL`. Leave it disabled unless a controlled same-application request needs it.
-- Set `APP_URL` behind a proxy, or enable `TRUST_PROXY` with exact `TRUSTED_PROXIES` addresses. Other forwarded headers are ignored. Validate user-influenced outbound URLs to prevent SSRF.
-- `build_sql_query()` rejects UPDATE/DELETE without a valid condition. Full-table changes require `allow_full_table => true`; relaxed validation does not grant that permission.
-- Empty `NOT IN []` is not a restrictive condition. Relaxed mutations need another restrictive condition or full-table permission; strict mutations reject it even with either. Empty `IN []` matches nothing. Trusted SQL fragments are not checked for arbitrary tautologies.
-- Keep the supplied denial of all `tests` path segments, including submodules. In Nginx it must precede the PHP handler and sit outside overriding `^~` locations. CLI tests also reject web execution.
-- Track `composer.lock` in applications for reproducible installs.
-
-For local HTTP diagnostics only:
-
-```bash
-php -S 127.0.0.1:8000 -t tests
-```
-
-This bypasses production rewrites on loopback. `get_and_post.php` and `test_pass.php` return plain text with `nosniff`; do not expose this server publicly.
-
-`byCommon.accessibilityText("plus")` and `byCommon.accessibilityText("minus")` change the `html` font size by `0.25rem`, within `0.5rem` to `3rem`. Calling it without a mode resets the root to `1rem`. Body text, headings, Bootstrap font-size utilities, and other `rem` dimensions follow the root scale; `body` remains `1rem` to avoid compounding it.
+- `session_check()` preserves GET/POST. Initial form POST data is forwarded once, never stored in history. PHP `make_http_request()` does not retry ambiguous POST failures.
+- Session-ID forwarding requires `ALLOW_POST_SESSION_ID` and a URL matching `APP_URL`. Behind proxies, set `APP_URL` or configure exact `TRUSTED_PROXIES` with `TRUST_PROXY`; validate outbound URLs.
+- SQL UPDATE/DELETE needs a restrictive condition or explicit `allow_full_table => true`. Empty `NOT IN []` is not restrictive and strict mode rejects it. Trusted SQL fragments are not checked for tautologies.
+- Block every `tests` path segment, including submodules. Nginx denial must precede PHP handling and sit outside overriding `^~` locations. Test scripts are CLI-only.
+- Track application `composer.lock` for reproducible installs.
 
 ## Maintaining a submodule integration
 
-Framework changes belong here. Consumers pin a commit, so they must review and record their own submodule update separately.
-
-1. Review the old and new framework commits.
-2. Reconcile application-owned `_init.php` and `_routes.php`, preserving application settings. Updating the submodule does not update copied initialization.
-3. Run the framework's [CI checks](.github/workflows/ci.yml).
-4. Test affected behavior in the consuming application before recording its upgrade.
-
-### Shared SPA maintenance
-
 Keep `_fonts.js`, `_functions.js`, `_common.js`, and `_common.css` identical across both SPAs; SPA.php owns the shared source. `_spa.js`, routing, transport, history, and application bootstrap retain host-specific behavior.
 
-Neither repository synchronizes the other automatically. Compare reviewed immutable commits, preserve application-owned initializer settings, and test affected consumers.
+For upgrades, review changes, reconcile application-owned `_init.php`/`_routes.php` without losing settings, run checks, and test the consumer. Submodule updates do not update copied initializers. Neither repository synchronizes the other automatically.
+
+### Checks
+
+```bash
+node --test tests/common.test.js tests/fragment_scripts.test.js tests/routing.test.js tests/storage.test.js tests/parity.test.js tests/fonts.test.js
+node --test tests/browser.test.js tests/fonts.browser.test.js
+```
+
+Browser tests require Playwright and Chromium, or `BROWSER_CHANNEL=chrome`. See [CI](.github/workflows/ci.yml) for PHP/SQL/auth/HTTP checks and [shared contract checks](tests/SPA_PARITY.md) for comparison rules. `SPA_JS_TREE` selects a Git object store; [parity-source.js](tests/parity-source.js) pins the reviewed revision, ignoring its working tree and HEAD.
 
 ## Related tools
 
-- [easy-md-viewer](https://github.com/byuwur/easy-md-viewer): Readable, themed Markdown with rich formatting and zero dependencies.
-- [easy-json-viewer](https://github.com/byuwur/easy-json-viewer): Explore large JSON documents with collapsible trees and responsive rendering.
-- [easy-http-error](https://github.com/byuwur/easy-http-error): Friendly bilingual error pages that work even when PHP fails.
-- [easy-sidebar-bootstrap](https://github.com/byuwur/easy-sidebar-bootstrap): Responsive Bootstrap navigation that remembers your sidebar preferences.
+[easy-md-viewer](https://github.com/byuwur/easy-md-viewer) · [easy-json-viewer](https://github.com/byuwur/easy-json-viewer) · [easy-http-error](https://github.com/byuwur/easy-http-error) · [easy-sidebar-bootstrap](https://github.com/byuwur/easy-sidebar-bootstrap)
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow and [CODING_STANDARDS.md](CODING_STANDARDS.md) for engineering standards.
+Follow [CODING_STANDARDS.md](CODING_STANDARDS.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
-MIT (c) Andrés Trujillo [Mateus] byUwUr
+[MIT](LICENSE.md) · Copyright (c) Andrés Trujillo [Mateus] byUwUr
