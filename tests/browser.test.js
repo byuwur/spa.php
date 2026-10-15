@@ -255,6 +255,47 @@ test("shared: navigation has one terminal outcome, including stale work and erro
   ]);
 });
 
+test("local lifecycle listeners hand navigation ownership to their recovery route", { skip: Boolean(reference) }, async (t) => {
+  for (const stage of ["before-unload", "error", "transport-error"]) {
+    await t.test(stage, async (t) => {
+      const page = await application(t);
+      const result = await page.evaluate(async (stage) => {
+        events.length = requests.length = 0;
+        let recovery;
+        let finishRecovery;
+        let probes = 0;
+        window.remote_file_exists = () => { probes++; return $.Deferred().resolve(true).promise(); };
+        const ajax = $.ajax;
+        $.ajax = (options) => {
+          if (options.url.includes("next.php")) {
+            requests.push(options);
+            const pending = $.Deferred();
+            finishRecovery = () => pending.resolve("<p>Recovery</p>");
+            return pending.promise();
+          }
+          if (stage === "transport-error" && options.url.includes("known.php")) return $.Deferred().reject({ status: 503, responseText: "Old error" }, "error", "unavailable").promise();
+          return ajax(options);
+        };
+        document.addEventListener(stage === "before-unload" ? "bySPA:before-unload" : "bySPA:error", () => { recovery = bySPA.load("/next"); }, { once: true });
+        await bySPA.load(stage === "transport-error" ? "/known" : "/unknown");
+        const pendingHTML = document.getElementById("spa-content")?.innerHTML;
+        finishRecovery();
+        await recovery;
+        return { events: events.map((event) => event.type), requests: requests.map((request) => request.url), pendingHTML, probes, html: document.getElementById("spa-content")?.innerHTML, url: bySPA.URL };
+      }, stage);
+      assert.equal(result.pendingHTML, "");
+      assert.equal(result.probes, 0);
+      assert.equal(result.html, "<p>Recovery</p>");
+      assert.equal(result.url, "/next");
+      assert.equal(result.requests.length, 1);
+      assert.ok(result.requests[0].includes("next.php"));
+      assert.deepEqual(result.events, stage === "before-unload"
+        ? ["bySPA:before-unload", "bySPA:before-unload", "bySPA:load"]
+        : ["bySPA:before-unload", "bySPA:error", "bySPA:before-unload", "bySPA:load"]);
+    });
+  }
+});
+
 test("shared: both click handlers preserve native ownership and existing-target scrolling", async (t) => {
   const page = await application(t);
   const cases = [

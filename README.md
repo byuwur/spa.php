@@ -105,7 +105,7 @@ Keeping these files local gives you control over updates and availability. Updat
 - Component GET data replaces overlapping query keys; `uri=false` stays authoritative.
 - Navigation emits `bySPA:before-unload`, then `bySPA:load` on success or `bySPA:error` on failure. The timeout is 30 seconds (`bySPA.REQUEST_TIMEOUT`).
 - Unknown routes emit one error before loading the standalone error page. A failed error-page load adds no second terminal event. Error details are `{ navigationId, url, status, error }`; status `0` means no transport status.
-- Superseded requests cannot update the newer page or emit a terminal event. Initial browser loading follows the same rules; initial requests rejected by PHP never begin a browser SPA lifecycle. FILE routes leave the document without a success event.
+- Superseded requests cannot update the newer page or emit a terminal event, including when synchronous lifecycle listeners start another navigation. Initial browser loading follows the same rules; initial requests rejected by PHP never begin a browser SPA lifecycle. FILE routes leave the document without a success event.
 
 `HOME_PATH` resolves requests and history. Ordinary primary clicks on same-origin links are routed; the application prefix is removed for links inside it. Root-relative virtual links such as `/home` keep their route path, including unknown routes. Targets, downloads, hashes, and `custom-folder="true"` retain browser navigation. PHP uses path routing; `#/` links remain native. Smooth scrolling applies only to an existing same-document ID with the same origin, path, and query.
 

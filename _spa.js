@@ -370,6 +370,8 @@
     const navigationId = ++bySPA.NAVIGATION_ID;
     const historyMode = typeof mode === "object" ? mode : {};
     document.dispatchEvent(new CustomEvent("bySPA:before-unload", { detail: { navigationId, url } }));
+    // Public listeners can synchronously hand ownership to a newer navigation.
+    if (navigationId !== bySPA.NAVIGATION_ID) return $.when(null);
     // Log debug information if in development mode
     if (bySPA.APP_ENV === "DEV") console.log(`loadSPA("${url}", ${parse_json(mode)})`);
     $("#spa-loader").fadeIn(1);
@@ -380,6 +382,7 @@
       if (historyMode.push) historyPush(`${url}`);
       if (historyMode.replace) historyReplace(`${url}`);
       document.dispatchEvent(new CustomEvent("bySPA:error", { detail: { navigationId, url, status: 404, error } }));
+      if (navigationId !== bySPA.NAVIGATION_ID) return $.when(null);
       return bySPA.errorPage(404, error, navigationId).always(function () {
         if (navigationId === bySPA.NAVIGATION_ID) $("#spa-loader").fadeOut(byCommon.GLOBAL_TRANSITION_DURATION);
       });
@@ -432,6 +435,7 @@
         if (navigationId !== bySPA.NAVIGATION_ID) return null;
         console.error(`Error (SPA): ${xhr?.status} ${status} ${error}`, bySPA.APP_ENV == "DEV" ? xhr : "");
         document.dispatchEvent(new CustomEvent("bySPA:error", { detail: { navigationId, url, status: xhr?.status || 0, error } }));
+        if (navigationId !== bySPA.NAVIGATION_ID) return null;
         $("#spa-content").html(xhr?.responseText || /* HTML */ `<pre>Error ${xhr?.status || 0}</pre>`);
         return null;
       })
