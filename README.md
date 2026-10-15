@@ -178,7 +178,7 @@ php -S 127.0.0.1:8000 -t tests
 
 This bypasses production rewrites on loopback. `get_and_post.php` and `test_pass.php` return plain text with `nosniff`; do not expose this server publicly.
 
-`byCommon.accessibilityText("plus")` and `byCommon.accessibilityText("minus")` change body text size by `0.25rem`, within `0.5rem` to `3rem`. Calling it without a mode resets text to `1rem`.
+`byCommon.accessibilityText("plus")` and `byCommon.accessibilityText("minus")` change the `html` font size by `0.25rem`, within `0.5rem` to `3rem`. Calling it without a mode resets the root to `1rem`. Body text, headings, Bootstrap font-size utilities, and other `rem` dimensions follow the root scale; `body` remains `1rem` to avoid compounding it.
 
 ## Maintaining a submodule integration
 

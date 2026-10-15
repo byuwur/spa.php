@@ -73,31 +73,31 @@ test("initBootstrap supports the same one-call suppression", () => {
   assert.equal(harness.warnings.length, 0);
 });
 
-test("accessibility text uses quarter-rem steps and resets", () => {
+test("accessibility text resizes only the root in quarter-rem steps and resets", () => {
   const { byCommon, styles } = loadCommon();
   assert.equal(byCommon.fontSize, 1);
   byCommon.accessibilityText("plus");
   assert.equal(byCommon.fontSize, 1.25);
-  assert.equal(styles.body["font-size"], "1.25rem");
+  assert.equal(styles.html["font-size"], "1.25rem");
   byCommon.accessibilityText("mas");
-  assert.equal(styles.body["font-size"], "1.5rem");
+  assert.equal(styles.html["font-size"], "1.5rem");
   byCommon.accessibilityText("minus");
-  assert.equal(styles.body["font-size"], "1.25rem");
+  assert.equal(styles.html["font-size"], "1.25rem");
   byCommon.accessibilityText("menos");
-  assert.equal(styles.body["font-size"], "1rem");
+  assert.equal(styles.html["font-size"], "1rem");
   byCommon.accessibilityText();
-  assert.equal(styles.body["font-size"], "1rem");
-  assert.equal(styles.html, undefined);
+  assert.equal(styles.html["font-size"], "1rem");
+  assert.equal(styles.body, undefined);
 });
 
 test("accessibility text stays within half-rem and three-rem limits", () => {
   const { byCommon, styles } = loadCommon();
   for (let i = 0; i < 30; i++) byCommon.accessibilityText("plus");
-  assert.equal(styles.body["font-size"], "3rem");
+  assert.equal(styles.html["font-size"], "3rem");
   for (let i = 0; i < 30; i++) byCommon.accessibilityText("minus");
-  assert.equal(styles.body["font-size"], "0.5rem");
+  assert.equal(styles.html["font-size"], "0.5rem");
   byCommon.accessibilityText();
-  assert.equal(styles.body["font-size"], "1rem");
+  assert.equal(styles.html["font-size"], "1rem");
 });
 
 test("jQuery modules stop before publishing APIs or reading application state when the dependency is missing", () => {

@@ -457,7 +457,7 @@
         byCommon.fontSize = 1;
         break;
     }
-    $("body").css("font-size", `${byCommon.fontSize}rem`);
+    $("html").css("font-size", `${byCommon.fontSize}rem`);
   };
   byCommon.accessibilityMotion = () => $("html").toggleClass("no-motion");
   byCommon.accessibilityDyslexia = () => $("body").toggleClass("dyslexia");
