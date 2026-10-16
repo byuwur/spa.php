@@ -109,6 +109,7 @@ body {
 }
 * {
   min-width: 0;
+  min-height: 0;
   /* scroll */
   scrollbar-color: #111 #fff;
   /* anim */
@@ -1773,21 +1774,21 @@ label:has(input[type="checkbox"]:disabled, input[role="switch"]:disabled) {
   position: fixed;
   top: 12.5vh;
   right: 0;
+  max-height: -webkit-fill-available;
+  max-height: stretch;
 }
 #bywr-accessibility,
 #bywr-accessibility-buttons {
   display: flex;
   flex-direction: column;
   align-items: end;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 0.25rem;
   z-index: 1001;
   transform-origin: right;
 }
 #bywr-accessibility-buttons {
-  max-height: 90vh;
   overflow-y: auto;
-  flex-wrap: nowrap;
 }
 @media (max-width: 36rem) {
   #bywr-accessibility {
@@ -1796,6 +1797,7 @@ label:has(input[type="checkbox"]:disabled, input[role="switch"]:disabled) {
 }
 #bywr-accessibility a {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
   height: 3rem;
