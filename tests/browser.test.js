@@ -63,9 +63,17 @@ test("local HTML and CSRF utilities work without jQuery or SPA initialization", 
   });
   assert.deepEqual(result, {
     escaped: ['&lt;img src=x onerror="alert(1)"&gt;&amp;', "", "", "0", "false", "Caf\u00e9 \u{1f600}"],
-    preferred: "meta-token", fallback: "stored-token", missing: "",
-    payload: [{ name: "message", value: "Hello" }, { name: "_csrf", value: "meta-token" }],
-    explicit: [{ name: "_csrf", value: "explicit-token" }], readOnly: [], sameArray: true, standalone: true
+    preferred: "meta-token",
+    fallback: "stored-token",
+    missing: "",
+    payload: [
+      { name: "message", value: "Hello" },
+      { name: "_csrf", value: "meta-token" }
+    ],
+    explicit: [{ name: "_csrf", value: "explicit-token" }],
+    readOnly: [],
+    sameArray: true,
+    standalone: true
   });
 });
 
@@ -75,7 +83,12 @@ async function application(t, preferences = {}) {
   await page.route("**/*", (route) =>
     route.fulfill({
       contentType: "text/html",
-      body: /* HTML */ `<main id="spa-content"></main><div id="spa-loader"></div><div id="component"></div><div id="section"></div><form id="form"><button type="submit"></button></form><form id="other"></form>`
+      body: /* HTML */ `<main id="spa-content"></main>
+        <div id="spa-loader"></div>
+        <div id="component"></div>
+        <div id="section"></div>
+        <form id="form"><button type="submit"></button></form>
+        <form id="other"></form>`
     })
   );
   await page.goto("https://example.test/app/known?q=a?b");
@@ -118,11 +131,11 @@ async function initializePage(page, preferences = {}) {
           else
             pending.resolve(
               /_error\.(php|html)/.test(options.url)
-                ? /* HTML */ `<html
-                    ><body
-                      >Error fixture</body
-                    ></html
-                  >`
+                ? /* HTML */ `<html>
+                    <body>
+                      Error fixture
+                    </body>
+                  </html>`
                 : /* HTML */ `<p>Fragment</p>`
             );
         },
@@ -264,7 +277,10 @@ test("local lifecycle listeners hand navigation ownership to their recovery rout
         let recovery;
         let finishRecovery;
         let probes = 0;
-        window.remote_file_exists = () => { probes++; return $.Deferred().resolve(true).promise(); };
+        window.remote_file_exists = () => {
+          probes++;
+          return $.Deferred().resolve(true).promise();
+        };
         const ajax = $.ajax;
         $.ajax = (options) => {
           if (options.url.includes("next.php")) {
@@ -276,7 +292,13 @@ test("local lifecycle listeners hand navigation ownership to their recovery rout
           if (stage === "transport-error" && options.url.includes("known.php")) return $.Deferred().reject({ status: 503, responseText: "Old error" }, "error", "unavailable").promise();
           return ajax(options);
         };
-        document.addEventListener(stage === "before-unload" ? "bySPA:before-unload" : "bySPA:error", () => { recovery = bySPA.load("/next"); }, { once: true });
+        document.addEventListener(
+          stage === "before-unload" ? "bySPA:before-unload" : "bySPA:error",
+          () => {
+            recovery = bySPA.load("/next");
+          },
+          { once: true }
+        );
         await bySPA.load(stage === "transport-error" ? "/known" : "/unknown");
         const pendingHTML = document.getElementById("spa-content")?.innerHTML;
         finishRecovery();
@@ -289,9 +311,7 @@ test("local lifecycle listeners hand navigation ownership to their recovery rout
       assert.equal(result.url, "/next");
       assert.equal(result.requests.length, 1);
       assert.ok(result.requests[0].includes("next.php"));
-      assert.deepEqual(result.events, stage === "before-unload"
-        ? ["bySPA:before-unload", "bySPA:before-unload", "bySPA:load"]
-        : ["bySPA:before-unload", "bySPA:error", "bySPA:before-unload", "bySPA:load"]);
+      assert.deepEqual(result.events, stage === "before-unload" ? ["bySPA:before-unload", "bySPA:before-unload", "bySPA:load"] : ["bySPA:before-unload", "bySPA:error", "bySPA:before-unload", "bySPA:load"]);
     });
   }
 });

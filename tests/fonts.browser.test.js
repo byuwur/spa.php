@@ -47,13 +47,13 @@ async function fontPage(t, markup) {
 test("common initialization preserves saved fonts, reuses widgets, and resets previews", async (t) => {
   const { page, requests, errors } = await fontPage(
     t,
-    /* HTML */ ` <main id="spa-content"
-      ><form id="settings">
+    /* HTML */ `<main id="spa-content">
+      <form id="settings">
         <label>Font <input id="font" name="fontFamily" class="form-control" data-font-picker value="My Installed Font" maxlength="80" /></label>
         <input id="weight" type="number" value="700" />
         <button type="reset">Reset</button>
-      </form></main
-    >`
+      </form>
+    </main>`
   );
   await page.evaluate(() => {
     byFont.picker(document.getElementById("font"), { weight: document.getElementById("weight") });
@@ -93,29 +93,29 @@ test("common initialization preserves saved fonts, reuses widgets, and resets pr
 test("modal initialization retains font templates and removes old-route controls", async (t) => {
   const { page, errors } = await fontPage(
     t,
-    /* HTML */ ` <main id="spa-content"
-      ><div id="font-modal" class="modal" tabindex="-1">
-        <div class="modal-dialog"
-          ><div class="modal-content"
-            ><form>
+    /* HTML */ ` <main id="spa-content">
+      <div id="font-modal" class="modal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <form>
               <label
                 >Font
-                <select id="font" name="font" data-font-picker
-                  ><option selected value="Arial">Arial</option></select
-                ></label
+                <select id="font" name="font" data-font-picker>
+                  <option selected value="Arial">Arial</option>
+                </select></label
               >
               <label>Other font <input id="font-input" data-font-picker value="Georgia" /></label>
-              <select id="ordinary"
-                ><option>Ordinary</option></select
-              >
-              <select id="custom"
-                ><option>Custom</option></select
-              >
-            </form></div
-          ></div
-        >
-      </div></main
-    >`
+              <select id="ordinary">
+                <option>Ordinary</option>
+              </select>
+              <select id="custom">
+                <option>Custom</option>
+              </select>
+            </form>
+          </div>
+        </div>
+      </div>
+    </main>`
   );
   await page.evaluate(() => {
     window.bySPA = { URL: "/first" };
@@ -151,10 +151,11 @@ test("modal initialization retains font templates and removes old-route controls
 test("dynamic font fields load visible samples only and dispose on SPA navigation", async (t) => {
   const { page, requests, errors } = await fontPage(
     t,
-    /* HTML */ ` <main id="spa-content"
-      ><form
-        ><label>Font <input id="font" data-font-picker value="Arial" /></label></form
-    ></main>`
+    /* HTML */ ` <main id="spa-content">
+      <form>
+        <label>Font <input id="font" data-font-picker value="Arial" /></label>
+      </form>
+    </main>`
   );
   await page.evaluate(() => byCommon.init({ showWarn: false }));
   await page.waitForFunction(() => $("#font").data("select2"));
@@ -177,14 +178,14 @@ test("dynamic font fields load visible samples only and dispose on SPA navigatio
 test("font cleanup preserves unrelated widgets", async (t) => {
   const { page, errors } = await fontPage(
     t,
-    /* HTML */ ` <main id="spa-content"
-      ><form id="settings">
+    /* HTML */ ` <main id="spa-content">
+      <form id="settings">
         <label>Font <input id="font" data-font-picker value="Arial" /></label>
-        <select id="ordinary"
-          ><option>Ordinary</option></select
-        >
-      </form></main
-    >`
+        <select id="ordinary">
+          <option>Ordinary</option>
+        </select>
+      </form>
+    </main>`
   );
   await page.evaluate(() => {
     $("#ordinary").select2();
@@ -215,20 +216,20 @@ test("Bootstrap modal controls remain usable without optional font methods", asy
     await t.test(name, async (t) => {
       const { page, errors } = await fontPage(
         t,
-        /* HTML */ ` <main id="spa-content"
-            ><div id="font-modal" class="modal"
-              ><div class="modal-dialog"
-                ><div class="modal-content">
+        /* HTML */ ` <main id="spa-content">
+            <div id="font-modal" class="modal">
+              <div class="modal-dialog">
+                <div class="modal-content">
                   <label
                     >Font
-                    <select id="font" data-font-picker
-                      ><option>Arial</option></select
-                    ></label
+                    <select id="font" data-font-picker>
+                      <option>Arial</option>
+                    </select></label
                   >
-                </div></div
-              ></div
-            ></main
-          >
+                </div>
+              </div>
+            </div>
+          </main>
           <div id="stale-modal" class="modal" data-byspa-modal="true" data-byspa-route="previous"></div>`
       );
       await page.evaluate((namespace) => {
