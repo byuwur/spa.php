@@ -1786,13 +1786,12 @@ label:has(input[type="checkbox"]:disabled, input[role="switch"]:disabled) {
 }
 #bywr-accessibility-buttons {
   max-height: 90vh;
+  overflow-y: auto;
+  flex-wrap: nowrap;
 }
 @media (max-width: 36rem) {
   #bywr-accessibility {
     top: 17.5vh;
-  }
-  #bywr-accessibility-buttons {
-    max-height: 85vh;
   }
 }
 #bywr-accessibility a {
