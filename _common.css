@@ -553,7 +553,6 @@ th {
     transition: none;
   }
 }
-
 /* === BUTTONS === */
 .btn {
   padding: 0.25rem 0.5rem;
@@ -829,7 +828,6 @@ label:has(input[type="checkbox"]:disabled, input[role="switch"]:disabled) {
 [data-bs-theme="dark"] .select2-container--default.select2-container--focus .select2-selection {
   border-color: var(--primary-foreground);
 }
-
 /* === INPUTS === */
 :disabled,
 :disabled * {
@@ -999,7 +997,6 @@ label:has(input[type="checkbox"]:disabled, input[role="switch"]:disabled) {
   width: 100%;
   margin-top: 0.5rem;
 }
-
 /* === NAVBAR === */
 @media (hover: hover) and (pointer: fine) {
   .dropdown:hover > .dropdown-menu,
@@ -1039,7 +1036,6 @@ label:has(input[type="checkbox"]:disabled, input[role="switch"]:disabled) {
   margin: 0;
   transform: none !important;
 }
-
 /* === BACKGROUNDS AND IMAGES === */
 .has-background-cover {
   position: relative;

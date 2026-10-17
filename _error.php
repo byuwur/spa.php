@@ -186,34 +186,27 @@ function e(string $value): string
         background-color 0.3s ease,
         filter 0.3s ease !important;
     }
-
     html {
       font-size: 16px;
     }
-
     body {
       font-size: 1rem;
     }
-
-
     html,
     body {
       margin: 0;
       min-height: 100%;
       font-family: "Lucida Console", Courier, monospace;
     }
-
     body {
       overflow: hidden;
     }
-
     #body {
       background: linear-gradient(90deg, #311 25%, #111 100%);
       width: 100%;
       min-height: 100vh;
       min-height: 100svh;
     }
-
     #cubes,
     #message-box {
       color: #fff;
@@ -223,11 +216,9 @@ function e(string $value): string
       height: 100svh;
       top: 0;
     }
-
     #cubes {
       left: 5%;
     }
-
     #message-box {
       display: flex;
       flex-direction: column;
@@ -238,44 +229,36 @@ function e(string $value): string
       padding: 1.5rem;
       overflow-y: auto;
     }
-
     #message-box .country-flag {
       width: 1rem;
       height: 0.75rem;
     }
-
     #message-box .brand-logo {
       width: 8.75rem;
       height: 8.75rem;
     }
-
     #message-box a {
       color: #fff;
       font-size: 1rem;
       margin: 0.5rem 0 1.5rem;
     }
-
     #message-box span {
       font-size: 1rem;
       margin-bottom: 0.25rem;
     }
-
     #message-box h1 {
       font-size: clamp(6rem, 18vw, 12rem);
       margin: 0;
       line-height: 1;
     }
-
     #message-box p {
       font-size: clamp(1.5rem, 4vw, 2.5rem);
       margin: 0.25rem;
       line-height: 1;
     }
-
     #action-link-wrap {
       margin: 2rem 0;
     }
-
     #action-link-wrap .btn {
       background: #600;
       border: 0;
@@ -288,16 +271,13 @@ function e(string $value): string
       cursor: pointer;
       text-transform: uppercase;
     }
-
     #action-link-wrap .btn:hover {
       background: #900;
     }
-
     #action-link-wrap .btn:focus-visible {
       outline: 0.125rem solid #fff;
       outline-offset: 0.1875rem;
     }
-
     #poly1,
     #poly2,
     #poly3,
@@ -305,31 +285,24 @@ function e(string $value): string
     #poly5 {
       animation: 2.5s ease-in-out infinite alternate floatCubes;
     }
-
     #poly2 {
       animation-delay: 0.25s;
     }
-
     #poly3 {
       animation-delay: 0.5s;
     }
-
     #poly4 {
       animation-delay: 0.75s;
     }
-
     #poly5 {
       animation-delay: 1s;
     }
-
     @keyframes floatCubes {
       100% {
         transform: translateY(1.5rem);
       }
     }
-
     @media (max-width: 55rem) {
-
       #cubes,
       #message-box {
         width: 100vw;
@@ -339,10 +312,12 @@ function e(string $value): string
   </style>
   <script>
     "use strict";
-    window.addEventListener("popstate", function () {
+    window.addEventListener("popstate", function() {
       console.log('Go back event');
       window.location.reload();
-    }, { once: true });
+    }, {
+      once: true
+    });
   </script>
 </head>
 
