@@ -101,14 +101,14 @@ test("accessibility text stays within half-rem and three-rem limits", () => {
 });
 
 test("jQuery modules stop before publishing APIs or reading application state when the dependency is missing", () => {
-  const files = ["_common.js", "_spa.js"];
-  for (const file of files) {
+  const modules = { "_common.js": ["byCommon"], "_spa.js": ["bySPA"] };
+  for (const [file, namespaces] of Object.entries(modules)) {
     const errors = [];
     const window = {};
     const context = { window, console: { error: (message) => errors.push(message) } };
     vm.runInNewContext(fs.readFileSync(path.join(__dirname, "..", file), "utf8"), context);
-    assert.deepEqual(Object.keys(window), file === "_common.js" ? ["byCommon"] : [], `${file} published unexpected globals`);
-    if (file === "_common.js") assert.deepEqual(Object.keys(window.byCommon), []);
+    assert.deepEqual(Object.keys(window), namespaces, `${file} published unexpected globals`);
+    for (const namespace of namespaces) assert.deepEqual(Object.keys(window[namespace]), [], `${file} initialized without jQuery`);
     assert.deepEqual(errors, [`Init ${file} FAILED. No jQuery found.`]);
   }
 });
