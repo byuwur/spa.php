@@ -150,6 +150,23 @@ async function initializePage(page, preferences = {}) {
   return page;
 }
 
+test("demo sidebar keeps its logo inside the header when collapsed and expanded", async (t) => {
+  const page = await browser.newPage({ viewport: { width: 400, height: 320 } });
+  t.after(() => page.close());
+  const markup = execFileSync(process.env.PHP_BINARY || "php", ["sidebar.php"], { cwd: path.join(__dirname, "../demo"), encoding: "utf8" });
+  await page.setContent(`<!doctype html><html class="no-motion"><body>${markup}</body></html>`);
+  for (const file of ["css/bootstrap.min.css", "_common.css"]) await page.addStyleTag({ path: path.join(__dirname, "..", file) });
+  for (const width of [400, 1280]) {
+    await page.setViewportSize({ width, height: 320 });
+    for (const expanded of [false, true]) {
+      await page.locator("#bywr-sidebar").evaluate((element, expanded) => element.classList.toggle("bywr-sidebar-expanded", expanded), expanded);
+      const header = await page.locator(".bywr-sidebar-header").boundingBox();
+      const logo = await page.locator(".bywr-sidebar-header .navbar-brand").boundingBox();
+      assert.ok(logo.y >= header.y && logo.y + logo.height <= header.y + header.height, `${width}px, expanded=${expanded}: header contains its logo`);
+    }
+  }
+});
+
 test("accessibility text scales inherited text, headings, and Bootstrap utilities together", async (t) => {
   const page = await application(t);
   await page.addStyleTag({ path: path.join(__dirname, "../css/bootstrap.min.css") });
