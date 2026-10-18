@@ -7,6 +7,12 @@ $_SERVER = ["REMOTE_ADDR" => "203.0.113.10", "HTTP_HOST" => "example.test", "SER
 $_ENV = [];
 require_once __DIR__ . "/../_init.php";
 
+/**
+ * Proxy assert.
+ * @param bool $condition Condition required for the test to pass.
+ * @param string $message Message to display or report.
+ * @return void No value is returned.
+ */
 function proxy_assert(bool $condition, string $message): void
 {
   if (!$condition)

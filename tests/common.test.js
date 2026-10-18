@@ -4,7 +4,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
 
-function loadCommon() {
+function loadCommon(window = { byCommon: {} }) {
   const warnings = [];
   const errors = [];
   const styles = {};
@@ -28,7 +28,7 @@ function loadCommon() {
       }
     };
   };
-  const window = { byCommon: {}, jQuery: $ };
+  window.jQuery = $;
   vm.runInNewContext(fs.readFileSync(path.join(__dirname, "..", "_common.js"), "utf8"), {
     window,
     document: {},
@@ -107,7 +107,29 @@ test("jQuery modules stop before publishing APIs or reading application state wh
     const window = {};
     const context = { window, console: { error: (message) => errors.push(message) } };
     vm.runInNewContext(fs.readFileSync(path.join(__dirname, "..", file), "utf8"), context);
-    assert.deepEqual(Object.keys(window), [], file + " published a partial namespace");
-    assert.deepEqual(errors, ["Init " + file + " FAILED. No jQuery found."]);
+    assert.deepEqual(Object.keys(window), file === "_common.js" ? ["byCommon"] : [], `${file} published unexpected globals`);
+    if (file === "_common.js") assert.deepEqual(Object.keys(window.byCommon), []);
+    assert.deepEqual(errors, [`Init ${file} FAILED. No jQuery found.`]);
   }
+});
+
+test("byCommon preserves configuration after a missing dependency and initializes only once on retry", () => {
+  const byCommon = { SECTION_TOP_OVERHEAD: 125 };
+  const window = { byCommon };
+  const errors = [];
+  vm.runInNewContext(fs.readFileSync(path.join(__dirname, "..", "_common.js"), "utf8"), {
+    window,
+    console: { error: (message) => errors.push(message) }
+  });
+  assert.equal(window.byCommon, byCommon);
+  assert.deepEqual(Object.keys(byCommon), ["SECTION_TOP_OVERHEAD"]);
+  assert.deepEqual(errors, ["Init _common.js FAILED. No jQuery found."]);
+
+  loadCommon(window);
+  assert.equal(window.byCommon, byCommon);
+  assert.equal(byCommon.initialized, true);
+  assert.equal(byCommon.SECTION_TOP_OVERHEAD, 125);
+  const init = byCommon.init;
+  loadCommon(window);
+  assert.equal(byCommon.init, init);
 });

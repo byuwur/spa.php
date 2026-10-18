@@ -105,6 +105,11 @@ setcookie("lang", $lang, [
 
 http_response_code($err);
 
+/**
+ * Escape a value for safe HTML text or attribute output.
+ * @param string $value Value to validate or format.
+ * @return string The accepted result of this operation.
+ */
 function e(string $value): string
 {
   return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8");

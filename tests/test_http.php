@@ -8,6 +8,12 @@ $_ENV = ["APP_ENV" => "PROD"];
 require_once __DIR__ . "/../_init.php";
 require_once __DIR__ . "/../_functions.php";
 
+/**
+ * Http assert.
+ * @param bool $condition Condition required for the test to pass.
+ * @param string $message Message to display or report.
+ * @return void No value is returned.
+ */
 function http_assert(bool $condition, string $message): void
 {
   if (!$condition)
@@ -15,6 +21,11 @@ function http_assert(bool $condition, string $message): void
   echo "[PASS] {$message}" . PHP_EOL;
 }
 
+/**
+ * Capture the request outcome for an isolated HTTP contract assertion.
+ * @param callable $request Request operation to capture.
+ * @return array The accepted result of this operation.
+ */
 function captured_request(callable $request): array
 {
   ob_start();

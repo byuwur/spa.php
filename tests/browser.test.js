@@ -504,3 +504,34 @@ test("resource probes preserve HEAD fallback and jQuery promise compatibility", 
   assert.equal(result.invalid, false);
   assert.equal(result.invalidHasAlways, true);
 });
+
+test("duplicate runtime scripts preserve active navigation and bind handlers once", async (t) => {
+  const page = await application(t);
+
+  await page.evaluate(() => {
+    window.savedRuntime = { load: bySPA.load, common: byCommon.init, memory: byStorage.memory, navigation: bySPA.NAVIGATION_ID, history: bySPA.HISTORY_INDEX, requests: requests.length, events: events.length };
+  });
+  for (const file of ["_common.js", "_spa.js"]) await page.addScriptTag({ content: source(file) });
+  assert.equal(await page.evaluate(() => bySPA.initialized === true && byCommon.initialized === true), true);
+  assert.deepEqual(
+    await page.evaluate(() => ({
+      sameLoad: bySPA.load === savedRuntime.load,
+      sameCommon: byCommon.init === savedRuntime.common,
+      sameMemory: byStorage.memory === savedRuntime.memory,
+      sameNavigation: bySPA.NAVIGATION_ID === savedRuntime.navigation,
+      sameHistory: bySPA.HISTORY_INDEX === savedRuntime.history,
+      sameRequests: requests.length === savedRuntime.requests,
+      sameEvents: events.length === savedRuntime.events
+    })),
+    { sameLoad: true, sameCommon: true, sameMemory: true, sameNavigation: true, sameHistory: true, sameRequests: true, sameEvents: true }
+  );
+  await page.evaluate(() => {
+    const link = document.createElement("a");
+    link.href = "/app/known";
+    link.textContent = "Known route";
+    document.body.append(link);
+    link.click();
+  });
+  await page.waitForFunction(() => events.length > savedRuntime.events && events.at(-1).type === "bySPA:load");
+  assert.equal(await page.evaluate(() => requests.length - savedRuntime.requests), 1);
+});

@@ -22,9 +22,9 @@ function check_json(json) {
 }
 
 /**
- * Checks whether a value is valid JSON.
- * @param {any} json The data to check.
- * @return {boolean} Whether the input is a valid JSON string.
+ * Parse JSON text without throwing on malformed input.
+ * @param {string} json JSON text to decode; non-string input is rejected.
+ * @return {*} Parsed JSON value, or null for invalid/non-string input.
  */
 function parse_json(json) {
   if (typeof json != "string") return null;
@@ -55,6 +55,7 @@ function print_json(json) {
  * Compresses UTF-8 text to unpadded Base64url using native raw DEFLATE.
  * @param {string} value Text to compress; serialize JSON before calling.
  * @return {Promise<string>} URL-safe token. Rejects invalid input or unavailable native compression.
+ * @throws {TypeError}
  */
 async function compress_url_data(value) {
   if (typeof value !== "string") throw new TypeError("Expected a string to compress.");
@@ -70,6 +71,8 @@ async function compress_url_data(value) {
  * @param {string} value Token returned by compress_url_data().
  * @param {number} [maxBytes=1048576] Positive safe-integer limit for decompressed UTF-8 bytes.
  * @return {Promise<string>} Original text. Rejects malformed data, exceeded limits, or unavailable native decompression.
+ * @throws {TypeError}
+ * @throws {RangeError}
  */
 async function decompress_url_data(value, maxBytes = 1048576) {
   if (typeof value !== "string" || !/^[A-Za-z0-9_-]+$/.test(value) || value.length % 4 === 1) throw new TypeError("Expected an unpadded Base64url token.");
@@ -170,6 +173,7 @@ function dirname(path) {
  * (JS version: it just throws a special object to simulate termination)
  * @param {any} json The data to output.
  * @return {never}
+ * @throws {Error}
  */
 function exit_json(json) {
   console.warn(print_json(json));
@@ -221,6 +225,10 @@ function init_websocket(options) {
     $(elId).append($pre);
   };
 
+  /**
+   * Connect.
+   * @returns {void}
+   */
   function connect() {
     if (ws && ws.readyState === WebSocket.OPEN) return;
     console.log(`ws${appIsDEV ? `: ${ws_path}` : `.`}`);
@@ -253,6 +261,10 @@ function init_websocket(options) {
     };
   }
 
+  /**
+   * Retry.
+   * @returns {void}
+   */
   function retry() {
     if (retries > maxRetries) {
       logToEl(`ws.retry`, `Max retries reached (${maxRetries})`);
@@ -304,6 +316,7 @@ function init_websocket(options) {
  * @param {string} name The name of the cookie.
  * @param {string} value The value of the cookie.
  * @param {number} [seconds=31536000] (Default 1y) The number of seconds until the cookie expires. A negative number expires the cookie.
+ * @returns {void}
  */
 function set_cookie(name, value, seconds = 31536000) {
   document.cookie = `${name}=${encodeURIComponent(value)};max-age=${seconds};path=/`;
@@ -352,6 +365,7 @@ function debounce(func, wait = 250) {
  * Hides and removes the front modal from the DOM after a short delay.
  * @param {string} $modalId The ID of the modal element
  * @param {boolean} $delay Whether delays its detruction or not.
+ * @returns {void}
  */
 function destroy_modal_front($modalId, $delay = true) {
   const $modal = $(`#${$modalId}`);
@@ -378,6 +392,7 @@ function destroy_modal_front($modalId, $delay = true) {
  * @param {string} $message The message to display in the modal.
  * @param {boolean} $hideCancelBtn Whether to hide the cancel button.
  * @param {string} $redirect The URL to redirect to when "OK" is clicked.
+ * @returns {void}
  */
 function show_modal_front($modalId, $state = "success", $title = "INFO.", $message = "Message.", $hideCancelBtn = false, $redirect = `javascript:destroy_modal_front('${$modalId}');`) {
   // If already exist, destroy it with no delay
@@ -437,6 +452,7 @@ function add_csrf_token(formData, method = "POST") {
  * @param {Array} [options.$_post=[]] An array of additional POST parameters to include in the request.
  * @param {Object} [options.ajaxOpts={}] Additional options added to the AJAX request if needed (e.g., async)
  * @param {boolean} [options.loudFail=false] (Default False) Defines if the error is displayed with the modal or console only.
+ * @returns {jQuery.jqXHR}
  */
 function make_http_request(options) {
   const { $elementId, $url, $type = "POST", $returnType = "json", $_get = {}, $_post = [], ajaxOpts = {}, loudFail = false } = options;
@@ -504,6 +520,7 @@ function make_http_request(options) {
  * @param {Function} [options.alwaysFn=()=>{}] A callback function to be executed after the request happens.
  * @param {Object} [options.ajaxOpts={}] Additional options added to the AJAX request if needed (e.g., async)
  * @param {boolean} [options.loudFail=true] (Default True) Defines if the error is displayed with the modal or console only.
+ * @returns {jQuery.jqXHR}
  */
 function element_make_http_request(options) {
   const { $elementId, $trigger = "submit", $url, $type = "POST", $returnType = "json", $_get = {}, $_post = [], beforeFn = () => {}, doneFn = () => {}, failFn = () => {}, alwaysFn = () => {}, ajaxOpts = {}, loudFail = true } = options;

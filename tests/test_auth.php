@@ -9,6 +9,12 @@ require_once __DIR__ . "/../_init.php";
 require_once __DIR__ . "/../_functions.php";
 require_once __DIR__ . "/../_auth.php";
 
+/**
+ * Auth assert.
+ * @param bool $condition Condition required for the test to pass.
+ * @param string $message Message to display or report.
+ * @return void No value is returned.
+ */
 function auth_assert(bool $condition, string $message): void
 {
   if (!$condition)

@@ -156,9 +156,10 @@ function remote_file_exists(string $url, bool $clog_error = false): bool
   return $http_code >= 200 && $http_code <= 299;
 }
 
-/** 
+/**
  * Checks if a given TCP port is currently in use on localhost.
  * @param int $port The port number to check (e.g. 8080 or 6969).
+ * @param bool $is_cli Is cli used by this operation. Optional; uses the declared default when omitted.
  * @return bool True if the port is active, false otherwise.
  */
 function is_port_in_use(int $port, bool $is_cli = false): bool

@@ -79,3 +79,40 @@ for (const copy of reference ? ["static"] : ["root", "demo"]) {
     assert.equal(denied.getItem("APP_THEME"), "light");
   });
 }
+
+test("duplicate emitted storage setup preserves memory fallback and its namespace", { skip: !!reference }, () => {
+  for (const copy of ["root", "demo"]) {
+    const html = execFileSync(process.env.PHP_BINARY || "php", [path.join(__dirname, "render_init.php"), copy, "https://example.test/app"], { encoding: "utf8" });
+    const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((script) => script[1]);
+    const context = {
+      byStorage: { custom: true },
+      URL,
+      console,
+      document: { baseURI: "https://example.test/app/" },
+      localStorage: {
+        getItem() {
+          throw Error("denied");
+        },
+        setItem() {
+          throw Error("denied");
+        },
+        removeItem() {
+          throw Error("denied");
+        }
+      }
+    };
+    context.window = context;
+    vm.createContext(context);
+    for (const source of scripts) vm.runInContext(source, context);
+    const storage = context.byStorage;
+    assert.equal(storage.initialized, true);
+    const getItem = storage.getItem;
+    storage.setItem("unsaved", "local");
+    for (const source of scripts) vm.runInContext(source, context);
+    assert.equal(context.byStorage, storage);
+    assert.equal(storage.getItem, getItem);
+    assert.equal(storage.getItem("unsaved"), "local");
+    assert.equal(storage.custom, true);
+    assert.equal(storage.prefix, "bySPA:/app:");
+  }
+});
