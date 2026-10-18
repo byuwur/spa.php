@@ -3,13 +3,15 @@
  * Native Google Fonts loading; optional pickers require jQuery and Select2.
  * Keep the SPA.php and SPA.js implementations in sync.
  * Copyright (c) 2026 Andrés Trujillo [Mateus] byUwUr
+ * @param {Window} global Global.
+ * @returns {void}
  */
 (function (global) {
   // Keep font loading native so standalone overlays can reuse it without the SPA or jQuery.
   // Resolve jQuery only in picker methods, allowing their UI libraries to load afterward.
   global.byFont = global.byFont || {};
   const byFont = global.byFont;
-  if (typeof byFont.init === "function") return;
+  if (byFont?.initialized) return;
   // ==========
   // ==== VERIFIED GOOGLE FONTS CATALOG ====
   // ==========
@@ -385,7 +387,11 @@
     return names.get(first.toLowerCase());
   }
 
-  /** Cache successful and failed stylesheet requests to avoid retries while browsing or offline. */
+  /**
+   * Cache successful and failed stylesheet requests to avoid retries while browsing or offline.
+   * @param {unknown} value Value supplied by the caller.
+   * @returns {Promise<boolean>} The resulting asynchronous value.
+   */
   function load(value) {
     const name = googleFamily(value);
     if (!name) return;
@@ -424,7 +430,12 @@
     return CSS.supports("font-family", fontStack) ? fontStack : fallback;
   };
 
-  /** Request a selected or visible font once, preserving installed families and CSS stacks. */
+  /**
+   * Request a selected or visible font once, preserving installed families and CSS stacks.
+   * @param {unknown} value Value supplied by the caller.
+   * @param {string} [fallback="system-ui, sans-serif"] Value to use when the requested value is unavailable.
+   * @returns {string}
+   */
   byFont.family = function (value, fallback = "system-ui, sans-serif") {
     load(value);
     return byFont.stack(value, fallback);
@@ -463,7 +474,11 @@
   const pickers = new WeakMap();
   const systemFonts = ["system-ui", "sans-serif", "serif", "monospace", "Arial", "Arial Black", "Verdana", "Tahoma", "Trebuchet MS", "Georgia", "Times New Roman", "Courier New", "Impact"];
 
-  /** Render labels safely without downloading offscreen Google families. */
+  /**
+   * Render labels safely without downloading offscreen Google families.
+   * @param {Object} option Select2 option data.
+   * @returns {jQuery|string}
+   */
   function fontOption(option) {
     if (option.children || option.id == null) return option.text;
     const label = document.createElement("span");
@@ -597,7 +612,11 @@
     return select;
   };
 
-  /** Enhance explicitly marked fields; repeated SPA initialization keeps existing controls. */
+  /**
+   * Enhance explicitly marked fields; repeated SPA initialization keeps existing controls.
+   * @param {Document} [root=document] Container whose descendants belong to this operation.
+   * @returns {void}
+   */
   byFont.init = function (root = document) {
     const $ = global.jQuery;
     if (!root || typeof $?.fn?.select2 !== "function") return;
@@ -611,7 +630,11 @@
       .each((_, field) => byFont.picker(field));
   };
 
-  /** Release samples, observers, and event handlers before removing a field or subtree. */
+  /**
+   * Release samples, observers, and event handlers before removing a field or subtree.
+   * @param {Document} [root=document] Container whose descendants belong to this operation.
+   * @returns {void}
+   */
   byFont.destroy = function (root = document) {
     const $ = global.jQuery;
     if (!root || !$) return;
@@ -625,4 +648,6 @@
       pickers.delete(state.field);
     }
   };
+
+  byFont.initialized = true;
 })(typeof window !== "undefined" ? window : this);

@@ -11,13 +11,15 @@
  * This IIFE (Immediately Invoked Function Expression) ensures byCommon object exists globally
  * (typically on `window` in a browser) to avoid pollution and conflicts in the global namespace.
  * @param {Object} global - The global object, usually `window` in a browser.
+ * @returns {unknown}
  */
 (function (global) {
-  if (typeof jQuery === "undefined" && !global.jQuery) return console.error("Init _common.js FAILED. No jQuery found.");
-  const $ = global.jQuery;
-
   global.byCommon = global.byCommon || {};
   const byCommon = global.byCommon;
+  if (byCommon?.initialized) return;
+
+  if (typeof jQuery === "undefined" && !global.jQuery) return console.error("Init _common.js FAILED. No jQuery found.");
+  const $ = global.jQuery;
   // Common selectors
   byCommon.SIDEBAR_ID = "#bywr-sidebar";
   byCommon.SIDEBAR_TOGGLE_ID = "#bywr-sidebar-toggle";
@@ -31,6 +33,9 @@
 
   /**
    * Initializes the <Sidebar /> component in #spa-nav.
+   * @param {Object} [options={}] Options that configure this operation.
+   * @param {boolean} [options.showWarn=true] Log a warning when an optional dependency is unavailable.
+   * @returns {void}
    */
   function initSidebar({ showWarn = true } = {}) {
     // Check it exists in the first place. Duh..
@@ -97,6 +102,7 @@
 
   /**
    * Some other initializations for common resources in the page.
+   * @returns {void}
    */
   function initMisc() {
     // Smooth scroll for links with hashes in their href (excluding empty hashes)
@@ -146,6 +152,7 @@
    * @param {boolean} [options.tooltipsOnly=false] Skip other components and modal setup.
    * @param {Document|Element} [options.root=document] Tooltip subtree, including its root.
    * @param {boolean} [options.refreshTooltips=false] Recreate tooltips after their titles change.
+   * @returns {void}
    */
   byCommon.initBootstrap = function ({ showWarn = true, tooltipsOnly = false, root = document, refreshTooltips = false } = {}) {
     if (typeof bootstrap === "undefined" && !window.bootstrap) {
@@ -245,6 +252,9 @@
 
   /**
    * Reloads Google ReCaptcha if present
+   * @param {Object} [options={}] Options that configure this operation.
+   * @param {boolean} [options.showWarn=true] Log a warning when an optional dependency is unavailable.
+   * @returns {void}
    */
   function initCaptcha({ showWarn = true } = {}) {
     // Check it exists in the first place. Duh..
@@ -265,6 +275,7 @@
 
   /**
    * Reloads Google Page Translator if present
+   * @returns {unknown}
    */
   byCommon.initTranslate = function () {
     if (typeof google === "undefined") return console.warn("initTranslate(): google object doesn't exist.");
@@ -281,6 +292,9 @@
 
   /**
    * Reloads Cookie Consent if present
+   * @param {Object} [options={}] Options that configure this operation.
+   * @param {boolean} [options.showWarn=true] Log a warning when an optional dependency is unavailable.
+   * @returns {void}
    */
   function initCookieConsent({ showWarn = true } = {}) {
     if (typeof cookieconsent === "undefined" && !window.cookieconsent) {
@@ -306,6 +320,9 @@
 
   /**
    * Reloads Particles if present
+   * @param {Object} [options={}] Options that configure this operation.
+   * @param {boolean} [options.showWarn=true] Log a warning when an optional dependency is unavailable.
+   * @returns {void}
    */
   function initParticles({ showWarn = true } = {}) {
     if (typeof particlesJS === "undefined" && !window.particlesJS) {
@@ -341,6 +358,9 @@
 
   /**
    * Initializes all components that dynamically changes within the page
+   * @param {Object} [options={}] Options that configure this operation.
+   * @param {boolean} [options.showWarn=byCommon.INIT_WARNINGS] Log a warning when an optional dependency is unavailable.
+   * @returns {void}
    */
   byCommon.init = function ({ showWarn = byCommon.INIT_WARNINGS } = {}) {
     $(() => {
@@ -380,6 +400,12 @@
     }
   };
 
+  /**
+   * Initialize video.
+   * @param {unknown} elementId Element id.
+   * @param {Object} [optionsOverride={}] Per-call options that override the defaults.
+   * @returns {unknown}
+   */
   byCommon.initVideo = function (elementId, optionsOverride = {}) {
     if (typeof videojs === "undefined" && !window.videojs) return console.warn("Can't load Video.JS if script ain't present.");
     const VIDEO_CONTAINER = $(`#${elementId}`);
@@ -439,7 +465,16 @@
    * * --- ACCESSIBILITY --- *
    */
   byCommon.fontSize = 1; // 1rem
+  /**
+   * Accessibility toggle.
+   * @returns {unknown}
+   */
   byCommon.accessibilityToggle = () => $("#bywr-accessibility-buttons").toggleClass("hide");
+  /**
+   * Accessibility text.
+   * @param {string} [mode=""] Requested operation or display mode.
+   * @returns {void}
+   */
   byCommon.accessibilityText = (mode = "") => {
     // 0.5rem min, 3rem max, 0.25rem step
     switch (mode) {
@@ -459,10 +494,31 @@
     }
     $("html").css("font-size", `${byCommon.fontSize}rem`);
   };
+  /**
+   * Accessibility motion.
+   * @returns {unknown}
+   */
   byCommon.accessibilityMotion = () => $("html").toggleClass("no-motion");
+  /**
+   * Accessibility dyslexia.
+   * @returns {unknown}
+   */
   byCommon.accessibilityDyslexia = () => $("body").toggleClass("dyslexia");
+  /**
+   * Accessibility word spacing.
+   * @returns {unknown}
+   */
   byCommon.accessibilityWordSpacing = () => $("body").toggleClass("word-spacing");
+  /**
+   * Accessibility highlight links.
+   * @returns {unknown}
+   */
   byCommon.accessibilityHighlightLinks = () => $("html").toggleClass("highlight-links");
+  /**
+   * Accessibility high contrast.
+   * @param {string} [mode="high-contrast"] Requested operation or display mode.
+   * @returns {unknown}
+   */
   byCommon.accessibilityHighContrast = (mode = "high-contrast") => {
     if ($("html").hasClass(mode)) return $("html").removeClass(mode);
     $("html").removeClass("protanopia");
@@ -481,6 +537,7 @@
   /**
    * Applies a light/dark theme; omitting theme toggles the first target's current theme.
    * @param {string|Element} target Selector (all matches) or element.
+   * @param {Object} [options={}] Theme, control, property, and stylesheet options.
    * @param {"light"|"dark"} [options.theme] Explicit theme.
    * @param {string|Element} [options.button] Toggle button selector or element.
    * @param {object} [options.properties] CSS property maps keyed by light/dark.
@@ -488,6 +545,7 @@
    * @param {{light:string,dark:string}} [options.stylesheets] Full or relative theme URLs; omitted URLs are inferred from .light.css/.dark.css.
    * @returns {"light"|"dark"|null} Applied theme, or null if no target matches.
    * Event binding and persistence belong to the caller; stylesheet loading is asynchronous.
+   * @throws {TypeError}
    */
   byCommon.toggleTheme = function (target, { theme, button, properties, stylesheet, stylesheets } = {}) {
     const elements = $(target).toArray();
@@ -619,4 +677,6 @@
     const color = (offset = 0) => `hsl(${(hue + offset) % 360} ${preset.saturation}% ${preset.lightness}%)`;
     return gradient ? `linear-gradient(${angle}deg, ${color()}, ${color(15 + Math.floor(Math.random() * 31))})` : color();
   };
+
+  byCommon.initialized = true;
 })(typeof window !== "undefined" ? window : this);

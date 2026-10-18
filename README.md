@@ -63,6 +63,8 @@ Since v14, `_var.php` is `_init.php`; update old includes. No compatibility alia
 
 ### Storage and shared UI
 
+Each installed API owns one boolean `initialized` flag. Bootstrap scripts can populate the shared namespace before `_spa.js` sets `bySPA.initialized = true`. Repeated imports preserve storage fallback values and active navigation; ordinary `byCommon.init()` calls still initialize new page content.
+
 `byStorage` namespaces keys by application root and removes legacy keys after migration. Failed writes/removals give only that key a local value/null marker until a successful explicit change; other keys keep reading persistent storage. Removal also clears legacy copies. Memory fallback lasts for this runtime, without automatic replay or cross-tab synchronization.
 
 `byCommon.init()` initializes shared UI after navigation. Optional warnings are off; enable `byCommon.INIT_WARNINGS` or `{ showWarn: true }`. `byCommon.initBootstrap({ tooltipsOnly: true, root, refreshTooltips: true })` refreshes scoped tooltips without rerunning other components.

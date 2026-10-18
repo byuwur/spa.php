@@ -126,10 +126,14 @@ if (isset($setLocalStorage) && $setLocalStorage) { ?>
      * Provides namespaced SPA storage with an in-memory fallback.
      * Legacy unprefixed keys are migrated on first read.
      * @namespace byStorage
+     * @param {Window} global Global.
+     * @returns {void}
      */
-    (function (global) {
+    (function(global) {
       global.byStorage = global.byStorage || {};
       const byStorage = global.byStorage;
+      if (byStorage?.initialized) return;
+
       byStorage.memory = Object.create(null);
       // Only failed keys override disk; a successful explicit mutation restores persistent authority.
       const localKeys = new Set();
@@ -141,7 +145,7 @@ if (isset($setLocalStorage) && $setLocalStorage) { ?>
        * @param {string} key
        * @returns {string|null}
        */
-      byStorage.getItem = function (key) {
+      byStorage.getItem = function(key) {
         if (localKeys.has(key)) return byStorage.memory[key];
         try {
           const value = global.localStorage.getItem(byStorage.prefix + key);
@@ -154,7 +158,7 @@ if (isset($setLocalStorage) && $setLocalStorage) { ?>
             if (global.localStorage.getItem(byStorage.prefix + key) === legacy)
               try {
                 global.localStorage.removeItem(key);
-              } catch (_) { }
+              } catch (_) {}
           }
           return legacy;
         } catch (_) {
@@ -168,13 +172,13 @@ if (isset($setLocalStorage) && $setLocalStorage) { ?>
        * @param {*} value
        * @returns {void}
        */
-      byStorage.setItem = function (key, value) {
+      byStorage.setItem = function(key, value) {
         byStorage.memory[key] = String(value);
         localKeys.add(key);
         try {
           global.localStorage.setItem(byStorage.prefix + key, value);
           localKeys.delete(key);
-        } catch (_) { }
+        } catch (_) {}
       };
 
       /**
@@ -182,7 +186,7 @@ if (isset($setLocalStorage) && $setLocalStorage) { ?>
        * @param {string} key
        * @returns {void}
        */
-      byStorage.removeItem = function (key) {
+      byStorage.removeItem = function(key) {
         // Null is a deletion tombstone; failed removal must not resurrect disk data.
         byStorage.memory[key] = null;
         localKeys.add(key);
@@ -190,8 +194,10 @@ if (isset($setLocalStorage) && $setLocalStorage) { ?>
           global.localStorage.removeItem(byStorage.prefix + key);
           global.localStorage.removeItem(key);
           localKeys.delete(key);
-        } catch (_) { }
+        } catch (_) {}
       };
+
+      byStorage.initialized = true;
     })(typeof window !== "undefined" ? window : this);
   </script>
   <script>
