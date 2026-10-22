@@ -7,7 +7,7 @@ if [ "$(id -u)" -ne 0 ]; then
 fi
 
 echo ""
-echo "[RENEW] SSL certificate for Bitnami LAMP with Certbot:"
+echo "[RENEW] SSL certificate for Lightsail LAMP with Certbot:"
 echo "=== SCRIPT START ==="
 echo ""
 
@@ -30,13 +30,13 @@ if [ -z "$WILDCARD" ]; then
 fi
 
 echo ""
-
 echo "Using DOMAIN   = $DOMAIN"
 echo "Using WILDCARD = $WILDCARD"
 sleep 1
 
 echo ""
-sudo /opt/bitnami/ctlscript.sh stop
+sudo systemctl stop apache2
+sudo systemctl stop mariadb
 
 echo ""
 echo "Please complete the ACME challenge on your DNS records:"
@@ -46,62 +46,16 @@ sleep 2
 sudo certbot -d $DOMAIN -d $WILDCARD --manual --preferred-challenges dns certonly
 
 echo ""
-echo "Move the old certificates:"
+echo "Change SSL config:"
+
+sudo sed \
+-i -e "s|SSLCertificateFile /etc/ssl/certs/ssl-cert-snakeoil.pem|SSLCertificateFile /etc/letsencrypt/live/$DOMAIN/fullchain.pem|g" \
+-i -e "s|SSLCertificateKeyFile /etc/ssl/private/ssl-cert-snakeoil.key|SSLCertificateKeyFile /etc/letsencrypt/live/$DOMAIN/privkey.pem|g" \
+/etc/apache2/sites-enabled/default-ssl.conf
 
 echo ""
-echo "Which instance of Bitnami LAMP are you using:"
-echo "1. Ubuntu"
-echo "2. Debian Packages"
-echo "3. Debian self-contained"
-while [[ ! "$USER_INSTANCE" =~ ^[1-39]$ ]]; do
-    read -p "Please select one: " USER_INSTANCE
-done
-
-case $USER_INSTANCE in
-    1)
-        echo ""
-        echo "Option 1: Ubuntu"
-        sudo mv /opt/bitnami/apache/conf/bitnami/certs/server.crt /opt/bitnami/apache/conf/bitnami/certs/server.crt.old
-        sudo mv /opt/bitnami/apache/conf/bitnami/certs/server.key /opt/bitnami/apache/conf/bitnami/certs/server.key.old
-        sudo ln -s /etc/letsencrypt/live/$DOMAIN/privkey.pem /opt/bitnami/apache/conf/bitnami/certs/server.key
-        sudo ln -s /etc/letsencrypt/live/$DOMAIN/fullchain.pem /opt/bitnami/apache/conf/bitnami/certs/server.crt
-        ;;
-    2)
-        echo ""
-        echo "Option 2: Debian Packages"
-        sudo mv /opt/bitnami/apache2/conf/bitnami/certs/server.crt /opt/bitnami/apache2/conf/bitnami/certs/server.crt.old
-        sudo mv /opt/bitnami/apache2/conf/bitnami/certs/server.key /opt/bitnami/apache2/conf/bitnami/certs/server.key.old
-        sudo ln -sf /etc/letsencrypt/live/$DOMAIN/privkey.pem /opt/bitnami/apache2/conf/bitnami/certs/server.key
-        sudo ln -sf /etc/letsencrypt/live/$DOMAIN/fullchain.pem /opt/bitnami/apache2/conf/bitnami/certs/server.crt
-        ;;
-    3)
-        echo ""
-        echo "Option 3: Debian self-contained"
-        sudo mv /opt/bitnami/apache2/conf/server.crt /opt/bitnami/apache2/conf/server.crt.old
-        sudo mv /opt/bitnami/apache2/conf/server.key /opt/bitnami/apache2/conf/server.key.old
-        sudo ln -sf /etc/letsencrypt/live/$DOMAIN/privkey.pem /opt/bitnami/apache2/conf/server.key
-        sudo ln -sf /etc/letsencrypt/live/$DOMAIN/fullchain.pem /opt/bitnami/apache2/conf/server.crt
-        ;;
-    9)
-        echo ""
-        echo "Option 9: TRY ALL"
-        sudo mv /opt/bitnami/apache/conf/bitnami/certs/server.crt /opt/bitnami/apache/conf/bitnami/certs/server.crt.old
-        sudo mv /opt/bitnami/apache/conf/bitnami/certs/server.key /opt/bitnami/apache/conf/bitnami/certs/server.key.old
-        sudo ln -s /etc/letsencrypt/live/$DOMAIN/privkey.pem /opt/bitnami/apache/conf/bitnami/certs/server.key
-        sudo ln -s /etc/letsencrypt/live/$DOMAIN/fullchain.pem /opt/bitnami/apache/conf/bitnami/certs/server.crt
-        sudo mv /opt/bitnami/apache2/conf/bitnami/certs/server.crt /opt/bitnami/apache2/conf/bitnami/certs/server.crt.old
-        sudo mv /opt/bitnami/apache2/conf/bitnami/certs/server.key /opt/bitnami/apache2/conf/bitnami/certs/server.key.old
-        sudo ln -sf /etc/letsencrypt/live/$DOMAIN/privkey.pem /opt/bitnami/apache2/conf/bitnami/certs/server.key
-        sudo ln -sf /etc/letsencrypt/live/$DOMAIN/fullchain.pem /opt/bitnami/apache2/conf/bitnami/certs/server.crt
-        sudo mv /opt/bitnami/apache2/conf/server.crt /opt/bitnami/apache2/conf/server.crt.old
-        sudo mv /opt/bitnami/apache2/conf/server.key /opt/bitnami/apache2/conf/server.key.old
-        sudo ln -sf /etc/letsencrypt/live/$DOMAIN/privkey.pem /opt/bitnami/apache2/conf/server.key
-        sudo ln -sf /etc/letsencrypt/live/$DOMAIN/fullchain.pem /opt/bitnami/apache2/conf/server.crt
-        ;;
-esac
-
-echo ""
-sudo /opt/bitnami/ctlscript.sh start
+sudo systemctl restart apache2
+sudo systemctl restart mariadb
 
 echo ""
 echo "=== SCRIPT END ==="
