@@ -11,9 +11,8 @@ require_once "{$TO_HOME}/../_common.php";
 require_once "{$TO_HOME}/common.example.php";
 //enable_progressive_rendering();
 ?>
-<link href="https://cdn.jsdelivr.net/gh/byuwur/easy-md-viewer@v1.8/md.min.css" rel="stylesheet" />
-<link id="byVIEWtheme" href="https://cdn.jsdelivr.net/gh/byuwur/easy-md-viewer@v1.8/md.light.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/gh/byuwur/easy-md-viewer@v1.8/md.min.js"></script>
+<link href="https://cdn.jsdelivr.net/gh/byuwur/easy-md-viewer@main/md.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/gh/byuwur/easy-md-viewer@main/md.js"></script>
 <style>
   ol {
     list-style: decimal-leading-zero !important;
@@ -21,7 +20,7 @@ require_once "{$TO_HOME}/common.example.php";
 </style>
 <div class="video-foreground app-container">
   <div class="container vh-100 d-flex flex-column align-items-center justify-content-center p-0">
-    <pre id="byMDrenderer" class="w-100"></pre>
+    <pre id="byMDrenderer" class="w-100" data-theme="light"></pre>
   </div>
 </div>
 <script>
