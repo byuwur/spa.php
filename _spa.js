@@ -14,14 +14,17 @@
  * @returns {unknown}
  */
 (function (global) {
+  /* --- INITIALIZATION --- */
   global.bySPA = global.bySPA || {};
   const bySPA = global.bySPA;
   if (bySPA?.initialized) return;
-
   if (typeof jQuery === "undefined" && !global.jQuery) return console.error("Init _spa.js FAILED. No jQuery found.");
   const $ = global.jQuery;
 
+  /* --- METADATA --- */
   bySPA.VERSION = "20.6"; // 2026-10-18
+
+  /* --- STATE --- */
   // Initializes values retrieved from localStorage and sets up environment variables.
   bySPA.URI = byStorage.getItem("URI") ?? "/";
   bySPA.URL = byStorage.getItem("URL") ?? bySPA.URI;
@@ -35,26 +38,13 @@
   bySPA.HOME_PATH = byStorage.getItem("HOME_PATH");
   bySPA.HISTORY_PATH = [];
   bySPA.NAVIGATION_ID = 0;
+
   // These properties can be previously initialized to be overriden
   bySPA.REQUEST_TIMEOUT = bySPA.REQUEST_TIMEOUT || 30000;
   let fileNavigation = false; // Flags if you come from a FILE route
   let errorNavigation = false; // A replaced document needs a clean runtime on Back.
 
-  /**
-   * Builds a fragment request URL while preserving query parameters already present in the route URI.
-   * @param {string} path Route fragment path, optionally containing a query string.
-   * @param {Object} [get={}] Additional GET values. These replace matching URI query values.
-   * @return {string} Absolute request URL, safe for nested deployments.
-   */
-  bySPA.buildRequestURL = function (path, get = {}) {
-    const base = `${String(bySPA.HOME_PATH || window.location.origin).replace(/\/$/, "")}/`;
-    const target = new URL(String(path || "/null").replace(/^\/+/, ""), base);
-    Object.entries(get).forEach(function ([key, value]) {
-      if (value !== undefined && value !== null) target.searchParams.set(key, value);
-    });
-    return target.href;
-  };
-
+  /* --- HELPERS --- */
   /**
    * Replaces one fragment and executes its scripts in source order. Ordered external scripts
    * and modules are awaited, script failures are non-fatal, and stale navigation stops the work.
@@ -154,6 +144,212 @@
   }
 
   /**
+   * Validates if the querySelector input is valid for use
+   * @param {string} selector The querySelector string to validate.
+   * @return {boolean} Validity of the selector input
+   */
+  function validateQuerySelector(selector) {
+    try {
+      document.querySelector(selector);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /**
+   * Parses a querySelector and creates a corresponding jQuery element.
+   * @param {string} selector The querySelector string to parse. It supports tag name, ID, classes and attr.
+   * @return {jQuery} The created jQuery element based on the provided selector string.
+   */
+  function parseQuerySelector(selector) {
+    if (!validateQuerySelector(selector)) return false;
+    const tag = selector.match(/^[a-z]+/i);
+    const id = selector.match(/#[a-zA-Z0-9-_]+/);
+    const classes = selector.match(/\.[a-zA-Z0-9-_]+/g);
+    const attr = [...selector.matchAll(/\[([a-zA-Z0-9-_]+)='([^']*)'\]/g)];
+
+    const _tag = tag ? tag[0] : "div";
+    const $el = $(`<${_tag}>`);
+
+    if (id) $el.attr("id", id[0].slice(1));
+    if (classes) $el.addClass(classes.map((cls) => cls.slice(1)).join(" "));
+    attr.forEach((a) => $el.attr(a[1], a[2]));
+    return $el;
+  }
+
+  /**
+   * Validates the ID of a querySelector to check in a element with that ID exists
+   * @param {string} selector The querySelector string to validate.
+   * @return {boolean} Whether the component ID exists
+   */
+  function componentIdExists(selector) {
+    const id = selector.match(/#[a-zA-Z0-9-_]+/);
+    if (!id) {
+      console.warn(`Insert a valid ID to search if a component exists...`);
+      return false;
+    }
+    return $(id[0]).length;
+  }
+
+  /**
+   * Routes the given URI within the SPA, managing state and navigation.
+   * Route GET values override /$/ parameters, which override ordinary query values.
+   * @param {string} uri The URI to route.
+   * @return {object} An object containing the routed path, URI, file, parameters, and components.
+   */
+  function routeURL(uri = "/") {
+    // Parse the URI into path and parameters
+    const { path, params, query, url } = bySPA.parseURL(uri);
+    // Check if the path exists in the defined routes
+    if (!Object.keys(bySPA.ROUTES).includes(path)) return null;
+    const route = bySPA.ROUTES[path] ?? {};
+    // Application configuration is authoritative: route > /$/ params > query.
+    const get = { ...query, ...params, ...(route?.GET ?? {}) };
+    const post = { ...(route?.POST ?? {}) };
+    // Determine the final URI based on the route
+    uri = route?.URI;
+    // Determine the correct URI if it's not explicitly set
+    if (uri == "") {
+      get.uri = bySPA.URI || "/";
+      uri = bySPA.ROUTES[get.uri]?.URI ? bySPA.ROUTES[get.uri]?.URI : bySPA.ROUTES["/"]?.URI;
+    } else get.uri = path;
+    setRouteState({ path, url, get, post });
+    return { path, url, uri, file: route?.FILE, get, post, component: route?.COMPONENT };
+  }
+
+  /**
+   * Runs page/component lifecycle hooks after dynamic content is swapped.
+   * @param {object} routing The loaded route data, including its navigationId.
+   * @returns {void}
+   */
+  function afterLoad(routing) {
+    if (typeof byCommon !== "undefined" && typeof byCommon.init === "function") byCommon.init();
+    document.dispatchEvent(new CustomEvent("bySPA:load", { detail: routing }));
+  }
+
+  /* --- LIFECYCLE --- */
+  /**
+   * Initialize this component once using its current state and available dependencies.
+   * @returns {void}
+   */
+  function init() {
+    // Log debug information if in development mode
+    console.log("SPA_VERSION=", bySPA.VERSION);
+    console.log("APP_VERSION=", bySPA.APP_VERSION);
+    if (bySPA.APP_ENV === "DEV") {
+      console.log("TO_HOME=", bySPA.TO_HOME);
+      console.log("HOME_PATH=", bySPA.HOME_PATH);
+      console.log("URI=", bySPA.URI);
+      console.log("URL=", bySPA.URL);
+      console.log("ROUTES=", bySPA.ROUTES);
+      console.log("_GET=", bySPA._GET);
+      console.log("_POST=", bySPA._POST);
+      console.log("HISTORY_INDEX=", bySPA.HISTORY_INDEX);
+      console.log("HISTORY_PATH=", bySPA.HISTORY_PATH);
+    }
+    // Handles the popstate event for navigating through browser history.
+    $(window).on("popstate.bySPA", function (event) {
+      const e = event.originalEvent || event;
+      if (errorNavigation) return window.location.reload();
+      if (!e.state) return;
+      bySPA.HISTORY_INDEX = e.state.index;
+      bySPA.load(e.state.url ?? bySPA.HISTORY_PATH[bySPA.HISTORY_INDEX], { push: false });
+      if (bySPA.APP_ENV === "DEV") console.log("HISTORY_INDEX=", bySPA.HISTORY_INDEX, "; HISTORY_PATH=", bySPA.HISTORY_PATH);
+    });
+    // Attaches click event handlers to links for SPA navigation.
+    $(document).on("click", "a[href]", function (e) {
+      if (e.defaultPrevented || e.isDefaultPrevented() || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      if (this.target || this.hasAttribute("download") || this.getAttribute("custom-folder") == "true") return;
+      const href = this.getAttribute("href");
+      if (!href || href.startsWith("javascript:")) return;
+      if (href.startsWith("#")) return;
+      let nextURL = href;
+      try {
+        const absolute = new URL(this.href);
+        if (absolute.origin != window.location.origin) return;
+        // Ordinary anchors belong to the browser/common scrolling handler.
+        if (absolute.hash) return;
+        const home = new URL(`${bySPA.HOME_PATH.replace(/\/$/, "")}/`, document.baseURI);
+        const insideHome = absolute.pathname === home.pathname.replace(/\/$/, "") || absolute.pathname.startsWith(home.pathname);
+        // Same-origin virtual routes may be root-relative, including unknown routes for SPA errors.
+        nextURL = (insideHome ? absolute.pathname.slice(home.pathname.length - 1) || "/" : absolute.pathname) + absolute.search;
+      } catch (error) {
+        return;
+      }
+      e.preventDefault();
+      bySPA.load(nextURL);
+    });
+    // Reload the SPA when returning from a full FILE navigation via the browser cache.
+    $(window).on("pageshow.bySPA", function (event) {
+      const e = event.originalEvent || event;
+      if (!e.persisted || !fileNavigation) return;
+      fileNavigation = false;
+      window.location.reload();
+    });
+    // Initial load of SPA content based on the stored URL.
+    bySPA.load(`${bySPA.URL}`, { replace: true, post: bySPA._POST });
+  }
+
+  /* --- PUBLIC API --- */
+  /**
+   * Builds a fragment request URL while preserving query parameters already present in the route URI.
+   * @param {string} path Route fragment path, optionally containing a query string.
+   * @param {Object} [get={}] Additional GET values. These replace matching URI query values.
+   * @return {string} Absolute request URL, safe for nested deployments.
+   */
+  bySPA.buildRequestURL = function (path, get = {}) {
+    const base = `${String(bySPA.HOME_PATH || window.location.origin).replace(/\/$/, "")}/`;
+    const target = new URL(String(path || "/null").replace(/^\/+/, ""), base);
+    Object.entries(get).forEach(function ([key, value]) {
+      if (value !== undefined && value !== null) target.searchParams.set(key, value);
+    });
+    return target.href;
+  };
+
+  /**
+   * Parses the given URI into a path and associated parameters.
+   * @param {string} uri The URI to parse.
+   * @return {object} An object containing the path and parameters.
+   */
+  bySPA.parseURL = function (uri = "/") {
+    uri = String(uri || "/").trim();
+    if (uri.includes("://")) {
+      try {
+        const parsed = new URL(uri);
+        uri = parsed.pathname + parsed.search;
+      } catch (e) {
+        uri = "/";
+      }
+    }
+    uri = uri.split("#", 1)[0] || "/";
+    const queryIndex = uri.indexOf("?");
+    const pathInput = queryIndex < 0 ? uri : uri.slice(0, queryIndex);
+    const queryInput = queryIndex < 0 ? "" : uri.slice(queryIndex + 1);
+    // Ensure the URI starts with a "/" and doesn't end with one
+    let pathUri = pathInput || "/";
+    if (!pathUri.startsWith("/")) pathUri = `/${pathUri.replace(/^\/+/, "")}`;
+    while (pathUri.length > 1 && pathUri.endsWith("/")) pathUri = pathUri.substring(0, pathUri.length - 1);
+    const query = Object.fromEntries(new URLSearchParams(queryInput));
+    const url = `${pathUri}${queryInput ? `?${queryInput}` : ""}`;
+    // Handle URI parameters if present
+    if (!pathUri.includes("/$/")) return { path: pathUri, params: {}, query, url };
+    const [path, param] = pathUri.split("/$/", 2);
+    const keyValuePairs = param.split("/");
+    const params = {};
+    // Iterate over the parameters and store them as key-value pairs
+    for (let i = 0; i < keyValuePairs.length; i += 2)
+      if (keyValuePairs[i + 1] !== undefined) {
+        try {
+          params[decodeURIComponent(keyValuePairs[i])] = decodeURIComponent(keyValuePairs[i + 1]);
+        } catch (e) {
+          params[keyValuePairs[i]] = keyValuePairs[i + 1];
+        }
+      }
+    return { path, params, query, url };
+  };
+
+  /**
    * Displays a standalone error page by intentionally replacing the full document.
    * Ordered scripts finish before temporary SPA error state is discarded.
    * @param {number} status HTTP status code.
@@ -217,55 +413,6 @@
   };
 
   /**
-   * Validates if the querySelector input is valid for use
-   * @param {string} selector The querySelector string to validate.
-   * @return {boolean} Validity of the selector input
-   */
-  function validateQuerySelector(selector) {
-    try {
-      document.querySelector(selector);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  /**
-   * Parses a querySelector and creates a corresponding jQuery element.
-   * @param {string} selector The querySelector string to parse. It supports tag name, ID, classes and attr.
-   * @return {jQuery} The created jQuery element based on the provided selector string.
-   */
-  function parseQuerySelector(selector) {
-    if (!validateQuerySelector(selector)) return false;
-    const tag = selector.match(/^[a-z]+/i);
-    const id = selector.match(/#[a-zA-Z0-9-_]+/);
-    const classes = selector.match(/\.[a-zA-Z0-9-_]+/g);
-    const attr = [...selector.matchAll(/\[([a-zA-Z0-9-_]+)='([^']*)'\]/g)];
-
-    const _tag = tag ? tag[0] : "div";
-    const $el = $(`<${_tag}>`);
-
-    if (id) $el.attr("id", id[0].slice(1));
-    if (classes) $el.addClass(classes.map((cls) => cls.slice(1)).join(" "));
-    attr.forEach((a) => $el.attr(a[1], a[2]));
-    return $el;
-  }
-
-  /**
-   * Validates the ID of a querySelector to check in a element with that ID exists
-   * @param {string} selector The querySelector string to validate.
-   * @return {boolean} Whether the component ID exists
-   */
-  function componentIdExists(selector) {
-    const id = selector.match(/#[a-zA-Z0-9-_]+/);
-    if (!id) {
-      console.warn(`Insert a valid ID to search if a component exists...`);
-      return false;
-    }
-    return $(id[0]).length;
-  }
-
-  /**
    * Reloads a specific component to its elementID via an AJAX request.
    * @param {string} component The selector for the component to reload.
    * @param {string} file The file path to load the content from.
@@ -305,74 +452,6 @@
         return null;
       });
   };
-
-  /**
-   * Parses the given URI into a path and associated parameters.
-   * @param {string} uri The URI to parse.
-   * @return {object} An object containing the path and parameters.
-   */
-  bySPA.parseURL = function (uri = "/") {
-    uri = String(uri || "/").trim();
-    if (uri.includes("://")) {
-      try {
-        const parsed = new URL(uri);
-        uri = parsed.pathname + parsed.search;
-      } catch (e) {
-        uri = "/";
-      }
-    }
-    uri = uri.split("#", 1)[0] || "/";
-    const queryIndex = uri.indexOf("?");
-    const pathInput = queryIndex < 0 ? uri : uri.slice(0, queryIndex);
-    const queryInput = queryIndex < 0 ? "" : uri.slice(queryIndex + 1);
-    // Ensure the URI starts with a "/" and doesn't end with one
-    let pathUri = pathInput || "/";
-    if (!pathUri.startsWith("/")) pathUri = `/${pathUri.replace(/^\/+/, "")}`;
-    while (pathUri.length > 1 && pathUri.endsWith("/")) pathUri = pathUri.substring(0, pathUri.length - 1);
-    const query = Object.fromEntries(new URLSearchParams(queryInput));
-    const url = `${pathUri}${queryInput ? `?${queryInput}` : ""}`;
-    // Handle URI parameters if present
-    if (!pathUri.includes("/$/")) return { path: pathUri, params: {}, query, url };
-    const [path, param] = pathUri.split("/$/", 2);
-    const keyValuePairs = param.split("/");
-    const params = {};
-    // Iterate over the parameters and store them as key-value pairs
-    for (let i = 0; i < keyValuePairs.length; i += 2)
-      if (keyValuePairs[i + 1] !== undefined) {
-        try {
-          params[decodeURIComponent(keyValuePairs[i])] = decodeURIComponent(keyValuePairs[i + 1]);
-        } catch (e) {
-          params[keyValuePairs[i]] = keyValuePairs[i + 1];
-        }
-      }
-    return { path, params, query, url };
-  };
-
-  /**
-   * Routes the given URI within the SPA, managing state and navigation.
-   * Route GET values override /$/ parameters, which override ordinary query values.
-   * @param {string} uri The URI to route.
-   * @return {object} An object containing the routed path, URI, file, parameters, and components.
-   */
-  function routeURL(uri = "/") {
-    // Parse the URI into path and parameters
-    const { path, params, query, url } = bySPA.parseURL(uri);
-    // Check if the path exists in the defined routes
-    if (!Object.keys(bySPA.ROUTES).includes(path)) return null;
-    const route = bySPA.ROUTES[path] ?? {};
-    // Application configuration is authoritative: route > /$/ params > query.
-    const get = { ...query, ...params, ...(route?.GET ?? {}) };
-    const post = { ...(route?.POST ?? {}) };
-    // Determine the final URI based on the route
-    uri = route?.URI;
-    // Determine the correct URI if it's not explicitly set
-    if (uri == "") {
-      get.uri = bySPA.URI || "/";
-      uri = bySPA.ROUTES[get.uri]?.URI ? bySPA.ROUTES[get.uri]?.URI : bySPA.ROUTES["/"]?.URI;
-    } else get.uri = path;
-    setRouteState({ path, url, get, post });
-    return { path, url, uri, file: route?.FILE, get, post, component: route?.COMPONENT };
-  }
 
   /**
    * Loads the SPA content for the given URL, optionally pushing the state to history.
@@ -460,78 +539,8 @@
       });
   };
 
-  /**
-   * Runs page/component lifecycle hooks after dynamic content is swapped.
-   * @param {object} routing The loaded route data, including its navigationId.
-   * @returns {void}
-   */
-  function afterLoad(routing) {
-    if (typeof byCommon !== "undefined" && typeof byCommon.init === "function") byCommon.init();
-    document.dispatchEvent(new CustomEvent("bySPA:load", { detail: routing }));
-  }
-
-  /**
-   * Initialize this component once using its current state and available dependencies.
-   * @returns {void}
-   */
-  function init() {
-    // Log debug information if in development mode
-    console.log("SPA_VERSION=", bySPA.VERSION);
-    console.log("APP_VERSION=", bySPA.APP_VERSION);
-    if (bySPA.APP_ENV === "DEV") {
-      console.log("TO_HOME=", bySPA.TO_HOME);
-      console.log("HOME_PATH=", bySPA.HOME_PATH);
-      console.log("URI=", bySPA.URI);
-      console.log("URL=", bySPA.URL);
-      console.log("ROUTES=", bySPA.ROUTES);
-      console.log("_GET=", bySPA._GET);
-      console.log("_POST=", bySPA._POST);
-      console.log("HISTORY_INDEX=", bySPA.HISTORY_INDEX);
-      console.log("HISTORY_PATH=", bySPA.HISTORY_PATH);
-    }
-    // Handles the popstate event for navigating through browser history.
-    $(window).on("popstate.bySPA", function (event) {
-      const e = event.originalEvent || event;
-      if (errorNavigation) return window.location.reload();
-      if (!e.state) return;
-      bySPA.HISTORY_INDEX = e.state.index;
-      bySPA.load(e.state.url ?? bySPA.HISTORY_PATH[bySPA.HISTORY_INDEX], { push: false });
-      if (bySPA.APP_ENV === "DEV") console.log("HISTORY_INDEX=", bySPA.HISTORY_INDEX, "; HISTORY_PATH=", bySPA.HISTORY_PATH);
-    });
-    // Attaches click event handlers to links for SPA navigation.
-    $(document).on("click", "a[href]", function (e) {
-      if (e.defaultPrevented || e.isDefaultPrevented() || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-      if (this.target || this.hasAttribute("download") || this.getAttribute("custom-folder") == "true") return;
-      const href = this.getAttribute("href");
-      if (!href || href.startsWith("javascript:")) return;
-      if (href.startsWith("#")) return;
-      let nextURL = href;
-      try {
-        const absolute = new URL(this.href);
-        if (absolute.origin != window.location.origin) return;
-        // Ordinary anchors belong to the browser/common scrolling handler.
-        if (absolute.hash) return;
-        const home = new URL(`${bySPA.HOME_PATH.replace(/\/$/, "")}/`, document.baseURI);
-        const insideHome = absolute.pathname === home.pathname.replace(/\/$/, "") || absolute.pathname.startsWith(home.pathname);
-        // Same-origin virtual routes may be root-relative, including unknown routes for SPA errors.
-        nextURL = (insideHome ? absolute.pathname.slice(home.pathname.length - 1) || "/" : absolute.pathname) + absolute.search;
-      } catch (error) {
-        return;
-      }
-      e.preventDefault();
-      bySPA.load(nextURL);
-    });
-    // Reload the SPA when returning from a full FILE navigation via the browser cache.
-    $(window).on("pageshow.bySPA", function (event) {
-      const e = event.originalEvent || event;
-      if (!e.persisted || !fileNavigation) return;
-      fileNavigation = false;
-      window.location.reload();
-    });
-    // Initial load of SPA content based on the stored URL.
-    bySPA.load(`${bySPA.URL}`, { replace: true, post: bySPA._POST });
-  }
-
+  /* --- STARTUP --- */
+  // Mark installed before initial loading can execute fragment scripts that import the runtime again.
   bySPA.initialized = true;
   init();
 })(typeof window !== "undefined" ? window : this);
