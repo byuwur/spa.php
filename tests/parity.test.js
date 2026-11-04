@@ -12,6 +12,38 @@ function loadURLHelpers(overrides = {}) {
   return context;
 }
 
+test("standalone helpers preserve existing public globals", () => {
+  const context = {};
+  vm.runInNewContext(fs.readFileSync(path.join(__dirname, "..", "_functions.js"), "utf8"), context);
+  const entries = [
+    "check_json",
+    "parse_json",
+    "print_json",
+    "is_object",
+    "escape_html",
+    "std_dir_separator",
+    "dirname",
+    "exit_json",
+    "compress_url_data",
+    "decompress_url_data",
+    "set_cookie",
+    "get_cookie",
+    "get_url_param",
+    "debounce",
+    "destroy_modal_front",
+    "show_modal_front",
+    "get_csrf_token",
+    "add_csrf_token",
+    "remote_file_exists",
+    "make_http_request",
+    "element_make_http_request",
+    "init_websocket"
+  ];
+  assert.deepEqual(Object.keys(context).sort(), entries.sort());
+  for (const name of entries) assert.equal(typeof context[name], "function", name);
+  assert.equal(context.parse_json('{"ok":true}').ok, true);
+});
+
 test("local URL helpers preserve UTF-8 text and interoperate with raw DEFLATE", async () => {
   const { compress_url_data, decompress_url_data } = loadURLHelpers();
   for (const text of ["", "\uFEFFleading BOM", "Café 日本語 😀\u0000 + / = & ?", JSON.stringify([{ platform: "twitch", handle: "/byUwUr" }])]) {

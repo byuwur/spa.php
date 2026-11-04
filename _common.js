@@ -14,23 +14,79 @@
  * @returns {unknown}
  */
 (function (global) {
+  /* --- INITIALIZATION --- */
   global.byCommon = global.byCommon || {};
   const byCommon = global.byCommon;
   if (byCommon?.initialized) return;
-
   if (typeof jQuery === "undefined" && !global.jQuery) return console.error("Init _common.js FAILED. No jQuery found.");
   const $ = global.jQuery;
+
+  /* --- DEFAULTS --- */
   // Common selectors
   byCommon.SIDEBAR_ID = "#bywr-sidebar";
   byCommon.SIDEBAR_TOGGLE_ID = "#bywr-sidebar-toggle";
   byCommon.SIDEBAR_HIDDEN_ID = "#bywr-sidebar-hidden";
   byCommon.APP_CONTAINER_SELECTOR = ".app-container";
+
   // These properties can be previously initialized to be overriden
   byCommon.GLOBAL_TRANSITION_DURATION = byCommon.GLOBAL_TRANSITION_DURATION || 999;
   byCommon.COOKIE_CONSENT_READY = byCommon.COOKIE_CONSENT_READY || false;
   byCommon.SECTION_TOP_OVERHEAD = byCommon.SECTION_TOP_OVERHEAD || 0;
   byCommon.INIT_WARNINGS = byCommon.INIT_WARNINGS ?? false;
+  byCommon.VIDEO_COMMON_OPTIONS = {
+    controls: true,
+    autoplay: true,
+    preload: "auto",
+    fluid: true,
+    playbackRates: [0.5, 1, 1.5, 2],
+    controlBar: {
+      currentTimeDisplay: true,
+      timeDivider: true,
+      durationDisplay: true,
+      remainingTimeDisplay: false,
+      progressControl: true,
+      fullscreenToggle: true,
+      pictureInPictureToggle: true,
+      playbackRateMenuButton: true,
+      chaptersButton: true
+    }
+  };
+  byCommon.fontSize = 1; // 1rem
+  byCommon.CTA_BONYUR_BANK ??= {
+    common: {
+      weight: 65,
+      messages: ["Let's do this", "You got this", "Ready when you are", "Your move", "Make it yours", "Go for it", "Have at it", "Here we go", "Let's roll", "Do your thing", "All yours", "Why wait?", "Take it away", "Go ahead"]
+    },
+    playful: {
+      weight: 30,
+      messages: [
+        "Go on then",
+        "Might as well",
+        "Do the thing",
+        "No pressure",
+        "Press the thing",
+        "There. That button.",
+        "Well? We're waiting",
+        "This counts as progress",
+        "Very official",
+        "Important business",
+        "It'll be fine. Probably.",
+        "Let's cook"
+      ]
+    },
+    rare: {
+      weight: 5,
+      messages: ["Add a little BONYUR", "byUwUr was here", "Made easy, with love", "UwU responsibly", "HÃ¡gale pues", "De una", "Yogurt approves", "Peak engineering", "An important moment in computing", "For the bit", "Clip farming"]
+    }
+  };
+  byCommon.ACCENT_COLOR_BANK ??= {
+    light: { weight: 30, saturation: 35, lightness: 95 },
+    neutral: { weight: 30, saturation: 10, lightness: 85 },
+    pastel: { weight: 35, saturation: 55, lightness: 85 },
+    dark: { weight: 5, saturation: 25, lightness: 25 }
+  };
 
+  /* --- HELPERS --- */
   /**
    * Initializes the <Sidebar /> component in #spa-nav.
    * @param {Object} [options={}] Options that configure this operation.
@@ -141,6 +197,226 @@
     console.log("Init misc");
   }
 
+  /**
+   * Reloads Google ReCaptcha if present
+   * @param {Object} [options={}] Options that configure this operation.
+   * @param {boolean} [options.showWarn=true] Log a warning when an optional dependency is unavailable.
+   * @returns {void}
+   */
+  function initCaptcha({ showWarn = true } = {}) {
+    // Check it exists in the first place. Duh..
+    if (typeof grecaptcha === "undefined" && !window.grecaptcha) {
+      if (showWarn) console.warn("Can't load reCaptcha if script ain't present.");
+      return;
+    }
+    try {
+      $(".g-recaptcha").each((_, captchaEl) => {
+        if (grecaptcha.render) grecaptcha.render(captchaEl);
+        else if (showWarn) console.warn("grecaptcha not ready...");
+      });
+      console.log("Init captcha");
+    } catch (e) {
+      if (showWarn) console.warn("initCaptcha():", e);
+    }
+  }
+
+  /**
+   * Reloads Cookie Consent if present
+   * @param {Object} [options={}] Options that configure this operation.
+   * @param {boolean} [options.showWarn=true] Log a warning when an optional dependency is unavailable.
+   * @returns {void}
+   */
+  function initCookieConsent({ showWarn = true } = {}) {
+    if (typeof cookieconsent === "undefined" && !window.cookieconsent) {
+      if (showWarn) console.warn("Can't load CookieConsent if script ain't present.");
+      return;
+    }
+    if (byCommon.COOKIE_CONSENT_READY) return;
+    try {
+      cookieconsent.run({
+        notice_banner_type: "simple",
+        consent_type: "express",
+        palette: byStorage.getItem("APP_THEME") ?? "dark",
+        language: byStorage.getItem("APP_LANG") ?? "es",
+        website_name: "[Mateus] byUwUr",
+        change_preferences_selector: "#cookiePrefs"
+      });
+      byCommon.COOKIE_CONSENT_READY = true;
+      console.log("Init CookieConsent");
+    } catch (e) {
+      if (showWarn) console.warn("initCookieConsent():", e);
+    }
+  }
+
+  /**
+   * Reloads Particles if present
+   * @param {Object} [options={}] Options that configure this operation.
+   * @param {boolean} [options.showWarn=true] Log a warning when an optional dependency is unavailable.
+   * @returns {void}
+   */
+  function initParticles({ showWarn = true } = {}) {
+    if (typeof particlesJS === "undefined" && !window.particlesJS) {
+      if (showWarn) console.warn("Can't load Particles if script ain't present.");
+      return;
+    }
+    const PARTICLES_CONTAINER_ID = "particles";
+    if (!$(`#${PARTICLES_CONTAINER_ID}`).length) {
+      if (showWarn) console.warn(`Can't find Particles.JS container (#${PARTICLES_CONTAINER_ID})`);
+      return;
+    }
+    try {
+      particlesJS(PARTICLES_CONTAINER_ID, {
+        particles: {
+          number: { value: 32, density: { enable: false, value_area: 0 } },
+          shape: { type: "polygon", stroke: { width: 0, color: "#777777" }, polygon: { nb_sides: 3 } },
+          opacity: { value: 0.25 },
+          size: { value: 2 },
+          line_linked: { enable: true, distance: 192, color: "#777777", opacity: 0.5, width: 1 },
+          move: { enable: true, speed: 1, direction: "right", random: false, straight: false, out_mode: "out", bounce: false, attract: { enable: false } }
+        },
+        interactivity: {
+          detect_on: "window",
+          events: { onhover: { enable: true, mode: "grab" }, onclick: { enable: false } },
+          modes: { grab: { distance: 256, line_linked: { opacity: 0.5 } } }
+        }
+      });
+      console.log("Init Particles.JS");
+    } catch (e) {
+      if (showWarn) console.warn("initParticles():", e);
+    }
+  }
+
+  /* --- CONTROLS --- */
+  /**
+   * Accessibility toggle.
+   * @returns {unknown}
+   */
+  byCommon.accessibilityToggle = () => $("#bywr-accessibility-buttons").toggleClass("hide");
+
+  /**
+   * Accessibility text.
+   * @param {string} [mode=""] Requested operation or display mode.
+   * @returns {void}
+   */
+  byCommon.accessibilityText = (mode = "") => {
+    // 0.5rem min, 3rem max, 0.25rem step
+    switch (mode) {
+      case "plus":
+      case "mas":
+      case "+":
+        byCommon.fontSize = Math.max(0.5, Math.min(3, byCommon.fontSize + 0.25));
+        break;
+      case "minus":
+      case "menos":
+      case "-":
+        byCommon.fontSize = Math.max(0.5, Math.min(3, byCommon.fontSize - 0.25));
+        break;
+      default:
+        byCommon.fontSize = 1;
+        break;
+    }
+    $("html").css("font-size", `${byCommon.fontSize}rem`);
+  };
+
+  /**
+   * Accessibility motion.
+   * @returns {unknown}
+   */
+  byCommon.accessibilityMotion = () => $("html").toggleClass("no-motion");
+
+  /**
+   * Accessibility dyslexia.
+   * @returns {unknown}
+   */
+  byCommon.accessibilityDyslexia = () => $("body").toggleClass("dyslexia");
+
+  /**
+   * Accessibility word spacing.
+   * @returns {unknown}
+   */
+  byCommon.accessibilityWordSpacing = () => $("body").toggleClass("word-spacing");
+
+  /**
+   * Accessibility highlight links.
+   * @returns {unknown}
+   */
+  byCommon.accessibilityHighlightLinks = () => $("html").toggleClass("highlight-links");
+
+  /**
+   * Accessibility high contrast.
+   * @param {string} [mode="high-contrast"] Requested operation or display mode.
+   * @returns {unknown}
+   */
+  byCommon.accessibilityHighContrast = (mode = "high-contrast") => {
+    if ($("html").hasClass(mode)) return $("html").removeClass(mode);
+    $("html").removeClass("protanopia");
+    $("html").removeClass("deuteranopia");
+    $("html").removeClass("tritanopia");
+    $("html").removeClass("monochropia");
+    $("html").removeClass("invertchropia");
+    $("html").removeClass("high-contrast");
+    $("html").addClass(mode);
+  };
+
+  /**
+   * * --- THEME --- *
+   */
+
+  /**
+   * Applies a light/dark theme; omitting theme toggles the first target's current theme.
+   * @param {string|Element} target Selector (all matches) or element.
+   * @param {Object} [options={}] Theme, control, property, and stylesheet options.
+   * @param {"light"|"dark"} [options.theme] Explicit theme.
+   * @param {string|Element} [options.button] Toggle button selector or element.
+   * @param {object} [options.properties] CSS property maps keyed by light/dark.
+   * @param {string|HTMLLinkElement} [options.stylesheet] Existing stylesheet link.
+   * @param {{light:string,dark:string}} [options.stylesheets] Full or relative theme URLs; omitted URLs are inferred from .light.css/.dark.css.
+   * @returns {"light"|"dark"|null} Applied theme, or null if no target matches.
+   * Event binding and persistence belong to the caller; stylesheet loading is asynchronous.
+   * @throws {TypeError}
+   */
+  byCommon.toggleTheme = function (target, { theme, button, properties, stylesheet, stylesheets } = {}) {
+    const elements = $(target).toArray();
+    if (!elements.length) return null;
+    const link = typeof stylesheet === "string" ? $(stylesheet)[0] : stylesheet;
+    if ((stylesheet || stylesheets) && (!link || link.tagName !== "LINK")) throw new TypeError("Provide an existing stylesheet link.");
+    const href = link && typeof link.getAttribute === "function" ? link.getAttribute("href") || "" : "";
+    const themeSuffix = /\.(light|dark)\.css(?=[?#]|$)/i;
+    if (link && !stylesheets && themeSuffix.test(href)) {
+      stylesheets = {
+        light: href.replace(themeSuffix, ".light.css"),
+        dark: href.replace(themeSuffix, ".dark.css")
+      };
+    }
+    if (link && (!stylesheets?.light || !stylesheets?.dark)) throw new TypeError("Provide both light/dark URLs or a .light.css/.dark.css stylesheet.");
+    // The selected stylesheet owns the current theme when its URL matches a configured variant.
+    const current = link
+      ? ["light", "dark"].find((name) => {
+          return new URL(stylesheets[name], document.baseURI).href === link.href;
+        })
+      : null;
+    const next = theme ?? ((current || elements[0].getAttribute("data-bs-theme")) === "dark" ? "light" : "dark");
+    if (next !== "light" && next !== "dark") throw new TypeError("Theme must be light or dark.");
+    const buttons = $(button).toArray();
+    const keys = new Set([...Object.keys(properties?.light || {}), ...Object.keys(properties?.dark || {})]);
+    for (const element of elements) {
+      element.setAttribute("data-bs-theme", next);
+      for (const key of keys) {
+        const value = properties?.[next]?.[key];
+        if (value == null) element.style.removeProperty(key);
+        else element.style.setProperty(key, value);
+      }
+    }
+    if (link) link.setAttribute("href", stylesheets[next]);
+    for (const toggle of buttons) {
+      toggle.title = `Switch to ${next === "dark" ? "light" : "dark"} theme`;
+      toggle.setAttribute("aria-label", toggle.title);
+      toggle.setAttribute("aria-pressed", String(next === "dark"));
+    }
+    return next;
+  };
+
+  /* --- PUBLIC API --- */
   // ==========
   // ==== BOOTSTRAP LIFECYCLE ====
   // ==========
@@ -251,29 +527,6 @@
   };
 
   /**
-   * Reloads Google ReCaptcha if present
-   * @param {Object} [options={}] Options that configure this operation.
-   * @param {boolean} [options.showWarn=true] Log a warning when an optional dependency is unavailable.
-   * @returns {void}
-   */
-  function initCaptcha({ showWarn = true } = {}) {
-    // Check it exists in the first place. Duh..
-    if (typeof grecaptcha === "undefined" && !window.grecaptcha) {
-      if (showWarn) console.warn("Can't load reCaptcha if script ain't present.");
-      return;
-    }
-    try {
-      $(".g-recaptcha").each((_, captchaEl) => {
-        if (grecaptcha.render) grecaptcha.render(captchaEl);
-        else if (showWarn) console.warn("grecaptcha not ready...");
-      });
-      console.log("Init captcha");
-    } catch (e) {
-      if (showWarn) console.warn("initCaptcha():", e);
-    }
-  }
-
-  /**
    * Reloads Google Page Translator if present
    * @returns {unknown}
    */
@@ -287,116 +540,6 @@
       console.log("Init Google Translate");
     } catch (e) {
       console.warn("initTranslate():", e);
-    }
-  };
-
-  /**
-   * Reloads Cookie Consent if present
-   * @param {Object} [options={}] Options that configure this operation.
-   * @param {boolean} [options.showWarn=true] Log a warning when an optional dependency is unavailable.
-   * @returns {void}
-   */
-  function initCookieConsent({ showWarn = true } = {}) {
-    if (typeof cookieconsent === "undefined" && !window.cookieconsent) {
-      if (showWarn) console.warn("Can't load CookieConsent if script ain't present.");
-      return;
-    }
-    if (byCommon.COOKIE_CONSENT_READY) return;
-    try {
-      cookieconsent.run({
-        notice_banner_type: "simple",
-        consent_type: "express",
-        palette: byStorage.getItem("APP_THEME") ?? "dark",
-        language: byStorage.getItem("APP_LANG") ?? "es",
-        website_name: "[Mateus] byUwUr",
-        change_preferences_selector: "#cookiePrefs"
-      });
-      byCommon.COOKIE_CONSENT_READY = true;
-      console.log("Init CookieConsent");
-    } catch (e) {
-      if (showWarn) console.warn("initCookieConsent():", e);
-    }
-  }
-
-  /**
-   * Reloads Particles if present
-   * @param {Object} [options={}] Options that configure this operation.
-   * @param {boolean} [options.showWarn=true] Log a warning when an optional dependency is unavailable.
-   * @returns {void}
-   */
-  function initParticles({ showWarn = true } = {}) {
-    if (typeof particlesJS === "undefined" && !window.particlesJS) {
-      if (showWarn) console.warn("Can't load Particles if script ain't present.");
-      return;
-    }
-    const PARTICLES_CONTAINER_ID = "particles";
-    if (!$(`#${PARTICLES_CONTAINER_ID}`).length) {
-      if (showWarn) console.warn(`Can't find Particles.JS container (#${PARTICLES_CONTAINER_ID})`);
-      return;
-    }
-    try {
-      particlesJS(PARTICLES_CONTAINER_ID, {
-        particles: {
-          number: { value: 32, density: { enable: false, value_area: 0 } },
-          shape: { type: "polygon", stroke: { width: 0, color: "#777777" }, polygon: { nb_sides: 3 } },
-          opacity: { value: 0.25 },
-          size: { value: 2 },
-          line_linked: { enable: true, distance: 192, color: "#777777", opacity: 0.5, width: 1 },
-          move: { enable: true, speed: 1, direction: "right", random: false, straight: false, out_mode: "out", bounce: false, attract: { enable: false } }
-        },
-        interactivity: {
-          detect_on: "window",
-          events: { onhover: { enable: true, mode: "grab" }, onclick: { enable: false } },
-          modes: { grab: { distance: 256, line_linked: { opacity: 0.5 } } }
-        }
-      });
-      console.log("Init Particles.JS");
-    } catch (e) {
-      if (showWarn) console.warn("initParticles():", e);
-    }
-  }
-
-  /**
-   * Initializes all components that dynamically changes within the page
-   * @param {Object} [options={}] Options that configure this operation.
-   * @param {boolean} [options.showWarn=byCommon.INIT_WARNINGS] Log a warning when an optional dependency is unavailable.
-   * @returns {void}
-   */
-  byCommon.init = function ({ showWarn = byCommon.INIT_WARNINGS } = {}) {
-    $(() => {
-      console.log("Init _common.js");
-      initMisc();
-      const options = { showWarn };
-      initCaptcha(options);
-      if (typeof byCommon.initBootstrap === "function") byCommon.initBootstrap(options);
-      initSidebar(options);
-      initCookieConsent(options);
-      initParticles(options);
-      //byCommon.initTranslate(); //// Callback invoked in ?cb= on <script>
-
-      if (global.byFont && typeof global.byFont.init === "function") global.byFont.init();
-    });
-  };
-
-  /**
-   * * --- VIDEO --- *
-   */
-  byCommon.VIDEO_COMMON_OPTIONS = {
-    controls: true,
-    autoplay: true,
-    preload: "auto",
-    fluid: true,
-    playbackRates: [0.5, 1, 1.5, 2],
-    controlBar: {
-      currentTimeDisplay: true,
-      timeDivider: true,
-      durationDisplay: true,
-      remainingTimeDisplay: false,
-      progressControl: true,
-      fullscreenToggle: true,
-      pictureInPictureToggle: true,
-      playbackRateMenuButton: true,
-      chaptersButton: true
     }
   };
 
@@ -462,164 +605,6 @@
   };
 
   /**
-   * * --- ACCESSIBILITY --- *
-   */
-  byCommon.fontSize = 1; // 1rem
-  /**
-   * Accessibility toggle.
-   * @returns {unknown}
-   */
-  byCommon.accessibilityToggle = () => $("#bywr-accessibility-buttons").toggleClass("hide");
-  /**
-   * Accessibility text.
-   * @param {string} [mode=""] Requested operation or display mode.
-   * @returns {void}
-   */
-  byCommon.accessibilityText = (mode = "") => {
-    // 0.5rem min, 3rem max, 0.25rem step
-    switch (mode) {
-      case "plus":
-      case "mas":
-      case "+":
-        byCommon.fontSize = Math.max(0.5, Math.min(3, byCommon.fontSize + 0.25));
-        break;
-      case "minus":
-      case "menos":
-      case "-":
-        byCommon.fontSize = Math.max(0.5, Math.min(3, byCommon.fontSize - 0.25));
-        break;
-      default:
-        byCommon.fontSize = 1;
-        break;
-    }
-    $("html").css("font-size", `${byCommon.fontSize}rem`);
-  };
-  /**
-   * Accessibility motion.
-   * @returns {unknown}
-   */
-  byCommon.accessibilityMotion = () => $("html").toggleClass("no-motion");
-  /**
-   * Accessibility dyslexia.
-   * @returns {unknown}
-   */
-  byCommon.accessibilityDyslexia = () => $("body").toggleClass("dyslexia");
-  /**
-   * Accessibility word spacing.
-   * @returns {unknown}
-   */
-  byCommon.accessibilityWordSpacing = () => $("body").toggleClass("word-spacing");
-  /**
-   * Accessibility highlight links.
-   * @returns {unknown}
-   */
-  byCommon.accessibilityHighlightLinks = () => $("html").toggleClass("highlight-links");
-  /**
-   * Accessibility high contrast.
-   * @param {string} [mode="high-contrast"] Requested operation or display mode.
-   * @returns {unknown}
-   */
-  byCommon.accessibilityHighContrast = (mode = "high-contrast") => {
-    if ($("html").hasClass(mode)) return $("html").removeClass(mode);
-    $("html").removeClass("protanopia");
-    $("html").removeClass("deuteranopia");
-    $("html").removeClass("tritanopia");
-    $("html").removeClass("monochropia");
-    $("html").removeClass("invertchropia");
-    $("html").removeClass("high-contrast");
-    $("html").addClass(mode);
-  };
-
-  /**
-   * * --- THEME --- *
-   */
-
-  /**
-   * Applies a light/dark theme; omitting theme toggles the first target's current theme.
-   * @param {string|Element} target Selector (all matches) or element.
-   * @param {Object} [options={}] Theme, control, property, and stylesheet options.
-   * @param {"light"|"dark"} [options.theme] Explicit theme.
-   * @param {string|Element} [options.button] Toggle button selector or element.
-   * @param {object} [options.properties] CSS property maps keyed by light/dark.
-   * @param {string|HTMLLinkElement} [options.stylesheet] Existing stylesheet link.
-   * @param {{light:string,dark:string}} [options.stylesheets] Full or relative theme URLs; omitted URLs are inferred from .light.css/.dark.css.
-   * @returns {"light"|"dark"|null} Applied theme, or null if no target matches.
-   * Event binding and persistence belong to the caller; stylesheet loading is asynchronous.
-   * @throws {TypeError}
-   */
-  byCommon.toggleTheme = function (target, { theme, button, properties, stylesheet, stylesheets } = {}) {
-    const elements = $(target).toArray();
-    if (!elements.length) return null;
-    const link = typeof stylesheet === "string" ? $(stylesheet)[0] : stylesheet;
-    if ((stylesheet || stylesheets) && (!link || link.tagName !== "LINK")) throw new TypeError("Provide an existing stylesheet link.");
-    const href = link && typeof link.getAttribute === "function" ? link.getAttribute("href") || "" : "";
-    const themeSuffix = /\.(light|dark)\.css(?=[?#]|$)/i;
-    if (link && !stylesheets && themeSuffix.test(href)) {
-      stylesheets = {
-        light: href.replace(themeSuffix, ".light.css"),
-        dark: href.replace(themeSuffix, ".dark.css")
-      };
-    }
-    if (link && (!stylesheets?.light || !stylesheets?.dark)) throw new TypeError("Provide both light/dark URLs or a .light.css/.dark.css stylesheet.");
-    // The selected stylesheet owns the current theme when its URL matches a configured variant.
-    const current = link
-      ? ["light", "dark"].find((name) => {
-          return new URL(stylesheets[name], document.baseURI).href === link.href;
-        })
-      : null;
-    const next = theme ?? ((current || elements[0].getAttribute("data-bs-theme")) === "dark" ? "light" : "dark");
-    if (next !== "light" && next !== "dark") throw new TypeError("Theme must be light or dark.");
-    const buttons = $(button).toArray();
-    const keys = new Set([...Object.keys(properties?.light || {}), ...Object.keys(properties?.dark || {})]);
-    for (const element of elements) {
-      element.setAttribute("data-bs-theme", next);
-      for (const key of keys) {
-        const value = properties?.[next]?.[key];
-        if (value == null) element.style.removeProperty(key);
-        else element.style.setProperty(key, value);
-      }
-    }
-    if (link) link.setAttribute("href", stylesheets[next]);
-    for (const toggle of buttons) {
-      toggle.title = `Switch to ${next === "dark" ? "light" : "dark"} theme`;
-      toggle.setAttribute("aria-label", toggle.title);
-      toggle.setAttribute("aria-pressed", String(next === "dark"));
-    }
-    return next;
-  };
-
-  /**
-   *  * --- CTA --- *
-   */
-  byCommon.CTA_BONYUR_BANK ??= {
-    common: {
-      weight: 65,
-      messages: ["Let's do this", "You got this", "Ready when you are", "Your move", "Make it yours", "Go for it", "Have at it", "Here we go", "Let's roll", "Do your thing", "All yours", "Why wait?", "Take it away", "Go ahead"]
-    },
-    playful: {
-      weight: 30,
-      messages: [
-        "Go on then",
-        "Might as well",
-        "Do the thing",
-        "No pressure",
-        "Press the thing",
-        "There. That button.",
-        "Well? We're waiting",
-        "This counts as progress",
-        "Very official",
-        "Important business",
-        "It'll be fine. Probably.",
-        "Let's cook"
-      ]
-    },
-    rare: {
-      weight: 5,
-      messages: ["Add a little BONYUR", "byUwUr was here", "Made easy, with love", "UwU responsibly", "HÃ¡gale pues", "De una", "Yogurt approves", "Peak engineering", "An important moment in computing", "For the bit", "Clip farming"]
-    }
-  };
-
-  /**
    * Returns a random message from a weighted message bank.
    * Selects a group based on its weight, then randomly picks one of its messages.
    *
@@ -635,16 +620,6 @@
       if (roll < 0) return messages[Math.floor(Math.random() * messages.length)];
     }
     return null;
-  };
-
-  /**
-   *  * --- COLOR --- *
-   */
-  byCommon.ACCENT_COLOR_BANK ??= {
-    light: { weight: 30, saturation: 35, lightness: 95 },
-    neutral: { weight: 30, saturation: 10, lightness: 85 },
-    pastel: { weight: 35, saturation: 55, lightness: 85 },
-    dark: { weight: 5, saturation: 25, lightness: 25 }
   };
 
   /**
@@ -678,5 +653,28 @@
     return gradient ? `linear-gradient(${angle}deg, ${color()}, ${color(15 + Math.floor(Math.random() * 31))})` : color();
   };
 
+  /**
+   * Initializes all components that dynamically changes within the page
+   * @param {Object} [options={}] Options that configure this operation.
+   * @param {boolean} [options.showWarn=byCommon.INIT_WARNINGS] Log a warning when an optional dependency is unavailable.
+   * @returns {void}
+   */
+  byCommon.init = function ({ showWarn = byCommon.INIT_WARNINGS } = {}) {
+    $(() => {
+      console.log("Init _common.js");
+      initMisc();
+      const options = { showWarn };
+      initCaptcha(options);
+      if (typeof byCommon.initBootstrap === "function") byCommon.initBootstrap(options);
+      initSidebar(options);
+      initCookieConsent(options);
+      initParticles(options);
+      //byCommon.initTranslate(); //// Callback invoked in ?cb= on <script>
+
+      if (global.byFont && typeof global.byFont.init === "function") global.byFont.init();
+    });
+  };
+
+  /* --- STARTUP --- */
   byCommon.initialized = true;
 })(typeof window !== "undefined" ? window : this);

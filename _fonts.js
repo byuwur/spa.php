@@ -7,15 +7,14 @@
  * @returns {void}
  */
 (function (global) {
+  /* --- INITIALIZATION --- */
   // Keep font loading native so standalone overlays can reuse it without the SPA or jQuery.
   // Resolve jQuery only in picker methods, allowing their UI libraries to load afterward.
   global.byFont = global.byFont || {};
   const byFont = global.byFont;
   if (byFont?.initialized) return;
-  // ==========
-  // ==== VERIFIED GOOGLE FONTS CATALOG ====
-  // ==========
 
+  /* --- CONSTANTS --- */
   // Names and normal weights verified against https://fonts.google.com/metadata/fonts on 2026-10-10.
   const catalog = {
     ABeeZee: "400",
@@ -369,16 +368,15 @@
     "Zilla Slab": "300;400;500;600;700",
     "Zilla Slab Highlight": "400;700"
   };
+  byFont.families = Object.freeze(Object.keys(catalog));
+  const systemFonts = ["system-ui", "sans-serif", "serif", "monospace", "Arial", "Arial Black", "Verdana", "Tahoma", "Trebuchet MS", "Georgia", "Times New Roman", "Courier New", "Impact"];
 
-  const families = Object.freeze(Object.keys(catalog));
-  byFont.families = families;
-  const names = new Map(families.map((name) => [name.toLowerCase(), name]));
+  /* --- STATE --- */
+  const names = new Map(byFont.families.map((name) => [name.toLowerCase(), name]));
   const requests = new Map();
+  const pickers = new WeakMap();
 
-  // ==========
-  // ==== FONT LOADING AND PREVIEWS ====
-  // ==========
-
+  /* --- HELPERS --- */
   function googleFamily(value) {
     const first = String(value || "")
       .split(",")[0]
@@ -417,6 +415,22 @@
     return request;
   }
 
+  /**
+   * Render labels safely without downloading offscreen Google families.
+   * @param {Object} option Select2 option data.
+   * @returns {jQuery|string}
+   */
+  function fontOption(option) {
+    if (option.children || option.id == null) return option.text;
+    const label = document.createElement("span");
+    label.className = "font-option d-block text-truncate";
+    label.textContent = option.text;
+    label.dataset.font = option.id;
+    label.style.fontFamily = byFont.stack(option.id);
+    return global.jQuery(label);
+  }
+
+  /* --- PUBLIC API --- */
   /**
    * Build a CSS stack without downloading fonts for offscreen dropdown options.
    * @param {string} value Saved family name or existing CSS font stack.
@@ -467,28 +481,6 @@
     }
   };
 
-  // ==========
-  // ==== OPTIONAL FONT PICKERS ====
-  // ==========
-
-  const pickers = new WeakMap();
-  const systemFonts = ["system-ui", "sans-serif", "serif", "monospace", "Arial", "Arial Black", "Verdana", "Tahoma", "Trebuchet MS", "Georgia", "Times New Roman", "Courier New", "Impact"];
-
-  /**
-   * Render labels safely without downloading offscreen Google families.
-   * @param {Object} option Select2 option data.
-   * @returns {jQuery|string}
-   */
-  function fontOption(option) {
-    if (option.children || option.id == null) return option.text;
-    const label = document.createElement("span");
-    label.className = "font-option d-block text-truncate";
-    label.textContent = option.text;
-    label.dataset.font = option.id;
-    label.style.fontFamily = byFont.stack(option.id);
-    return global.jQuery(label);
-  }
-
   /**
    * Enhance one native field, preserving its name, saved value, and form Reset.
    * @param {HTMLInputElement|HTMLSelectElement} field Input or select to enhance.
@@ -510,7 +502,7 @@
     const initial = field.value;
     const maxLength = Number(field.getAttribute("maxlength")) || 240;
     const select = field.tagName === "SELECT" ? field : document.createElement("select");
-    const existing = field.tagName === "SELECT" ? [...field.options].filter((option) => !families.includes(option.value)).map((option) => [option.value, option.text]) : [];
+    const existing = field.tagName === "SELECT" ? [...field.options].filter((option) => !byFont.families.includes(option.value)).map((option) => [option.value, option.text]) : [];
     if ($(select).data("select2")) $(select).select2("close").select2("destroy");
     if (select !== field) {
       for (const { name, value } of field.attributes) {
@@ -526,11 +518,11 @@
     const installed = document.createElement("optgroup");
     installed.label = "Installed and system fonts";
     const choices = new Map([["", "Default font"], ...systemFonts.map((name) => [name, name]), ...existing]);
-    if (!families.includes(initial) && !choices.has(initial)) choices.set(initial, initial);
+    if (!byFont.families.includes(initial) && !choices.has(initial)) choices.set(initial, initial);
     for (const [value, title] of choices) installed.append(new Option(title, value, value === initial, value === initial));
     const google = document.createElement("optgroup");
     google.label = "Google Fonts";
-    for (const name of families) google.append(new Option(name, name, name === initial, name === initial));
+    for (const name of byFont.families) google.append(new Option(name, name, name === initial, name === initial));
     select.append(installed, google);
     select.value = initial;
     const modal = select.closest(".modal, dialog");
@@ -649,5 +641,6 @@
     }
   };
 
+  /* --- STARTUP --- */
   byFont.initialized = true;
 })(typeof window !== "undefined" ? window : this);

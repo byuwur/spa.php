@@ -1,10 +1,12 @@
 "use strict";
 /*
  * File: _functions.js
- * Desc: Contains common standalone functions that are used project-wide. In hopes that the function names doesn't collide with global.
+ * Desc: Standalone data, URL, UI, and request utilities shared by the SPAs.
  * Deps: Native browser APIs; jQuery for UI/HTTP helpers, Bootstrap for modals, byStorage for request/WebSocket helpers.
  * Copyright (c) 2026 Andrés Trujillo [Mateus] byUwUr
  */
+
+/* --- JSON --- */
 
 /**
  * Checks whether a value is valid JSON.
@@ -50,6 +52,60 @@ function print_json(json) {
   else output = JSON.stringify(json, null, 2);
   return output;
 }
+
+/* --- VALUES AND PATHS --- */
+
+/**
+ * Returns if a variable is an object.
+ * @param {any} value The data to check.
+ * @return {boolean} Whether the input is an object or not.
+ */
+function is_object(value) {
+  return value && typeof value === "object" && !Array.isArray(value);
+}
+
+/**
+ * Escapes a value for HTML text content.
+ * @param {any} value The value to escape.
+ * @return {string} HTML-safe string.
+ */
+function escape_html(value) {
+  const element = document.createElement("div");
+  element.textContent = value ?? "";
+  return element.innerHTML;
+}
+
+/**
+ * Replaces "\\" directory separators to "/"
+ * @param {string} path String to convert
+ * @return string Converted path
+ */
+function std_dir_separator(path) {
+  return String(path || "").replace(/\\/g, "/");
+}
+
+/**
+ * Returns the directory portion of a path using normalized "/" separators.
+ * @param {string} path Path string to inspect.
+ * @return {string} Directory path, or "." when no directory portion exists.
+ */
+function dirname(path) {
+  return std_dir_separator(path).replace(/\/[^/]*$/, "") || ".";
+}
+
+/**
+ * Logs a JSON response and stops further execution.
+ * (JS version: it just throws a special object to simulate termination)
+ * @param {any} json The data to output.
+ * @return {never}
+ * @throws {Error}
+ */
+function exit_json(json) {
+  console.warn(print_json(json));
+  throw new Error("exit_json: Script terminated after sending JSON response.");
+}
+
+/* --- URL COMPRESSION --- */
 
 /**
  * Compresses UTF-8 text to unpadded Base64url using native raw DEFLATE.
@@ -99,217 +155,7 @@ async function decompress_url_data(value, maxBytes = 1048576) {
   return new TextDecoder("utf-8", { fatal: true, ignoreBOM: true }).decode(await new Blob(chunks).arrayBuffer());
 }
 
-/**
- * Returns if a variable is an object.
- * @param {any} value The data to check.
- * @return {boolean} Whether the input is an object or not.
- */
-function is_object(value) {
-  return value && typeof value === "object" && !Array.isArray(value);
-}
-
-/**
- * Escapes a value for HTML text content.
- * @param {any} value The value to escape.
- * @return {string} HTML-safe string.
- */
-function escape_html(value) {
-  const element = document.createElement("div");
-  element.textContent = value ?? "";
-  return element.innerHTML;
-}
-
-/**
- * Makes an HTTP request to check if a remote URL responds correctly (200 - 299).
- * @param {string} url The URL to check.
- * @return {jQuery.Promise<boolean>|undefined} The resource existence, or no result without jQuery.
- */
-function remote_file_exists(url) {
-  if (typeof jQuery === "undefined" && !window.jQuery) return console.error("remote_file_exists() FAILED. No jQuery found.");
-  try {
-    url = new URL(url, window.location.href).href;
-  } catch {
-    console.error("HTTP ERROR: Invalid URL.");
-    return $.when(false);
-  }
-  return $.ajax({
-    url,
-    type: "HEAD"
-  })
-    .then(function () {
-      return true;
-    })
-    .catch(async function (xhr) {
-      if (![405, 501].includes(xhr?.status)) return false;
-      try {
-        await $.ajax({ url, type: "GET" });
-        return true;
-      } catch {
-        return false;
-      }
-    });
-}
-
-/**
- * Replaces "\\" directory separators to "/"
- * @param {string} path String to convert
- * @return string Converted path
- */
-function std_dir_separator(path) {
-  return String(path || "").replace(/\\/g, "/");
-}
-
-/**
- * Returns the directory portion of a path using normalized "/" separators.
- * @param {string} path Path string to inspect.
- * @return {string} Directory path, or "." when no directory portion exists.
- */
-function dirname(path) {
-  return std_dir_separator(path).replace(/\/[^/]*$/, "") || ".";
-}
-
-/**
- * Logs a JSON response and stops further execution.
- * (JS version: it just throws a special object to simulate termination)
- * @param {any} json The data to output.
- * @return {never}
- * @throws {Error}
- */
-function exit_json(json) {
-  console.warn(print_json(json));
-  throw new Error("exit_json: Script terminated after sending JSON response.");
-}
-
-/**
- * Inits a websocket connection.
- * @param {object} options Options for the websocket connection.
- * @param {string} options.host The host where you wish to connect.
- * @param {int} options.port The port of the host.
- * @param {string} options.path The path where the websocket is exposed.
- * @param {string} options.elementId The element where you want to render the websocket.
- * @param {boolean} [options.autoConnect=true] Log websocket data on the element.
- * @param {boolean} [options.logging=false] Log websocket data on the element.
- * @param {Function} [options.onOpen=()=>{}] onOpen trigger for websocket.
- * @param {Function} [options.onClose=()=>{}] onClose trigger for websocket.
- * @param {Function} [options.onError=()=>{}] onError trigger for websocket.
- * @param {Function} [options.onMessage=()=>{}] onMessage trigger for websocket.
- * @param {int} [options.reconnDelay=3000] How long to wait between reconnections in ms.
- * @param {int} [options.maxRetries=3] How many reconnections tries.
- * @return {object} Returns the ws object for further manipulation.
- */
-function init_websocket(options) {
-  const { host, port, path, elementId, autoConnect = true, logging = false, onOpen = () => {}, onClose = () => {}, onError = () => {}, onMessage = () => {}, reconnDelay = 3000, maxRetries = 3 } = options;
-  // Developer mode?
-  const appIsDEV = byStorage.getItem("APP_ENV") === "DEV";
-  if (appIsDEV) console.log(`init_websocket():`, options);
-  // Check if elementId is a valid ID (#id)
-  const inputId = elementId.match(/#[a-zA-Z0-9-_]+/);
-  if (!inputId) return console.warn(`Insert a valid element ID.`);
-  // Look up ID existence
-  const elId = inputId[0];
-  if (!$(elId).length) return console.warn(`Element ID (${elId}) doesn't exist.`);
-  // Init websocket
-
-  const ws_protocol = window.location.protocol === "https:" ? "wss" : "ws";
-  const ws_path = `${ws_protocol}://${host}:${port}/${path}`;
-  let ws = undefined;
-  let retries = 0;
-  let closedManually = false;
-
-  const logToEl = (label, data = "") => {
-    if (!logging) return;
-    let content = data;
-    if (check_json(content)) content = JSON.stringify(JSON.parse(content), null, 2);
-    const now = new Date().toISOString().replace("T", "_").replace(/:/g, "-").split(".")[0];
-    const $pre = $(/* HTML */ `<pre></pre>`).text(`${label}: [${now}]\n${data}`);
-    $(elId).append($pre);
-  };
-
-  /**
-   * Connect.
-   * @returns {void}
-   */
-  function connect() {
-    if (ws && ws.readyState === WebSocket.OPEN) return;
-    console.log(`ws${appIsDEV ? `: ${ws_path}` : `.`}`);
-    ws = new WebSocket(ws_path);
-    logToEl(`ws`, `Connecting...`);
-
-    ws.onopen = (e) => {
-      if (appIsDEV) console.log("ws.onopen:", e);
-      retries = 0;
-      logToEl(`ws.onopen`, `Connection established.`);
-      onOpen(e);
-    };
-    ws.onclose = (e) => {
-      if (appIsDEV) console.log("ws.onclose:", e);
-      logToEl(`ws.onclose`, `Connection closed. (${e.code})`);
-      onClose(e);
-      if (!closedManually && retries < maxRetries) retry();
-      else logToEl(`ws.retry`, `Max retries reached (${maxRetries})`);
-    };
-    ws.onerror = (e) => {
-      if (appIsDEV) console.log("ws.onerror:", e);
-      logToEl(`ws.onerror`, `Connection failed.`);
-      onError(e);
-      ws.close();
-    };
-    ws.onmessage = (e) => {
-      if (appIsDEV) console.log("ws.onmessage:", e);
-      logToEl(`ws.onmessage`, e.data || `[no data]`);
-      onMessage(e);
-    };
-  }
-
-  /**
-   * Retry.
-   * @returns {void}
-   */
-  function retry() {
-    if (retries > maxRetries) {
-      logToEl(`ws.retry`, `Max retries reached (${maxRetries})`);
-      return;
-    }
-    retries++;
-    logToEl(`ws.retry`, `Reconnection attempt (${retries}) in ${reconnDelay / 1000} seconds...`);
-    setTimeout(connect, reconnDelay);
-  }
-
-  if (autoConnect) connect();
-
-  return {
-    get ws() {
-      return ws;
-    },
-    get readyState() {
-      return ws?.readyState;
-    },
-    connect: () => {
-      // Do more if needed
-      connect();
-    },
-    close: () => {
-      closedManually = true;
-      retries = maxRetries;
-      if (ws && typeof ws.close === "function") ws.close();
-    },
-    retry: () => {
-      closedManually = false;
-      retries = 0;
-      retry();
-    },
-    send: (data) => {
-      if (!ws || ws.readyState !== WebSocket.OPEN) {
-        console.warn("⚠️ Cannot send = socket not open");
-        return;
-      }
-      let parsedData = data;
-      if (check_json(data)) parsedData = JSON.stringify(JSON.parse(parsedData), null, 2);
-      else parsedData = JSON.stringify(parsedData, null, 2);
-      if (ws && typeof ws.send === "function") ws.send(parsedData);
-    }
-  };
-}
+/* --- COOKIES AND QUERY PARAMETERS --- */
 
 /**
  * Creates or updates a cookie with the specified name, value, and expiration days.
@@ -347,6 +193,8 @@ function get_url_param(name) {
   return new URLSearchParams(hash.slice(hash.indexOf("?") + 1)).get(name);
 }
 
+/* --- EVENTS --- */
+
 /**
  * Creates a debounced function that delays the execution of the provided function (`func`)
  * @param {Function} func The function to debounce. This is the function that will be delayed in execution.
@@ -360,6 +208,8 @@ function debounce(func, wait = 250) {
     timeout = setTimeout(() => func.apply(this, arguments), wait);
   };
 }
+
+/* --- MODALS --- */
 
 /**
  * Hides and removes the front modal from the DOM after a short delay.
@@ -420,6 +270,8 @@ function show_modal_front($modalId, $state = "success", $title = "INFO.", $messa
   $(`#${$modalId}`).modal("show");
 }
 
+/* --- REQUESTS --- */
+
 /**
  * Returns the CSRF token provided by the consuming application.
  * @returns {string} CSRF token or an empty string.
@@ -439,6 +291,37 @@ function add_csrf_token(formData, method = "POST") {
   const token = get_csrf_token();
   if (token && !formData.some((field) => field?.name === "_csrf")) formData.push({ name: "_csrf", value: token });
   return formData;
+}
+
+/**
+ * Makes an HTTP request to check if a remote URL responds correctly (200 - 299).
+ * @param {string} url The URL to check.
+ * @return {jQuery.Promise<boolean>|undefined} The resource existence, or no result without jQuery.
+ */
+function remote_file_exists(url) {
+  if (typeof jQuery === "undefined" && !window.jQuery) return console.error("remote_file_exists() FAILED. No jQuery found.");
+  try {
+    url = new URL(url, window.location.href).href;
+  } catch {
+    console.error("HTTP ERROR: Invalid URL.");
+    return $.when(false);
+  }
+  return $.ajax({
+    url,
+    type: "HEAD"
+  })
+    .then(function () {
+      return true;
+    })
+    .catch(async function (xhr) {
+      if (![405, 501].includes(xhr?.status)) return false;
+      try {
+        await $.ajax({ url, type: "GET" });
+        return true;
+      } catch {
+        return false;
+      }
+    });
 }
 
 /**
@@ -591,4 +474,137 @@ function element_make_http_request(options) {
           alwaysFn(response?.data ?? response);
         });
     });
+}
+
+/* --- WEBSOCKETS --- */
+
+/**
+ * Inits a websocket connection.
+ * @param {object} options Options for the websocket connection.
+ * @param {string} options.host The host where you wish to connect.
+ * @param {int} options.port The port of the host.
+ * @param {string} options.path The path where the websocket is exposed.
+ * @param {string} options.elementId The element where you want to render the websocket.
+ * @param {boolean} [options.autoConnect=true] Log websocket data on the element.
+ * @param {boolean} [options.logging=false] Log websocket data on the element.
+ * @param {Function} [options.onOpen=()=>{}] onOpen trigger for websocket.
+ * @param {Function} [options.onClose=()=>{}] onClose trigger for websocket.
+ * @param {Function} [options.onError=()=>{}] onError trigger for websocket.
+ * @param {Function} [options.onMessage=()=>{}] onMessage trigger for websocket.
+ * @param {int} [options.reconnDelay=3000] How long to wait between reconnections in ms.
+ * @param {int} [options.maxRetries=3] How many reconnections tries.
+ * @return {object} Returns the ws object for further manipulation.
+ */
+function init_websocket(options) {
+  const { host, port, path, elementId, autoConnect = true, logging = false, onOpen = () => {}, onClose = () => {}, onError = () => {}, onMessage = () => {}, reconnDelay = 3000, maxRetries = 3 } = options;
+  // Developer mode?
+  const appIsDEV = byStorage.getItem("APP_ENV") === "DEV";
+  if (appIsDEV) console.log(`init_websocket():`, options);
+  // Check if elementId is a valid ID (#id)
+  const inputId = elementId.match(/#[a-zA-Z0-9-_]+/);
+  if (!inputId) return console.warn(`Insert a valid element ID.`);
+  // Look up ID existence
+  const elId = inputId[0];
+  if (!$(elId).length) return console.warn(`Element ID (${elId}) doesn't exist.`);
+  // Init websocket
+
+  const ws_protocol = window.location.protocol === "https:" ? "wss" : "ws";
+  const ws_path = `${ws_protocol}://${host}:${port}/${path}`;
+  let ws = undefined;
+  let retries = 0;
+  let closedManually = false;
+
+  const logToEl = (label, data = "") => {
+    if (!logging) return;
+    let content = data;
+    if (check_json(content)) content = JSON.stringify(JSON.parse(content), null, 2);
+    const now = new Date().toISOString().replace("T", "_").replace(/:/g, "-").split(".")[0];
+    const $pre = $(/* HTML */ `<pre></pre>`).text(`${label}: [${now}]\n${data}`);
+    $(elId).append($pre);
+  };
+
+  /**
+   * Connect.
+   * @returns {void}
+   */
+  function connect() {
+    if (ws && ws.readyState === WebSocket.OPEN) return;
+    console.log(`ws${appIsDEV ? `: ${ws_path}` : `.`}`);
+    ws = new WebSocket(ws_path);
+    logToEl(`ws`, `Connecting...`);
+
+    ws.onopen = (e) => {
+      if (appIsDEV) console.log("ws.onopen:", e);
+      retries = 0;
+      logToEl(`ws.onopen`, `Connection established.`);
+      onOpen(e);
+    };
+    ws.onclose = (e) => {
+      if (appIsDEV) console.log("ws.onclose:", e);
+      logToEl(`ws.onclose`, `Connection closed. (${e.code})`);
+      onClose(e);
+      if (!closedManually && retries < maxRetries) retry();
+      else logToEl(`ws.retry`, `Max retries reached (${maxRetries})`);
+    };
+    ws.onerror = (e) => {
+      if (appIsDEV) console.log("ws.onerror:", e);
+      logToEl(`ws.onerror`, `Connection failed.`);
+      onError(e);
+      ws.close();
+    };
+    ws.onmessage = (e) => {
+      if (appIsDEV) console.log("ws.onmessage:", e);
+      logToEl(`ws.onmessage`, e.data || `[no data]`);
+      onMessage(e);
+    };
+  }
+
+  /**
+   * Retry.
+   * @returns {void}
+   */
+  function retry() {
+    if (retries > maxRetries) {
+      logToEl(`ws.retry`, `Max retries reached (${maxRetries})`);
+      return;
+    }
+    retries++;
+    logToEl(`ws.retry`, `Reconnection attempt (${retries}) in ${reconnDelay / 1000} seconds...`);
+    setTimeout(connect, reconnDelay);
+  }
+
+  if (autoConnect) connect();
+
+  return {
+    get ws() {
+      return ws;
+    },
+    get readyState() {
+      return ws?.readyState;
+    },
+    connect: () => {
+      // Do more if needed
+      connect();
+    },
+    close: () => {
+      closedManually = true;
+      retries = maxRetries;
+      if (ws && typeof ws.close === "function") ws.close();
+    },
+    retry: () => {
+      closedManually = false;
+      retries = 0;
+      retry();
+    },
+    send: (data) => {
+      if (!ws || ws.readyState !== WebSocket.OPEN) {
+        console.warn("⚠️ Cannot send = socket not open");
+        return;
+      }
+      let parsedData = data;
+      if (check_json(data)) parsedData = JSON.stringify(JSON.parse(parsedData), null, 2);
+      else parsedData = JSON.stringify(parsedData, null, 2);
+      if (ws && typeof ws.send === "function") ws.send(parsedData);
+    }
+  };
 }
