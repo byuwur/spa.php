@@ -4052,7 +4052,7 @@ button.list-group-item-dark.active {
   transition: -webkit-transform 0.3s ease-out;
   transition: transform 0.3s ease-out;
   transition:
-    transform 0.3s ease-out,
+    transform 0.3s ease,
     -webkit-transform 0.3s ease-out;
 }
 
