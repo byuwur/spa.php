@@ -1,5 +1,5 @@
 html {
-  font-size: 16px;
+  font-size: 1rem;
 }
 body {
   font-size: 1rem;
@@ -936,7 +936,8 @@ label:has(input[type="checkbox"]:disabled, input[role="switch"]:disabled) {
 .dropzone .dz-preview .dz-progress {
   display: none;
   left: 0.5rem;
-  width: calc(100% - 1rem);
+  right: 0.5rem;
+  width: auto;
   height: 0.5rem;
   background: var(--light-color);
   transform: none;
@@ -980,7 +981,8 @@ label:has(input[type="checkbox"]:disabled, input[role="switch"]:disabled) {
 }
 .dropzone .dz-preview .dz-error-message {
   left: 2.25rem;
-  width: calc(100% - 2.75rem);
+  right: 0.5rem;
+  width: auto;
   max-height: 3.5rem;
   padding: 0.25rem 0.5rem;
   overflow: auto;
@@ -1027,7 +1029,7 @@ label:has(input[type="checkbox"]:disabled, input[role="switch"]:disabled) {
 .dropdown-floating > .dropdown-menu {
   position: absolute !important;
   width: max-content;
-  max-width: min(31.25rem, calc(100vw - 2rem));
+  max-width: min(31.25rem, 100vw - 2rem);
 }
 .dropdown-embedded > .dropdown-menu {
   position: static !important;
@@ -1650,20 +1652,20 @@ label:has(input[type="checkbox"]:disabled, input[role="switch"]:disabled) {
   position: relative;
   min-height: 100vh;
   width: 100%;
-  padding: 0rem 0rem 0rem calc(0rem + var(--sidebar-width));
+  padding: 0 0 0 var(--sidebar-width);
   overflow-x: hidden;
   overflow-y: auto;
   z-index: 9;
 }
 .app-container.bywr-sidebar-expanded {
-  padding-left: calc(0rem + var(--sidebar-expanded-width));
+  padding-left: var(--sidebar-expanded-width);
 }
 @media (max-width: 48rem) {
   .bywr-sidebar.bywr-sidebar-expanded {
     width: 100vw;
   }
   .app-container {
-    padding: 0rem 0rem 0rem calc(0rem + var(--sidebar-width));
+    padding: 0 0 0 var(--sidebar-width);
   }
   .app-container.bywr-sidebar-expanded {
     padding-left: 0rem;
