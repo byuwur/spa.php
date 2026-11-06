@@ -499,8 +499,7 @@
       if (!bySPA.reloadComponent) return window.location.reload();
       console.warn("Main Component (main#spa-content) missing. Creating and appending to the body...");
       $("body").append(
-        $(// HTML
-         `<main></main>`, {
+        $(/* HTML */ `<main></main>`, {
           id: "spa-content"
         })
       );
@@ -532,8 +531,7 @@
         console.error(`Error (SPA): ${xhr?.status} ${status} ${error}`, bySPA.APP_ENV == "DEV" ? xhr : "");
         document.dispatchEvent(new CustomEvent("bySPA:error", { detail: { navigationId, url, status: xhr?.status || 0, error } }));
         if (navigationId !== bySPA.NAVIGATION_ID) return null;
-        $("#spa-content").html(xhr?.responseText || // HTML
-         `<pre>Error ${xhr?.status || 0}</pre>`);
+        $("#spa-content").html(xhr?.responseText || /* HTML */ `<pre>Error ${xhr?.status || 0}</pre>`);
         return null;
       })
       .always(function () {

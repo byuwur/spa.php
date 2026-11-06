@@ -83,8 +83,7 @@ async function application(t, preferences = {}) {
   await page.route("**/*", (route) =>
     route.fulfill({
       contentType: "text/html",
-      body: // HTML
-       `<main id="spa-content"></main>
+      body: /* HTML */ `<main id="spa-content"></main>
         <div id="spa-loader"></div>
         <div id="component"></div>
         <div id="section"></div>
@@ -132,14 +131,12 @@ async function initializePage(page, preferences = {}) {
           else
             pending.resolve(
               /_error\.(php|html)/.test(options.url)
-                ? // HTML
-                 `<html>
+                ? /* HTML */ `<html>
                     <body>
                       Error fixture
                     </body>
                   </html>`
-                : // HTML
-                 `<p>Fragment</p>`
+                : /* HTML */ `<p>Fragment</p>`
             );
         },
         options.url.includes("slow.php") ? 100 : 0
@@ -383,8 +380,7 @@ test("shared: both click handlers preserve native ownership and existing-target 
 test("native external hash navigation reaches the destination", async (t) => {
   const page = await application(t);
   await page.evaluate(() => {
-    document.body.insertAdjacentHTML("beforeend", // HTML
-     `<a id="external" href="https://elsewhere.test/page#section">External</a>`);
+    document.body.insertAdjacentHTML("beforeend", /* HTML */ `<a id="external" href="https://elsewhere.test/page#section">External</a>`);
     byCommon.init();
   });
   await page.click("#external");
@@ -466,8 +462,7 @@ test("component failures settle independently and navigation retains jQuery prom
     bySPA.reloadComponent = () => Promise.reject(new Error("Component fixture failure"));
     $.ajax = () => {
       const response = $.Deferred();
-      setTimeout(() => response.resolve(// HTML
-       `<p>Page survives</p>`), 25);
+      setTimeout(() => response.resolve(/* HTML */ `<p>Page survives</p>`), 25);
       return response.promise();
     };
     const request = bySPA.load("/known", { push: false });
