@@ -14,14 +14,14 @@
  * @returns {unknown}
  */
 (function (global) {
-  /* --- INITIALIZATION --- */
+  // --- INITIALIZATION ---
   global.byCommon = global.byCommon || {};
   const byCommon = global.byCommon;
   if (byCommon?.initialized) return;
   if (typeof jQuery === "undefined" && !global.jQuery) return console.error("Init _common.js FAILED. No jQuery found.");
   const $ = global.jQuery;
 
-  /* --- DEFAULTS --- */
+  // --- DEFAULTS ---
   // Common selectors
   byCommon.SIDEBAR_ID = "#bywr-sidebar";
   byCommon.SIDEBAR_TOGGLE_ID = "#bywr-sidebar-toggle";
@@ -86,7 +86,7 @@
     dark: { weight: 5, saturation: 25, lightness: 25 }
   };
 
-  /* --- HELPERS --- */
+  // --- HELPERS ---
   /**
    * Initializes the <Sidebar /> component in #spa-nav.
    * @param {Object} [options={}] Options that configure this operation.
@@ -286,7 +286,7 @@
     }
   }
 
-  /* --- CONTROLS --- */
+  // --- CONTROLS ---
   /**
    * Accessibility toggle.
    * @returns {unknown}
@@ -416,7 +416,7 @@
     return next;
   };
 
-  /* --- PUBLIC API --- */
+  // --- PUBLIC API ---
   // ==========
   // ==== BOOTSTRAP LIFECYCLE ====
   // ==========
@@ -675,6 +675,6 @@
     });
   };
 
-  /* --- STARTUP --- */
+  // --- STARTUP ---
   byCommon.initialized = true;
 })(typeof window !== "undefined" ? window : this);

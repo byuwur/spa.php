@@ -7,14 +7,14 @@
  * @returns {void}
  */
 (function (global) {
-  /* --- INITIALIZATION --- */
+  // --- INITIALIZATION ---
   // Keep font loading native so standalone overlays can reuse it without the SPA or jQuery.
   // Resolve jQuery only in picker methods, allowing their UI libraries to load afterward.
   global.byFont = global.byFont || {};
   const byFont = global.byFont;
   if (byFont?.initialized) return;
 
-  /* --- CONSTANTS --- */
+  // --- CONSTANTS ---
   // Names and normal weights verified against https://fonts.google.com/metadata/fonts on 2026-10-10.
   const catalog = {
     ABeeZee: "400",
@@ -371,12 +371,12 @@
   byFont.families = Object.freeze(Object.keys(catalog));
   const systemFonts = ["system-ui", "sans-serif", "serif", "monospace", "Arial", "Arial Black", "Verdana", "Tahoma", "Trebuchet MS", "Georgia", "Times New Roman", "Courier New", "Impact"];
 
-  /* --- STATE --- */
+  // --- STATE ---
   const names = new Map(byFont.families.map((name) => [name.toLowerCase(), name]));
   const requests = new Map();
   const pickers = new WeakMap();
 
-  /* --- HELPERS --- */
+  // --- HELPERS ---
   function googleFamily(value) {
     const first = String(value || "")
       .split(",")[0]
@@ -430,7 +430,7 @@
     return global.jQuery(label);
   }
 
-  /* --- PUBLIC API --- */
+  // --- PUBLIC API ---
   /**
    * Build a CSS stack without downloading fonts for offscreen dropdown options.
    * @param {string} value Saved family name or existing CSS font stack.
@@ -641,6 +641,6 @@
     }
   };
 
-  /* --- STARTUP --- */
+  // --- STARTUP ---
   byFont.initialized = true;
 })(typeof window !== "undefined" ? window : this);

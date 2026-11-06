@@ -1175,7 +1175,8 @@ function random_string($length): string
 function show_modal_back($state = "success", $title = "INFO.", $message = "Message.", $hideCancelBtn = false, $redirect = "javascript:destroy_modal_back();"): void
 {
   $cancel_script = $hideCancelBtn ? '$("#modal_back_back").addClass("d-none");' : '$("#modal_back_back").removeClass("d-none");';
-  echo /* HTML */ <<<HTML
+  echo // HTML
+   <<<HTML
     <div id="modal_back" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel">
       <div id="modal_back_container" class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content">

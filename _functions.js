@@ -6,7 +6,7 @@
  * Copyright (c) 2026 Andrés Trujillo [Mateus] byUwUr
  */
 
-/* --- JSON --- */
+// --- JSON ---
 
 /**
  * Checks whether a value is valid JSON.
@@ -53,7 +53,7 @@ function print_json(json) {
   return output;
 }
 
-/* --- VALUES AND PATHS --- */
+// --- VALUES AND PATHS ---
 
 /**
  * Returns if a variable is an object.
@@ -105,7 +105,7 @@ function exit_json(json) {
   throw new Error("exit_json: Script terminated after sending JSON response.");
 }
 
-/* --- URL COMPRESSION --- */
+// --- URL COMPRESSION ---
 
 /**
  * Compresses UTF-8 text to unpadded Base64url using native raw DEFLATE.
@@ -155,7 +155,7 @@ async function decompress_url_data(value, maxBytes = 1048576) {
   return new TextDecoder("utf-8", { fatal: true, ignoreBOM: true }).decode(await new Blob(chunks).arrayBuffer());
 }
 
-/* --- COOKIES AND QUERY PARAMETERS --- */
+// --- COOKIES AND QUERY PARAMETERS ---
 
 /**
  * Creates or updates a cookie with the specified name, value, and expiration days.
@@ -193,7 +193,7 @@ function get_url_param(name) {
   return new URLSearchParams(hash.slice(hash.indexOf("?") + 1)).get(name);
 }
 
-/* --- EVENTS --- */
+// --- EVENTS ---
 
 /**
  * Creates a debounced function that delays the execution of the provided function (`func`)
@@ -209,7 +209,7 @@ function debounce(func, wait = 250) {
   };
 }
 
-/* --- MODALS --- */
+// --- MODALS ---
 
 /**
  * Hides and removes the front modal from the DOM after a short delay.
@@ -248,7 +248,8 @@ function show_modal_front($modalId, $state = "success", $title = "INFO.", $messa
   // If already exist, destroy it with no delay
   if ($(`#${$modalId}`).length) destroy_modal_front($modalId, false);
   // HTML structure for the modal
-  const modal_front = /* HTML */ `
+  const modal_front = // HTML
+   `
     <div id="${$modalId}" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel">
       <div id="${$modalId}_container" class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content">
@@ -270,7 +271,7 @@ function show_modal_front($modalId, $state = "success", $title = "INFO.", $messa
   $(`#${$modalId}`).modal("show");
 }
 
-/* --- REQUESTS --- */
+// --- REQUESTS ---
 
 /**
  * Returns the CSRF token provided by the consuming application.
@@ -374,13 +375,15 @@ function make_http_request(options) {
     .then(function (response) {
       if (appIsDEV) console.log(`Response (${elementId}):`, response);
       if (loudFail && ![200, 201, 202].includes(response?.status))
-        return show_modal_front("modal_front", "danger", "ERROR", /* HTML */ `Ocurrió un error.<br />Disculpe las molestias, intente nuevamente.<br /><code>(${escape_html(response?.message)})</code>`, true);
+        return show_modal_front("modal_front", "danger", "ERROR", // HTML
+         `Ocurrió un error.<br />Disculpe las molestias, intente nuevamente.<br /><code>(${escape_html(response?.message)})</code>`, true);
       return response?.data ?? response;
     })
     .catch(function (xhr, status, error) {
       console.error(`Error (${elementId}): ${xhr?.status} ${status} ${error} "${xhr?.responseJSON?.message ?? xhr?.responseText}"`, appIsDEV ? xhr : "");
       if (loudFail)
-        show_modal_front("modal_front", "danger", "ERROR", /* HTML */ `Ocurrió un error.<br />Disculpe las molestias, intente nuevamente.<br /><code>(${escape_html(xhr?.responseJSON?.message ?? xhr?.responseText)})</code>`, true);
+        show_modal_front("modal_front", "danger", "ERROR", // HTML
+         `Ocurrió un error.<br />Disculpe las molestias, intente nuevamente.<br /><code>(${escape_html(xhr?.responseJSON?.message ?? xhr?.responseText)})</code>`, true);
       return null;
     });
 }
@@ -457,14 +460,16 @@ function element_make_http_request(options) {
         .then(function (response) {
           if (appIsDEV) console.log(`Response (${elementId}):`, response);
           if (loudFail && ![200, 201, 202].includes(response?.status))
-            return show_modal_front("modal_front", "danger", "ERROR", /* HTML */ `Ocurrió un error.<br />Disculpe las molestias, intente nuevamente.<br /><code>(${escape_html(response?.message)})</code>`, true);
+            return show_modal_front("modal_front", "danger", "ERROR", // HTML
+             `Ocurrió un error.<br />Disculpe las molestias, intente nuevamente.<br /><code>(${escape_html(response?.message)})</code>`, true);
           doneFn(response?.data ?? response);
           return response?.data ?? response;
         })
         .catch(function (xhr, status, error) {
           console.error(`Error (${elementId}): ${xhr?.status} ${status} ${error} "${xhr?.responseJSON?.message ?? xhr?.responseText}"`, appIsDEV ? xhr : "");
           if (loudFail)
-            show_modal_front("modal_front", "danger", "ERROR", /* HTML */ `Ocurrió un error.<br />Disculpe las molestias, intente nuevamente.<br /><code>(${escape_html(xhr?.responseJSON?.message ?? xhr?.responseText)})</code>`, true);
+            show_modal_front("modal_front", "danger", "ERROR", // HTML
+             `Ocurrió un error.<br />Disculpe las molestias, intente nuevamente.<br /><code>(${escape_html(xhr?.responseJSON?.message ?? xhr?.responseText)})</code>`, true);
           failFn();
           return null;
         })
@@ -476,7 +481,7 @@ function element_make_http_request(options) {
     });
 }
 
-/* --- WEBSOCKETS --- */
+// --- WEBSOCKETS ---
 
 /**
  * Inits a websocket connection.
@@ -519,7 +524,8 @@ function init_websocket(options) {
     let content = data;
     if (check_json(content)) content = JSON.stringify(JSON.parse(content), null, 2);
     const now = new Date().toISOString().replace("T", "_").replace(/:/g, "-").split(".")[0];
-    const $pre = $(/* HTML */ `<pre></pre>`).text(`${label}: [${now}]\n${data}`);
+    const $pre = $(// HTML
+     `<pre></pre>`).text(`${label}: [${now}]\n${data}`);
     $(elId).append($pre);
   };
 

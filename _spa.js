@@ -14,17 +14,17 @@
  * @returns {unknown}
  */
 (function (global) {
-  /* --- INITIALIZATION --- */
+  // --- INITIALIZATION ---
   global.bySPA = global.bySPA || {};
   const bySPA = global.bySPA;
   if (bySPA?.initialized) return;
   if (typeof jQuery === "undefined" && !global.jQuery) return console.error("Init _spa.js FAILED. No jQuery found.");
   const $ = global.jQuery;
 
-  /* --- METADATA --- */
+  // --- METADATA ---
   bySPA.VERSION = "20.7"; // 2026-11-04
 
-  /* --- STATE --- */
+  // --- STATE ---
   // Initializes values retrieved from localStorage and sets up environment variables.
   bySPA.URI = byStorage.getItem("URI") ?? "/";
   bySPA.URL = byStorage.getItem("URL") ?? bySPA.URI;
@@ -44,7 +44,7 @@
   let fileNavigation = false; // Flags if you come from a FILE route
   let errorNavigation = false; // A replaced document needs a clean runtime on Back.
 
-  /* --- HELPERS --- */
+  // --- HELPERS ---
   /**
    * Replaces one fragment and executes its scripts in source order. Ordered external scripts
    * and modules are awaited, script failures are non-fatal, and stale navigation stops the work.
@@ -228,7 +228,7 @@
     document.dispatchEvent(new CustomEvent("bySPA:load", { detail: routing }));
   }
 
-  /* --- LIFECYCLE --- */
+  // --- LIFECYCLE ---
   /**
    * Initialize this component once using its current state and available dependencies.
    * @returns {void}
@@ -291,7 +291,7 @@
     bySPA.load(`${bySPA.URL}`, { replace: true, post: bySPA._POST });
   }
 
-  /* --- PUBLIC API --- */
+  // --- PUBLIC API ---
   /**
    * Builds a fragment request URL while preserving query parameters already present in the route URI.
    * @param {string} path Route fragment path, optionally containing a query string.
@@ -499,7 +499,8 @@
       if (!bySPA.reloadComponent) return window.location.reload();
       console.warn("Main Component (main#spa-content) missing. Creating and appending to the body...");
       $("body").append(
-        $(/* HTML */ `<main></main>`, {
+        $(// HTML
+         `<main></main>`, {
           id: "spa-content"
         })
       );
@@ -531,7 +532,8 @@
         console.error(`Error (SPA): ${xhr?.status} ${status} ${error}`, bySPA.APP_ENV == "DEV" ? xhr : "");
         document.dispatchEvent(new CustomEvent("bySPA:error", { detail: { navigationId, url, status: xhr?.status || 0, error } }));
         if (navigationId !== bySPA.NAVIGATION_ID) return null;
-        $("#spa-content").html(xhr?.responseText || /* HTML */ `<pre>Error ${xhr?.status || 0}</pre>`);
+        $("#spa-content").html(xhr?.responseText || // HTML
+         `<pre>Error ${xhr?.status || 0}</pre>`);
         return null;
       })
       .always(function () {
@@ -539,7 +541,7 @@
       });
   };
 
-  /* --- STARTUP --- */
+  // --- STARTUP ---
   // Mark installed before initial loading can execute fragment scripts that import the runtime again.
   bySPA.initialized = true;
   init();
