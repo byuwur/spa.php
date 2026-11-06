@@ -26,6 +26,8 @@ Resolve conflicts in this order:
 
 Existing public contracts take precedence over aesthetic consistency. Record intentional local departures from this standard where contributors will find them. Do not silently “correct” them.
 
+Current user instructions override older preferences. Memory and skills summarize guidance; the current task and repository documents remain authoritative. Carry forward durable rules with their explicit exceptions, rather than turning a one-time instruction into a permanent convention.
+
 ## 1. Engineering identity and simplicity
 
 Prefer direct control flow, explicit behavior, guard clauses, operational transparency, and low integration and deployment cost. Use language-native conventions, plain data formats where appropriate, and abstractions small enough to understand in context. Owning a small piece of infrastructure is reasonable when it reduces total maintenance cost. Remove mechanisms whose justification has disappeared.
@@ -52,6 +54,8 @@ Prefer improvements in this order:
 8. Add a dependency or architectural layer.
 
 The further down this list a change goes, the stronger its justification must be. Explain the concrete problem and why a simpler option is insufficient. Do not build extension mechanisms for imagined requirements.
+
+Prefer descriptive names and direct data access over terse wrappers that hide ordinary behavior. Reuse existing utilities, platform APIs, and framework helpers when they are already available and make the code clearer; keep standalone libraries independent of host frameworks unless a dependency is part of their documented contract.
 
 Similar syntax does not establish shared responsibility. Duplication can be appropriate when behavior changes independently, belongs to different hosts, has meaningful differences, or costs less to maintain than a shared dependency. Extract common policy when duplicated decisions must remain consistent and a small shared implementation makes that responsibility clearer.
 
@@ -103,6 +107,8 @@ Follow the language and surrounding code for casing, prefixes, constants, and pa
 
 Rename when a name misleads, hides an important distinction, or makes related contracts difficult to recognize. Preserve established public names unless the benefit justifies migration. Avoid mass cosmetic renaming and prefixes that add no useful information.
 
+In authored JavaScript, use `const` unless reassignment is needed, then `let`; avoid `var`. Prefer string interpolation when composing values into strings. Keep static data explicit: string arrays are easier to review than whitespace-packed strings split into sets. Build a lookup set once when membership checks justify it. Leave bundled third-party code unchanged.
+
 ## 8. Keep APIs small and contracts precise
 
 Every public function, option, event, configuration setting, and supported format is a maintenance obligation. Expose what callers need, and make the internal boundary recognizable.
@@ -112,6 +118,8 @@ Define accepted inputs, defaults, return values, side effects, mutation, and fai
 Add options for real variation, not to avoid deciding who owns behavior. Boolean switches and fallback combinations can create a large implicit state machine behind a small signature. Prefer fewer supported combinations with clear contracts.
 
 Evolve APIs deliberately. Preserve behavior during refactoring. A requested bug correction may change defective behavior, but identify any observable compatibility impact rather than treating it as incidental cleanup.
+
+For namespace-based libraries, use a local reference to the established library function or object and assign public members directly, including its `VERSION` when exposed. Preserve the existing public type; do not invent namespaces for unrelated standalone helpers. Expose documented entry points and reusable operations that callers actually need. Helpers invoked by those entry points stay private unless a concrete public use requires them.
 
 ## 9. Make errors and recovery understandable
 
@@ -137,6 +145,8 @@ Assess a dependency by total benefit against conceptual, maintenance, update, se
 
 Compatibility should protect real supported APIs, stored data, deployment environments, integrations, and formats. Document the supported scenario and the reason for non-obvious branches. Retire obsolete compatibility deliberately, with migration guidance when needed. Speculative compatibility is another mechanism to maintain.
 
+For project CDN imports, use minified assets. Documentation and generated starter examples use `@latest` where supported; actual integrations, companion imports, and CI checkouts use explicit releases derived from the project's version authority, unless the user requests another policy. Do not infer the intended version from local Git tags. Preserve an explicitly requested pin or temporary local development import; restore the release import when publication is confirmed. A planned source version does not prove that its CDN assets or tag are available.
+
 ## 12. Keep equivalent paths equivalent
 
 Equivalent entry paths must satisfy the same contract: initial and later execution, direct and indirect calls, normal and recovery paths, primary and fallback storage, or corresponding frontend and backend behavior. Any intentional difference must be explicit.
@@ -144,6 +154,8 @@ Equivalent entry paths must satisfy the same contract: initial and later executi
 Independent runtimes may remain independent. Do not introduce a package or shared architecture solely to eliminate copied text. For behavior that must match across modules or projects, use shared fixtures, parity checks, compatibility tables, or reproducible version pins as appropriate. Make the canonical owner of mirrored policy and the update path discoverable.
 
 Test the actual entry points. A handwritten imitation of the implementation can pass while the real path diverges. When shared code changes, check integrations and copied initialization or configuration that a dependency update does not replace.
+
+For shared options in related components, keep equivalent names, defaults, validation, and dependency behavior aligned across the runtime API, form controls, configuration, generated exports, documentation, and tests wherever those paths exist. Dependent controls become unavailable without discarding their configured value. Keep component-specific and format-specific behavior local.
 
 ## 13. Fix invariants and test actual risks
 
@@ -155,21 +167,29 @@ Prefer the smallest suite that distinguishes correct behavior from plausible mis
 
 Use the repository's actual validation tools and documented workflows. Run checks appropriate to the change and any required checks. Broaden testing when changes, failures, or unresolved risks justify it. Report blocked, skipped, and unexecuted checks distinctly from passing checks; do not present an environmental limitation as a code failure.
 
+Keep browser setup reproducible and bounded. Reuse installed or cached tools, or a CI image whose browser and Playwright package versions match, instead of repeatedly installing operating-system packages. Distinguish test-contract defects, library regressions, and setup/network failures; increasing timeouts or weakening assertions does not resolve their cause. Local assets can validate an unpublished release, but report that substitution and verify remote publication separately.
+
 ## 14. Comment the decisions; document the contracts
 
 Comments should preserve information the code cannot easily convey: intent, invariants, ownership, lifecycle, trust assumptions, compatibility reasons, protocol requirements, ordering constraints, surprising choices, and intentional deviations.
 
 Avoid narrating obvious syntax, decorative verbosity, and comments that compensate for misleading names. A short explanation of why an unusual branch exists is more valuable than a paragraph describing each statement. Inaccurate comments are worse than absent ones.
 
+Use `//` for single-line JavaScript comments, including section labels. Retain necessary multiline file/license/documentation blocks and tool directives. The `/* HTML */` annotation is an explicit exception: place it immediately before the HTML string literal, preferably on the same line, so formatting and embedded HTML highlighting keep working.
+
 Public API documentation should describe accepted inputs, defaults, outputs, failures, side effects, mutation, and relevant trust, lifecycle, and compatibility constraints. Use the documentation conventions appropriate to the language and project. Internal helpers need only the detail their callers cannot reasonably infer.
 
 Code and documentation describe the same contract. Inspect both when changing behavior, including examples and configuration guidance. Do not preserve a polished explanation of behavior the implementation no longer provides.
+
+Favor useful installation, API, lifecycle, limits, and integration information. Avoid repeating instructions already clear from the UI. Prefer concise CDN installation examples while retaining accurate local/offline requirements and optional dependency warnings.
 
 ## 15. Measure performance; bound resource use
 
 Prioritize correctness, then clarity, then measurement, then optimization. Take obvious improvements when they preserve clarity, but justify complex caching, concurrency, or specialized representations with observed costs or a concrete capacity requirement.
 
 Resource bounds are part of correctness when input can exhaust memory, storage, connections, or processing time. A small encoded input can expand into a large workload. Evaluate the resource actually consumed, not only the convenient size available at the boundary.
+
+Keep the first useful draw immediate. Initial appearance motion is opt-in and separate from interaction animations. Prefer short transitions on opacity, transforms, and a few background surfaces; avoid blanket `*` transitions, `transition: all`, and document-wide font-size or layout animation. When revealing editor syntax requires movement, limit it to the active block. When motion is configurable, an explicit enable/disable choice takes precedence over the system motion preference. Preserve the project's documented default. Avoid building hidden controls, animating every node, or introducing an animation framework for a few simple effects.
 
 ## 16. Refactor to reduce concepts
 
@@ -195,20 +215,20 @@ Review integration as well as the edited functions. State validation limits hone
 Use:
 
 ```text
-[Type] Area: concrete behavior change
+[Type] [Area] Concrete behavior change
 ```
 
-Use a specific area and a subject that remains useful years later. The primary types are:
+Use a specific area and a subject that remains useful years later. Use brackets for the type and area; do not separate them from the subject with a colon. The primary types are:
 
-| Type | Use |
-| --- | --- |
-| Feature | Add supported behavior. |
-| Fix | Correct defective behavior. |
-| Refactor | Improve structure while preserving behavior. |
-| Security | Correct or strengthen a concrete security boundary. |
-| Test | Change validation without changing production behavior. |
-| Docs | Change documentation. |
-| Update | Maintain dependencies, tooling, or other existing support. |
+| Type     | Use                                                            |
+| -------- | -------------------------------------------------------------- |
+| Feature  | Add supported behavior.                                        |
+| Fix      | Correct defective behavior.                                    |
+| Refactor | Improve structure while preserving behavior.                   |
+| Security | Correct or strengthen a concrete security boundary.            |
+| Test     | Change validation without changing production behavior.        |
+| Docs     | Change documentation.                                          |
+| Update   | Maintain dependencies, tooling, or other existing support.     |
 | Breaking | Intentionally change a supported public contract incompatibly. |
 
 Reserve `Hotfix` for an urgent regression in released behavior, not routine fixes, cleanup, or formatting. `DX` is optional when developer experience is the primary outcome and the main types describe it poorly.
@@ -216,12 +236,14 @@ Reserve `Hotfix` for an urgent regression in released behavior, not routine fixe
 For example:
 
 ```text
-[Fix] Storage: preserve the last valid document when replacement fails
-[Refactor] Navigation: centralize transition ownership
-[Docs] Configuration: explain fallback precedence
+[Fix] [Storage] Preserve the last valid document when replacement fails
+[Refactor] [Navigation] Centralize transition ownership
+[Docs] [Configuration] Explain fallback precedence
 ```
 
 Commit one conceptual outcome, including its implementation, tests, and documentation. File count does not determine scope. Separate broad formatting and unrelated maintenance. For dependency or mirrored-code updates, identify the relevant consumer benefit or compatibility effect.
+
+Commits require explicit authorization for the current task; pushing requires separate authorization. Stage only the authorized files and hunks. Build an understandable progression of reviewable changes that work at each boundary, including for an initial release. Separate implementation, demos, dependency updates, and release metadata when they are distinct outcomes; keep directly required tests and documentation with their behavior change. Use “Upgrade” in version subjects, and put the version upgrade last in the requested progression.
 
 Avoid subjects that say only “Update,” “Tweaks,” “Changes,” “Final,” “Fix stuff,” or “Format.” Add a body when needed to explain intent, compatibility or migration, validation limits, or a non-obvious decision. No additional commit tooling or ceremony is required.
 
@@ -248,3 +270,51 @@ Avoid speculative generalization, casual dependencies, and generated layers whos
 3. Who owns the decision and state, and when does their authority end?
 4. Does this reduce the concepts needed across the whole system, or merely move complexity out of sight?
 5. Can another maintainer explain, test, change, and operate the result without reconstructing hidden rules?
+
+## 21. Practical language and interface conventions
+
+Apply language and interface conventions only where they fit the project. They do not require a browser UI, a particular framework, or a new public namespace. Preserve language-native conventions and documented project differences.
+
+### JavaScript layout
+
+Keep the established wrapper and section formatting. For a standalone browser library with an initialization guard and public namespace, the normal order is: initialization guard; public version; shared constants; library-specific constants; shared controls and helpers; parsing/data transformation; rendering; instance lifecycle; public API exposure; final `initialized = true`. Follow actual dependencies when a library needs a different order. When a JavaScript library exposes its version, assign it directly to the public API with a `// YYYY-MM-DD` date beside it. Keep common controls and helpers in a comparable location across related libraries. Modules and other languages retain their native initialization and export mechanisms.
+
+For source-based editors, the original document format remains authoritative, whether Markdown or another structured format. Preserve exact source, line endings, selection, undo/redo, IME ownership, and unaffected content during editing and mode changes. An HTML editing surface must not silently replace a different canonical source format. Editing work should affect the current caret/block, including empty lines, rather than a stale hovered block.
+
+### CSS and layout
+
+Prefer `rem` for general dimensions. Use `em` when a component must scale with its own text, such as independent toolbar controls. Absolute pixels are appropriate when a canvas, overlay, export, or editing coordinate system requires fixed dimensions; preserve that explicit contract. Avoid unnecessary `calc()` when a direct relative value, layout rule, or useful CSS custom property expresses the same relationship. Retain calculations that combine genuinely different dimensions.
+
+Use HEX colors, including alpha HEX when needed. Keep another representation only when the behavior requires it. Playground color pickers should prefer HEX. Use CSS custom properties for shared appearance behavior and values that need consistent overrides.
+
+Keep containers and controls consistent across related components: comparable spacing, size options, and alternative toolbar positions. Special content rules need a concrete reason; flowing documents can require different spacing from framed data/code panels. Tables may overflow horizontally; filters and copy-cell controls must preserve stable cell spacing and readable labels.
+
+### Controls, accessibility, and motion
+
+Favor a compact, organized default view. Make supported controls hideable through options, with equivalent controls styled consistently. Preserve native semantics, accessible names, keyboard operation, visible focus, and understandable feedback for actions and state changes. Small two- or three-choice settings can use accessible segmented controls.
+
+In configurable playgrounds, group parameters as preview appearance, component controls, rendering, then extras where applicable. Make dependencies explicit: header controls depend on the header, panel status depends on its panel, and entry animation depends on animations. Preserve intentional differences when a component has no such container or header.
+
+For embeddable content components, keep the outer background independent from inner content surfaces. Theme-based control/button and content-panel backgrounds must remain readable when the document is transparent or customized; attribution itself has no background. Explicit appearance options should work independently of whether their controls are shown.
+
+Use subtle hover, press, disclosure, and state feedback without delaying useful content. Entry effects for secondary lists must leave the page title and useful initial content visible immediately. Verify entering and leaving states, including after editor line breaks and reparsing.
+
+### Themes and localization
+
+Keep structural styles before palette overrides. Core palettes belong at the end of the main stylesheet; expanded palettes belong in an optional theme stylesheet. When a feature needs an unavailable companion or a known extra palette is selected without its stylesheet, issue an actionable warning with the appropriate import or documentation link and retain the documented fallback. Avoid warning about unused optional features or valid custom palettes. Preserve built-in Light/Dark behavior, custom theme names, and instance isolation.
+
+Localize controls, accessible labels, dialogs, and necessary messages within the component that owns them. Keep translated showcase content in the demo/playground. Use descriptive language data/access names rather than opaque shorthand helpers. Switching the interface language must preserve user-authored content.
+
+### Playgrounds, imports, and examples
+
+For source demonstrations, use an explicit `samples` object with one single-line entry per sample, normally `{ name, source }`; retain format-specific fields such as a second comparison source or options when needed. Store source as strings with escaped newlines. Use a narrow formatter directive when needed to retain this data layout. Keep samples safe inside HTML scripts, and never execute displayed source. Include meaningful demos alongside new supported languages or formats.
+
+In HTML entry points, keep imports compact: stylesheets before scripts, with dependency and cascade order preserved within each group. Retain deliberate `defer`, script timing, and local/offline contracts. When a code viewer is already available, reuse it for starter displays with unnecessary controls and background disabled; preserve readable syntax colors in all supported site themes. Displayed, copied, and downloaded examples must agree.
+
+Published landing pages need valid static titles, descriptions, canonical URLs, and social-preview metadata in the HTML head; a working JavaScript playground does not prove that a crawler can read them. When preview images are part of the requested work, update the relevant project preview and any explicitly maintained website or portfolio copy together.
+
+## 22. Versions and release references
+
+Keep one documented version authority in the owning source or project metadata. When an upgrade is requested, update that authority and its date comment where applicable; standalone JavaScript libraries that expose `VERSION` use that source value. Check every applicable reference: runtime attribution, versioned imports, companion integrations, documentation, examples, CI refs, and test expectations. Preserve deliberate `@latest` examples and explicitly held dependency pins. Do not change other libraries' versions unless they are part of the requested scope.
+
+Use “Upgrade,” rather than “bump,” in release descriptions. Keep an explicit request to leave the version unchanged. Release the required companion first; source updates and passing local tests do not publish a tag or invalidate CDN caches. Disclose any remaining publication step.

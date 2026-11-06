@@ -12,45 +12,41 @@ Before significant work, read in this order:
 1. [README.md](./README.md).
 2. [CODING_STANDARDS.md](CODING_STANDARDS.md).
 3. [CONTRIBUTING.md](CONTRIBUTING.md).
-4. Relevant project-specific documentation and the existing implementation and tests. For framework changes, read the README's [application layout](./README.md#how-is-it-done) and [runtime contracts](./README.md#runtime-contracts).
+4. Relevant project-specific documentation and the existing implementation, callers, and tests. For framework changes, read its documented application layout and runtime contracts where available.
 
-`CODING_STANDARDS.md` is the canonical engineering policy. This file provides orientation and workflow; it does not duplicate or override that policy. Follow its precedence rules and any explicit project requirements. If a listed document is absent, continue with the available guidance and disclose material uncertainty.
+`CODING_STANDARDS.md` is the canonical engineering policy. This file provides orientation and workflow; it does not duplicate or override that policy. Follow its precedence rules and explicit task requirements. If a listed document is absent, continue with the available guidance and disclose material uncertainty.
 
-For each task:
+Current user instructions and authorized scope take precedence over saved preferences. Memory and skills are derived reminders: verify them against the current repository guidance and implementation before relying on details that may have changed. When a memory update is requested, retain durable decisions and their source references; distinguish them from temporary exceptions and historical results.
 
-- Inspect the existing architecture, nearby utilities, and callers before adding a replacement.
-- Identify the responsible owner, invariant, state authority, and lifecycle before changing behavior.
-- Keep changes within the requested scope and preserve unrelated work and established public contracts.
+## Work within the requested scope
+
+- Inspect the existing architecture, nearby utilities, and callers before adding a replacement. Identify the responsible owner, invariant, state authority, and lifecycle before changing behavior.
+- Check Git status before editing or staging. Preserve unrelated and concurrent work; use an external snapshot when a broad pass or partial staging warrants one.
+- For an authorized consistency or cross-project pass, inspect related repositories and shared framework callers. Keep independent public contracts and intentional project differences intact. A request to change one copy does not authorize synchronizing every copy.
 - Prefer deleting, simplifying, or reusing existing code. Justify any new abstraction or dependency with a concrete need.
-- Add meaningful validation and update documentation when the contract changes. Discover and run the repository's existing checks.
-- Review the complete diff and affected integration paths; remove unnecessary generated complexity.
-- Report the result, validation performed, and material limitations accurately.
+- Resume interrupted work from the established checkpoint, incorporating later corrections and completing the remaining authorized scope.
+- Follow the [commit standard](CODING_STANDARDS.md#18-commit-standard). Create commits only when the current task authorizes them; pushing requires separate authorization.
 
-> **Do not make the code look more sophisticated than the problem requires.**
-> SIMPLE IS COMPLICATED ENOUGH.
+## Edit and validate authored source
 
-Never create `.agents/` or `.codex/` or similar folders inside project repositories.
+Work on authored source. Exclude minified/generated files, bundles, vendored code, installed modules, and submodule contents from bulk edits. Coordinate a dependency change in its owning repository when that is within scope. Updating an import URL does not require editing the referenced generated asset.
 
-Keep configuration, skills, plugins, hooks, and temporary files outside repositories.
+Preserve existing formatting, section order, encoding, line endings, and tool annotations unless their change is part of the task. Keep unrelated formatting separate from behavior changes.
 
-Be concise and execution-focused.
+Use existing documentation and test files first. Create additional documentation or test files only when explicitly requested or genuinely necessary. Add meaningful regression coverage when behavior warrants it; avoid tests that merely restate implementation or low-impact styling.
 
-Work first. Do not narrate reasoning, progress, or obvious implementation details unless necessary.
+Discover and run the repository's existing checks. Review the complete diff and affected integration paths, including options, playground configuration, exports, dependency references, and release metadata. Remove unnecessary generated complexity. Report executed checks separately from skipped checks, infrastructure failures, or unpublished dependencies.
 
-Ask questions only when information is required to proceed correctly. Otherwise make reasonable assumptions.
+Never create `.agents/`, `.codex/`, or similar agent folders inside project repositories. Keep agent configuration, skills, plugins, hooks, scratch scripts, and temporary validation fixtures outside repositories.
 
-Do not create documentation files unless explicitly requested or genuinely required.
+## Communicate and finish
 
-Do not create testing files unless explicitly requested or genuinely required.
+Be concise and execution-focused. Proceed with reasonable assumptions and ask questions only when missing information is required to continue correctly. Keep routine narration out of the response; provide updates when a meaningful finding, decision, or blocker needs attention.
 
-Use comments sparingly. Comment only non-obvious intent, constraints, workarounds, or edge cases. Prefer clear naming and clean code.
+For ordinary tasks, report only:
 
-For ordinary tasks, the final response should contain only:
-
-- What changed
-- Whether it succeeded
+- What changed.
+- Whether the work and relevant validation succeeded.
 - Any critical caveat or required action.
 
-Use string interporlation whenever possible.
-
-Everytime changes are made, ignore every minified file, vendor file, module file, submodule file ,bundle file, and the likes. Those don't need it.
+> **Do not make the code look more sophisticated than the problem requires.** SIMPLE IS COMPLICATED ENOUGH.
