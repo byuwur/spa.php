@@ -11,8 +11,8 @@ require_once "{$TO_HOME}/../_common.php";
 require_once "{$TO_HOME}/common.example.php";
 //enable_progressive_rendering();
 ?>
-<link href="https://cdn.jsdelivr.net/gh/byuwur/easy-md-viewer@main/md.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/gh/byuwur/easy-md-viewer@main/md.js"></script>
+<link href="https://cdn.jsdelivr.net/gh/byuwur/easy-md-viewer@latest/md.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/gh/byuwur/easy-md-viewer@latest/md.min.js"></script>
 <style>
   ol {
     list-style: decimal-leading-zero !important;

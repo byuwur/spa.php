@@ -11,8 +11,8 @@ require_once "{$TO_HOME}/../_common.php";
 require_once "{$TO_HOME}/common.example.php";
 //enable_progressive_rendering();
 ?>
-<link href="https://cdn.jsdelivr.net/gh/byuwur/easy-json-viewer@main/json.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/gh/byuwur/easy-json-viewer@main/json.js"></script>
+<link href="https://cdn.jsdelivr.net/gh/byuwur/easy-json-viewer@latest/json.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/gh/byuwur/easy-json-viewer@latest/json.min.js"></script>
 <div class="video-foreground app-container">
   <div class="container vh-100 d-flex flex-column align-items-center justify-content-center p-0">
     <pre id="byJSONrenderer" class="w-100" data-theme="light"></pre>

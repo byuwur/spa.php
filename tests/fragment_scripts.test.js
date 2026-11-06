@@ -194,6 +194,15 @@ function createHarness(plans = {}) {
   return { bySPA: window.bySPA, target: new FakeTarget(fakeDocument), order, errors, createdScripts, consoleMessages };
 }
 
+test("viewer demos load the latest minified stylesheet and script", () => {
+  for (const format of ["md", "json"]) {
+    const html = fs.readFileSync(path.join(__dirname, "..", "demo", `${format}.example.php`), "utf8");
+    const base = `https://cdn.jsdelivr.net/gh/byuwur/easy-${format}-viewer@latest/`;
+    assert.ok(html.includes(`href="${base}${format}.min.css"`));
+    assert.ok(html.includes(`src="${base}${format}.min.js"`));
+  }
+});
+
 test("cold and cached external dependencies execute before dependent inline scripts", async () => {
   for (const delay of [25, 0]) {
     const harness = createHarness({ "viewer.js": { delay, label: "viewer" } });
