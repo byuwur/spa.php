@@ -20,9 +20,8 @@ $has_session_set_cookie = session_set_cookie_params([
 // Crash if cookie cannot be configured
 if (!$has_session_set_cookie)
   api_respond(500, true, "Session crash.");
-// At start it always checks if a session_name is provided through query params;
-// This case applies when you want to manipulate an specific session on the server. Proceed with caution
-// if that's the case, set that session_id accordingly
+// Legacy clients may resume a POST-supplied session ID only when explicitly enabled.
+// Ordinary requests keep the session cookie as the authority.
 $allow_post_session_id = filter_var($_ENV["ALLOW_POST_SESSION_ID"] ?? false, FILTER_VALIDATE_BOOLEAN);
 if (
   $allow_post_session_id &&
@@ -43,7 +42,6 @@ function login($session = [], $regen = true)
 {
   if ($regen)
     session_regenerate_id(true);
-  //setcookie(session_name(), session_id(), time() + 3600, "/", "", true, true);
   $_SESSION = [...$_SESSION, ...$session];
   return true;
 }

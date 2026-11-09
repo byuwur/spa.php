@@ -160,7 +160,7 @@
   /**
    * Parses a querySelector and creates a corresponding jQuery element.
    * @param {string} selector The querySelector string to parse. It supports tag name, ID, classes and attr.
-   * @return {jQuery} The created jQuery element based on the provided selector string.
+   * @return {jQuery|false} Created element, or false when the selector is invalid.
    */
   function parseQuerySelector(selector) {
     if (!validateQuerySelector(selector)) return false;
@@ -181,7 +181,7 @@
   /**
    * Validates the ID of a querySelector to check in a element with that ID exists
    * @param {string} selector The querySelector string to validate.
-   * @return {boolean} Whether the component ID exists
+   * @return {number|false} Matching element count, or false when the selector has no ID.
    */
   function componentIdExists(selector) {
     const id = selector.match(/#[a-zA-Z0-9-_]+/);
@@ -195,8 +195,8 @@
   /**
    * Routes the given URI within the SPA, managing state and navigation.
    * Route GET values override /$/ parameters, which override ordinary query values.
-   * @param {string} uri The URI to route.
-   * @return {object} An object containing the routed path, URI, file, parameters, and components.
+   * @param {string} [uri="/"] Application URI to resolve.
+   * @return {Object|null} Resolved route/state data, or null for an unknown path.
    */
   function routeURL(uri = "/") {
     // Parse the URI into path and parameters

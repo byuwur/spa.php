@@ -48,7 +48,7 @@ if (strpos($uri, "/\$/") !== false) {
 if (!array_key_exists($uri, $routes) || (!isset($routes[$uri]["URI"]) && !isset($routes[$uri]["FILE"])))
   error_crash(404, "Route \"{$uri}\" does not exist.");
 // If the URI is associated with a file, serve the file with appropriate headers
-if (array_key_exists($uri, $routes) && isset($routes[$uri]["FILE"])) {
+if (isset($routes[$uri]["FILE"])) {
   $file = $routes[$uri]["FILE"];
   $file_path = is_file($file) ? $file : (is_file("{$TO_HOME}{$file}") ? "{$TO_HOME}{$file}" : null);
   if (!$file_path)
@@ -71,9 +71,9 @@ if (isset($_GET["lang"])) {
 }
 // Render the document language and client settings after route overrides
 if (isset($setLocalStorage) && $setLocalStorage) {
-  ?>
+?>
   <html lang="<?= escape_html($APP_LANG) ?>" dir="ltr">
-  <?php
+<?php
 }
 ?>
 <script>
@@ -81,7 +81,7 @@ if (isset($setLocalStorage) && $setLocalStorage) {
   byStorage.setItem("APP_LANG", <?= js_encode($APP_LANG) ?>);
   byStorage.setItem("APP_THEME", <?= js_encode($APP_THEME) ?>);
   <?php if (($_ENV["APP_ENV"] ?? $NOTENV_APP_ENV) === "DEV") { ?>
-    console.log("=== PHP ===",);
+    console.log("=== PHP ===", );
     console.log("APP_ENV", <?= js_encode($_ENV["APP_ENV"] ?? $NOTENV_APP_ENV) ?>);
     console.log("APP_VERSION", <?= js_encode($_ENV["APP_VERSION"] ?? "0.1by") ?>);
     console.log("URI", <?= js_encode($uri) ?>);
@@ -89,7 +89,7 @@ if (isset($setLocalStorage) && $setLocalStorage) {
     console.log("ROUTES", JSON.stringify(<?= js_encode($routes) ?>));
     console.log("_GET", JSON.stringify(<?= js_encode($_GET) ?>));
     console.log("_POST", JSON.stringify(<?= js_encode($_POST) ?>));
-    console.log("=== PHP ===",);
+    console.log("=== PHP ===", );
   <?php } ?>
   byStorage.setItem("APP_ENV", <?= js_encode($_ENV["APP_ENV"] ?? $NOTENV_APP_ENV) ?>);
   byStorage.setItem("APP_VERSION", <?= js_encode($_ENV["APP_VERSION"] ?? "0.1by") ?>);

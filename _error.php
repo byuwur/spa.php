@@ -107,8 +107,8 @@ http_response_code($err);
 
 /**
  * Escape a value for safe HTML text or attribute output.
- * @param string $value Value to validate or format.
- * @return string The accepted result of this operation.
+ * @param string $value Raw text or attribute value.
+ * @return string HTML-escaped text, replacing invalid UTF-8 sequences.
  */
 function e(string $value): string
 {

@@ -7,38 +7,14 @@
  */
 
 // --- LANGUAGE ---
-$lang = substr($_SERVER["HTTP_ACCEPT_LANGUAGE"] ?? "es", 0, 2);
-if (isset($_COOKIE["lang"]))
-  $lang = $_COOKIE["lang"];
-if (isset($_GET["lang"]))
-  $lang = $_GET["lang"];
-switch ($lang) {
-  case "es":
-  case "en":
-  case "ja":
-    $APP_LANG = $lang;
-    break;
-  default:
-    $APP_LANG = "es";
-    break;
-}
+// An explicit query wins over the saved cookie, then the browser language.
+$lang = $_GET["lang"] ?? $_COOKIE["lang"] ?? substr($_SERVER["HTTP_ACCEPT_LANGUAGE"] ?? "es", 0, 2);
+$APP_LANG = in_array($lang, ["es", "en", "ja"], true) ? $lang : "es";
 setcookie("lang", $APP_LANG, time() + 31536000, "/", "", false, false);
 
 // --- THEME ---
-$theme = "dark";
-if (isset($_COOKIE["theme"]))
-  $theme = $_COOKIE["theme"];
-if (isset($_GET["theme"]))
-  $theme = $_GET["theme"];
-switch ($theme) {
-  case "dark":
-  case "light":
-    $APP_THEME = $theme;
-    break;
-  default:
-    $APP_THEME = "dark";
-    break;
-}
+$theme = $_GET["theme"] ?? $_COOKIE["theme"] ?? "dark";
+$APP_THEME = in_array($theme, ["dark", "light"], true) ? $theme : "dark";
 setcookie("theme", $APP_THEME, time() + 31536000, "/", "", false, false);
 
 // --- VARIABLES ---
