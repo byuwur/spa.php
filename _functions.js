@@ -477,21 +477,23 @@ function element_make_http_request(options) {
 // --- WEBSOCKETS ---
 
 /**
- * Inits a websocket connection.
+ * Creates one WebSocket controller with bounded reconnect attempts and optional DOM logging.
+ * The caller owns its lifetime: close() cancels delayed retries and closes the transport.
+ * retry() re-enables reconnection after a manual close; send() serializes values through print_json().
  * @param {object} options Options for the websocket connection.
  * @param {string} options.host The host where you wish to connect.
- * @param {int} options.port The port of the host.
+ * @param {number} options.port The port of the host.
  * @param {string} options.path The path where the websocket is exposed.
  * @param {string} options.elementId The element where you want to render the websocket.
- * @param {boolean} [options.autoConnect=true] Log websocket data on the element.
+ * @param {boolean} [options.autoConnect=true] Open immediately; false returns an idle controller.
  * @param {boolean} [options.logging=false] Log websocket data on the element.
  * @param {Function} [options.onOpen=()=>{}] onOpen trigger for websocket.
  * @param {Function} [options.onClose=()=>{}] onClose trigger for websocket.
  * @param {Function} [options.onError=()=>{}] onError trigger for websocket.
  * @param {Function} [options.onMessage=()=>{}] onMessage trigger for websocket.
- * @param {int} [options.reconnDelay=3000] How long to wait between reconnections in ms.
- * @param {int} [options.maxRetries=3] How many reconnections tries.
- * @return {object} Returns the ws object for further manipulation.
+ * @param {number} [options.reconnDelay=3000] How long to wait between reconnections in ms.
+ * @param {number} [options.maxRetries=3] How many reconnections tries.
+ * @return {Object|undefined} Controller with ws/readyState getters and connect/close/retry/send methods, or undefined for an invalid target.
  */
 function init_websocket(options) {
   const { host, port, path, elementId, autoConnect = true, logging = false, onOpen = () => {}, onClose = () => {}, onError = () => {}, onMessage = () => {}, reconnDelay = 3000, maxRetries = 3 } = options;
@@ -511,22 +513,23 @@ function init_websocket(options) {
   let ws = undefined;
   let retries = 0;
   let closedManually = false;
+  let retryTimer;
 
   const logToEl = (label, data = "") => {
     if (!logging) return;
-    let content = data;
-    if (check_json(content)) content = JSON.stringify(JSON.parse(content), null, 2);
     const now = new Date().toISOString().replace("T", "_").replace(/:/g, "-").split(".")[0];
     const $pre = $(/* HTML */ `<pre></pre>`).text(`${label}: [${now}]\n${data}`);
     $(elId).append($pre);
   };
 
   /**
-   * Connect.
+   * Open a transport only when no connection is open or still connecting.
    * @returns {void}
    */
   function connect() {
-    if (ws && ws.readyState === WebSocket.OPEN) return;
+    clearTimeout(retryTimer);
+    retryTimer = undefined;
+    if (ws && [WebSocket.CONNECTING, WebSocket.OPEN].includes(ws.readyState)) return;
     console.log(`ws${appIsDEV ? `: ${ws_path}` : `.`}`);
     ws = new WebSocket(ws_path);
     logToEl(`ws`, `Connecting...`);
@@ -558,7 +561,7 @@ function init_websocket(options) {
   }
 
   /**
-   * Retry.
+   * Replace any pending reconnect timer while preserving the retry limit.
    * @returns {void}
    */
   function retry() {
@@ -568,7 +571,8 @@ function init_websocket(options) {
     }
     retries++;
     logToEl(`ws.retry`, `Reconnection attempt (${retries}) in ${reconnDelay / 1000} seconds...`);
-    setTimeout(connect, reconnDelay);
+    clearTimeout(retryTimer);
+    retryTimer = setTimeout(connect, reconnDelay);
   }
 
   if (autoConnect) connect();
@@ -580,11 +584,10 @@ function init_websocket(options) {
     get readyState() {
       return ws?.readyState;
     },
-    connect: () => {
-      // Do more if needed
-      connect();
-    },
+    connect,
     close: () => {
+      clearTimeout(retryTimer);
+      retryTimer = undefined;
       closedManually = true;
       retries = maxRetries;
       if (ws && typeof ws.close === "function") ws.close();
@@ -599,9 +602,7 @@ function init_websocket(options) {
         console.warn("⚠️ Cannot send = socket not open");
         return;
       }
-      let parsedData = data;
-      if (check_json(data)) parsedData = JSON.stringify(JSON.parse(parsedData), null, 2);
-      else parsedData = JSON.stringify(parsedData, null, 2);
+      const parsedData = print_json(data);
       if (ws && typeof ws.send === "function") ws.send(parsedData);
     }
   };

@@ -66,6 +66,57 @@ test("JSON helpers preserve parsed values and native stringify failures", () => 
   for (const value of [circular, 1n]) assert.throws(() => print_json(value), { name: "TypeError" });
 });
 
+test("WebSocket controllers avoid duplicate connections and cancel queued reconnects", () => {
+  const timers = new Map();
+  const sockets = [];
+  let nextTimer = 0;
+  class WebSocket {
+    static CONNECTING = 0;
+    static OPEN = 1;
+    constructor() {
+      this.readyState = WebSocket.CONNECTING;
+      sockets.push(this);
+    }
+    close() {
+      if (this.readyState === 3) return;
+      this.readyState = 3;
+      this.onclose?.({ code: 1000 });
+    }
+    send(value) {
+      this.sent = value;
+    }
+  }
+  const { init_websocket } = loadHelpers({
+    WebSocket,
+    window: { location: { protocol: "http:" } },
+    byStorage: { getItem: () => "PROD" },
+    $: () => ({ length: 1 }),
+    setTimeout(callback) {
+      timers.set(++nextTimer, callback);
+      return nextTimer;
+    },
+    clearTimeout(timer) {
+      timers.delete(timer);
+    }
+  });
+  const controller = init_websocket({ host: "localhost", port: 1234, path: "socket", elementId: "#socket" });
+  controller.connect();
+  assert.equal(sockets.length, 1, "a connecting transport is reused");
+  sockets[0].readyState = WebSocket.OPEN;
+  controller.send('{"ok":true}');
+  assert.equal(sockets[0].sent, JSON.stringify({ ok: true }, null, 2));
+  sockets[0].close();
+  assert.equal(timers.size, 1, "an unexpected close schedules reconnection");
+  controller.close();
+  assert.equal(timers.size, 0, "manual close cancels the pending reconnection");
+  controller.retry();
+  assert.equal(timers.size, 1, "explicit retry can restart a closed controller");
+  controller.connect();
+  assert.equal(sockets.length, 2);
+  assert.equal(timers.size, 0, "immediate connection replaces its delayed retry");
+  controller.close();
+});
+
 test("local URL helpers preserve UTF-8 text and interoperate with raw DEFLATE", async () => {
   const { compress_url_data, decompress_url_data } = loadHelpers();
   for (const text of ["", "\uFEFFleading BOM", "Café 日本語 😀\u0000 + / = & ?", JSON.stringify([{ platform: "twitch", handle: "/byUwUr" }])]) {
