@@ -43,7 +43,8 @@ echo "Please complete the ACME challenge on your DNS records:"
 echo ""
 sleep 2
 
-sudo certbot -d $DOMAIN -d $WILDCARD --manual --preferred-challenges dns certonly
+# Pass the wildcard literally; shell expansion could turn it into local filenames.
+sudo certbot -d "$DOMAIN" -d "$WILDCARD" --manual --preferred-challenges dns certonly
 
 echo ""
 echo "Change SSL config:"
