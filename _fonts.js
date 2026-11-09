@@ -377,6 +377,11 @@
   const pickers = new WeakMap();
 
   // --- HELPERS ---
+  /**
+   * Match only the first family in a CSS stack against the bundled Google Fonts catalog.
+   * @param {unknown} value Family name or CSS stack.
+   * @returns {string|undefined} Canonical catalog name, or undefined for installed/custom families.
+   */
   function googleFamily(value) {
     const first = String(value || "")
       .split(",")[0]
@@ -388,7 +393,7 @@
   /**
    * Cache successful and failed stylesheet requests to avoid retries while browsing or offline.
    * @param {unknown} value Value supplied by the caller.
-   * @returns {Promise<boolean>} The resulting asynchronous value.
+   * @returns {Promise<boolean>|undefined} Cached load result, or undefined for families outside the catalog.
    */
   function load(value) {
     const name = googleFamily(value);
@@ -579,6 +584,7 @@
     if (weightField) $(weightField).on("input.byFont change.byFont", update);
     let resetTimer;
     const reset = () => {
+      // Native form reset restores values after this event; update Select2 on the next task.
       clearTimeout(resetTimer);
       resetTimer = setTimeout(() => {
         $(select).val(initial).trigger("change.select2");

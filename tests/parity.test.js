@@ -6,7 +6,8 @@ const path = require("node:path");
 const { deflateRawSync, inflateRawSync } = require("node:zlib");
 const { source } = require("./parity-source");
 
-function loadURLHelpers(overrides = {}) {
+// Isolate standalone helpers; overrides supply only the dependencies a contract needs.
+function loadHelpers(overrides = {}) {
   const context = { Blob, Response, Uint8Array, TextDecoder, CompressionStream, DecompressionStream, atob, btoa, ...overrides };
   vm.runInNewContext(fs.readFileSync(path.join(__dirname, "..", "_functions.js"), "utf8"), context);
   return context;
@@ -44,8 +45,29 @@ test("standalone helpers preserve existing public globals", () => {
   assert.equal(context.parse_json('{"ok":true}').ok, true);
 });
 
+test("JSON helpers preserve parsed values and native stringify failures", () => {
+  const { check_json, parse_json, print_json } = loadHelpers();
+  for (const [text, expected] of [
+    ["null", null],
+    ["false", false],
+    ["0", 0],
+    ['"hello"', "hello"]
+  ]) {
+    assert.equal(check_json(text), true);
+    assert.equal(parse_json(text), expected);
+    assert.equal(print_json(text), JSON.stringify(expected, null, 2));
+  }
+  for (const value of ["", "{", "plain text", undefined, null, false, 0, { ok: true }]) {
+    assert.equal(parse_json(value), null);
+    assert.equal(print_json(value), JSON.stringify(value, null, 2));
+  }
+  const circular = {};
+  circular.self = circular;
+  for (const value of [circular, 1n]) assert.throws(() => print_json(value), { name: "TypeError" });
+});
+
 test("local URL helpers preserve UTF-8 text and interoperate with raw DEFLATE", async () => {
-  const { compress_url_data, decompress_url_data } = loadURLHelpers();
+  const { compress_url_data, decompress_url_data } = loadHelpers();
   for (const text of ["", "\uFEFFleading BOM", "Café 日本語 😀\u0000 + / = & ?", JSON.stringify([{ platform: "twitch", handle: "/byUwUr" }])]) {
     const token = await compress_url_data(text);
     assert.match(token, /^[A-Za-z0-9_-]+$/);
@@ -57,7 +79,7 @@ test("local URL helpers preserve UTF-8 text and interoperate with raw DEFLATE", 
 });
 
 test("local URL decompression enforces byte limits before collecting oversized output", async () => {
-  const { compress_url_data, decompress_url_data } = loadURLHelpers();
+  const { compress_url_data, decompress_url_data } = loadHelpers();
   const text = "😀".repeat(32);
   const token = await compress_url_data(text);
   const size = Buffer.byteLength(text);
@@ -71,7 +93,7 @@ test("local URL decompression enforces byte limits before collecting oversized o
 });
 
 test("local URL helpers reject invalid tokens, truncated streams, and invalid UTF-8", async () => {
-  const { compress_url_data, decompress_url_data } = loadURLHelpers();
+  const { compress_url_data, decompress_url_data } = loadHelpers();
   for (const value of [null, {}, 1]) await assert.rejects(compress_url_data(value), { name: "TypeError" });
   for (const token of [null, {}, "", "a", "a+b", "a/b", "a=", "a b", "%%%"]) {
     await assert.rejects(decompress_url_data(token), { name: "TypeError" });
@@ -84,10 +106,10 @@ test("local URL helpers reject invalid tokens, truncated streams, and invalid UT
 });
 
 test("local URL helpers reject unavailable native APIs without changing formats", async () => {
-  const { compress_url_data } = loadURLHelpers({ CompressionStream: undefined });
+  const { compress_url_data } = loadHelpers({ CompressionStream: undefined });
   await assert.rejects(compress_url_data("text"), { name: "TypeError" });
   const token = deflateRawSync(Buffer.from("text")).toString("base64url");
-  const { decompress_url_data } = loadURLHelpers({ DecompressionStream: undefined });
+  const { decompress_url_data } = loadHelpers({ DecompressionStream: undefined });
   await assert.rejects(decompress_url_data(token), { name: "TypeError" });
 });
 

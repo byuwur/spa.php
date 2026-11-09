@@ -99,7 +99,6 @@ function make_http_request(string $url, array $get = [], array $post = [], bool 
       console_error("CURL (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req));
     error_log("CURL (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req));
   }
-  //curl_close($req);
   if ($forward_session && session_status() == PHP_SESSION_NONE)
     session_start();
   if (!$json_decode)
@@ -152,7 +151,6 @@ function remote_file_exists(string $url, bool $clog_error = false): bool
     error_log("CURL HTTP1.1 (" . curl_getinfo($req, CURLINFO_HTTP_CODE) . ") ERROR: " . curl_error($req));
   }
   $http_code = curl_getinfo($req, CURLINFO_RESPONSE_CODE);
-  //curl_close($req);
   return $http_code >= 200 && $http_code <= 299;
 }
 
@@ -166,9 +164,9 @@ function is_port_in_use(int $port, bool $is_cli = false): bool
 {
   if ($port < 1 || $port > 65535) {
     if (!$is_cli)
-      console_error("PORT ERROR: Invalid port number ({$port}). Must be 1 >= PORT <= 65535.");
+      console_error("PORT ERROR: Invalid port number ({$port}). Must be 1 <= PORT <= 65535.");
     else
-      echo "🔴 PORT ERROR: Invalid port number ({$port}). Must be 1 >= PORT <= 65535.";
+      echo "🔴 PORT ERROR: Invalid port number ({$port}). Must be 1 <= PORT <= 65535.";
     return false;
   }
   $connection = @fsockopen('127.0.0.1', $port);
@@ -231,7 +229,6 @@ function validate_value($input, string $type = "string", array $options = [])
 {
   if (
     !isset($input) ||
-    $input === null ||
     $input === "null" ||
     $input === ""
   )
@@ -348,7 +345,7 @@ function api_validate_keys(string $method, array $array, array $required, bool $
  */
 function common_keys(array $array): array
 {
-  if (empty($array) || !count($array))
+  if (empty($array))
     return [];
   $common = array_keys(reset($array));
   foreach ($array as $item)
@@ -1122,10 +1119,7 @@ function check_json($json): bool
  */
 function print_json($json): void
 {
-  if (check_json($json))
-    echo json_encode(json_decode($json, true), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-  else
-    echo json_encode($json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+  echo json_encode(check_json($json) ? json_decode($json, true) : $json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 }
 
 /** 
@@ -1191,6 +1185,7 @@ function show_modal_back($state = "success", $title = "INFO.", $message = "Messa
     <script>
       "use strict";
       function destroy_modal_back() {
+        // Capture this node so delayed cleanup cannot remove a replacement with the same ID.
         const modal = \$("#modal_back");
         modal.modal("hide");
         setTimeout(() => {

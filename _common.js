@@ -76,7 +76,7 @@
     },
     rare: {
       weight: 5,
-      messages: ["Add a little BONYUR", "byUwUr was here", "Made easy, with love", "UwU responsibly", "HÃ¡gale pues", "De una", "Yogurt approves", "Peak engineering", "An important moment in computing", "For the bit", "Clip farming"]
+      messages: ["Add a little BONYUR", "byUwUr was here", "Made easy, with love", "UwU responsibly", "Hágale pues", "De una", "Yogurt approves", "Peak engineering", "An important moment in computing", "For the bit", "Clip farming"]
     }
   };
   byCommon.ACCENT_COLOR_BANK ??= {
@@ -343,19 +343,14 @@
   byCommon.accessibilityHighlightLinks = () => $("html").toggleClass("highlight-links");
 
   /**
-   * Accessibility high contrast.
-   * @param {string} [mode="high-contrast"] Requested operation or display mode.
-   * @returns {unknown}
+   * Keep one contrast/color-vision mode active; choosing it again clears that mode.
+   * @param {string} [mode="high-contrast"] CSS class for the requested display mode.
+   * @returns {jQuery|undefined} Root collection when clearing the current mode; otherwise no value.
    */
   byCommon.accessibilityHighContrast = (mode = "high-contrast") => {
-    if ($("html").hasClass(mode)) return $("html").removeClass(mode);
-    $("html").removeClass("protanopia");
-    $("html").removeClass("deuteranopia");
-    $("html").removeClass("tritanopia");
-    $("html").removeClass("monochropia");
-    $("html").removeClass("invertchropia");
-    $("html").removeClass("high-contrast");
-    $("html").addClass(mode);
+    const root = $("html");
+    if (root.hasClass(mode)) return root.removeClass(mode);
+    root.removeClass("protanopia deuteranopia tritanopia monochropia invertchropia high-contrast").addClass(mode);
   };
 
   /**

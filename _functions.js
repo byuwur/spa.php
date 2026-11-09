@@ -29,12 +29,9 @@ function check_json(json) {
  * @return {*} Parsed JSON value, or null for invalid/non-string input.
  */
 function parse_json(json) {
-  if (typeof json != "string") return null;
+  if (typeof json !== "string") return null;
   try {
-    const parsed = JSON.parse(json);
-    //console.log("json?:", json);
-    //console.log("parsed?:", parsed);
-    return parsed;
+    return JSON.parse(json);
   } catch {
     return null;
   }
@@ -44,21 +41,20 @@ function parse_json(json) {
  * Returns a pretty-printed JSON string.
  * If the input is already JSON, it normalizes it.
  * @param {any} json The data to format.
- * @return {string} JSON-formatted string.
+ * @return {string|undefined} Formatted JSON, or undefined for unsupported top-level values.
+ * @throws {TypeError} For circular references or BigInt values, as with JSON.stringify().
  */
 function print_json(json) {
-  let output = null;
-  if (check_json(json)) output = JSON.stringify(JSON.parse(json), null, 2);
-  else output = JSON.stringify(json, null, 2);
-  return output;
+  // parse_json() cannot distinguish valid JSON null from invalid text; validate before choosing what to format.
+  return JSON.stringify(check_json(json) ? JSON.parse(json) : json, null, 2);
 }
 
 // --- VALUES AND PATHS ---
 
 /**
- * Returns if a variable is an object.
+ * Checks truthy values for non-array objects; falsy inputs pass through unchanged.
  * @param {any} value The data to check.
- * @return {boolean} Whether the input is an object or not.
+ * @return {*} Boolean for truthy inputs, otherwise the supplied falsy value.
  */
 function is_object(value) {
   return value && typeof value === "object" && !Array.isArray(value);
@@ -85,17 +81,17 @@ function std_dir_separator(path) {
 }
 
 /**
- * Returns the directory portion of a path using normalized "/" separators.
+ * Removes the last slash-delimited segment after normalizing directory separators.
+ * Slashless input is returned unchanged.
  * @param {string} path Path string to inspect.
- * @return {string} Directory path, or "." when no directory portion exists.
+ * @return {string} Remaining path, or "." when the result is empty.
  */
 function dirname(path) {
   return std_dir_separator(path).replace(/\/[^/]*$/, "") || ".";
 }
 
 /**
- * Logs a JSON response and stops further execution.
- * (JS version: it just throws a special object to simulate termination)
+ * Logs formatted JSON, then throws an Error to stop the current call stack.
  * @param {any} json The data to output.
  * @return {never}
  * @throws {Error}
@@ -142,6 +138,7 @@ async function decompress_url_data(value, maxBytes = 1048576) {
     while (true) {
       const { value: chunk, done } = await reader.read();
       if (done) break;
+      // Bound expanded bytes before buffering them; compressed input size does not bound memory use.
       size += chunk.byteLength;
       if (size > maxBytes) {
         await reader.cancel();
@@ -152,13 +149,14 @@ async function decompress_url_data(value, maxBytes = 1048576) {
   } finally {
     reader.releaseLock();
   }
+  // Preserve a leading BOM as payload data and reject malformed UTF-8 rather than replacing it.
   return new TextDecoder("utf-8", { fatal: true, ignoreBOM: true }).decode(await new Blob(chunks).arrayBuffer());
 }
 
 // --- COOKIES AND QUERY PARAMETERS ---
 
 /**
- * Creates or updates a cookie with the specified name, value, and expiration days.
+ * Creates or updates a path-wide cookie, encoding its value and setting its lifetime in seconds.
  * @param {string} name The name of the cookie.
  * @param {string} value The value of the cookie.
  * @param {number} [seconds=31536000] (Default 1y) The number of seconds until the cookie expires. A negative number expires the cookie.
@@ -196,10 +194,10 @@ function get_url_param(name) {
 // --- EVENTS ---
 
 /**
- * Creates a debounced function that delays the execution of the provided function (`func`)
- * @param {Function} func The function to debounce. This is the function that will be delayed in execution.
- * @param {number} wait (Default 111) The number of milliseconds to wait before executing the `func`.
- * @return {Function} Returns a new debounced version of the `func` that delays its execution.
+ * Runs func after calls have stopped for wait milliseconds, using the last call's receiver and arguments.
+ * @param {Function} func Function to invoke after the delay.
+ * @param {number} [wait=250] Delay in milliseconds, restarted by each call.
+ * @return {Function} Debounced function; it does not return func's result.
  */
 function debounce(func, wait = 250) {
   let timeout;
@@ -335,7 +333,7 @@ function remote_file_exists(url) {
  * @param {Array} [options.$_post=[]] An array of additional POST parameters to include in the request.
  * @param {Object} [options.ajaxOpts={}] Additional options added to the AJAX request if needed (e.g., async)
  * @param {boolean} [options.loudFail=false] (Default False) Defines if the error is displayed with the modal or console only.
- * @returns {jQuery.jqXHR}
+ * @returns {jQuery.Promise<*>|undefined} Response data, or null after a handled failure; invalid elements return undefined.
  */
 function make_http_request(options) {
   const { $elementId, $url, $type = "POST", $returnType = "json", $_get = {}, $_post = [], ajaxOpts = {}, loudFail = false } = options;
@@ -403,7 +401,7 @@ function make_http_request(options) {
  * @param {Function} [options.alwaysFn=()=>{}] A callback function to be executed after the request happens.
  * @param {Object} [options.ajaxOpts={}] Additional options added to the AJAX request if needed (e.g., async)
  * @param {boolean} [options.loudFail=true] (Default True) Defines if the error is displayed with the modal or console only.
- * @returns {jQuery.jqXHR}
+ * @returns {jQuery|undefined} Bound elements, or undefined when the target ID is invalid or missing.
  */
 function element_make_http_request(options) {
   const { $elementId, $trigger = "submit", $url, $type = "POST", $returnType = "json", $_get = {}, $_post = [], beforeFn = () => {}, doneFn = () => {}, failFn = () => {}, alwaysFn = () => {}, ajaxOpts = {}, loudFail = true } = options;
