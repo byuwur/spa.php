@@ -114,7 +114,7 @@ Applications own authorization and must sanitize untrusted HTML. `_auth.php` use
 - `session_check()` preserves GET/POST. Initial form POST data is forwarded once, never stored in history. PHP `make_http_request()` does not retry ambiguous POST failures.
 - Session-ID forwarding requires `ALLOW_POST_SESSION_ID` and a URL matching `APP_URL`. Behind proxies, set `APP_URL` or configure exact `TRUSTED_PROXIES` with `TRUST_PROXY`; validate outbound URLs.
 - SQL UPDATE/DELETE needs a restrictive condition or explicit `allow_full_table => true`. Empty `NOT IN []` is not restrictive and strict mode rejects it. Trusted SQL fragments are not checked for tautologies.
-- Block every `tests` path segment, including submodules. Nginx denial must precede PHP handling and sit outside overriding `^~` locations. Test scripts are CLI-only.
+- Block every `__tests__` path segment, including submodules; retain denial for `tests` in older pinned submodules. Nginx denial must precede PHP handling and sit outside overriding `^~` locations. Test scripts are CLI-only.
 - Track application `composer.lock` for reproducible installs.
 
 ## Maintaining a submodule integration
@@ -126,11 +126,11 @@ For upgrades, review changes, reconcile application-owned `_init.php`/`_routes.p
 ### Checks
 
 ```bash
-node --test tests/common.test.js tests/fragment_scripts.test.js tests/routing.test.js tests/storage.test.js tests/parity.test.js tests/fonts.test.js
-node --test tests/browser.test.js tests/fonts.browser.test.js
+node --test __tests__/common.test.js __tests__/fragment_scripts.test.js __tests__/routing.test.js __tests__/storage.test.js __tests__/parity.test.js __tests__/fonts.test.js
+node --test __tests__/browser.test.js __tests__/fonts.browser.test.js
 ```
 
-Browser tests require Playwright and Chromium, or `BROWSER_CHANNEL=chrome`. See [CI](.github/workflows/ci.yml) for PHP/SQL/auth/HTTP checks and [shared contract checks](tests/SPA_PARITY.md) for comparison rules. `SPA_JS_TREE` selects a Git object store; [parity-source.js](tests/parity-source.js) pins the reviewed revision, ignoring its working tree and HEAD.
+Browser tests require Playwright and Chromium, or `BROWSER_CHANNEL=chrome`. See [CI](.github/workflows/ci.yml) for PHP/SQL/auth/HTTP checks and [shared contract checks](__tests__/SPA_PARITY.md) for comparison rules. `SPA_JS_TREE` selects a Git object store; [parity-source.js](__tests__/parity-source.js) pins the reviewed revision, ignoring its working tree and HEAD.
 
 ## Related tools
 

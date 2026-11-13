@@ -3,7 +3,7 @@ if (PHP_SAPI !== "cli") {
   http_response_code(403);
   exit;
 }
-$_SERVER = ["REMOTE_ADDR" => "203.0.113.10", "HTTP_HOST" => "example.test", "SERVER_PORT" => "80", "SCRIPT_FILENAME" => __FILE__, "PHP_SELF" => "/tests/test_proxy.php"];
+$_SERVER = ["REMOTE_ADDR" => "203.0.113.10", "HTTP_HOST" => "example.test", "SERVER_PORT" => "80", "SCRIPT_FILENAME" => __FILE__, "PHP_SELF" => "/__tests__/test_proxy.php"];
 $_ENV = [];
 require_once __DIR__ . "/../_init.php";
 

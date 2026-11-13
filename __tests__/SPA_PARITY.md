@@ -7,10 +7,10 @@ The existing browser and storage suites are also executable against the recorded
 From spa.php, with PHP on PATH (or `PHP_BINARY` set), and the existing CI Playwright installation available through `NODE_PATH`:
 
 ```sh
-node --test tests/parity.test.js tests/storage.test.js
-node --test tests/browser.test.js
-SPA_JS_TREE=/absolute/path/to/spa.js node --test tests/parity.test.js tests/storage.test.js
-SPA_JS_TREE=/absolute/path/to/spa.js node --test --test-name-pattern='shared:' tests/browser.test.js
+node --test __tests__/parity.test.js __tests__/storage.test.js
+node --test __tests__/browser.test.js
+SPA_JS_TREE=/absolute/path/to/spa.js node --test __tests__/parity.test.js __tests__/storage.test.js
+SPA_JS_TREE=/absolute/path/to/spa.js node --test --test-name-pattern='shared:' __tests__/browser.test.js
 ```
 
 In PowerShell set `$env:SPA_JS_TREE = 'C:/path/to/spa.js'` before the two reference commands and remove it afterward with `Remove-Item Env:SPA_JS_TREE`. `BROWSER_CHANNEL` may select an installed Playwright-supported browser. Changing the comparison revision requires reviewing and updating `SPA_JS_REVISION` in `parity-source.js` and this record together.

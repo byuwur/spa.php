@@ -5,7 +5,7 @@ if (PHP_SAPI !== "cli") {
   exit;
 }
 $_ENV = ["APP_ENV" => "PROD", "APP_URL" => $argv[2] ?? "https://example.test/app"];
-$_SERVER = ["HTTP_HOST" => "example.test", "SCRIPT_FILENAME" => __FILE__, "PHP_SELF" => "/app/tests/render_init.php"];
+$_SERVER = ["HTTP_HOST" => "example.test", "SCRIPT_FILENAME" => __FILE__, "PHP_SELF" => "/app/__tests__/render_init.php"];
 $setLocalStorage = true;
 require __DIR__ . (($argv[1] ?? "") === "demo" ? "/../demo/_init.php" : "/../_init.php");
 if (isset($argv[3])) {

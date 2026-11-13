@@ -21,7 +21,7 @@ $post = [
     "value" => "1"
   ]
 ];
-echo make_http_request("{$HOME_PATH}/test/get_and_post.php", $get, $post);
+echo make_http_request("{$HOME_PATH}/__tests__/get_and_post.php", $get, $post);
 echo "<br>";
 echo "remote_file_exists(): " . (remote_file_exists("https://byuwur.github.io/img/logo.png") ? "true" : "false");
 exit;
