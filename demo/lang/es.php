@@ -64,7 +64,8 @@ $LANG = [
   "meta.description" => "Un framework PHP ligero con enrutador para crear aplicaciones de una sola página.",
   "meta.keywords" => "SPA.php, aplicación de una sola página, enrutador SPA, framework PHP, PHP, byUwUr",
   "meta.locale" => "es_CO",
-  "meta.url" => "https://byuwur.co/spa.php/demo/es",
+  // "meta.url" => "https://byuwur.co/spa.php/demo/es",
+  "meta.url" => "https://spa.byuwur.co/demo/es",
 
   "title.default" => "SPA.php | byUwUr",
   "title.home" => "SPA Inicio | byUwUr",

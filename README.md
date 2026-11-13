@@ -4,7 +4,8 @@
 
 A PHP single-page application framework with server-side routing, jQuery page/component loading, shared UI, and request/session helpers.
 
-[Demo](https://byuwur.co/spa.php/) · [Static HTML version: SPA.js](https://github.com/byuwur/spa.js)
+<!-- [Demo](https://byuwur.co/spa.php/) · [Static HTML version: SPA.js](https://github.com/byuwur/spa.js) -->
+[Demo](https://spa.byuwur.co/) · [Static HTML version: SPA.js](https://github.com/byuwur/spa.js)
 
 ## Installation
 

@@ -64,7 +64,8 @@ $LANG = [
   "meta.description" => "PHPでシングルページアプリケーションを構築するための軽量フレームワークとルーターです。",
   "meta.keywords" => "SPA.php, シングルページアプリケーション, SPAルーター, PHPフレームワーク, PHP, byUwUr",
   "meta.locale" => "ja_JP",
-  "meta.url" => "https://byuwur.co/spa.php/demo/ja",
+  // "meta.url" => "https://byuwur.co/spa.php/demo/ja",
+  "meta.url" => "https://spa.byuwur.co/demo/ja",
 
   "title.default" => "SPA.php | byUwUr",
   "title.home" => "SPA ホーム | byUwUr",
