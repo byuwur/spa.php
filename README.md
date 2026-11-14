@@ -44,6 +44,7 @@ The framework's initializer is a template; loading it directly derives the wrong
 | `_functions.php`, `_functions.js`          | Server/browser utilities and request helpers.        |
 | `_common.php`, `_common.js`, `_common.css` | Defaults, shared UI, and styles.                     |
 | `_load.js`                                 | Native ordered CSS/JavaScript dependency loading.    |
+| `_fonts.css`                               | Bundled fonts; imported by `_common.css`.            |
 | `_fonts.js`                                | Optional Google Fonts loading and pickers.           |
 | `_auth.php`, `_config.php`, `_plugins.php` | Optional sessions/CSRF, MySQL, and Composer setup.   |
 | `_error.php`                               | Standalone HTTP error page.                          |
@@ -151,7 +152,7 @@ Applications own authorization and must sanitize untrusted HTML. `_auth.php` use
 
 ## Maintaining a submodule integration
 
-Keep `_load.js`, `_fonts.js`, `_functions.js`, `_common.js`, and `_common.css` identical across both SPAs; SPA.php owns the shared source. `_spa.js`, routing, transport, history, and application bootstrap retain host-specific behavior.
+Keep `_load.js`, `_fonts.css`, `_fonts.js`, `_functions.js`, `_common.js`, and `_common.css` identical across both SPAs; SPA.php owns the shared source. `_spa.js`, routing, transport, history, and application bootstrap retain host-specific behavior.
 
 For upgrades, review changes, reconcile application-owned `_init.php`/`_routes.php` without losing settings, run checks, and test the consumer. Submodule updates do not update copied initializers. Neither repository synchronizes the other automatically.
 

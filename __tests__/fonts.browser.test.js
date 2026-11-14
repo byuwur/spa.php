@@ -21,6 +21,9 @@ async function fontPage(t, markup) {
   page.on("pageerror", (error) => errors.push(error.message));
   await page.route("https://example.test/**", (route) => {
     const url = new URL(route.request().url());
+    if (["/_common.css", "/_fonts.css"].includes(url.pathname)) {
+      return route.fulfill({ path: path.join(root, path.basename(url.pathname)), contentType: "text/css; charset=UTF-8" });
+    }
     if (/\.(woff2?|ttf)$/.test(url.pathname)) {
       const font = path.join(root, "css", "webfonts", path.basename(url.pathname));
       return route.fulfill({ body: fs.readFileSync(font), contentType: "application/octet-stream" });
@@ -33,7 +36,9 @@ async function fontPage(t, markup) {
     return route.fulfill({ contentType: "text/css", body: "/* Font request fixture */" });
   });
   await page.goto("https://example.test/app/");
-  for (const file of ["css/bootstrap.min.css", "css/select2.min.css", "_common.css"]) await page.addStyleTag({ path: path.join(root, file) });
+  for (const file of ["css/bootstrap.min.css", "css/select2.min.css"]) await page.addStyleTag({ path: path.join(root, file) });
+  await page.addStyleTag({ url: "https://example.test/_common.css" });
+  assert.equal(await page.evaluate(async () => (await document.fonts.load('400 16px "Archivo"')).length), 1, "Common styles load the shared font faces");
   await page.addScriptTag({ path: path.join(root, "_fonts.js") });
   assert.equal(await page.evaluate(() => typeof window.jQuery), "undefined");
   await page.evaluate(() => {
@@ -43,6 +48,28 @@ async function fontPage(t, markup) {
   for (const file of ["js/jquery.min.js", "js/select2.full.min.js", "js/popper.min.js", "js/bootstrap.min.js", "_common.js"]) await page.addScriptTag({ path: path.join(root, file) });
   return { page, requests, errors };
 }
+
+test("bundled fonts load independently without changing host styles", async (t) => {
+  const page = await browser.newPage();
+  t.after(() => page.close());
+  await page.route("https://example.test/**", (route) => {
+    const file = new URL(route.request().url()).pathname.slice(1);
+    if (file === "_fonts.css") return route.fulfill({ path: path.join(root, file), contentType: "text/css; charset=UTF-8" });
+    if (/^css\/webfonts\/[a-z_]+\.(ttf|woff2)$/.test(file)) return route.fulfill({ path: path.join(root, file), contentType: "application/octet-stream" });
+    return route.fulfill({ contentType: "text/html; charset=UTF-8", body: '<!doctype html><html><head><meta charset="UTF-8"></head><body style="font-family: serif">Bundled fonts</body></html>' });
+  });
+  await page.goto("https://example.test/");
+  await page.addStyleTag({ url: "https://example.test/_fonts.css" });
+  const loaded = await page.evaluate(async () => {
+    const faces = [];
+    for (const font of ['normal 400 16px "Archivo"', 'italic 900 16px "Archivo"', '16px "Bahnschrift"', '16px "Open Dyslexic"']) {
+      faces.push((await document.fonts.load(font)).length);
+    }
+    return faces;
+  });
+  assert.deepEqual(loaded, [1, 1, 1, 1]);
+  assert.equal(await page.locator("body").evaluate((body) => getComputedStyle(body).fontFamily), "serif");
+});
 
 test("common initialization preserves saved fonts, reuses widgets, and resets previews", async (t) => {
   const { page, requests, errors } = await fontPage(

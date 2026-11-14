@@ -1,0 +1,22 @@
+@font-face {
+  font-family: "Archivo";
+  src: url("./css/webfonts/archivo.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Archivo";
+  src: url("./css/webfonts/archivo_i.ttf") format("truetype");
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Bahnschrift";
+  src: url("./css/webfonts/bahnschrift.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Open Dyslexic";
+  src: url("./css/webfonts/open_dyslexic.woff2") format("woff2");
+}
