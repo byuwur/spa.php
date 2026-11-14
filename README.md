@@ -94,7 +94,9 @@ Requires native `CompressionStream`/`DecompressionStream` support for `deflate-r
 
 ```html
 <style>
-  html.spa-styles-loading body { visibility: hidden; }
+  .spa-styles-loading {
+    visibility: hidden;
+  }
 </style>
 <script src="https://cdn.jsdelivr.net/gh/byuwur/spa.js@v20.9/_load.min.js"></script>
 <script>
