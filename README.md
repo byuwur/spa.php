@@ -96,9 +96,9 @@ Requires native `CompressionStream`/`DecompressionStream` support for `deflate-r
 <style>
   html.spa-styles-loading body { visibility: hidden; }
 </style>
-<script src="https://cdn.jsdelivr.net/gh/byuwur/spa.js@v20.8/_load.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/byuwur/spa.js@v20.9/_load.min.js"></script>
 <script>
-  const SPA_VERSION = "v20.8";
+  const SPA_VERSION = "v20.9";
   const HOST = `https://cdn.jsdelivr.net/gh/byuwur/spa.js@${SPA_VERSION}`;
   document.documentElement.classList.add("spa-styles-loading");
   (async () => {
