@@ -32,8 +32,8 @@ require_once "{$TO_HOME}/common.example.php";
 ?>
 
 <head>
+  <meta charset="UTF-8" />
   <title><?= escape_html($LANG["title.default"]) ?></title>
-  <meta charset="utf-8" />
   <meta property="og:title" content="<?= escape_html($LANG["title.default"]) ?>" />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="https://byuwur.github.io/img/logo.png" />

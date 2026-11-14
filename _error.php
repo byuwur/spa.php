@@ -119,8 +119,8 @@ function e(string $value): string
 <html lang="<?= e($lang) ?>" dir="ltr">
 
 <head>
+  <meta charset="UTF-8">
   <title>ERROR <?= $err ?></title>
-  <meta charset="utf-8">
   <meta property="og:title" content="[Mateus] byUwUr" />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="https://byuwur.github.io/img/logo.png" />

@@ -150,7 +150,7 @@ async function decompress_url_data(value, maxBytes = 1048576) {
     reader.releaseLock();
   }
   // Preserve a leading BOM as payload data and reject malformed UTF-8 rather than replacing it.
-  return new TextDecoder("utf-8", { fatal: true, ignoreBOM: true }).decode(await new Blob(chunks).arrayBuffer());
+  return new TextDecoder("UTF-8", { fatal: true, ignoreBOM: true }).decode(await new Blob(chunks).arrayBuffer());
 }
 
 // --- COOKIES AND QUERY PARAMETERS ---
