@@ -9,19 +9,20 @@
   if (typeof global.byLoad === "function") return;
 
   const requests = new Map();
-  const ready = document.readyState === "loading" ? new Promise((resolve) => document.addEventListener("DOMContentLoaded", resolve, { once: true })) : Promise.resolve();
+  const ready = document.readyState === "loading" ? new Promise((resolve) => document.addEventListener("DOMContentLoaded", resolve, { once: true })) : null;
 
   /**
-   * Load dependencies into the head after parsing, preserving their array order.
+   * Load dependencies into the head, preserving their array order.
    * @param {Array<string|{path: string, attributes?: Object<string, string>, optional?: boolean}>} files CSS/JS paths or descriptors.
    * @param {Object} [options] Resolution options.
    * @param {string} [options.host=""] Prefix for paths beginning with /; ./ and ../ remain document-relative.
+   * @param {boolean} [options.defer=true] Wait for DOM parsing; false starts the batch immediately.
    * @param {HTMLElement|null} [options.before=null] Head element before which assets are inserted, preserving the host's CSS cascade.
    * @returns {Promise<Array<HTMLElement|null>>} Loaded elements; optional failures warn and return null. Other failures reject. Failed requests can be retried.
    */
-  global.byLoad = async function (files, { host = "", before = null } = {}) {
+  global.byLoad = async function (files, { host = "", before = null, defer = true } = {}) {
     if (!Array.isArray(files)) throw new TypeError("byLoad expects an array of CSS/JS paths.");
-    await ready;
+    if (defer && ready) await ready;
     const elements = [];
     for (const entry of files) {
       const { path, attributes = {}, optional = false } = typeof entry === "string" ? { path: entry } : entry || {};
@@ -42,7 +43,7 @@
             element.src = url.href;
             element.charset = "UTF-8";
             element.async = false;
-            element.defer = true;
+            element.defer = defer;
           }
           element.onload = () => {
             element.onload = element.onerror = null;

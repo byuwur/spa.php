@@ -89,19 +89,30 @@ Requires native `CompressionStream`/`DecompressionStream` support for `deflate-r
 
 ### Ordered assets
 
-`_load.js` exposes native `byLoad(files, { host, before })` without jQuery. CSS and classic JavaScript paths load into the head in array order after parsing; the promise resolves after loading. Await it before application initialization. Dynamically inserted scripts do not delay `DOMContentLoaded`.
+`_load.js` exposes native `byLoad(files, { host, before, defer })` without jQuery. The default `defer: true` waits for DOM parsing. Set `defer: false` to start a batch immediately, including while the head is being parsed. CSS and classic JavaScript paths keep their array order; the promise resolves after loading. Await it before application initialization. Dynamically inserted scripts do not delay `DOMContentLoaded`.
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/byuwur/spa.js@v20.8/_load.min.js" defer></script>
+<style>
+  html.spa-styles-loading body { visibility: hidden; }
+</style>
+<script src="https://cdn.jsdelivr.net/gh/byuwur/spa.js@v20.8/_load.min.js"></script>
 <script>
-  document.addEventListener("DOMContentLoaded", async () => {
-    const SPA_VERSION = "v20.8";
-    const HOST = `https://cdn.jsdelivr.net/gh/byuwur/spa.js@${SPA_VERSION}`;
-    await byLoad(["/css/bootstrap.min.css", "/js/jquery.min.js", "/_functions.min.js"], { host: HOST });
+  const SPA_VERSION = "v20.8";
+  const HOST = `https://cdn.jsdelivr.net/gh/byuwur/spa.js@${SPA_VERSION}`;
+  document.documentElement.classList.add("spa-styles-loading");
+  (async () => {
+    try {
+      await byLoad(["/css/bootstrap.min.css"], { host: HOST, defer: false });
+    } finally {
+      document.documentElement.classList.remove("spa-styles-loading");
+    }
+    await byLoad(["/js/jquery.min.js", "/_functions.min.js"], { host: HOST });
     // Initialize the application here.
-  });
+  })().catch(console.error);
 </script>
 ```
+
+For CSS-first startup, load the bootstrap script without `defer`, start the stylesheet batch immediately, and use a deferred JavaScript batch afterward. The example reveals page content when CSS settles, before JavaScript finishes; `finally` also releases the visibility guard if loading fails.
 
 Leading `/` paths use `host`; `./` and `../` paths remain document-relative, including `file://`. Absolute and embedded CSS/JS data URLs also work. Pass `before` to preserve stylesheet cascade order relative to an existing head element. Entries can be `{ path, attributes }`; `{ path, optional: true }` warns and returns `null` on failure, for optional assets such as icon fonts. Required failures reject and stop the batch. Duplicate URLs share a request; failures can be retried, and repeated loader imports retain that registry. Existing page event handlers are preserved.
 
