@@ -20,11 +20,11 @@ jobs:
       - run: php __tests__/test_http.php
       - run: |
           php __tests__/test_api_respond.php | php -r '$data = json_decode(stream_get_contents(STDIN), true); exit(($data["message"] ?? null) === "ok" ? 0 : 1);'
-      - run: node --check _functions.js && node --check _common.js && node --check _spa.js && node --check _fonts.js
+      - run: node --check _load.js && node --check _functions.js && node --check _common.js && node --check _spa.js && node --check _fonts.js
       - run: node --test __tests__/common.test.js __tests__/fragment_scripts.test.js __tests__/routing.test.js __tests__/storage.test.js __tests__/parity.test.js __tests__/fonts.test.js
       - name: Browser contract tests
         run: |
           npm install --prefix "$RUNNER_TEMP/spa-browser" --no-package-lock playwright@1.62.1
           "$RUNNER_TEMP/spa-browser/node_modules/.bin/playwright" install --with-deps chromium
-          NODE_PATH="$RUNNER_TEMP/spa-browser/node_modules" node --test __tests__/browser.test.js __tests__/fonts.browser.test.js
+          NODE_PATH="$RUNNER_TEMP/spa-browser/node_modules" node --test __tests__/browser.test.js __tests__/fonts.browser.test.js __tests__/load.browser.test.js
       - run: composer validate --no-check-publish

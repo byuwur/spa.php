@@ -43,6 +43,7 @@ The framework's initializer is a template; loading it directly derives the wrong
 | `_spa.js`                                  | AJAX navigation, history, components, and lifecycle. |
 | `_functions.php`, `_functions.js`          | Server/browser utilities and request helpers.        |
 | `_common.php`, `_common.js`, `_common.css` | Defaults, shared UI, and styles.                     |
+| `_load.js`                                 | Native ordered CSS/JavaScript dependency loading.    |
 | `_fonts.js`                                | Optional Google Fonts loading and pickers.           |
 | `_auth.php`, `_config.php`, `_plugins.php` | Optional sessions/CSRF, MySQL, and Composer setup.   |
 | `_error.php`                               | Standalone HTTP error page.                          |
@@ -86,6 +87,24 @@ const restored = JSON.parse(await decompress_url_data(token));
 
 Requires native `CompressionStream`/`DecompressionStream` support for `deflate-raw`. Decompression rejects malformed data/UTF-8 and output exceeding the positive safe-integer UTF-8 byte limit. Callers own JSON, validation, URL parameters, and format markers.
 
+### Ordered assets
+
+`_load.js` exposes native `byLoad(files, { host, before })` without jQuery. CSS and classic JavaScript paths load into the head in array order after parsing; the promise resolves after loading. Await it before application initialization. Dynamically inserted scripts do not delay `DOMContentLoaded`.
+
+```html
+<script src="https://cdn.jsdelivr.net/gh/byuwur/spa.js@v20.8/_load.min.js" defer></script>
+<script>
+  document.addEventListener("DOMContentLoaded", async () => {
+    const SPA_VERSION = "v20.8";
+    const HOST = `https://cdn.jsdelivr.net/gh/byuwur/spa.js@${SPA_VERSION}`;
+    await byLoad(["/css/bootstrap.min.css", "/js/jquery.min.js", "/_functions.min.js"], { host: HOST });
+    // Initialize the application here.
+  });
+</script>
+```
+
+Leading `/` paths use `host`; `./` and `../` paths remain document-relative, including `file://`. Absolute and embedded CSS/JS data URLs also work. Pass `before` to preserve stylesheet cascade order relative to an existing head element. Entries can be `{ path, attributes }`; `{ path, optional: true }` warns and returns `null` on failure, for optional assets such as icon fonts. Required failures reject and stop the batch. Duplicate URLs share a request; failures can be retried, and repeated loader imports retain that registry. Existing page event handlers are preserved.
+
 ### Optional Google Fonts
 
 `_fonts.js` loads fonts natively with caching and offline fallbacks. Optional pickers need jQuery, Select2, `_common.css`, and `data-font-picker` controls:
@@ -121,7 +140,7 @@ Applications own authorization and must sanitize untrusted HTML. `_auth.php` use
 
 ## Maintaining a submodule integration
 
-Keep `_fonts.js`, `_functions.js`, `_common.js`, and `_common.css` identical across both SPAs; SPA.php owns the shared source. `_spa.js`, routing, transport, history, and application bootstrap retain host-specific behavior.
+Keep `_load.js`, `_fonts.js`, `_functions.js`, `_common.js`, and `_common.css` identical across both SPAs; SPA.php owns the shared source. `_spa.js`, routing, transport, history, and application bootstrap retain host-specific behavior.
 
 For upgrades, review changes, reconcile application-owned `_init.php`/`_routes.php` without losing settings, run checks, and test the consumer. Submodule updates do not update copied initializers. Neither repository synchronizes the other automatically.
 
@@ -129,7 +148,7 @@ For upgrades, review changes, reconcile application-owned `_init.php`/`_routes.p
 
 ```bash
 node --test __tests__/common.test.js __tests__/fragment_scripts.test.js __tests__/routing.test.js __tests__/storage.test.js __tests__/parity.test.js __tests__/fonts.test.js
-node --test __tests__/browser.test.js __tests__/fonts.browser.test.js
+node --test __tests__/browser.test.js __tests__/fonts.browser.test.js __tests__/load.browser.test.js
 ```
 
 Browser tests require Playwright and Chromium, or `BROWSER_CHANNEL=chrome`. See [CI](.github/workflows/ci.yml) for PHP/SQL/auth/HTTP checks and [shared contract checks](__tests__/SPA_PARITY.md) for comparison rules. `SPA_JS_TREE` selects a Git object store; [parity-source.js](__tests__/parity-source.js) pins the reviewed revision, ignoring its working tree and HEAD.
