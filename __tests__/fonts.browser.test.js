@@ -21,7 +21,7 @@ async function fontPage(t, markup) {
   page.on("pageerror", (error) => errors.push(error.message));
   await page.route("https://example.test/**", (route) => {
     const url = new URL(route.request().url());
-    if (["/_common.css", "/_fonts.css"].includes(url.pathname)) {
+    if (["/_common.css", "/_fonts.css", "/_transitions.css"].includes(url.pathname)) {
       return route.fulfill({ path: path.join(root, path.basename(url.pathname)), contentType: "text/css; charset=UTF-8" });
     }
     if (/\.(woff2?|ttf)$/.test(url.pathname)) {

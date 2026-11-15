@@ -1,0 +1,74 @@
+:root {
+  --transition-duration: 0.3s;
+}
+
+:root.no-motion {
+  --transition-duration: 0s;
+}
+
+* {
+  min-width: 0;
+  /*min-height: 0;*/
+  /* scroll */
+  scrollbar-color: #111 #fff;
+  /* anim */
+  -webkit-transition:
+    opacity var(--transition-duration) ease,
+    height var(--transition-duration) ease,
+    width var(--transition-duration) ease,
+    transform var(--transition-duration) ease,
+    margin var(--transition-duration) ease,
+    padding var(--transition-duration) ease,
+    background-color var(--transition-duration) ease,
+    filter var(--transition-duration) ease !important;
+  -o-transition:
+    opacity var(--transition-duration) ease,
+    height var(--transition-duration) ease,
+    width var(--transition-duration) ease,
+    transform var(--transition-duration) ease,
+    margin var(--transition-duration) ease,
+    padding var(--transition-duration) ease,
+    background-color var(--transition-duration) ease,
+    filter var(--transition-duration) ease !important;
+  -ms-transition:
+    opacity var(--transition-duration) ease,
+    height var(--transition-duration) ease,
+    width var(--transition-duration) ease,
+    transform var(--transition-duration) ease,
+    margin var(--transition-duration) ease,
+    padding var(--transition-duration) ease,
+    background-color var(--transition-duration) ease,
+    filter var(--transition-duration) ease !important;
+  -moz-transition:
+    opacity var(--transition-duration) ease,
+    height var(--transition-duration) ease,
+    width var(--transition-duration) ease,
+    transform var(--transition-duration) ease,
+    margin var(--transition-duration) ease,
+    padding var(--transition-duration) ease,
+    background-color var(--transition-duration) ease,
+    filter var(--transition-duration) ease !important;
+  transition:
+    opacity var(--transition-duration) ease,
+    height var(--transition-duration) ease,
+    width var(--transition-duration) ease,
+    transform var(--transition-duration) ease,
+    margin var(--transition-duration) ease,
+    padding var(--transition-duration) ease,
+    background-color var(--transition-duration) ease,
+    filter var(--transition-duration) ease !important;
+}
+
+.no-motion * {
+  -webkit-transition: none !important;
+  -o-transition: none !important;
+  -ms-transition: none !important;
+  -moz-transition: none !important;
+  transition: none !important;
+}
+
+/* @media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition-duration: 0s;
+  }
+} */
