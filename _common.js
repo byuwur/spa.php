@@ -288,14 +288,14 @@
 
   // --- CONTROLS ---
   /**
-   * Accessibility toggle.
-   * @returns {unknown}
+   * Show or hide the accessibility controls.
+   * @returns {jQuery} Accessibility controls with the hide class toggled.
    */
   byCommon.accessibilityToggle = () => $("#bywr-accessibility-buttons").toggleClass("hide");
 
   /**
    * Accessibility text.
-   * @param {string} [mode=""] Requested operation or display mode.
+   * @param {string} [mode=""] Increase with plus/mas/+, decrease with minus/menos/-, or reset to 1rem.
    * @returns {void}
    */
   byCommon.accessibilityText = (mode = "") => {
@@ -319,26 +319,26 @@
   };
 
   /**
-   * Accessibility motion.
-   * @returns {unknown}
+   * Toggle the no-motion class on the document root.
+   * @returns {jQuery} Root element after toggling the class.
    */
   byCommon.accessibilityMotion = () => $("html").toggleClass("no-motion");
 
   /**
-   * Accessibility dyslexia.
-   * @returns {unknown}
+   * Toggle the dyslexia font on the page body.
+   * @returns {jQuery} Body element after toggling the class.
    */
   byCommon.accessibilityDyslexia = () => $("body").toggleClass("dyslexia");
 
   /**
-   * Accessibility word spacing.
-   * @returns {unknown}
+   * Toggle extra letter spacing on the page body.
+   * @returns {jQuery} Body element after toggling the class.
    */
   byCommon.accessibilityWordSpacing = () => $("body").toggleClass("word-spacing");
 
   /**
-   * Accessibility highlight links.
-   * @returns {unknown}
+   * Toggle the page's link highlights.
+   * @returns {jQuery} Root element after toggling the class.
    */
   byCommon.accessibilityHighlightLinks = () => $("html").toggleClass("highlight-links");
 
@@ -522,8 +522,9 @@
   };
 
   /**
-   * Reloads Google Page Translator if present
-   * @returns {unknown}
+   * Initialize Google Translate in #g-translate when its script and container are available.
+   * Missing dependencies and initialization failures are logged as warnings.
+   * @returns {void}
    */
   byCommon.initTranslate = function () {
     if (typeof google === "undefined") return console.warn("initTranslate(): google object doesn't exist.");
@@ -539,10 +540,12 @@
   };
 
   /**
-   * Initialize video.
-   * @param {unknown} elementId Element id.
-   * @param {Object} [optionsOverride={}] Per-call options that override the defaults.
-   * @returns {unknown}
+   * Replace any existing Video.js player for this ID and attach its keyboard shortcuts.
+   * Shortcuts apply only while the player is focused; this replaces the previous shared key handler.
+   * Missing Video.js, missing elements, and initialization failures are logged as warnings.
+   * @param {string} elementId Video element ID without #.
+   * @param {Object} [optionsOverride={}] Video.js options overriding VIDEO_COMMON_OPTIONS.
+   * @returns {void}
    */
   byCommon.initVideo = function (elementId, optionsOverride = {}) {
     if (typeof videojs === "undefined" && !window.videojs) return console.warn("Can't load Video.JS if script ain't present.");
@@ -644,6 +647,11 @@
     const preset = groups.find(([, group]) => (roll -= group.weight) < 0)?.[1];
     if (!preset) return null;
     const hue = Math.floor(Math.random() * 360);
+    /**
+     * Format one color from the selected preset and hue offset.
+     * @param {number} [offset=0] Hue offset in degrees.
+     * @returns {string} CSS HSL color.
+     */
     const color = (offset = 0) => `hsl(${(hue + offset) % 360} ${preset.saturation}% ${preset.lightness}%)`;
     return gradient ? `linear-gradient(${angle}deg, ${color()}, ${color(15 + Math.floor(Math.random() * 31))})` : color();
   };

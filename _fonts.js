@@ -379,7 +379,7 @@
   // --- HELPERS ---
   /**
    * Match only the first family in a CSS stack against the bundled Google Fonts catalog.
-   * @param {unknown} value Family name or CSS stack.
+   * @param {string} value Family name or CSS stack.
    * @returns {string|undefined} Canonical catalog name, or undefined for installed/custom families.
    */
   function googleFamily(value) {
@@ -392,7 +392,7 @@
 
   /**
    * Cache successful and failed stylesheet requests to avoid retries while browsing or offline.
-   * @param {unknown} value Value supplied by the caller.
+   * @param {string} value Family name or CSS stack.
    * @returns {Promise<boolean>|undefined} Cached load result, or undefined for families outside the catalog.
    */
   function load(value) {
@@ -404,6 +404,7 @@
     link.rel = "stylesheet";
     link.href = url;
     link.dataset.fontFamily = name;
+    // A failed or timed-out family stays cached to avoid repeated requests while offline.
     const request = new Promise(function (resolve) {
       const timeout = setTimeout(() => resolve(false), 8000);
       link.onload = () => {
@@ -439,7 +440,7 @@
   /**
    * Build a CSS stack without downloading fonts for offscreen dropdown options.
    * @param {string} value Saved family name or existing CSS font stack.
-   * @param {string} [fallback] Fonts to use when the requested family is unavailable.
+   * @param {string} [fallback="system-ui, sans-serif"] Fonts used when the selected family is unavailable.
    * @returns {string} A valid font-family value, or the fallback for malformed input.
    */
   byFont.stack = function (value, fallback = "system-ui, sans-serif") {
@@ -451,7 +452,7 @@
 
   /**
    * Request a selected or visible font once, preserving installed families and CSS stacks.
-   * @param {unknown} value Value supplied by the caller.
+   * @param {string} value Family name or CSS stack.
    * @param {string} [fallback="system-ui, sans-serif"] Value to use when the requested value is unavailable.
    * @returns {string}
    */
@@ -464,8 +465,8 @@
    * Bound the wait for renderers that measure text before starting an animation.
    * @param {string} value Family name or existing CSS font stack.
    * @param {number|string} [weight=400] Current rendering weight.
-   * @param {string} [text] Glyphs needed for the measurement.
-   * @returns {Promise<boolean>} Whether the font loaded; failures leave CSS fallbacks usable.
+   * @param {string} [text="Aa 0123"] Glyphs needed for the measurement.
+   * @returns {Promise<boolean>} True for installed/non-catalog families or loaded glyphs; false on failure or the three-second deadline.
    */
   byFont.ready = async function (value, weight = 400, text = "Aa 0123") {
     const name = googleFamily(value);
@@ -576,6 +577,7 @@
     sample.textContent = previewText;
     select.parentElement.append(sample);
     const weightField = typeof weight === "object" ? weight : null;
+    /** Update the sample font and weight from the current controls. @returns {void} */
     const update = () => {
       sample.style.fontFamily = byFont.family(select.value || emptyFont, fallback);
       sample.style.fontWeight = weightField ? weightField.value || 400 : weight;
@@ -583,6 +585,7 @@
     $(select).on("change.byFont", update);
     if (weightField) $(weightField).on("input.byFont change.byFont", update);
     let resetTimer;
+    /** Restore the opening font after the browser finishes its native form reset. @returns {void} */
     const reset = () => {
       // Native form reset restores values after this event; update Select2 on the next task.
       clearTimeout(resetTimer);
@@ -596,6 +599,7 @@
     pickers.set(select, {
       select,
       field,
+      /** Remove this picker's observers, events, pending reset, and preview. @returns {void} */
       dispose() {
         clearTimeout(resetTimer);
         if (observer && typeof observer.disconnect === "function") observer.disconnect();

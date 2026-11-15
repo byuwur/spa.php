@@ -5,20 +5,40 @@
  * Copyright (c) 2026 Andrés Trujillo [Mateus] byUwUr
  */
 
+/**
+ * @typedef {Object} ByLoadAsset
+ * @property {string} path CSS/classic-JavaScript path or a supported CSS/JavaScript data URL.
+ * @property {Object<string, string>} [attributes={}] Extra element attributes applied on the first request for a URL.
+ * @property {boolean} [optional=false] Warn and return null for request failures; descriptor validation still rejects.
+ */
+
+/**
+ * Install the loader once and reuse its saved requests on later imports.
+ * Does not require jQuery or replace existing event handlers.
+ * @param {Window|Object} global Browser global receiving byLoad.
+ * @returns {void}
+ */
 (function (global) {
   if (typeof global.byLoad === "function") return;
 
+  // Reuse loaded assets; remove failed requests so they can be retried.
   const requests = new Map();
+  // Dynamic scripts do not delay DOMContentLoaded, even when their defer property is set.
   const ready = document.readyState === "loading" ? new Promise((resolve) => document.addEventListener("DOMContentLoaded", resolve, { once: true })) : null;
 
   /**
-   * Load dependencies into the head, preserving their array order.
-   * @param {Array<string|{path: string, attributes?: Object<string, string>, optional?: boolean}>} files CSS/JS paths or descriptors.
-   * @param {Object} [options] Resolution options.
-   * @param {string} [options.host=""] Prefix for paths beginning with /; ./ and ../ remain document-relative.
-   * @param {boolean} [options.defer=true] Wait for DOM parsing; false starts the batch immediately.
-   * @param {HTMLElement|null} [options.before=null] Head element before which assets are inserted, preserving the host's CSS cascade.
-   * @returns {Promise<Array<HTMLElement|null>>} Loaded elements; optional failures warn and return null. Other failures reject. Failed requests can be retried.
+   * Insert CSS and classic scripts into the head sequentially, awaiting each element's load event.
+   * Required failures reject and stop this batch without removing earlier successful assets.
+   * Duplicate URLs reuse the first request, including its attributes and insertion position.
+   * Separate batches can overlap. Await this batch before using its assets.
+   * @param {Array<string|ByLoadAsset>} files CSS/JS paths or descriptors, in loading order.
+   * @param {Object} [options={}] Loading options.
+   * @param {string} [options.host=""] Prefix for leading-slash paths; ./ and ../ resolve from document.baseURI.
+   * @param {boolean} [options.defer=true] Wait for DOMContentLoaded; false begins loading during head parsing.
+   * @param {Element|null} [options.before=null] Existing child of document.head before which each asset is inserted.
+   * @returns {Promise<Array<HTMLLinkElement|HTMLScriptElement|null>>} Ordered loaded elements; optional request failures log and contribute null.
+   * @throws {TypeError} Rejects for a non-array batch, empty path, unsupported asset/type, or invalid URL.
+   * @throws {Error} Rejects for a required asset request or DOM insertion failure; a failed URL may be retried.
    */
   global.byLoad = async function (files, { host = "", before = null, defer = true } = {}) {
     if (!Array.isArray(files)) throw new TypeError("byLoad expects an array of CSS/JS paths.");
@@ -45,6 +65,7 @@
             element.async = false;
             element.defer = defer;
           }
+          // Loading a script does not confirm its initialization succeeded; fonts may still be loading.
           element.onload = () => {
             element.onload = element.onerror = null;
             resolve(element);
@@ -56,6 +77,7 @@
           };
           document.head.insertBefore(element, before);
         }).catch((error) => {
+          // Allow a later batch to retry this URL.
           requests.delete(url.href);
           throw error;
         });
