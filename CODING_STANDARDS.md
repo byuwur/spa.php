@@ -85,6 +85,10 @@ Keep related state changes coherent. Use transactions, atomic replacement, versi
 
 ## 5. Define lifecycle and asynchronous behavior
 
+Keep new implementations sequential, linear, and predictable. Prefer direct calls, guard clauses, and an execution order that can be read from top to bottom.
+
+Avoid Promises, `.then()` chains, `new Promise()` wrappers, jQuery Deferreds, and similar coordination mechanisms when direct code or an existing callback is sufficient. Use asynchronous coordination only for a real asynchronous operation or an existing API contract. Reuse the API's returned value instead of wrapping it again. When a Promise-based API is required, prefer sequential `await` calls; introduce parallel work only when independent operations have a concrete reason to run together. Preserve existing public contracts.
+
 Every continuing mechanism needs an owner, a creation point, a useful lifetime, and an end condition. Timers, handlers, registrations, caches, requests, pending writes, and temporary resources must be disposed of, canceled, superseded, invalidated, or deliberately ignored when no longer relevant.
 
 Object scope and garbage collection do not establish application lifetime. A registry can keep obsolete work reachable; a completed request can update a view that no longer owns its result.
@@ -171,13 +175,13 @@ Keep browser setup reproducible and bounded. Reuse installed or cached tools, or
 
 ## 14. Comment the decisions; document the contracts
 
-Comments should preserve information the code cannot easily convey: intent, invariants, ownership, lifecycle, trust assumptions, compatibility reasons, protocol requirements, ordering constraints, surprising choices, and intentional deviations.
+New implementations must include key comments immediately above non-obvious logic. Explain intent, invariants, ownership, cleanup, trust boundaries, compatibility, ordering constraints, and important edge cases where the code alone does not explain them.
 
-Avoid narrating obvious syntax, decorative verbosity, and comments that compensate for misleading names. A short explanation of why an unusual branch exists is more valuable than a paragraph describing each statement. Inaccurate comments are worse than absent ones.
+Avoid narrating obvious syntax, decorative verbosity, and comments that compensate for misleading names. A short explanation of why an unusual branch exists is more valuable than a paragraph describing each statement. Inaccurate comments are worse than absent ones. Keep wording plain and direct: `HTML element to measure.` is enough when no further detail is needed. Do not add generic filler or make simple behavior sound complicated.
 
 Use `//` for single-line JavaScript comments, including section labels. Retain necessary multiline file/license/documentation blocks and tool directives. The `/* HTML */` annotation is an explicit exception: place it immediately before the HTML string literal, preferably on the same line, so formatting and embedded HTML highlighting keep working.
 
-Public API documentation should describe accepted inputs, defaults, outputs, failures, side effects, mutation, and relevant trust, lifecycle, and compatibility constraints. Use the documentation conventions appropriate to the language and project. Internal helpers need only the detail their callers cannot reasonably infer.
+Every new function or method must have documentation immediately above its definition: JSDoc for JavaScript, PHPDoc for PHP, GoDoc for Go, or the language's equivalent. This applies to private helpers as well as public APIs. Describe its purpose, parameters and defaults, return values, errors, and side effects as applicable. Include units, limits, ownership, and cleanup requirements when they matter. Use the language's type declarations where available; do not guess types or repeat obvious details. Simple functions need short documentation, not empty boilerplate.
 
 Code and documentation describe the same contract. Inspect both when changing behavior, including examples and configuration guidance. Do not preserve a polished explanation of behavior the implementation no longer provides.
 
@@ -206,6 +210,8 @@ Before considering a change complete, read the resulting behavior and diff toget
 - Did a fallback, cache, or helper introduce another source of truth?
 - Did each abstraction and dependency earn its cost?
 - Are public behavior, documentation, and meaningful validation aligned?
+- Are new functions documented, with key comments above non-obvious implementation details?
+- Is the control flow sequential and direct, with any asynchronous coordination justified?
 - Can anything added now be deleted or simplified without losing the result?
 
 Review integration as well as the edited functions. State validation limits honestly.
@@ -245,7 +251,9 @@ Commit one conceptual outcome, including its implementation, tests, and document
 
 Commits require explicit authorization for the current task; pushing requires separate authorization. Stage only the authorized files and hunks. Build an understandable progression of reviewable changes that work at each boundary, including for an initial release. Separate implementation, demos, dependency updates, and release metadata when they are distinct outcomes; keep directly required tests and documentation with their behavior change. Use “Upgrade” in version subjects, and put the version upgrade last in the requested progression.
 
-Avoid subjects that say only “Update,” “Tweaks,” “Changes,” “Final,” “Fix stuff,” or “Format.” Add a body when needed to explain intent, compatibility or migration, validation limits, or a non-obvious decision. No additional commit tooling or ceremony is required.
+Avoid subjects that say only “Update,” “Tweaks,” “Changes,” “Final,” “Fix stuff,” or “Format.” No additional commit tooling or ceremony is required.
+
+Use only the subject line by default. Add at most one short body line, separated by a blank line, only when essential context cannot fit in the subject. Do not add routine change summaries, file lists, test or validation logs, checklists, or generated commentary. Put detailed explanations and validation in the PR description or relevant documentation.
 
 ## 19. AI-assisted implementation
 

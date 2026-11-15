@@ -69,6 +69,8 @@ For example:
 
 Use specific subjects with brackets and no colon. Keep each commit centered on one outcome, including the tests and documentation required for it. A larger contribution should build up through manageable commits that work at each boundary; file type or line count alone does not define a useful split.
 
+Default to a subject-only message. Add a body only when strictly necessary, following the linked commit standard: one short line after a blank line. Keep routine summaries and validation logs out of commit messages.
+
 Coordinate version, dependency, and release changes with maintainers. When an upgrade is included, update all applicable references, use “Upgrade” in the subject, and keep the version upgrade last in the planned progression. Preserve intentionally pinned dependencies.
 
 ## Open a pull request
