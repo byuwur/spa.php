@@ -67,6 +67,28 @@
   transition: none !important;
 }
 
+/* Tooltip positioning stays immediate while page motion is enabled. */
+:is(.tooltip, .popover),
+:is(.tooltip, .popover) *,
+:is(.tooltip, .popover) *::before,
+:is(.tooltip, .popover) *::after {
+  animation: none !important;
+  -webkit-transition: none !important;
+  -o-transition: none !important;
+  -ms-transition: none !important;
+  -moz-transition: none !important;
+  transition: none !important;
+}
+
+/* Optional font controls must not animate as Select2 hides or measures them. */
+[data-font-picker],
+.font-picker + .select2-container,
+.font-picker + .select2-container *,
+.font-picker-dropdown,
+.font-picker-dropdown * {
+  transition: none !important;
+}
+
 /* @media (prefers-reduced-motion: reduce) {
   :root {
     --transition-duration: 0s;

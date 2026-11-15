@@ -49,6 +49,36 @@ test("common imports generic transitions and resource styles can override them",
   assert.equal(await page.locator("#plain").evaluate((node) => getComputedStyle(node).transitionDuration.split(",")[0]), "0.08s");
 });
 
+test("tooltips and popovers stay immediate while page transitions remain enabled", async (t) => {
+  for (const common of [false, true]) {
+    const page = await pageFor(t, common);
+    await page.addStyleTag({ path: path.join(root, "css/bootstrap.min.css") });
+    await page.addStyleTag({ content: "@keyframes hint-motion { from { opacity: 0; } to { opacity: 1; } } .tooltip, .tooltip *, .popover, .popover * { animation: hint-motion 1s; }" });
+    await page.addScriptTag({ path: path.join(root, "js/popper.min.js") });
+    await page.addScriptTag({ path: path.join(root, "js/bootstrap.min.js") });
+    const result = await page.evaluate(async () => {
+      const tooltip = new bootstrap.Tooltip(document.getElementById("keep"), { title: "Help", trigger: "manual", animation: false });
+      const popover = new bootstrap.Popover(document.getElementById("plain"), { title: "Details", content: "More information", trigger: "manual", animation: false });
+      tooltip.show();
+      popover.show();
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      const hints = [...document.querySelectorAll(".tooltip, .popover")];
+      const nodes = hints.flatMap((hint) => [hint, ...hint.querySelectorAll("*")]);
+      const motionless = nodes.every((node) => getComputedStyle(node).transitionDuration === "0s" && getComputedStyle(node).animationName === "none");
+      const effects = hints.reduce((count, hint) => count + hint.getAnimations({ subtree: true }).length, 0);
+      const visible = hints.every((hint) => Number(getComputedStyle(hint).opacity) > 0 && hint.getClientRects().length > 0);
+      const plain = document.getElementById("plain");
+      getComputedStyle(plain).backgroundColor;
+      plain.style.backgroundColor = "#123456";
+      const pageMotion = plain.getAnimations().some((animation) => animation.transitionProperty === "background-color");
+      tooltip.dispose();
+      popover.dispose();
+      return { hints: hints.length, visible, motionless, effects, pageMotion };
+    });
+    assert.deepEqual(result, { hints: 2, visible: true, motionless: true, effects: 0, pageMotion: true });
+  }
+});
+
 test("explicit content changes preserve nodes, use host timing, and restore overflow", async (t) => {
   const page = await pageFor(t);
   const result = await page.evaluate(async () => {

@@ -224,11 +224,6 @@ th {
 }
 /* === MISC === */
 .tooltip {
-  -webkit-transition: all 0s !important;
-  -o-transition: all 0s !important;
-  -ms-transition: all 0s !important;
-  -moz-transition: all 0s !important;
-  transition: all 0s !important;
   -webkit-filter: drop-shadow(0 0 0.125rem #bbb) !important;
   -moz-filter: drop-shadow(0 0 0.125rem #bbb) !important;
   -ms-filter: drop-shadow(0 0 0.125rem #bbb) !important;
@@ -468,7 +463,6 @@ th {
   height: 1rem;
   border-radius: 50%;
   background: currentColor;
-  transition: transform 0.3s;
 }
 .theme-toggle[aria-pressed="true"]::after {
   transform: translateX(1.5rem);
@@ -476,11 +470,6 @@ th {
 .theme-toggle:focus-visible {
   outline: 0.125rem solid currentColor;
   outline-offset: 0.2rem;
-}
-@media (prefers-reduced-motion: reduce) {
-  .theme-toggle::after {
-    transition: none;
-  }
 }
 /* === BUTTONS === */
 .btn {
@@ -774,14 +763,6 @@ label:has(input[type="checkbox"]:disabled, input[role="switch"]:disabled) {
 .select-has-icon {
   padding-left: 3rem !important;
   padding-right: 3rem !important;
-}
-/* Optional font controls must not animate as Select2 hides or measures them. */
-[data-font-picker],
-.font-picker + .select2-container,
-.font-picker + .select2-container *,
-.font-picker-dropdown,
-.font-picker-dropdown * {
-  transition: none !important;
 }
 .font-picker-dropdown .font-option {
   display: block;

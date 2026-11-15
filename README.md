@@ -125,7 +125,7 @@ Leading `/` paths use `host`; `./` and `../` paths remain document-relative, inc
 
 ### Page transitions
 
-`_common.css` imports `_transitions.css` alongside `_fonts.css`. The transition stylesheet can also load on its own, without the common theme or element resets. Set `--transition-duration` on the root or a container to change its default `0.3s`. Shared rules are generic defaults; each resource owns its component overrides. The reduced-motion media block is provided commented out; each resource can enable it or override the duration. The `no-motion` class still disables shared motion.
+`_common.css` imports `_transitions.css` alongside `_fonts.css`. The transition stylesheet can also load on its own, without the common theme or element resets. Set `--transition-duration` on the root or a container to change its default `0.3s`. Shared rules are generic defaults; each resource owns its component overrides. Tooltips and popovers, including their contents, have no animations or transitions by default. The reduced-motion media block is provided commented out; each resource can enable it or override the duration. The `no-motion` class still disables shared motion.
 
 Load `_transitions.js` to update selected containers with native height/opacity animations. It has no jQuery dependency and adds no Promise wrappers:
 
