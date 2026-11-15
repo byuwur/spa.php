@@ -12,7 +12,9 @@ const launchOptions = { channel: process.env.BROWSER_CHANNEL || undefined, execu
 test("non-deferred batches load during parsing while default batches wait for the DOM", async () => {
   const browser = await chromium.launch(launchOptions);
   let resumeParsing;
-  const heldParsing = new Promise((resolve) => { resumeParsing = resolve; });
+  const heldParsing = new Promise((resolve) => {
+    resumeParsing = resolve;
+  });
   try {
     const page = await browser.newPage();
     const requests = [];
@@ -65,7 +67,7 @@ test("loader waits for parsing, preserves script/CSS order and UTF-8, and shares
       if (url.pathname === "/_load.js") return route.fulfill({ path: loader, contentType: "text/javascript" });
       if (url.pathname === "/lib/one.js") {
         await new Promise((resolve) => setTimeout(resolve, 30));
-        return route.fulfill({ contentType: "text/javascript", body: 'window.order = ["one"]; window.accent = "Hágale pues — 日本語 🎮"; window.parsed = !!document.getElementById("parsed");' });
+        return route.fulfill({ contentType: "text/javascript", body: 'window.order = ["one"]; window.accent = "Hágale pues - 日本語 🎮"; window.parsed = !!document.getElementById("parsed");' });
       }
       if (url.pathname === "/lib/two.js") return route.fulfill({ contentType: "text/javascript", body: 'window.order.push("two");' });
       if (url.pathname === "/lib/base.css") return route.fulfill({ contentType: "text/css", body: ".probe { color: #ff0000; }" });
@@ -81,7 +83,7 @@ test("loader waits for parsing, preserves script/CSS order and UTF-8, and shares
     await page.goto("https://load.test/app/index.html");
     await page.evaluate(() => loaded);
     assert.deepEqual(await page.evaluate(() => order), ["one", "two"]);
-    assert.equal(await page.evaluate(() => accent), "Hágale pues — 日本語 🎮");
+    assert.equal(await page.evaluate(() => accent), "Hágale pues - 日本語 🎮");
     assert.equal(await page.evaluate(() => parsed && hostLoaded), true);
     assert.equal(await page.locator(".probe").evaluate((node) => getComputedStyle(node).color), "rgb(0, 255, 0)");
     await page.evaluate(() => Promise.all([byLoad(["https://load.test/lib/one.js?v=1#test"]), byLoad(["https://load.test/lib/one.js?v=1#test"])]));
@@ -101,7 +103,7 @@ test("loader preserves UTF-8 scripts inside a legacy-encoded host document", asy
     await page.route("https://load.test/**", (route) => {
       const url = new URL(route.request().url());
       if (url.pathname === "/_load.js") return route.fulfill({ path: loader, contentType: "text/javascript" });
-      if (url.pathname === "/text.js") return route.fulfill({ contentType: "text/javascript", body: Buffer.from('window.accent = "Hágale pues — 日本語 🎮";', "utf8") });
+      if (url.pathname === "/text.js") return route.fulfill({ contentType: "text/javascript", body: Buffer.from('window.accent = "Hágale pues - 日本語 🎮";', "utf8") });
       return route.fulfill({
         contentType: "text/html; charset=windows-1252",
         body: '<!doctype html><html><head><script src="/_load.js"></script></head><body></body></html>'
@@ -110,7 +112,7 @@ test("loader preserves UTF-8 scripts inside a legacy-encoded host document", asy
     await page.goto("https://load.test/");
     assert.equal(await page.evaluate(() => document.characterSet), "windows-1252");
     await page.evaluate(() => byLoad(["/text.js"]));
-    assert.equal(await page.evaluate(() => accent), "Hágale pues — 日本語 🎮");
+    assert.equal(await page.evaluate(() => accent), "Hágale pues - 日本語 🎮");
   } finally {
     await browser.close();
   }
@@ -138,7 +140,17 @@ test("loader rejects required failures, permits retry, and continues after optio
     await page.evaluate(() => byLoad(["/retry.js"]));
     assert.equal(await page.evaluate(() => retried), true);
     assert.equal(attempts, 2);
-    assert.deepEqual(await page.evaluate(async () => (await byLoad([{ path: "/missing.css", optional: true }, { path: "/after.js", attributes: { "data-test": "preserved" } }])).map((node) => node?.tagName || null)), [null, "SCRIPT"]);
+    assert.deepEqual(
+      await page.evaluate(async () =>
+        (
+          await byLoad([
+            { path: "/missing.css", optional: true },
+            { path: "/after.js", attributes: { "data-test": "preserved" } }
+          ])
+        ).map((node) => node?.tagName || null)
+      ),
+      [null, "SCRIPT"]
+    );
     assert.equal(await page.evaluate(() => attribute), "preserved");
     assert.match(await page.evaluate(() => byLoad(["/unknown.json"]).catch((error) => error.message)), /Unsupported dependency/);
     assert.match(await page.evaluate(() => byLoad([{ path: "/module.js", attributes: { type: "module" } }]).catch((error) => error.message)), /classic scripts/);
