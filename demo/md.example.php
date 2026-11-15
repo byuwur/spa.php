@@ -12,17 +12,17 @@ require_once "{$TO_HOME}/common.example.php";
 //enable_progressive_rendering();
 ?>
 <link href="https://cdn.jsdelivr.net/gh/byuwur/easy-md-viewer@latest/md.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/gh/byuwur/easy-md-viewer@latest/md.min.js"></script>
-<style>
-  ol {
-    list-style: decimal-leading-zero !important;
-  }
-</style>
+<script src="https://cdn.jsdelivr.net/gh/byuwur/easy-md-viewer@latest/md.min.js" defer></script>
 <div class="video-foreground app-container">
   <div class="container vh-100 d-flex flex-column align-items-center justify-content-center p-0">
     <pre id="byMDrenderer" class="w-100" data-theme="light"></pre>
   </div>
 </div>
+<style>
+  ol {
+    list-style: decimal-leading-zero !important;
+  }
+</style>
 <script>
   /*
    * Keep fragment-local declarations inside this callback.
