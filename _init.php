@@ -199,8 +199,7 @@ if (isset($setLocalStorage) && $setLocalStorage) { ?>
 
       byStorage.initialized = true;
     })(typeof window !== "undefined" ? window : this);
-  </script>
-  <script>
+
     // Store the calculated paths in the browser's localStorage
     <?php if (($_ENV["APP_ENV"] ?? $NOTENV_APP_ENV) === "DEV") { ?>
       console.log("PROTOCOL", <?= json_encode($PROTOCOL, $json_script_flags) ?>);
