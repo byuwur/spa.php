@@ -76,6 +76,8 @@ Each installed API owns one boolean `initialized` flag. Bootstrap scripts can po
 
 Modal cleanup destroys optional font controls and removes the captured element, preserving replacements with the same ID. `byCommon.accessibilityText(mode)` adjusts root size by `0.25rem` for `"plus"`/`"minus"`, within `0.5rem`-`3rem`; no argument resets `1rem`.
 
+With `_common.js`, Up/Down navigation in an open single-select Select2 commits the highlighted value immediately, emits the usual input/change and selection events, and keeps the dropdown open. Mouse hover only highlights; multi-selects still require confirmation. This also applies to dynamically created controls and remote results. `select2:selecting` can cancel a change.
+
 Data, HTML-text escaping, and CSRF utilities are native. UI and HTTP/form helpers use jQuery; modals also need Bootstrap. WebSocket transport is native, with jQuery DOM logging.
 
 ### Compressed URL data

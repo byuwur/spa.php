@@ -413,6 +413,41 @@
 
   // --- PUBLIC API ---
   // ==========
+  // ==== SELECT2 KEYBOARD ====
+  // ==========
+
+  const select2KeyboardWidgets = new WeakSet();
+
+  /** Commit single-select arrow navigation without closing the dropdown or selecting on hover. @returns {void} */
+  function initSelect2Keyboard() {
+    $(document).off("select2:open.byCommonKeyboard", "select").on("select2:open.byCommonKeyboard", "select", function () {
+      const select = $(this),
+        widget = select.data("select2");
+      if (!widget || this.multiple || select2KeyboardWidgets.has(widget)) return;
+      select2KeyboardWidgets.add(widget);
+      const utils = $.fn.select2.amd.require("select2/utils");
+      /** Apply the highlighted result through the existing adapter, including remote options and cancellation. @returns {void} */
+      function selectHighlighted() {
+        if (select.prop("disabled") || !widget.isOpen()) return;
+        const highlighted = widget.results.getHighlightedResults()[0];
+        const data = highlighted && utils.GetData(highlighted, "data");
+        if (data?.id == null || data.disabled || String(data.id) === select.val()) return;
+        const args = { data },
+          selecting = { prevented: false, name: "select", args };
+        widget.trigger("selecting", selecting);
+        if (selecting.prevented || select.data("select2") !== widget) return;
+        // The pinned Select2 adapter owns native options and input/change; bypass only close-on-select.
+        widget.dataAdapter.select(data);
+        if (select.data("select2") !== widget) return;
+        widget.results.setClasses();
+        select.trigger({ type: "select2:select", params: args });
+      }
+      widget.on("results:previous", selectHighlighted);
+      widget.on("results:next", selectHighlighted);
+    });
+  }
+
+  // ==========
   // ==== BOOTSTRAP LIFECYCLE ====
   // ==========
 
@@ -672,6 +707,7 @@
       initSidebar(options);
       initCookieConsent(options);
       initParticles(options);
+      initSelect2Keyboard();
       //byCommon.initTranslate(); //// Callback invoked in ?cb= on <script>
 
       if (global.byFont && typeof global.byFont.init === "function") global.byFont.init();
@@ -679,5 +715,6 @@
   };
 
   // --- STARTUP ---
+  initSelect2Keyboard();
   byCommon.initialized = true;
 })(typeof window !== "undefined" ? window : this);

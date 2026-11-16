@@ -522,6 +522,87 @@ test("resource probes preserve HEAD fallback and jQuery promise compatibility", 
   assert.equal(result.invalidHasAlways, true);
 });
 
+test("Select2 arrow navigation commits single values, honors cancellation, and preserves hover and multiple selection", async (t) => {
+  const page = await browser.newPage();
+  t.after(() => page.close());
+  await page.route('https://select2.test/**', route => route.fulfill({ contentType: 'text/html', body: '<!doctype html><head></head><body></body>' }));
+  await page.goto('https://select2.test/');
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.setContent('<select id="single"><option value="a">Alpha</option><optgroup label="Other"><option value="disabled" disabled>Disabled</option><option value="b">Beta</option><option value="c">Gamma</option></optgroup></select><select id="multiple" multiple><option value="a" selected>Alpha</option><option value="b">Beta</option></select>');
+  await page.addStyleTag({ path: path.join(__dirname, "..", "css/select2.min.css") });
+  // Shared keyboard behavior also applies when Select2 is loaded after common UI.
+  for (const file of ["js/jquery.min.js", "_common.js", "js/select2.full.min.js"]) await page.addScriptTag({ content: source(file) });
+  await page.evaluate(() => {
+    window.changes = [];
+    $("select").select2({ width: "200px" }).on("input change select2:select", (event) => changes.push([event.target.id, event.type, event.target.value]));
+  });
+  const single = page.locator("#single");
+  const selection = page.locator("#single + .select2 .select2-selection");
+  await selection.click();
+  await page.getByRole("option", { name: "Gamma", exact: true }).hover();
+  assert.equal(await single.inputValue(), "a", "Mouse hover only highlights");
+  await page.keyboard.press("Escape");
+  await selection.click();
+  await page.keyboard.press("ArrowDown");
+  assert.equal(await single.inputValue(), "b", "Arrow navigation selects the next enabled option");
+  assert.match(await selection.textContent(), /Beta/);
+  assert.equal(await page.evaluate(() => $("#single").data("select2").isOpen()), true);
+  assert.deepEqual(await page.evaluate(() => changes), [["single", "input", "b"], ["single", "change", "b"], ["single", "select2:select", "b"]]);
+  await page.evaluate(async () => {
+    byCommon.init();
+    byCommon.init();
+    await new Promise((resolve) => $(resolve));
+  });
+  await page.keyboard.press("ArrowDown");
+  await page.keyboard.press("ArrowDown");
+  assert.equal(await single.inputValue(), "c");
+  assert.equal(await page.evaluate(() => changes.length), 6, "Boundary keys do not emit another change");
+  await page.keyboard.press("ArrowUp");
+  await page.evaluate(() => $("#single").on("select2:selecting.cancelTest", (event) => { if (event.params.args.data.id === "a") event.preventDefault(); }));
+  await page.keyboard.press("ArrowUp");
+  assert.equal(await single.inputValue(), "b", "Selection cancellation preserves the accepted value");
+  assert.equal(await page.evaluate(() => changes.length), 9);
+  await page.evaluate(() => $("#single").off(".cancelTest"));
+  await page.keyboard.press("ArrowDown");
+  await page.keyboard.press("ArrowUp");
+  assert.equal(await single.inputValue(), "a");
+  await page.getByRole("option", { name: "Gamma", exact: true }).click();
+  assert.equal(await single.inputValue(), "c");
+  assert.equal(await page.evaluate(() => $("#single").data("select2").isOpen()), false, "Mouse selection retains normal close behavior");
+  await page.locator("#multiple + .select2 .select2-search__field").click();
+  await page.keyboard.press("ArrowDown");
+  assert.deepEqual(await page.locator("#multiple").evaluate((node) => [...node.selectedOptions].map((option) => option.value)), ["a"], "Multiple selection requires confirmation");
+  await page.keyboard.press("Escape");
+  // Reopening, repeated imports, and destroy/reinitialize must never multiply change events.
+  for (let i = 0; i < 3; i++) { await selection.click(); await page.keyboard.press("Escape"); }
+  await page.addScriptTag({ content: source("_common.js") });
+  await page.evaluate(() => { $("#single").select2("destroy").select2({ width: "200px" }); changes.length = 0; });
+  await selection.click();
+  await page.keyboard.press("ArrowUp");
+  assert.equal(await single.inputValue(), "b");
+  assert.equal(await page.evaluate(() => changes.filter((event) => event[1] === "change").length), 1);
+  await page.keyboard.press("Escape");
+  await page.evaluate(() => {
+    $("<select id='remote'></select>").appendTo("body").select2({
+      ajax: { transport: (_, success) => success({ results: [{ id: "remote-a", text: "Remote Alpha" }, { id: "remote-b", text: "Remote Beta" }] }) }
+    });
+    $("#remote").select2("open");
+  });
+  await page.getByRole("option", { name: "Remote Alpha", exact: true }).waitFor();
+  await page.keyboard.press("ArrowDown");
+  assert.equal(await page.locator("#remote").inputValue(), "remote-b", "Late AJAX results become canonical native options");
+  await page.keyboard.press("Enter");
+  assert.equal(await page.evaluate(() => $("#remote").data("select2").isOpen()), false);
+  await page.evaluate(() => {
+    $("<select id='removed'><option value='a'>Alpha</option><option value='b'>Beta</option></select>").appendTo("body").select2()
+      .on("change", function () { $(this).select2("destroy").remove(); }).select2("open");
+  });
+  await page.keyboard.press("ArrowDown");
+  assert.equal(await page.locator("#removed").count(), 0, "Change handlers may remove the owning control");
+  assert.deepEqual(errors, []);
+});
+
 test("duplicate runtime scripts preserve active navigation and bind handlers once", async (t) => {
   const page = await application(t);
 
