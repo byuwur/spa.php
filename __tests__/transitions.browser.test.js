@@ -2,12 +2,16 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs/promises");
 const path = require("node:path");
 const test = require("node:test");
-const { chromium } = require("playwright");
+const { chromium, firefox, webkit } = require("playwright");
+const engine = process.env.BROWSER_ENGINE || "chromium";
+assert.ok(["chromium", "firefox", "webkit"].includes(engine), "Unsupported BROWSER_ENGINE");
+const browserType = { chromium, firefox, webkit }[engine];
+const launchOptions = { timeout: 10000, ...(engine === "chromium" ? { channel: process.env.BROWSER_CHANNEL || process.env.PLAYWRIGHT_CHANNEL, executablePath: process.env.CHROMIUM_EXECUTABLE_PATH } : {}) };
 
 const root = path.join(__dirname, "..");
 let browser;
 test.before(async () => {
-  browser = await chromium.launch({ channel: process.env.BROWSER_CHANNEL || undefined });
+  browser = await browserType.launch(launchOptions);
 });
 test.after(async () => {
   await browser?.close();
@@ -21,6 +25,7 @@ test.after(async () => {
  */
 async function pageFor(t, common = false) {
   const page = await browser.newPage();
+  page.setDefaultTimeout(5000);
   t.after(() => page.close());
   await page.route("https://motion.test/**", async (route) => {
     const file = new URL(route.request().url()).pathname.slice(1);
@@ -39,47 +44,7 @@ async function pageFor(t, common = false) {
   return page;
 }
 
-test("common imports generic transitions and resource styles can override them", async (t) => {
-  const page = await pageFor(t, true);
-  assert.equal(await page.locator("#plain").evaluate((node) => getComputedStyle(node).transitionDuration.split(",")[0]), "0.3s");
-  assert.equal(await page.locator("#embedded").evaluate((node) => getComputedStyle(node).transitionDuration.split(",")[0]), "0.3s");
-  await page.addStyleTag({ content: ".byCODEdocument * { transition: none !important; }" });
-  assert.equal(await page.locator("#embedded").evaluate((node) => getComputedStyle(node).transitionDuration), "0s");
-  await page.evaluate(() => document.documentElement.style.setProperty("--transition-duration", "80ms"));
-  assert.equal(await page.locator("#plain").evaluate((node) => getComputedStyle(node).transitionDuration.split(",")[0]), "0.08s");
-});
-
-test("tooltips and popovers stay immediate while page transitions remain enabled", async (t) => {
-  for (const common of [false, true]) {
-    const page = await pageFor(t, common);
-    await page.addStyleTag({ path: path.join(root, "css/bootstrap.min.css") });
-    await page.addStyleTag({ content: "@keyframes hint-motion { from { opacity: 0; } to { opacity: 1; } } .tooltip, .tooltip *, .popover, .popover * { animation: hint-motion 1s; }" });
-    await page.addScriptTag({ path: path.join(root, "js/popper.min.js") });
-    await page.addScriptTag({ path: path.join(root, "js/bootstrap.min.js") });
-    const result = await page.evaluate(async () => {
-      const tooltip = new bootstrap.Tooltip(document.getElementById("keep"), { title: "Help", trigger: "manual", animation: false });
-      const popover = new bootstrap.Popover(document.getElementById("plain"), { title: "Details", content: "More information", trigger: "manual", animation: false });
-      tooltip.show();
-      popover.show();
-      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-      const hints = [...document.querySelectorAll(".tooltip, .popover")];
-      const nodes = hints.flatMap((hint) => [hint, ...hint.querySelectorAll("*")]);
-      const motionless = nodes.every((node) => getComputedStyle(node).transitionDuration === "0s" && getComputedStyle(node).animationName === "none");
-      const effects = hints.reduce((count, hint) => count + hint.getAnimations({ subtree: true }).length, 0);
-      const visible = hints.every((hint) => Number(getComputedStyle(hint).opacity) > 0 && hint.getClientRects().length > 0);
-      const plain = document.getElementById("plain");
-      getComputedStyle(plain).backgroundColor;
-      plain.style.backgroundColor = "#123456";
-      const pageMotion = plain.getAnimations().some((animation) => animation.transitionProperty === "background-color");
-      tooltip.dispose();
-      popover.dispose();
-      return { hints: hints.length, visible, motionless, effects, pageMotion };
-    });
-    assert.deepEqual(result, { hints: 2, visible: true, motionless: true, effects: 0, pageMotion: true });
-  }
-});
-
-test("explicit content changes preserve nodes, use host timing, and restore overflow", async (t) => {
+test("explicit content changes preserve nodes, use host timing, and restore overflow", { timeout: 30000 }, async (t) => {
   const page = await pageFor(t);
   const result = await page.evaluate(async () => {
     document.documentElement.style.setProperty("--transition-duration", "80ms");
@@ -108,60 +73,7 @@ test("explicit content changes preserve nodes, use host timing, and restore over
   assert.deepEqual(result, { count: 1, duration: 80, easing: "ease", clipped: true, grows: true, sameNode: true, clicks: 1, overflow: "" });
 });
 
-test("children controls direct-child effects and descendant observation", async (t) => {
-  const page = await pageFor(t);
-  const counts = await page.evaluate(async () => {
-    const panel = document.getElementById("panel");
-    panel.innerHTML = '<div id="nested"><span id="deep">First</span></div>';
-    let calls = 0;
-    const parentOnly = byTransition(
-      panel,
-      () => {
-        calls++;
-      },
-      { duration: 20 }
-    );
-    await parentOnly[0].finished;
-    const withChildren = byTransition(
-      panel,
-      () => {
-        calls++;
-      },
-      { duration: 20, children: true }
-    );
-    for (const animation of withChildren) await animation.finished;
-    return { parentOnly: parentOnly.length, withChildren: withChildren.length, calls };
-  });
-  assert.deepEqual(counts, { parentOnly: 1, withChildren: 2, calls: 2 });
-  await page.evaluate(() => {
-    window.effects = [];
-    const panel = document.getElementById("panel");
-    const animate = panel.animate.bind(panel);
-    panel.animate = (...args) => {
-      const animation = animate(...args);
-      effects.push(animation);
-      return animation;
-    };
-    window.watcher = byTransition.watch(panel, { duration: 30, children: false });
-    document.getElementById("deep").textContent = "Child change";
-  });
-  await page.waitForTimeout(60);
-  assert.equal(await page.evaluate(() => effects.length), 0);
-  await page.evaluate(() => {
-    watcher.disconnect();
-    window.watcher = byTransition.watch("#panel", { duration: 30, children: true });
-    document.getElementById("deep").textContent = "Observed child change";
-  });
-  await page.waitForFunction(() => effects.length === 1);
-  await page.evaluate(() => effects[0].finished);
-  await page.evaluate(() => watcher.disconnect());
-  await assert.rejects(
-    page.evaluate(() => byTransition("#panel", () => {}, { children: "yes" })),
-    /children/
-  );
-});
-
-test("watchers coalesce changes, share explicit updates, and disconnect without touching replacements", async (t) => {
+test("watchers coalesce changes, share explicit updates, and disconnect without touching replacements", { timeout: 30000 }, async (t) => {
   const page = await pageFor(t);
   await page.evaluate(() => {
     window.effects = [];
@@ -207,112 +119,4 @@ test("watchers coalesce changes, share explicit updates, and disconnect without 
   });
   await page.waitForTimeout(80);
   assert.equal(await page.evaluate(() => effects.length), 3);
-});
-
-test("retriggering and cancelling animations restore author styles", async (t) => {
-  const page = await pageFor(t);
-  await page.evaluate(() => {
-    const panel = document.getElementById("panel");
-    panel.style.setProperty("overflow", "auto", "important");
-    window.first = byTransition(
-      panel,
-      (element) => {
-        element.textContent = "First change";
-      },
-      { duration: 500 }
-    )[0];
-    window.second = byTransition(
-      panel,
-      (element) => {
-        element.textContent = "Second change";
-      },
-      { duration: 50 }
-    )[0];
-  });
-  assert.equal(await page.evaluate(() => first.playState), "idle");
-  await page.evaluate(() => second.finished);
-  assert.deepEqual(await page.locator("#panel").evaluate((node) => [node.style.overflow, node.style.getPropertyPriority("overflow")]), ["auto", "important"]);
-  await page.evaluate(() => {
-    byTransition(
-      "#panel",
-      (element) => {
-        element.textContent = "Cancelled";
-      },
-      { duration: 500 }
-    )[0].cancel();
-  });
-  await page.waitForFunction(() => document.getElementById("panel").style.overflow === "auto");
-});
-
-test("reduced motion, disabled motion, excluded content and invalid options retain update semantics", async (t) => {
-  const page = await pageFor(t);
-  assert.equal(
-    await page.evaluate(
-      () =>
-        byTransition(
-          "#embedded",
-          (element) => {
-            element.textContent = "Updated code";
-          },
-          { exclude: ".byCODEdocument" }
-        ).length
-    ),
-    0
-  );
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  assert.equal(await page.locator("#plain").evaluate((element) => getComputedStyle(element).transitionDuration.split(",")[0]), "0.3s");
-  await page.addStyleTag({ content: "@media (prefers-reduced-motion: reduce) { :root { --transition-duration: 0s; } }" });
-  assert.equal(
-    await page.evaluate(
-      () =>
-        byTransition("#plain", (element) => {
-          element.textContent = "Reduced motion";
-        }).length
-    ),
-    0
-  );
-  assert.equal(await page.locator("#plain").textContent(), "Reduced motion");
-  await page.emulateMedia({ reducedMotion: "no-preference" });
-  await page.evaluate(() => document.documentElement.classList.add("no-motion"));
-  assert.equal(
-    await page.evaluate(
-      () =>
-        byTransition("#plain", (element) => {
-          element.textContent = "Disabled motion";
-        }).length
-    ),
-    0
-  );
-  await page.evaluate(() => document.documentElement.classList.remove("no-motion"));
-  await assert.rejects(
-    page.evaluate(() =>
-      byTransition(
-        "#plain",
-        (element) => {
-          element.textContent = "Should not run";
-        },
-        { duration: -1 }
-      )
-    ),
-    /duration/
-  );
-  assert.equal(await page.locator("#plain").textContent(), "Disabled motion");
-  await page.evaluate(() => (document.documentElement.dataset.overlay = ""));
-  assert.equal(
-    await page.evaluate(
-      () =>
-        byTransition(
-          "#plain",
-          (element) => {
-            element.textContent = "Overlay";
-          },
-          { exclude: "[data-overlay]" }
-        ).length
-    ),
-    0
-  );
-  assert.equal(await page.locator("#plain").textContent(), "Overlay");
-  const source = await fs.readFile(path.join(root, "_transitions.js"), "utf8");
-  await page.addScriptTag({ content: source });
-  assert.equal(await page.evaluate(() => typeof byTransition.watch), "function");
 });

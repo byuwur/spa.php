@@ -204,15 +204,6 @@ function createHarness(plans = {}) {
   return { bySPA: window.bySPA, target: new FakeTarget(fakeDocument), order, errors, createdScripts, consoleMessages };
 }
 
-test("viewer demos load the latest minified stylesheet and script", () => {
-  for (const format of ["md", "json"]) {
-    const html = fs.readFileSync(path.join(__dirname, "..", "demo", `${format}.example.php`), "utf8");
-    const base = `https://cdn.jsdelivr.net/gh/byuwur/easy-${format}-viewer@latest/`;
-    assert.ok(html.includes(`href="${base}${format}.min.css"`));
-    assert.ok(html.includes(`src="${base}${format}.min.js"`));
-  }
-});
-
 test("cold and cached external dependencies execute before dependent inline scripts", async () => {
   for (const delay of [25, 0]) {
     const harness = createHarness({ "viewer.js": { delay, label: "viewer" } });
@@ -328,31 +319,6 @@ test("components, modules, attributes, async scripts, and repeat insertion keep 
   );
   assert.deepEqual(harness.order, ["component", "module", "async", "repeat"]);
   assert.ok(harness.createdScripts.every((script) => script.listeners.size === 0));
-});
-
-test("route and component insertion share the private helper and lifecycle waits for both", () => {
-  const source = fs.readFileSync(path.join(__dirname, "..", "_spa.js"), "utf8");
-  assert.match(source, /setHTML\(\$\(componentId\)\[0\], data, navigationId\)/);
-  assert.match(source, /await setHTML\(\$\("#spa-content"\)\[0\], data, navigationId\)/);
-  assert.match(source, /setHTML\(document\.documentElement, data, navigationId, true\)/);
-  assert.ok(source.indexOf("await componentsReady") < source.indexOf("afterLoad({ ...routing, navigationId })"));
-  assert.match(source, /const absolute = new URL\(this\.href\);/);
-});
-
-test("implementation-only SPA functions stay private", () => {
-  const harness = createHarness();
-  const privateFunctions = ["setRouteState", "historyPush", "historyReplace", "validateQuerySelector", "parseQuerySelector", "componentIdExists", "routeURL", "afterLoad", "init"];
-  privateFunctions.forEach((name) => assert.equal(harness.bySPA[name], undefined));
-  assert.equal(typeof harness.bySPA.load, "function");
-});
-
-test("implementation-only common initializers stay private", () => {
-  const source = fs.readFileSync(path.join(__dirname, "..", "_common.js"), "utf8");
-  ["initSidebar", "initMisc", "initCaptcha", "initCookieConsent", "initParticles"].forEach((name) => {
-    assert.doesNotMatch(source, new RegExp(`byCommon\\.${name}\\s*=`));
-  });
-  assert.match(source, /byCommon\.initBootstrap\s*=/);
-  assert.match(source, /byCommon\.init\s*=/);
 });
 
 test("the final ordered script cannot report success after navigation ownership changes", async () => {

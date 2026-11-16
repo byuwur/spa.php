@@ -1,0 +1,39 @@
+name: Browser check
+
+on:
+  workflow_call:
+    inputs:
+      browser:
+        type: string
+        required: true
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Check
+    runs-on: ubuntu-24.04
+    container:
+      # Browser binaries are preinstalled and match the npm package.
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      options: --ipc=host
+    timeout-minutes: 3
+    env:
+      HOME: /root
+      BROWSER_ENGINE: ${{ inputs.browser }}
+      NODE_PATH: ${{ runner.temp }}/browser-tests/node_modules
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          path: spa.php
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install test tools
+        timeout-minutes: 1
+        run: npm install --prefix "$RUNNER_TEMP/browser-tests" --no-package-lock --no-audit --no-fund playwright@1.63.0
+      - name: Run focused checks
+        working-directory: spa.php
+        timeout-minutes: 2
+        run: |
+          node --test --test-concurrency=1 __tests__/browser.test.js __tests__/load.browser.test.js __tests__/transitions.browser.test.js

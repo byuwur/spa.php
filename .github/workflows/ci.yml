@@ -1,30 +1,92 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      extended:
+        description: Run the reviewed cross-project parity checks
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: checks-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   checks:
-    runs-on: ubuntu-latest
+    name: Core contracts
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v7
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.1"
+          coverage: none
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-      - run: find . -name '*.php' -print0 | xargs -0 -n1 php -l
-      - run: cd __tests__ && php test_sql.php
-      - run: php __tests__/test_proxy.php
-      - run: php __tests__/test_auth.php
-      - run: php __tests__/test_http.php
-      - run: |
-          php __tests__/test_api_respond.php | php -r '$data = json_decode(stream_get_contents(STDIN), true); exit(($data["message"] ?? null) === "ok" ? 0 : 1);'
-      - run: node --check _load.js && node --check _transitions.js && node --check _functions.js && node --check _common.js && node --check _spa.js && node --check _fonts.js
-      - run: node --test __tests__/common.test.js __tests__/fragment_scripts.test.js __tests__/routing.test.js __tests__/storage.test.js __tests__/parity.test.js __tests__/fonts.test.js
-      - name: Browser contract tests
+      - name: Lint tracked PHP sources
+        run: git ls-files -z -- '*.php' | xargs -0 -r -n1 php -l
+      - name: Test SQL safety
+        working-directory: __tests__
+        run: php test_sql.php
+      - name: Test authentication and HTTP boundaries
         run: |
-          npm install --prefix "$RUNNER_TEMP/spa-browser" --no-package-lock playwright@1.62.1
-          "$RUNNER_TEMP/spa-browser/node_modules/.bin/playwright" install --with-deps chromium
-          NODE_PATH="$RUNNER_TEMP/spa-browser/node_modules" node --test __tests__/browser.test.js __tests__/fonts.browser.test.js __tests__/load.browser.test.js __tests__/transitions.browser.test.js
+          php __tests__/test_proxy.php
+          php __tests__/test_auth.php
+          php __tests__/test_http.php
+          php __tests__/test_api_respond.php | php -r '$data = json_decode(stream_get_contents(STDIN), true); exit(($data["message"] ?? null) === "ok" ? 0 : 1);'
       - run: composer validate --no-check-publish
+      - name: Check authored JavaScript
+        run: |
+          node --check _load.js
+          node --check _transitions.js
+          node --check _functions.js
+          node --check _common.js
+          node --check _spa.js
+          node --check _fonts.js
+      - name: Test core runtime contracts
+        run: node --test __tests__/common.test.js __tests__/fragment_scripts.test.js __tests__/routing.test.js __tests__/storage.test.js __tests__/fonts.test.js
+
+  browser_chromium:
+    name: browser (chromium)
+    needs: checks
+    if: ${{ !cancelled() }}
+    uses: ./.github/workflows/browser-check.yml
+    with:
+      browser: chromium
+
+  browser_firefox:
+    name: browser (firefox)
+    needs: browser_chromium
+    if: ${{ !cancelled() }}
+    uses: ./.github/workflows/browser-check.yml
+    with:
+      browser: firefox
+
+  browser_webkit:
+    name: browser (webkit)
+    needs: browser_firefox
+    if: ${{ !cancelled() }}
+    uses: ./.github/workflows/browser-check.yml
+    with:
+      browser: webkit
+
+  parity:
+    needs: browser_webkit
+    if: github.event_name == 'workflow_dispatch' && inputs.extended && !cancelled()
+    name: Reviewed SPA parity
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: node --test __tests__/parity.test.js

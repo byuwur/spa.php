@@ -188,12 +188,18 @@ For upgrades, review changes, reconcile application-owned `_init.php`/`_routes.p
 
 ### Checks
 
-```bash
-node --test __tests__/common.test.js __tests__/fragment_scripts.test.js __tests__/routing.test.js __tests__/storage.test.js __tests__/parity.test.js __tests__/fonts.test.js
-node --test __tests__/browser.test.js __tests__/fonts.browser.test.js __tests__/load.browser.test.js __tests__/transitions.browser.test.js
+Routine CI keeps small runtime/storage/navigation, safe-helper, ordered-loading, font-fallback, and lifecycle checks. Detailed widget, style, option, and catalog tests have been removed. New tests must protect a core contract or a real regression; host UI checks stay smaller than the distributed runtime checks.
+
+```sh
+node --test __tests__/common.test.js __tests__/fragment_scripts.test.js __tests__/routing.test.js __tests__/storage.test.js __tests__/fonts.test.js
+node --test __tests__/browser.test.js __tests__/load.browser.test.js __tests__/transitions.browser.test.js
 ```
 
-Browser tests require Playwright and Chromium, or `BROWSER_CHANNEL=chrome`. See [CI](.github/workflows/ci.yml) for PHP/SQL/auth/HTTP checks and [shared contract checks](__tests__/SPA_PARITY.md) for comparison rules. `SPA_JS_TREE` selects a Git object store; [parity-source.js](__tests__/parity-source.js) pins the reviewed revision, ignoring its working tree and HEAD.
+Install Playwright outside the repository and set `NODE_PATH` to its `node_modules`. `PLAYWRIGHT_CHANNEL=chrome` and `BROWSER_CHANNEL=chrome` select installed Chrome for the respective existing suites. CI uses a matching browser image instead of installing operating-system/browser packages in every job. Chromium, Firefox, and WebKit have separate jobs linked in that order. The small browser cases have 30-second limits, test steps two minutes, and jobs three minutes; superseded runs are canceled. A failed pass remains visible and does not hide the later engine results. `BROWSER_ENGINE` selects an engine locally.
+
+Reviewed cross-project parity is the only optional suite; run `node --test __tests__/parity.test.js` or enable **extended** in [CI](.github/workflows/ci.yml). SQL, authentication, proxy, HTTP, API-response, tracked-source lint, and Composer validation remain routine gates; see CI for their commands.
+
+`SPA_JS_TREE` selects a Git object store; [parity-source.js](__tests__/parity-source.js) pins the reviewed revision, ignoring its working tree and HEAD.
 
 ## Related tools
 

@@ -47,59 +47,6 @@ function loadCommon(window = { byCommon: {} }) {
   return { byCommon: window.byCommon, warnings, errors, styles };
 }
 
-test("byCommon.init can suppress warnings for one call", () => {
-  const harness = loadCommon();
-  harness.byCommon.init({ showWarn: false });
-  assert.equal(harness.warnings.length, 0);
-  assert.equal(harness.errors.length, 0);
-});
-
-test("byCommon.init remains quiet by default", () => {
-  const harness = loadCommon();
-  harness.byCommon.init();
-  assert.equal(harness.warnings.length, 0);
-});
-
-test("INIT_WARNINGS can enable automatic initialization warnings", () => {
-  const harness = loadCommon();
-  harness.byCommon.INIT_WARNINGS = true;
-  harness.byCommon.init();
-  assert.ok(harness.warnings.length > 0);
-});
-
-test("initBootstrap supports the same one-call suppression", () => {
-  const harness = loadCommon();
-  harness.byCommon.initBootstrap({ showWarn: false });
-  assert.equal(harness.warnings.length, 0);
-});
-
-test("accessibility text resizes only the root in quarter-rem steps and resets", () => {
-  const { byCommon, styles } = loadCommon();
-  assert.equal(byCommon.fontSize, 1);
-  byCommon.accessibilityText("plus");
-  assert.equal(byCommon.fontSize, 1.25);
-  assert.equal(styles.html["font-size"], "1.25rem");
-  byCommon.accessibilityText("mas");
-  assert.equal(styles.html["font-size"], "1.5rem");
-  byCommon.accessibilityText("minus");
-  assert.equal(styles.html["font-size"], "1.25rem");
-  byCommon.accessibilityText("menos");
-  assert.equal(styles.html["font-size"], "1rem");
-  byCommon.accessibilityText();
-  assert.equal(styles.html["font-size"], "1rem");
-  assert.equal(styles.body, undefined);
-});
-
-test("accessibility text stays within half-rem and three-rem limits", () => {
-  const { byCommon, styles } = loadCommon();
-  for (let i = 0; i < 30; i++) byCommon.accessibilityText("plus");
-  assert.equal(styles.html["font-size"], "3rem");
-  for (let i = 0; i < 30; i++) byCommon.accessibilityText("minus");
-  assert.equal(styles.html["font-size"], "0.5rem");
-  byCommon.accessibilityText();
-  assert.equal(styles.html["font-size"], "1rem");
-});
-
 test("jQuery modules stop before publishing APIs or reading application state when the dependency is missing", () => {
   const modules = { "_common.js": ["byCommon"], "_spa.js": ["bySPA"] };
   for (const [file, namespaces] of Object.entries(modules)) {

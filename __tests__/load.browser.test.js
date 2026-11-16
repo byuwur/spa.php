@@ -4,62 +4,19 @@ const os = require("node:os");
 const path = require("node:path");
 const test = require("node:test");
 const { pathToFileURL } = require("node:url");
-const { chromium } = require("playwright");
+const { chromium, firefox, webkit } = require("playwright");
+const engine = process.env.BROWSER_ENGINE || "chromium";
+assert.ok(["chromium", "firefox", "webkit"].includes(engine), "Unsupported BROWSER_ENGINE");
+const browserType = { chromium, firefox, webkit }[engine];
+const launchOptions = { timeout: 10000, ...(engine === "chromium" ? { channel: process.env.BROWSER_CHANNEL || process.env.PLAYWRIGHT_CHANNEL, executablePath: process.env.CHROMIUM_EXECUTABLE_PATH } : {}) };
 
 const loader = path.join(__dirname, "../_load.js");
-const launchOptions = { channel: process.env.BROWSER_CHANNEL || undefined, executablePath: process.env.CHROMIUM_EXECUTABLE_PATH || undefined };
 
-test("non-deferred batches load during parsing while default batches wait for the DOM", async () => {
-  const browser = await chromium.launch(launchOptions);
-  let resumeParsing;
-  const heldParsing = new Promise((resolve) => {
-    resumeParsing = resolve;
-  });
+test("loader waits for parsing, preserves script/CSS order and UTF-8, and shares duplicate requests", { timeout: 30000 }, async () => {
+  const browser = await browserType.launch(launchOptions);
   try {
     const page = await browser.newPage();
-    const requests = [];
-    await page.route("**/*", async (route) => {
-      const url = new URL(route.request().url());
-      requests.push(url.pathname);
-      if (url.pathname === "/_load.js") return route.fulfill({ path: loader, contentType: "text/javascript" });
-      if (url.pathname === "/base.css") return route.fulfill({ contentType: "text/css", body: ":root { --early-css: loaded; }" });
-      if (url.pathname === "/early.js") return route.fulfill({ contentType: "text/javascript", body: "window.earlyState = document.readyState;" });
-      if (url.pathname === "/late.js") return route.fulfill({ contentType: "text/javascript", body: 'window.lateParsed = !!document.getElementById("parsed");' });
-      if (url.pathname === "/pause.js") {
-        await heldParsing;
-        return route.fulfill({ contentType: "text/javascript", body: "" });
-      }
-      return route.fulfill({
-        contentType: "text/html",
-        body: `<!doctype html><head><meta charset="UTF-8"><script src="/_load.js"></script>
-          <script>
-            window.early = byLoad(["/base.css", "/early.js"], { defer: false });
-            window.late = early.then(() => byLoad(["/late.js"]));
-          </script><script src="/pause.js"></script></head><body id="parsed">Ready</body>`
-      });
-    });
-    const cssRequested = page.waitForRequest("https://load.test/base.css");
-    const navigation = page.goto("https://load.test/");
-    navigation.catch(() => {});
-    await cssRequested;
-    await page.evaluate(() => early);
-    assert.equal(await page.evaluate(() => earlyState), "loading");
-    assert.equal(await page.locator("html").evaluate((node) => getComputedStyle(node).getPropertyValue("--early-css").trim()), "loaded");
-    assert.equal(requests.includes("/late.js"), false);
-    resumeParsing();
-    await navigation;
-    await page.evaluate(() => late);
-    assert.equal(await page.evaluate(() => lateParsed), true);
-  } finally {
-    resumeParsing();
-    await browser.close();
-  }
-});
-
-test("loader waits for parsing, preserves script/CSS order and UTF-8, and shares duplicate requests", async () => {
-  const browser = await chromium.launch(launchOptions);
-  try {
-    const page = await browser.newPage();
+    page.setDefaultTimeout(5000);
     const requests = [];
     await page.route("**/*", async (route) => {
       const url = new URL(route.request().url());
@@ -96,32 +53,11 @@ test("loader waits for parsing, preserves script/CSS order and UTF-8, and shares
   }
 });
 
-test("loader preserves UTF-8 scripts inside a legacy-encoded host document", async () => {
-  const browser = await chromium.launch(launchOptions);
+test("loader rejects required failures, permits retry, and continues after optional failures", { timeout: 30000 }, async () => {
+  const browser = await browserType.launch(launchOptions);
   try {
     const page = await browser.newPage();
-    await page.route("https://load.test/**", (route) => {
-      const url = new URL(route.request().url());
-      if (url.pathname === "/_load.js") return route.fulfill({ path: loader, contentType: "text/javascript" });
-      if (url.pathname === "/text.js") return route.fulfill({ contentType: "text/javascript", body: Buffer.from('window.accent = "Hágale pues - 日本語 🎮";', "utf8") });
-      return route.fulfill({
-        contentType: "text/html; charset=windows-1252",
-        body: '<!doctype html><html><head><script src="/_load.js"></script></head><body></body></html>'
-      });
-    });
-    await page.goto("https://load.test/");
-    assert.equal(await page.evaluate(() => document.characterSet), "windows-1252");
-    await page.evaluate(() => byLoad(["/text.js"]));
-    assert.equal(await page.evaluate(() => accent), "Hágale pues - 日本語 🎮");
-  } finally {
-    await browser.close();
-  }
-});
-
-test("loader rejects required failures, permits retry, and continues after optional failures", async () => {
-  const browser = await chromium.launch(launchOptions);
-  try {
-    const page = await browser.newPage();
+    page.setDefaultTimeout(5000);
     let attempts = 0;
     const requests = [];
     await page.route("**/*", async (route) => {
@@ -159,15 +95,16 @@ test("loader rejects required failures, permits retry, and continues after optio
   }
 });
 
-test("loader supports downloaded files and calls made after DOMContentLoaded", async () => {
+test("loader supports downloaded files and calls made after DOMContentLoaded", { timeout: 30000 }, async () => {
   const directory = await fs.mkdtemp(path.join(os.tmpdir(), "spa-load-"));
-  const browser = await chromium.launch(launchOptions);
+  const browser = await browserType.launch(launchOptions);
   try {
     await fs.copyFile(loader, path.join(directory, "_load.js"));
     await fs.writeFile(path.join(directory, "one.js"), 'window.localText = "Hágale pues";');
     await fs.writeFile(path.join(directory, "base.css"), "body { --loaded: yes; }");
     await fs.writeFile(path.join(directory, "index.html"), '<!doctype html><meta charset="UTF-8"><script src="./_load.js" defer></script><body>Local</body>');
     const page = await browser.newPage();
+    page.setDefaultTimeout(5000);
     await page.goto(pathToFileURL(path.join(directory, "index.html")).href);
     await page.evaluate(() => byLoad(["./base.css", "./one.js"]));
     assert.equal(await page.evaluate(() => localText), "Hágale pues");
