@@ -709,7 +709,7 @@
       initSidebar(options);
       initCookieConsent(options);
       initParticles(options);
-      byCommon.initSelect2Keyboard();
+      initSelect2Keyboard();
       //byCommon.initTranslate(); //// Callback invoked in ?cb= on <script>
 
       if (global.byFont && typeof global.byFont.init === "function") global.byFont.init();
