@@ -72,11 +72,11 @@ Each installed API owns one boolean `initialized` flag. Bootstrap scripts can po
 
 `byStorage` namespaces keys by application root and removes legacy keys after migration. Failed writes/removals give only that key a local value/null marker until a successful explicit change; other keys keep reading persistent storage. Removal also clears legacy copies. Memory fallback lasts for this runtime, without automatic replay or cross-tab synchronization.
 
-`byCommon.init()` initializes shared UI after navigation. Optional warnings are off; enable `byCommon.INIT_WARNINGS` or `{ showWarn: true }`. `byCommon.initBootstrap({ tooltipsOnly: true, root, refreshTooltips: true })` refreshes scoped tooltips without rerunning other components.
+`byCommon.init()` initializes shared UI after navigation. Optional warnings are off; enable `byCommon.INIT_WARNINGS` or `{ showWarn: true }`. `byCommon.initBootstrap({ tooltipsOnly: true, root, refreshTooltips: true })` refreshes scoped tooltips without rerunning other components. Standalone pages must call `byCommon.init()` explicitly; public `byCommon.initSelect2Keyboard()` enables keyboard behavior without the other shared UI.
 
 Modal cleanup destroys optional font controls and removes the captured element, preserving replacements with the same ID. `byCommon.accessibilityText(mode)` adjusts root size by `0.25rem` for `"plus"`/`"minus"`, within `0.5rem`-`3rem`; no argument resets `1rem`.
 
-With `_common.js`, Up/Down navigation in an open single-select Select2 commits the highlighted value immediately, emits the usual input/change and selection events, and keeps the dropdown open. Mouse hover only highlights; multi-selects still require confirmation. This also applies to dynamically created controls and remote results. `select2:selecting` can cancel a change.
+After `byCommon.init()`, Up/Down navigation in an open single-select Select2 commits the highlighted value immediately, emits the usual input/change and selection events, and keeps the dropdown open. Mouse hover only highlights; multi-selects still require confirmation. This also applies to dynamically created controls and remote results. `select2:selecting` can cancel a change.
 
 Data, HTML-text escaping, and CSRF utilities are native. UI and HTTP/form helpers use jQuery; modals also need Bootstrap. WebSocket transport is native, with jQuery DOM logging.
 

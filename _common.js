@@ -419,7 +419,7 @@
   const select2KeyboardWidgets = new WeakSet();
 
   /** Commit single-select arrow navigation without closing the dropdown or selecting on hover. @returns {void} */
-  function initSelect2Keyboard() {
+  byCommon.initSelect2Keyboard = () => {
     $(document)
       .off("select2:open.byCommonKeyboard", "select")
       .on("select2:open.byCommonKeyboard", "select", function () {
@@ -447,7 +447,7 @@
         widget.on("results:previous", selectHighlighted);
         widget.on("results:next", selectHighlighted);
       });
-  }
+  };
 
   // ==========
   // ==== BOOTSTRAP LIFECYCLE ====
@@ -709,7 +709,7 @@
       initSidebar(options);
       initCookieConsent(options);
       initParticles(options);
-      initSelect2Keyboard();
+      byCommon.initSelect2Keyboard();
       //byCommon.initTranslate(); //// Callback invoked in ?cb= on <script>
 
       if (global.byFont && typeof global.byFont.init === "function") global.byFont.init();

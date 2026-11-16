@@ -532,7 +532,13 @@ test("Select2 arrow navigation commits single values, honors cancellation, and p
   await page.setContent('<select id="single"><option value="a">Alpha</option><optgroup label="Other"><option value="disabled" disabled>Disabled</option><option value="b">Beta</option><option value="c">Gamma</option></optgroup></select><select id="multiple" multiple><option value="a" selected>Alpha</option><option value="b">Beta</option></select>');
   await page.addStyleTag({ path: path.join(__dirname, "..", "css/select2.min.css") });
   // Shared keyboard behavior also applies when Select2 is loaded after common UI.
-  for (const file of ["js/jquery.min.js", "_common.js", "js/select2.full.min.js"]) await page.addScriptTag({ content: source(file) });
+  for (const file of ["js/jquery.min.js", "_common.js", "js/select2.full.min.js"]) {
+    await page.addScriptTag({ content: source(file) });
+    if (file === "_common.js") await page.evaluate(async () => {
+      byCommon.init();
+      await new Promise((resolve) => $(resolve));
+    });
+  }
   await page.evaluate(() => {
     window.changes = [];
     $("select").select2({ width: "200px" }).on("input change select2:select", (event) => changes.push([event.target.id, event.type, event.target.value]));
