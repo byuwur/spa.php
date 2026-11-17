@@ -1,0 +1,31 @@
+{
+  "repository": "byuwur/spa.php",
+  "branch": "main",
+  "kind": "spa",
+  "files": [
+    "README.md",
+    "LICENSE.md",
+    "index.html",
+    ".nojekyll",
+    "composer.json",
+    "cacert.pem",
+    ".htaccess",
+    "nginx.conf",
+    "home.php",
+    "css/images/ui-icons_444444_256x240.png",
+    "css/images/ui-icons_555555_256x240.png",
+    "css/images/ui-icons_777620_256x240.png",
+    "css/images/ui-icons_777777_256x240.png",
+    "css/images/ui-icons_cc0000_256x240.png",
+    "css/images/ui-icons_ffffff_256x240.png"
+  ],
+  "directories": ["css", "js", "img", "presets", "demo"],
+  "tests": ["common.test.js", "fragment_scripts.test.js", "routing.test.js", "storage.test.js", "fonts.test.js", "browser.test.js", "load.browser.test.js", "transitions.browser.test.js"],
+  "notes": [
+    "**Regular ZIP:** source files. **Minified ZIP:** minified authored JS/CSS.",
+    "**Bundled ZIP:** reusable core JS/CSS bundles, browser dependencies, and a separate `demo/` application.",
+    "**Complete [EXPERIMENTAL]:** all shipped browser libraries, CSS, fonts, and CSS images in `spa.complete.js`; PHP helpers and runtime files also live in a single native `spa.complete.php` archive.",
+    "The complete ZIP keeps the reusable framework at its root and the application in `demo/`. Initializers, routes, pages, languages, and demo media stay application-owned. Serve through HTTP(S); PHP requires PHP 8.1+ and Phar. Live APIs, Google services/fonts, and the demo's external Easy viewer examples require internet."
+  ],
+  "sourceTests": ["fragment_scripts.test.js"]
+}

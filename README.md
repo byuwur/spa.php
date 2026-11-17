@@ -205,6 +205,75 @@ Reviewed cross-project parity is the only optional suite; run `node --test __tes
 
 [easy-md-viewer](https://github.com/byuwur/easy-md-viewer) · [easy-json-viewer](https://github.com/byuwur/easy-json-viewer) · [easy-http-error](https://github.com/byuwur/easy-http-error) · [easy-sidebar-bootstrap](https://github.com/byuwur/easy-sidebar-bootstrap)
 
+## Releases
+
+[Release workflow](.github/workflows/release.yml) builds a reviewable preview on pushes to `main`, pull requests, and manual runs. Only a pushed version tag publishes a GitHub release. Source/browser checks and the complete distribution build must succeed on both main and tag runs before publication. Failed builds remove their own temporary stage and retain the last completed output. Two-part tags such as `v1.8` and three-part tags such as `v1.8.1` are supported. Keep release tags consistent with the project's source version.
+
+| Edition | Contents |
+| --- | --- |
+| Regular ZIP | Authored framework and `demo/`. |
+| Minified ZIP | Minified authored JS/CSS and `demo/`. |
+| Bundled ZIP | Core JS/CSS bundles and `demo/`. |
+| Complete ZIP [EXPERIMENTAL] | One reusable framework file and a separate `demo/`. |
+
+`spa.bundle.js` and `spa.bundle.css` are reusable core bundles. Keep the ZIP's library/font/image folders and load jQuery plus any optional UI dependencies before the JS bundle. Application initialization and routes load before the bundle. The complete edition includes every shipped browser library in dependency order and embeds CSS, fonts, CSS images, and error-page support. It retains original license notices. Missing jQuery UI icon sheets were restored from the stylesheet's matching upstream 1.14.2 release.
+
+### Complete PHP framework [EXPERIMENTAL]
+
+`spa.complete.php` is the reusable framework; the application remains in `demo/`. It is an uncompressed native [PHP PHAR](https://www.php.net/manual/en/phar.php) with a PHP entry point, preserving framework include paths and assets without extracting files. Requires PHP 8.1+ with Phar. `phar.readonly=0` is used only by the build subprocess; the generated file runs with read-only archives enabled.
+
+An application includes the single file, its own initializer/routes, and whichever server modules it needs:
+
+```php
+require_once __DIR__ . "/../spa.complete.php";
+$setLocalStorage = true;
+require_once __DIR__ . "/_init.php";
+require_once byspa_framework_path() . "/_functions.php";
+require_once byspa_framework_path() . "/_common.php";
+require_once __DIR__ . "/_routes.php";
+require_once byspa_framework_path() . "/_router.php";
+```
+
+Load its browser assets after the PHP bootstrap:
+
+```html
+<script src="../spa.complete.php?asset=spa.complete.js" defer></script>
+```
+
+The same PHP file serves an allowlist of public browser assets and the error page. It does not serve PHP source or configuration files. Generated complete-edition adapters use the archived error page and certificate bytes (PHP 8.2+/compatible cURL); older cURL integrations use their configured system trust store; the authored framework files remain unchanged. `spa.complete.js` is also available separately for browser-only integration with application-owned PHP bootstrap/error handling.
+
+Application pages, translations, media, credentials, Composer dependencies, live services, and dynamically requested Google Fonts remain application-owned. The bundled demo's Easy viewer examples and live integrations still require internet. The complete edition does not turn arbitrary applications or remote services into offline pages.
+
+Minification prefers jsDelivr-generated files pinned to the exact source commit when local source matches that commit. Unavailable CDN files and local edits use pinned esbuild instead. `--offline` selects local minification. `manifest.json` records providers, hashes, edition inventories, and complete-edition adapters. Prettier formats generated HTML demos while minified assets remain minified.
+
+### Local preview
+
+Requires Node.js 22 or newer; packaging/test dependencies are private to `.github`. Run from the repository root. In PowerShell, use `npm.cmd` if execution policy blocks `npm`.
+
+```sh
+npm --prefix .github ci --ignore-scripts --no-audit --no-fund
+node .github/scripts/build.mjs --tag v0.0.0-local
+node .github/node_modules/playwright/cli.js install chromium
+npm --prefix .github run release:test
+```
+
+Building and checking the PHP editions also needs PHP 8.1+ with Phar on `PATH` (or `PHP_BINARY` pointing to the executable). The builder enables writable archives only for its isolated packaging subprocess.
+
+Open `dist/RELEASE_NOTES.md` for the generated notes and `dist/assets/` for the complete tested output. Download `tested-release` from the workflow run to review CI results. Local commands and manual runs do not publish.
+
+### Script responsibilities
+
+- [release.json](.github/release.json) owns the repository identity, package inventory, and download explanations.
+- [build.mjs](.github/scripts/build.mjs) builds runtime ZIPs in a temporary output directory, then writes notes, provenance, and checksums.
+- [editions.mjs](.github/scripts/editions.mjs) generates core bundles, the complete browser framework, and separate demo imports.
+- [package-phar.php](.github/scripts/package-phar.php) builds the native single-file PHP framework and its public asset allowlist.
+- [release.mjs](.github/scripts/release.mjs) reads the real Git history. `--check` validates the exact pushed tag on `main`; `--publish` verifies the tested output and creates or resumes its matching draft before publishing.
+- [release tests](.github/tests/release.mjs) verify checksums, ZIP inventories, and the distributed runtime by running the existing checks against both extracted ZIPs. Internal-function source fixtures run on the regular ZIP; browser checks, including ordered fragment scripts, run on both variants. [Publication tests](.github/tests/publish-release.mjs) use a mock GitHub API to verify interrupted uploads, draft ownership, corruption rejection, and reruns.
+
+[Edition checks](.github/tests/editions.mjs) exercise both generated editions from an isolated application, the supplied demo, real navigation, offline framework libraries/fonts/images, and error rendering. PHP checks also cover read-only archive use and denial of source/configuration requests.
+
+The workflow uses read-only access while building/testing, passes the exact tested output to a separate publication job, and grants write access only there. Published releases are never overwritten. A failed upload leaves a draft that the same tested build can resume. Tag pushes and live release publication are separate from local validation.
+
 ## Contributing
 
 Follow [CODING_STANDARDS.md](CODING_STANDARDS.md) and [CONTRIBUTING.md](CONTRIBUTING.md).

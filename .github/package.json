@@ -1,0 +1,17 @@
+{
+  "name": "spa.php-release",
+  "private": true,
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "release:build": "node scripts/build.mjs",
+    "release:test": "node --test tests/release.mjs tests/editions.mjs tests/publish-release.mjs tests/cleanup.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "fflate": "0.8.3",
+    "playwright": "1.63.0",
+    "prettier": "3.10.1"
+  }
+}

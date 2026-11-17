@@ -1,0 +1,96 @@
+name: Publish versioned releases
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  source_checks:
+    uses: ./.github/workflows/ci.yml
+
+  build:
+    needs: source_checks
+    runs-on: ubuntu-24.04
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      options: --ipc=host
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: spa.php
+    env:
+      RELEASE_TAG: ${{ github.event_name == 'push' && github.ref_type == 'tag' && github.ref_name || 'v0.0.0-ci' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          path: spa.php
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm --prefix .github ci --ignore-scripts --no-audit --no-fund
+      - name: Validate exact tag, main ancestry, and release ownership
+        if: github.event_name == 'push' && github.ref_type == 'tag'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node .github/scripts/release.mjs --check
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.1"
+          extensions: curl, phar
+          coverage: none
+      - name: Test PHP contracts
+        run: |
+          git ls-files -z -- '*.php' | xargs -0 -r -n1 php -l
+          (cd __tests__ && php test_sql.php)
+          php __tests__/test_proxy.php
+          php __tests__/test_auth.php
+          php __tests__/test_http.php
+          php __tests__/test_api_respond.php | php -r '$data = json_decode(stream_get_contents(STDIN), true); exit(($data["message"] ?? null) === "ok" ? 0 : 1);'
+          composer validate --no-check-publish
+      - name: Build release preview or tagged distributions
+        run: node .github/scripts/build.mjs
+      - name: Test generated release
+        timeout-minutes: 5
+        run: npm --prefix .github run release:test
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tested-release
+          path: spa.php/dist/assets/
+          if-no-files-found: error
+          retention-days: 7
+
+  publish:
+    if: github.event_name == 'push' && github.ref_type == 'tag'
+    needs: [source_checks, build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/download-artifact@v4
+        with:
+          name: tested-release
+          path: dist/assets/
+      - name: Publish the verified draft
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node .github/scripts/release.mjs --publish

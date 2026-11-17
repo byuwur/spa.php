@@ -270,3 +270,25 @@ test("duplicate runtime scripts preserve active navigation and bind handlers onc
   await page.waitForFunction(() => events.length > savedRuntime.events && events.at(-1).type === "bySPA:load");
   assert.equal(await page.evaluate(() => requests.length - savedRuntime.requests), 1);
 });
+
+test("navigation waits for external and inline fragment scripts before announcing load", { timeout: 30000 }, async (t) => {
+  const page = await application(t);
+  await page.route("**/release-dependency.js", (route) => route.fulfill({ contentType: "text/javascript", body: "window.releaseOrder.push('external'); window.releaseDependency = 42;" }));
+  const result = await page.evaluate(async () => {
+    window.releaseOrder = [];
+    document.addEventListener("bySPA:load", () => releaseOrder.push("loaded"), { once: true });
+    $.ajax = () =>
+      $.Deferred()
+        .resolve(/* HTML */ `
+          <p id="release-fragment">Loaded</p>
+          <script src="/release-dependency.js"></script>
+          <script>
+            window.releaseOrder.push(window.releaseDependency === 42 ? "inline" : "missing dependency");
+          </script>
+        `)
+        .promise();
+    await bySPA.load("/next");
+    return { order: releaseOrder, content: document.getElementById("release-fragment")?.textContent };
+  });
+  assert.deepEqual(result, { order: ["external", "inline", "loaded"], content: "Loaded" });
+});

@@ -21,7 +21,6 @@ jobs:
     env:
       HOME: /root
       BROWSER_ENGINE: ${{ inputs.browser }}
-      NODE_PATH: ${{ runner.temp }}/browser-tests/node_modules
     steps:
       - uses: actions/checkout@v7
         with:
@@ -33,6 +32,8 @@ jobs:
         timeout-minutes: 1
         run: npm install --prefix "$RUNNER_TEMP/browser-tests" --no-package-lock --no-audit --no-fund playwright@1.63.0
       - name: Run focused checks
+        env:
+          NODE_PATH: ${{ runner.temp }}/browser-tests/node_modules
         working-directory: spa.php
         timeout-minutes: 2
         run: |
