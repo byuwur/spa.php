@@ -74,7 +74,7 @@ export function releaseNotes(manifest) {
     for (const note of config.notes) lines.push(note, "");
     if (config.kind === "easy") {
       for (const asset of manifest.assets.filter((asset) => asset.file.endsWith(".zip"))) {
-        const label = asset.file.endsWith(".regular.zip") ? "Regular ZIP" : "Minified ZIP";
+        const label = asset.file.endsWith(".minified.zip") ? "Minified ZIP" : "ZIP";
         lines.push(`- [${label}](${repository}/releases/download/${encodeURIComponent(manifest.tag)}/${asset.file})`);
       }
     } else {
