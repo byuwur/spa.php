@@ -11,8 +11,8 @@ require_once "{$TO_HOME}/../_common.php";
 require_once "{$TO_HOME}/common.example.php";
 //enable_progressive_rendering();
 ?>
-<link href="https://cdn.jsdelivr.net/gh/byuwur/easy-json-viewer@latest/json.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/gh/byuwur/easy-json-viewer@latest/json.min.js" defer></script>
+<link href="https://cdn.jsdelivr.net/gh/byuwur/json.view@latest/json.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/gh/byuwur/json.view@latest/json.min.js" defer></script>
 <div class="video-foreground app-container">
   <div class="container vh-100 d-flex flex-column align-items-center justify-content-center p-0">
     <pre id="byJSONrenderer" class="w-100" data-theme="light"></pre>
@@ -34,7 +34,7 @@ require_once "{$TO_HOME}/common.example.php";
         console.warn("Something went wrong", error);
       }
     };
-    renderFetched("https://raw.githubusercontent.com/byuwur/easy-json-viewer/main/test.json", {
+    renderFetched("https://raw.githubusercontent.com/byuwur/json.view/main/test.json", {
       chunkSize: 1,
       chunkLatency: 10
     });

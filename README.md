@@ -203,7 +203,7 @@ Reviewed cross-project parity is the only optional suite; run `node --test __tes
 
 ## Related tools
 
-[easy-md-viewer](https://github.com/byuwur/easy-md-viewer) · [easy-json-viewer](https://github.com/byuwur/easy-json-viewer) · [easy-http-error](https://github.com/byuwur/easy-http-error) · [easy-sidebar-bootstrap](https://github.com/byuwur/easy-sidebar-bootstrap)
+[MD.view](https://github.com/byuwur/md.view) · [JSON.view](https://github.com/byuwur/json.view) · [easy-http-error](https://github.com/byuwur/easy-http-error) · [easy-sidebar-bootstrap](https://github.com/byuwur/easy-sidebar-bootstrap)
 
 ## Releases
 
