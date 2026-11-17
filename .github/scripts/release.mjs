@@ -194,7 +194,7 @@ export async function publishRelease({ request = fetch, environment = process.en
   const lookup = await request(`${base}/releases/tags/${encodeURIComponent(tag)}`, { headers, signal: AbortSignal.timeout(30000) });
   let release;
   if (lookup.status === 404) {
-    release = await api(`${base}/releases`, "POST", { tag_name: tag, target_commitish: environment.GITHUB_SHA, name: `${config.repository.split("/")[1]} ${tag}`, body, draft: true, prerelease: tag.split("+")[0].includes("-") });
+    release = await api(`${base}/releases`, "POST", { tag_name: tag, target_commitish: environment.GITHUB_SHA, name: tag, body, draft: true, prerelease: tag.split("+")[0].includes("-") });
   } else {
     assert.ok(lookup.ok, `Release lookup failed: HTTP ${lookup.status}`);
     release = await lookup.json();
@@ -213,7 +213,7 @@ export async function publishRelease({ request = fetch, environment = process.en
   }
   if (config.kind === "history") {
     assert.deepEqual(await listAssets(), [], "History-only releases cannot contain assets");
-    await api(`${base}/releases/${release.id}`, "PATCH", { draft: false });
+    await api(`${base}/releases/${release.id}`, "PATCH", { name: tag, draft: false });
     console.log(`Published ${config.repository} ${tag} commit history`);
     return;
   }
@@ -250,7 +250,7 @@ export async function publishRelease({ request = fetch, environment = process.en
     assert.equal(asset.size, bodies.get(asset.name).length);
     assert.equal(asset.digest, `sha256:${sha256(bodies.get(asset.name))}`, `Uploaded integrity mismatch: ${asset.name}`);
   }
-  await api(`${base}/releases/${release.id}`, "PATCH", { draft: false });
+  await api(`${base}/releases/${release.id}`, "PATCH", { name: tag, draft: false });
   console.log(`Published ${config.repository} ${tag} with ${files.length} verified assets`);
 }
 
