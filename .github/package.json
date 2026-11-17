@@ -1,5 +1,5 @@
 {
-  "name": "spa.php-release",
+  "name": "spa.php",
   "private": true,
   "engines": {
     "node": ">=22"
