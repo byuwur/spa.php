@@ -22,10 +22,9 @@
   "directories": ["css", "js", "img", "presets", "demo"],
   "tests": ["common.test.js", "fragment_scripts.test.js", "routing.test.js", "storage.test.js", "fonts.test.js", "browser.test.js", "load.browser.test.js", "transitions.browser.test.js"],
   "notes": [
-    "**Regular ZIP:** source files. **Minified ZIP:** minified authored JS/CSS.",
-    "**Bundled ZIP:** reusable core JS/CSS bundles, browser dependencies, and a separate `demo/` application.",
-    "**Complete [EXPERIMENTAL]:** all shipped browser libraries, CSS, fonts, and CSS images in `spa.complete.js`; PHP helpers and runtime files also live in a single native `spa.complete.php` archive.",
-    "The complete ZIP keeps the reusable framework at its root and the application in `demo/`. Initializers, routes, pages, languages, and demo media stay application-owned. Serve through HTTP(S); PHP requires PHP 8.1+ and Phar. Live APIs, Google services/fonts, and the demo's external Easy viewer examples require internet."
+    "Framework at the ZIP root; application in `demo/`.",
+    "Complete [EXPERIMENTAL] embeds shipped browser libraries, styles, fonts, and CSS images. App pages, routes, languages, and media stay separate.",
+    "PHP 8.1+ with Phar is required. External services need internet."
   ],
   "sourceTests": ["fragment_scripts.test.js"]
 }

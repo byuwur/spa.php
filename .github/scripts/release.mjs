@@ -70,19 +70,14 @@ export function releaseNotes(manifest) {
   const url = previousTag ? `${repository}/compare/${encodeURIComponent(previousTag)}...${encodeURIComponent(ref)}` : `${repository}/commits/${encodeURIComponent(ref)}`;
   lines.push("", `[Full changelog (${range})](${url})`);
   if (config.kind !== "history") {
-    lines.push("", "## Downloads", "");
-    for (const note of config.notes) lines.push(note, "");
-    if (config.kind === "easy") {
-      for (const asset of manifest.assets.filter((asset) => asset.file.endsWith(".zip"))) {
-        const label = asset.file.endsWith(".minified.zip") ? "Minified ZIP" : "ZIP";
-        lines.push(`- [${label}](${repository}/releases/download/${encodeURIComponent(manifest.tag)}/${asset.file})`);
-      }
-    } else {
-      lines.push("| File | Contents |", "| --- | --- |");
-      for (const asset of manifest.assets.filter((asset) => asset.file !== "RELEASE_NOTES.md")) lines.push(`| [${asset.file}](${repository}/releases/download/${encodeURIComponent(manifest.tag)}/${asset.file}) | ${asset.description} |`);
+    lines.push("", "## Downloads", "", "| File | Contents |", "| --- | --- |");
+    for (const asset of manifest.assets.filter((item) => item.file !== "RELEASE_NOTES.md")) {
+      lines.push(`| [${asset.file}](${repository}/releases/download/${encodeURIComponent(manifest.tag)}/${asset.file}) | ${asset.description.replaceAll("|", "&#124;")} |`);
     }
-    lines.push("", "`manifest.json` records the source commit, package inventory, and minification providers. `SHA256SUMS` verifies every release file.");
+    for (const note of config.notes) lines.push("", note);
+    lines.push("", `[Manifest](${repository}/releases/download/${encodeURIComponent(manifest.tag)}/manifest.json) · [Checksums](${repository}/releases/download/${encodeURIComponent(manifest.tag)}/SHA256SUMS).`);
   }
+
   return `${lines.join("\n")}\n`;
 }
 
