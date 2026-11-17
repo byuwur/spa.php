@@ -25,6 +25,11 @@ jobs:
       - uses: actions/checkout@v7
         with:
           path: spa.php
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.1"
+          extensions: curl, phar
+          coverage: none
       - uses: actions/setup-node@v4
         with:
           node-version: 22
