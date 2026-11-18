@@ -1,12 +1,12 @@
 # SPA.php · Privacidad y cookies
 
-**Borrador sin publicar.** Antes de la publicación, falta confirmar quién aloja el sitio, quién puede consultar los registros de acceso del servidor y cuánto tiempo se conservan. La fecha de entrada en vigor se indicará al publicar el aviso por primera vez.
+**Borrador sin publicar.** Queda pendiente la revisión de los datos de contacto del responsable. La fecha de entrada en vigor se indicará al publicar el aviso por primera vez.
 
 ## Responsable y funcionamiento
 
 Andrés Trujillo Mateus, creador independiente en Colombia, opera este sitio como byUwUr. Este aviso cubre spa.byuwur.co. Contacto de privacidad: [mateus@byuwur.co](mailto:mateus@byuwur.co).
 
-La demostración solicita fragmentos y ejemplos al servidor. El kit de interfaz simula localmente la selección de archivos y el progreso de carga. Google Translate, reCAPTCHA, jsDelivr y los servidores de ejemplos de GitHub reciben solicitudes independientemente de la elección de analítica. El alojamiento recibe solicitudes y direcciones de red para entregar las páginas. El aviso usa MD.view a través de jsDelivr.
+La demostración solicita fragmentos y ejemplos al servidor. El kit de interfaz simula localmente la selección de archivos y el progreso de carga. Google Translate, reCAPTCHA, jsDelivr y los servidores de ejemplos de GitHub reciben solicitudes independientemente de la elección de analítica. El alojamiento recibe solicitudes y direcciones de red para entregar las páginas. No puedo consultar los registros de acceso de los visitantes en el panel de alojamiento y desconozco su plazo de conservación. El aviso usa MD.view a través de jsDelivr.
 
 ## Analítica opcional
 

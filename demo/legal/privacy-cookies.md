@@ -1,6 +1,6 @@
 # SPA.php · Privacy & Cookies
 
-**Unpublished draft.** Before publication, confirm who hosts the site, who can access its server logs and how long those logs are kept. Record the effective date when the notice is first published.
+**Unpublished draft.** The operator’s contact details are under review. The effective date will be recorded at first publication.
 
 ## Who operates this site
 
@@ -8,7 +8,7 @@ Andrés Trujillo Mateus operates this site as byUwUr, an individual creator in C
 
 ## Using SPA.php
 
-The SPA.php demo loads route fragments and examples from the server. The UI kit simulates file selection and upload progress locally. The demo requests resources from Google Translate, reCAPTCHA, jsDelivr and the GitHub sample hosts. Their servers receive the information needed for those requests independently of the analytics choice. The web host receives browser requests and network addresses to deliver the site. The privacy page loads MD.view through jsDelivr.
+The SPA.php demo loads route fragments and examples from the server. The UI kit simulates file selection and upload progress locally. The demo requests resources from Google Translate, reCAPTCHA, jsDelivr and the GitHub sample hosts. Their servers receive the information needed for those requests independently of the analytics choice. The web host receives browser requests and network addresses to deliver the site. I can’t view visitor access logs in the hosting dashboard, and I don’t know how long the host keeps them. The privacy page loads MD.view through jsDelivr.
 
 ## Optional Google Analytics
 
