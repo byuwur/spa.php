@@ -9,7 +9,7 @@
 
 Contributions that solve real problems, improve usability, clarify behavior, or simplify maintenance are welcome. Keep the work focused, understandable, and verifiable.
 
-Use [README.md](README.md) for project setup and [CODING_STANDARDS.md](CODING_STANDARDS.md) for engineering policy. This guide describes the contribution process; it does not replace those standards. Follow any explicit repository requirements, templates, and supported environments. Language-specific conventions apply only where relevant.
+Use [README.md](README.md) for project setup and [CODING_STANDARDS.md](CODING_STANDARDS.md) for engineering policy. This guide covers contributions submitted for review. For direct work in the maintainer's checkout, see [AGENTS.md](AGENTS.md). Follow any explicit repository requirements, templates, and supported environments.
 
 ## Report a problem or propose a change
 
@@ -20,7 +20,7 @@ Check existing issues, pull requests, and documentation before opening a new dis
 - Expected behavior and what actually happened.
 - Relevant logs, screenshots, or a small failing example, with private data removed.
 
-For a feature, explain the user need, a concrete example, and the limits of the proposed change. Discuss substantial architecture changes, new dependencies, or incompatible behavior with maintainers before investing in a large implementation. Small, focused fixes and documentation improvements can go directly to a pull request; an issue is not required for every contribution.
+For a feature, explain the user need, a concrete example, and the limits of the proposed change. For substantial architecture changes, new dependencies, or incompatible behavior, agree on scope with maintainers before investing in a large implementation. Small, focused fixes and documentation improvements can go directly to a pull request.
 
 Use the repository's private reporting channel for security-sensitive details when one is provided; otherwise contact a maintainer privately before posting those details publicly.
 
@@ -28,7 +28,7 @@ Use the repository's private reporting channel for security-sensitive details wh
 
 Read the relevant implementation, callers, tests, and project documentation. Understand the current behavior and available helpers before replacing them. Check the working tree and preserve unrelated changes.
 
-Work in your own fork or a contribution branch permitted by the repository workflow. Follow the documented setup and reuse the existing toolchain and validation tools. Propose additions only when a concrete requirement makes them necessary.
+When working outside the maintainer's checkout, use your own fork or a contribution branch permitted by the repository workflow. Follow the documented setup and reuse the existing toolchain and validation tools. Propose additions only when a concrete requirement makes them necessary.
 
 ## Make one coherent change
 
@@ -42,9 +42,7 @@ Respect existing copyright and attribution notices. Identify the source and lice
 
 ## Verify behavior and update documentation
 
-Discover the required checks in the README, scripts, and CI configuration. Establish the relevant baseline when practical, then run the checks appropriate to the change.
-
-For a behavioral fix, add or adjust meaningful regression coverage in the existing tests where possible. Exercise the defect and its important boundary or opposite case. Avoid tests that only mirror implementation or add ceremony to trivial changes.
+Use the README, scripts, and CI configuration to find focused checks for the changed behavior and any project-required checks. Establish the relevant baseline when practical. Follow the [regression coverage guidance](CODING_STANDARDS.md#13-fix-invariants-and-test-actual-risks) for behavioral fixes.
 
 For interface changes, check keyboard operation, focus, supported themes, responsive layouts, and related states where affected. Include before/after images when they help reviewers assess the result. For performance claims, provide a reproducible comparison and describe the workload and environment.
 
@@ -54,24 +52,7 @@ Update existing documentation, configuration examples, and integration samples w
 
 ## Keep commits reviewable
 
-Follow the [commit standard](CODING_STANDARDS.md#18-commit-standard):
-
-```text
-[Type] [Area] Concrete behavior change
-```
-
-For example:
-
-```text
-[Fix] [Parsing] Preserve escaped delimiters in quoted values
-[Docs] [Configuration] Explain how explicit options override defaults
-```
-
-Use specific subjects with brackets and no colon. Keep each commit centered on one outcome, including the tests and documentation required for it. A larger contribution should build up through manageable commits that work at each boundary; file type or line count alone does not define a useful split.
-
-Default to a subject-only message. Add a body only when strictly necessary, following the linked commit standard: one short line after a blank line. Keep routine summaries and validation logs out of commit messages.
-
-Coordinate version, dependency, and release changes with maintainers. When an upgrade is included, update all applicable references, use “Upgrade” in the subject, and keep the version upgrade last in the planned progression. Preserve intentionally pinned dependencies.
+Follow the [commit standard](CODING_STANDARDS.md#18-commit-standard) for message format, scope, and ordering. Coordinate version, dependency, and release changes with maintainers and follow the [release reference rules](CODING_STANDARDS.md#22-versions-and-release-references).
 
 ## Open a pull request
 

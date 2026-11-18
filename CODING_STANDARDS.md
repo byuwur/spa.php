@@ -149,7 +149,7 @@ Assess a dependency by total benefit against conceptual, maintenance, update, se
 
 Compatibility should protect real supported APIs, stored data, deployment environments, integrations, and formats. Document the supported scenario and the reason for non-obvious branches. Retire obsolete compatibility deliberately, with migration guidance when needed. Speculative compatibility is another mechanism to maintain.
 
-For project CDN imports, use minified assets. Documentation and generated starter examples use `@latest` where supported; actual integrations, companion imports, and CI checkouts use explicit releases derived from the project's version authority, unless the user requests another policy. Do not infer the intended version from local Git tags. Preserve an explicitly requested pin or temporary local development import; restore the release import when publication is confirmed. A planned source version does not prove that its CDN assets or tag are available.
+For project CDN imports, use minified assets. Documentation and generated starter examples use `@latest` where supported. Actual integrations, companion imports, and CI checkouts use explicit versions drawn from the owning project's documented version authority or the agreed release plan, unless the user requests another policy. Preserve deliberately held pins and follow the [release reference rules](#22-versions-and-release-references) for coordinated upgrades.
 
 ## 12. Keep equivalent paths equivalent
 
@@ -157,19 +157,21 @@ Equivalent entry paths must satisfy the same contract: initial and later executi
 
 Independent runtimes may remain independent. Do not introduce a package or shared architecture solely to eliminate copied text. For behavior that must match across modules or projects, use shared fixtures, parity checks, compatibility tables, or reproducible version pins as appropriate. Make the canonical owner of mirrored policy and the update path discoverable.
 
-Test the actual entry points. A handwritten imitation of the implementation can pass while the real path diverges. When shared code changes, check integrations and copied initialization or configuration that a dependency update does not replace.
+Test the actual entry points. A handwritten imitation of the implementation can pass while the real path diverges. When shared code changes, check integrations and copied initialization or configuration that a dependency update does not replace. Check relevant sibling implementations for parity by default, including those that ship independently.
 
 For shared options in related components, keep equivalent names, defaults, validation, and dependency behavior aligned across the runtime API, form controls, configuration, generated exports, documentation, and tests wherever those paths exist. Dependent controls become unavailable without discarding their configured value. Keep component-specific and format-specific behavior local.
 
 ## 13. Fix invariants and test actual risks
 
-For a bug, identify the invariant that failed, reproduce the failure, check the nearest opposite or boundary case, and fix the owner of that invariant. Inspect adjacent transitions and equivalent entry paths before declaring the repair complete. Add a practical regression test and update the contract where clarification is needed.
+For a bug, identify the invariant that failed, reproduce the failure, check the nearest opposite or boundary case, and fix the owner of that invariant. Inspect adjacent transitions and equivalent entry paths before declaring the repair complete. Update the contract where clarification is needed.
+
+Reuse an existing regression test when it demonstrates the failure before the fix and the expected behavior after it. Extend existing coverage or add a focused regression test when a meaningful case remains uncovered and automation is practical.
 
 Choose tests for confidence, not count or coverage percentage. Prioritize public contracts, historical regressions, state transitions, lifecycle cleanup, trust boundaries, failure and recovery behavior, compatibility, and integration between owners.
 
 Prefer the smallest suite that distinguishes correct behavior from plausible mistakes. Use focused unit tests for isolated rules and a few integration tests for wiring and real entry paths. Source checks can supplement execution; they do not establish runtime correctness. Avoid tests that merely restate the implementation.
 
-Use the repository's actual validation tools and documented workflows. Run checks appropriate to the change and any required checks. Broaden testing when changes, failures, or unresolved risks justify it. Report blocked, skipped, and unexecuted checks distinctly from passing checks; do not present an environmental limitation as a code failure.
+Use the repository's actual validation tools and documented workflows. Run checks focused on the changed behavior and any project-required checks. Broaden testing when the impact or unresolved risks justify it. Report results and distinguish product failures from setup or network failures and material checks left unexecuted.
 
 Keep browser setup reproducible and bounded. Reuse installed or cached tools, or a CI image whose browser and Playwright package versions match, instead of repeatedly installing operating-system packages. Distinguish test-contract defects, library regressions, and setup/network failures; increasing timeouts or weakening assertions does not resolve their cause. Local assets can validate an unpublished release, but report that substitution and verify remote publication separately.
 
@@ -181,7 +183,9 @@ Avoid narrating obvious syntax, decorative verbosity, and comments that compensa
 
 Use `//` for single-line JavaScript comments, including section labels. Retain necessary multiline file/license/documentation blocks and tool directives. The `/* HTML */` annotation is an explicit exception: place it immediately before the HTML string literal, preferably on the same line, so formatting and embedded HTML highlighting keep working.
 
-Every new function or method must have documentation immediately above its definition: JSDoc for JavaScript, PHPDoc for PHP, GoDoc for Go, or the language's equivalent. This applies to private helpers as well as public APIs. Describe its purpose, parameters and defaults, return values, errors, and side effects as applicable. Include units, limits, ownership, and cleanup requirements when they matter. Use the language's type declarations where available; do not guess types or repeat obvious details. Simple functions need short documentation, not empty boilerplate.
+Document every library function and method definition, including private helpers, and document longer functions and methods wherever they appear. Put the documentation immediately above the definition using JSDoc, PHPDoc, GoDoc, or the language's equivalent. For other short functions and ordinary inline callbacks, add explanation only where the behavior or contract needs it.
+
+Describe purpose, parameters and defaults, return values, errors, and side effects as applicable. Include units, limits, ownership, and cleanup requirements when they matter. Use the language's type declarations where available and keep documentation for simple library functions short.
 
 Code and documentation describe the same contract. Inspect both when changing behavior, including examples and configuration guidance. Do not preserve a polished explanation of behavior the implementation no longer provides.
 
@@ -210,7 +214,7 @@ Before considering a change complete, read the resulting behavior and diff toget
 - Did a fallback, cache, or helper introduce another source of truth?
 - Did each abstraction and dependency earn its cost?
 - Are public behavior, documentation, and meaningful validation aligned?
-- Are new functions documented, with key comments above non-obvious implementation details?
+- Are library and longer functions documented, with key comments above non-obvious implementation details?
 - Is the control flow sequential and direct, with any asynchronous coordination justified?
 - Can anything added now be deleted or simplified without losing the result?
 
@@ -281,7 +285,7 @@ Avoid speculative generalization, casual dependencies, and generated layers whos
 
 ## 21. Practical language and interface conventions
 
-Apply language and interface conventions only where they fit the project. They do not require a browser UI, a particular framework, or a new public namespace. Preserve language-native conventions and documented project differences.
+Apply language and interface conventions where they fit the project. Rules for a named project family or runtime apply within that scope. Preserve language-native conventions and documented project differences.
 
 ### JavaScript layout
 
@@ -299,7 +303,9 @@ Keep containers and controls consistent across related components: comparable sp
 
 ### Controls, accessibility, and motion
 
-Favor a compact, organized default view. Make supported controls hideable through options, with equivalent controls styled consistently. Preserve native semantics, accessible names, keyboard operation, visible focus, and understandable feedback for actions and state changes. Small two- or three-choice settings can use accessible segmented controls.
+Favor a compact, organized default view with controls that are easy to operate and customization that meets user or host needs. Style equivalent controls consistently. Preserve native semantics, accessible names, keyboard operation, visible focus, and understandable feedback for actions and state changes. Small two- or three-choice settings can use accessible segmented controls.
+
+In `.view` projects, make supported controls hideable through options.
 
 In configurable playgrounds, group parameters as preview appearance, component controls, rendering, then extras where applicable. Make dependencies explicit: header controls depend on the header, panel status depends on its panel, and entry animation depends on animations. Preserve intentional differences when a component has no such container or header.
 
@@ -331,4 +337,6 @@ Published landing pages need valid static titles, descriptions, canonical URLs, 
 
 Keep one documented version authority in the owning source or project metadata. When an upgrade is requested, update that authority and its date comment where applicable; standalone JavaScript libraries that expose `VERSION` use that source value. Check every applicable reference: runtime attribution, versioned imports, companion integrations, documentation, examples, CI refs, and test expectations. Preserve deliberate `@latest` examples and explicitly held dependency pins. Do not change other libraries' versions unless they are part of the requested scope.
 
-Use “Upgrade,” rather than “bump,” in release descriptions. Keep an explicit request to leave the version unchanged. Release the required companion first; source updates and passing local tests do not publish a tag or invalidate CDN caches. Disclose any remaining publication step.
+During coordinated release preparation, use sibling source files for local development and validation when available. Before committing the consumer, use the agreed versioned imports, with the latest proposed release for each dependency being upgraded. Check the import paths against the intended release layout.
+
+Use “Upgrade” in release descriptions. Honor an explicit request to leave the version unchanged. A required companion must be available before its consumer is published or deployed. Report pending publication and distinguish validation with local sibling files from verification of published imports.
