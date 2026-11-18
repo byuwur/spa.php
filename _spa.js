@@ -41,6 +41,7 @@
 
   // These properties can be previously initialized to be overriden
   bySPA.REQUEST_TIMEOUT = bySPA.REQUEST_TIMEOUT || 30000;
+  const componentRequests = new WeakMap();
   let fileNavigation = false; // Flags if you come from a FILE route
   let errorNavigation = false; // A replaced document needs a clean runtime on Back.
 
@@ -52,10 +53,11 @@
    * @param {string} html Trusted application fragment HTML.
    * @param {number} navigationId Navigation generation that owns the fragment.
    * @param {boolean} replaceDocument Whether to intentionally replace the full document.
+   * @param {function(): boolean} isCurrent Whether the request still owns this target.
    * @return {Promise<string|null>} Inserted HTML, or null when navigation ownership was lost.
    */
-  async function setHTML(target, html, navigationId, replaceDocument = false) {
-    if (navigationId !== bySPA.NAVIGATION_ID) return null;
+  async function setHTML(target, html, navigationId, replaceDocument = false, isCurrent = () => navigationId === bySPA.NAVIGATION_ID) {
+    if (!isCurrent()) return null;
     let root;
     if (replaceDocument) {
       target.innerHTML = html;
@@ -74,7 +76,7 @@
 
     for (const item of scripts) {
       // Script failure -> continue. Stale navigation -> stop.
-      if (navigationId !== bySPA.NAVIGATION_ID || !item.placeholder.isConnected) return null;
+      if (!isCurrent() || !item.placeholder.isConnected) return null;
       const script = document.createElement("script");
       for (const attr of item.script.attributes) script.setAttribute(attr.name, attr.value);
       script.textContent = item.script.textContent;
@@ -87,7 +89,7 @@
           const finish = function (failed) {
             script.removeEventListener("load", loaded);
             script.removeEventListener("error", failedToLoad);
-            if (failed && hasSource && navigationId === bySPA.NAVIGATION_ID) console.error(`SPA fragment script failed to load: ${script.src || item.script.getAttribute("src")}`);
+            if (failed && hasSource && isCurrent()) console.error(`SPA fragment script failed to load: ${script.src || item.script.getAttribute("src")}`);
             resolve();
           };
           const loaded = function () {
@@ -104,7 +106,7 @@
       // Explicit async external scripts keep independent timing and do not delay the route.
       if (waitForScript && !(hasSource && item.script.hasAttribute("async"))) await settled;
     }
-    return navigationId === bySPA.NAVIGATION_ID ? html : null;
+    return isCurrent() ? html : null;
   }
 
   /**
@@ -422,6 +424,7 @@
    * @return {jQuery.Promise<string|null>|jQuery|undefined} Component request or immediate clear/validation result.
    */
   bySPA.reloadComponent = function (component, file, get, post, navigationId = bySPA.NAVIGATION_ID) {
+    if (navigationId !== bySPA.NAVIGATION_ID) return;
     if (!component.includes("#")) return console.warn(`Can't use Component: ID${bySPA.APP_ENV === "DEV" ? ` ${component}` : ""} isn't valid`);
     if (!validateQuerySelector(component)) return console.warn(`Can't use Component: ${bySPA.APP_ENV === "DEV" ? component : ""} isn't valid`);
     if (!componentIdExists(component)) {
@@ -431,8 +434,11 @@
     }
     // If there's a component, extract the ID
     const componentId = component.match(/#[a-zA-Z0-9-_]+/)[0];
-    // If no file is provided, clear the component's content
-    if (!file || file == "null") return $(componentId).html("");
+    const target = $(componentId)[0];
+    const request = (componentRequests.get(target) || 0) + 1;
+    componentRequests.set(target, request);
+    const isCurrent = () => navigationId === bySPA.NAVIGATION_ID && componentRequests.get(target) === request && target.isConnected;
+    if (!file || file == "null") return $(target).html("");
     return $.ajax({
       url: bySPA.buildRequestURL(file, { ...get, uri: false }),
       type: "POST",
@@ -441,14 +447,13 @@
       timeout: bySPA.REQUEST_TIMEOUT
     })
       .then(function (data) {
-        // Ignore a slow component after the user has moved to another route.
-        if (navigationId !== bySPA.NAVIGATION_ID) return null;
-        return setHTML($(componentId)[0], data, navigationId);
+        if (!isCurrent()) return null;
+        return setHTML(target, data, navigationId, false, isCurrent);
       })
       .catch(function (xhr, status, error) {
-        if (navigationId !== bySPA.NAVIGATION_ID) return null;
+        if (!isCurrent()) return null;
         console.warn(`Error (component): ${xhr?.status} ${status} ${error}`, bySPA.APP_ENV == "DEV" ? xhr : "");
-        $(componentId).html("");
+        $(target).html("");
         return null;
       });
   };
