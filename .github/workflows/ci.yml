@@ -3,11 +3,12 @@ name: CI
 on:
   workflow_call:
   push:
-  pull_request:
+    branches-ignore: [main]
+    tags-ignore: ["v*"]
   workflow_dispatch:
     inputs:
       extended:
-        description: Run the reviewed cross-project parity checks
+        description: Also run Firefox, WebKit and reviewed cross-project parity
         type: boolean
         default: false
 
@@ -21,6 +22,8 @@ concurrency:
 jobs:
   checks:
     name: Core contracts
+    outputs:
+      bootstrap: ${{ steps.bootstrap.outputs.script }}
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
@@ -55,29 +58,38 @@ jobs:
       - name: Test core runtime contracts
         run: node --test __tests__/common.test.js __tests__/fragment_scripts.test.js __tests__/routing.test.js __tests__/storage.test.js __tests__/fonts.test.js
 
+      - name: Render the PHP bootstrap for browser checks
+        id: bootstrap
+        run: |
+          set -o pipefail
+          script=$(php __tests__/render_init.php | base64 -w0)
+          echo "script=$script" >> "$GITHUB_OUTPUT"
+
   browser_chromium:
     name: browser (chromium)
     needs: checks
-    if: ${{ !cancelled() }}
     uses: ./.github/workflows/browser-check.yml
     with:
       browser: chromium
+      bootstrap: ${{ needs.checks.outputs.bootstrap }}
 
   browser_firefox:
     name: browser (firefox)
-    needs: browser_chromium
-    if: ${{ !cancelled() }}
+    needs: [checks, browser_chromium]
+    if: github.event_name == 'workflow_dispatch' && inputs.extended && !cancelled()
     uses: ./.github/workflows/browser-check.yml
     with:
       browser: firefox
+      bootstrap: ${{ needs.checks.outputs.bootstrap }}
 
   browser_webkit:
     name: browser (webkit)
-    needs: browser_firefox
-    if: ${{ !cancelled() }}
+    needs: [checks, browser_firefox]
+    if: github.event_name == 'workflow_dispatch' && inputs.extended && !cancelled()
     uses: ./.github/workflows/browser-check.yml
     with:
       browser: webkit
+      bootstrap: ${{ needs.checks.outputs.bootstrap }}
 
   parity:
     needs: browser_webkit

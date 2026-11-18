@@ -21,14 +21,12 @@ jobs:
   build:
     needs: source_checks
     runs-on: ubuntu-24.04
-    container:
-      image: mcr.microsoft.com/playwright:v1.63.0-noble
-      options: --ipc=host
     timeout-minutes: 10
     defaults:
       run:
         working-directory: spa.php
     env:
+      BROWSER_CHANNEL: chrome
       RELEASE_TAG: ${{ github.event_name == 'push' && github.ref_type == 'tag' && github.ref_name || 'v0.0.0-ci' }}
     steps:
       - uses: actions/checkout@v4

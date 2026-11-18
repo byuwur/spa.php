@@ -107,7 +107,10 @@ async function initializePage(page, preferences = {}) {
   await page.evaluate((preferences) => {
     for (const [key, value] of Object.entries(preferences)) localStorage.setItem(key, value);
   }, preferences);
-  const bootstrap = reference ? null : execFileSync(process.env.PHP_BINARY || "php", [path.join(__dirname, "render_init.php")], { encoding: "utf8" });
+  let bootstrap;
+  if (!reference) {
+    bootstrap = process.env.SPA_TEST_BOOTSTRAP ? Buffer.from(process.env.SPA_TEST_BOOTSTRAP, "base64").toString("utf8") : execFileSync(process.env.PHP_BINARY || "php", [path.join(__dirname, "render_init.php")], { encoding: "utf8" });
+  }
   const scripts = reference ? [source("_init.js")] : [...bootstrap.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((script) => script[1]);
   for (const content of scripts) await page.addScriptTag({ content });
   await page.addScriptTag({ path: path.join(__dirname, "../js/jquery.min.js") });

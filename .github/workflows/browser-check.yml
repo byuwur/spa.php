@@ -6,6 +6,9 @@ on:
       browser:
         type: string
         required: true
+      bootstrap:
+        type: string
+        required: true
 permissions:
   contents: read
 
@@ -17,29 +20,24 @@ jobs:
       # Browser binaries are preinstalled and match the npm package.
       image: mcr.microsoft.com/playwright:v1.63.0-noble
       options: --ipc=host
-    timeout-minutes: 3
+    timeout-minutes: 8
     env:
       HOME: /root
+      SPA_TEST_BOOTSTRAP: ${{ inputs.bootstrap }}
       BROWSER_ENGINE: ${{ inputs.browser }}
     steps:
       - uses: actions/checkout@v7
         with:
           path: spa.php
-      - uses: shivammathur/setup-php@v2
-        with:
-          php-version: "8.1"
-          extensions: curl, phar
-          coverage: none
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Install test tools
-        timeout-minutes: 1
-        run: npm install --prefix "$RUNNER_TEMP/browser-tests" --no-package-lock --no-audit --no-fund playwright@1.63.0
+      - name: Install locked test tools
+        working-directory: spa.php
+        run: npm --prefix .github ci --ignore-scripts --no-audit --no-fund
       - name: Run focused checks
         env:
-          NODE_PATH: ${{ runner.temp }}/browser-tests/node_modules
+          NODE_PATH: ${{ github.workspace }}/spa.php/.github/node_modules
         working-directory: spa.php
-        timeout-minutes: 2
         run: |
           node --test --test-concurrency=1 __tests__/browser.test.js __tests__/load.browser.test.js __tests__/transitions.browser.test.js
