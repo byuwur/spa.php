@@ -159,13 +159,15 @@ function createHarness(plans = {}) {
       };
       if (src !== null) {
         const plan = plans[src] || {};
-        setTimeout(() => {
+        const finish = () => {
           if (plan.fail) script.dispatch("error");
           else {
             order.push(plan.label || src);
             script.dispatch("load");
           }
-        }, plan.delay || 0);
+        };
+        if (plan.hold) plan.hold(finish);
+        else setTimeout(finish, plan.delay || 0);
       } else if (type === "module") {
         setTimeout(() => {
           runInline();
@@ -295,7 +297,15 @@ test("stale navigation stops remaining scripts and lifecycle work", async () => 
 });
 
 test("components, modules, attributes, async scripts, and repeat insertion keep their semantics", async () => {
-  const harness = createHarness({ "async.js": { delay: 20, label: "async" } });
+  let finishAsync;
+  const harness = createHarness({
+    "async.js": {
+      label: "async",
+      hold(finish) {
+        finishAsync = finish;
+      }
+    }
+  });
   const html = /* HTML */ `<script src="async.js" async integrity="sha256-test" data-owner="component"></script>
     <script>
       record("component");
@@ -307,7 +317,7 @@ test("components, modules, attributes, async scripts, and repeat insertion keep 
   assert.deepEqual(harness.order, ["component", "module"]);
   assert.equal(harness.createdScripts[0].getAttribute("integrity"), "sha256-test");
   assert.equal(harness.createdScripts[0].getAttribute("data-owner"), "component");
-  await new Promise((resolve) => setTimeout(resolve, 25));
+  finishAsync();
   assert.deepEqual(harness.order, ["component", "module", "async"]);
 
   await harness.bySPA.__setHTMLForTest(
