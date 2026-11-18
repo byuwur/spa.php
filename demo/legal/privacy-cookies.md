@@ -1,10 +1,10 @@
 # SPA.php · Privacy & Cookies
 
-**Working draft for owner review. No effective date has been set.** Before publication, the operator must confirm the public controller details, hosting and access-log practices, request handling and effective date.
+**Unpublished draft.** Before publication, confirm who hosts the site, who can access its server logs and how long those logs are kept. Record the effective date when the notice is first published.
 
 ## Who operates this site
 
-byUwUr is an individual creator based in Colombia. This notice covers spa.byuwur.co. Contact [mateus@byuwur.co](mailto:mateus@byuwur.co) for privacy matters.
+Andrés Trujillo Mateus operates this site as byUwUr, an individual creator in Colombia. This notice covers spa.byuwur.co. Contact [mateus@byuwur.co](mailto:mateus@byuwur.co) for privacy matters.
 
 ## Using SPA.php
 
@@ -40,4 +40,4 @@ Open **Privacy settings** and choose **Reject analytics** to withdraw. This stop
 
 ## Access, correction and complaints
 
-Email the project name, the information concerned and what you would like the operator to do. Avoid sending documents, tokens or other sensitive material unless needed to handle your request. Under Colombia's Law 1581 you can consult, update or correct your data, ask about its use, request proof of authorization and, where applicable, request deletion or revoke authorization. Articles 14 and 15 govern consultations and claims. After using that procedure, you may bring a complaint to the Superintendencia de Industria y Comercio. [Law 1581 of 2012, articles 8 and 14–16](https://normograma.dian.gov.co/dian/compilacion/docs/ley_1581_2012.htm).
+Email the project name, the information concerned and what you would like the operator to do. Avoid sending documents, tokens or other sensitive material unless needed to handle your request. Under Colombia's Law 1581 you can consult, update or correct your data, ask about its use, request proof of authorization and, where applicable, request deletion or revoke authorization. I respond as soon as possible. Under articles 14 and 15, the usual maximum is 10 working days for a request to see your data and 15 working days for a claim. If an extension is needed, I will explain why and give you a response date within the limits set by law. After using that procedure, you may bring a complaint to the Superintendencia de Industria y Comercio. [Law 1581 of 2012, articles 8 and 14–16](https://normograma.dian.gov.co/dian/compilacion/docs/ley_1581_2012.htm).

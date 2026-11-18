@@ -1,10 +1,10 @@
 # SPA.php · Privacidad y cookies
 
-**Borrador para revisión. Sin fecha de entrada en vigor.** Antes de publicar, faltan los datos de contacto formales del responsable, los proveedores de alojamiento, los plazos de conservación de registros, el procedimiento de atención y la fecha de vigencia.
+**Borrador sin publicar.** Antes de la publicación, falta confirmar quién aloja el sitio, quién puede consultar los registros de acceso del servidor y cuánto tiempo se conservan. La fecha de entrada en vigor se indicará al publicar el aviso por primera vez.
 
 ## Responsable y funcionamiento
 
-byUwUr es un creador individual en Colombia. Este aviso cubre spa.byuwur.co. Contacto de privacidad: [mateus@byuwur.co](mailto:mateus@byuwur.co).
+Andrés Trujillo Mateus, creador independiente en Colombia, opera este sitio como byUwUr. Este aviso cubre spa.byuwur.co. Contacto de privacidad: [mateus@byuwur.co](mailto:mateus@byuwur.co).
 
 La demostración solicita fragmentos y ejemplos al servidor. El kit de interfaz simula localmente la selección de archivos y el progreso de carga. Google Translate, reCAPTCHA, jsDelivr y los servidores de ejemplos de GitHub reciben solicitudes independientemente de la elección de analítica. El alojamiento recibe solicitudes y direcciones de red para entregar las páginas. El aviso usa MD.view a través de jsDelivr.
 
@@ -36,4 +36,4 @@ Abre **Privacidad** y selecciona **Rechazar analítica** para retirar tu autoriz
 
 ## Consultas y reclamos
 
-Escribe al correo indicado con el proyecto, los datos afectados y tu solicitud. Puedes conocer, actualizar y rectificar tus datos, pedir prueba de autorización e información sobre su uso y, cuando proceda, revocar la autorización o solicitar la supresión. Los artículos 14 y 15 regulan las consultas y reclamos. Una vez agotado el trámite, puedes acudir a la Superintendencia de Industria y Comercio. [Ley 1581 de 2012](https://normograma.dian.gov.co/dian/compilacion/docs/ley_1581_2012.htm).
+Escribe al correo indicado con el proyecto, los datos afectados y tu solicitud. Puedes conocer, actualizar y rectificar tus datos, pedir prueba de autorización e información sobre su uso y, cuando proceda, revocar la autorización o solicitar la supresión. Responderé lo antes posible. Según los artículos 14 y 15, el plazo ordinario máximo es de 10 días hábiles para consultas y de 15 días hábiles para reclamos. Si necesito una prórroga, te comunicaré el motivo y la fecha de respuesta dentro de los plazos legales. Una vez agotado el trámite, puedes acudir a la Superintendencia de Industria y Comercio. [Ley 1581 de 2012](https://normograma.dian.gov.co/dian/compilacion/docs/ley_1581_2012.htm).
