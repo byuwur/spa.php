@@ -22,7 +22,7 @@
   const $ = global.jQuery;
 
   // --- METADATA ---
-  bySPA.VERSION = "20.13"; // 2026-11-16
+  bySPA.VERSION = "20.14"; // 2026-11-18
 
   // --- STATE ---
   // Initializes values retrieved from localStorage and sets up environment variables.

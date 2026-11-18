@@ -96,9 +96,9 @@ Requires native `CompressionStream`/`DecompressionStream` support for `deflate-r
 `_load.js` provides native `byLoad(files, { host, before, defer })` without jQuery. CSS and classic JavaScript load in array order; await completion before app initialization. Default `defer: true` waits for DOM parsing; `defer: false` starts immediately, even in the head. Dynamic scripts do not delay `DOMContentLoaded`.
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/byuwur/spa.js@v20.13/_load.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/byuwur/spa.js@v20.14/_load.min.js"></script>
 <script>
-  const SPA_VERSION = "v20.13";
+  const SPA_VERSION = "v20.14";
   const HOST = `https://cdn.jsdelivr.net/gh/byuwur/spa.js@${SPA_VERSION}`;
   (async () => {
     await byLoad(
