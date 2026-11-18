@@ -207,13 +207,15 @@ Reviewed cross-project parity is the only optional suite; run `node --test __tes
 
 ## Releases
 
+[Regular ZIP](https://github.com/byuwur/spa.php/releases/latest/download/spa.php.zip) · [Minified ZIP](https://github.com/byuwur/spa.php/releases/latest/download/spa.php.minified.zip) · [Bundled ZIP](https://github.com/byuwur/spa.php/releases/latest/download/spa.php.bundled.zip) · [Complete ZIP [EXPERIMENTAL]](https://github.com/byuwur/spa.php/releases/latest/download/spa.php.complete.zip). Filenames stay the same across releases; `manifest.json` records the version and source commit.
+
 [Release workflow](.github/workflows/release.yml) builds a reviewable preview on pushes to `main`, pull requests, and manual runs. Only a pushed version tag publishes a GitHub release. Source/browser checks and the complete distribution build must succeed on both main and tag runs before publication. Failed builds remove their own temporary stage and retain the last completed output. Two-part tags such as `v1.8` and three-part tags such as `v1.8.1` are supported. Keep release tags consistent with the project's source version.
 
-| Edition | Contents |
-| --- | --- |
-| Regular ZIP | Authored framework and `demo/`. |
-| Minified ZIP | Minified authored JS/CSS and `demo/`. |
-| Bundled ZIP | Core JS/CSS bundles and `demo/`. |
+| Edition                     | Contents                                            |
+| --------------------------- | --------------------------------------------------- |
+| Regular ZIP                 | Authored framework and `demo/`.                     |
+| Minified ZIP                | Minified authored JS/CSS and `demo/`.               |
+| Bundled ZIP                 | Core JS/CSS bundles and `demo/`.                    |
 | Complete ZIP [EXPERIMENTAL] | One reusable framework file and a separate `demo/`. |
 
 `spa.bundle.js` and `spa.bundle.css` are reusable core bundles. Keep the ZIP's library/font/image folders and load jQuery plus any optional UI dependencies before the JS bundle. Application initialization and routes load before the bundle. The complete edition includes every shipped browser library in dependency order and embeds CSS, fonts, CSS images, and error-page support. It retains original license notices. Missing jQuery UI icon sheets were restored from the stylesheet's matching upstream 1.14.2 release.

@@ -72,10 +72,10 @@ export function releaseNotes(manifest) {
   if (config.kind !== "history") {
     lines.push("", "## Downloads", "", "| File | Contents |", "| --- | --- |");
     for (const asset of manifest.assets.filter((item) => item.file !== "RELEASE_NOTES.md")) {
-      lines.push(`| [${asset.file}](${repository}/releases/download/${encodeURIComponent(manifest.tag)}/${asset.file}) | ${asset.description.replaceAll("|", "&#124;")} |`);
+      lines.push(`| [${asset.file}](${repository}/releases/latest/download/${asset.file}) | ${asset.description.replaceAll("|", "&#124;")} |`);
     }
     for (const note of config.notes) lines.push("", note);
-    lines.push("", `[Manifest](${repository}/releases/download/${encodeURIComponent(manifest.tag)}/manifest.json) · [Checksums](${repository}/releases/download/${encodeURIComponent(manifest.tag)}/SHA256SUMS).`);
+    lines.push("", `[Manifest](${repository}/releases/latest/download/manifest.json) · [Checksums](${repository}/releases/latest/download/SHA256SUMS).`);
   }
 
   return `${lines.join("\n")}\n`;
