@@ -35,14 +35,20 @@ function api_respond(int $status, bool $error, string $message, array $data = []
   // Discard framework/application noise before headers and the one intended JSON body.
   while (ob_get_level() > 0)
     ob_end_clean();
-  http_response_code($status);
-  header("Content-Type: application/json; charset=UTF-8");
   $response = new stdClass();
   $response->status = $status;
   $response->error = $error;
   $response->message = $message;
   $response->data = $data;
-  echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+  $body = json_encode($response, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+  if ($body === false) {
+    error_log("api_respond(): " . json_last_error_msg());
+    $status = 500;
+    $body = '{"status":500,"error":true,"message":"Unable to encode response.","data":[]}';
+  }
+  http_response_code($status);
+  header("Content-Type: application/json; charset=UTF-8");
+  echo $body;
   exit;
 }
 
