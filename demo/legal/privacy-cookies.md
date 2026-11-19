@@ -10,6 +10,12 @@ Andrés Trujillo Mateus operates this site as byUwUr, an individual creator in C
 
 The SPA.php demo loads route fragments and examples from the server. The UI kit simulates file selection and upload progress locally. The demo requests resources from Google Translate, reCAPTCHA, jsDelivr and the GitHub sample hosts. Their servers receive the information needed for those requests independently of the analytics choice. The web host receives browser requests and network addresses to deliver the site. I can’t view visitor access logs in the hosting dashboard, and I don’t know how long the host keeps them. The privacy page loads MD.view through jsDelivr.
 
+## Basic usage counts
+
+`usage_count` is one page view or one predefined action on this project. Before you choose, your browser sends predefined labels for the action, page type and resource to byuwur.co without cookies, a browser ID or a referrer URL. Our server reports these labels and the project to Google Analytics under a service identifier. It includes the country code when supplied by the host, or “unknown” otherwise. The counter does not forward your IP address, region, city, coordinates, content or personal identifiers to Google. The host receives your network address to deliver the request and may keep technical logs.
+
+Repeated actions by the same person each count once. Accepting analytics keeps this count running and enables the browser measurement below. Rejecting stops both for as long as your choice is valid.
+
 ## Optional Google Analytics
 
 If you accept, Google Analytics 4 receives a predefined page location and title, a limited referral origin or recognized internal route, and fixed identifiers for the project, interface and resource. Selected links record a click. These measurements help the creator understand visits, useful actions and repeat use. An export click cannot establish that a file was saved or used.
@@ -34,7 +40,7 @@ The GA4 property keeps detailed event and user data for 14 months. Reset on new 
 
 ## Your choice across project sites
 
-Accept analytics or Reject analytics in the notice. Ignoring it keeps measurement off. The choice applies to the eligible public pages on byuwur.co, www.byuwur.co, stream.byuwur.co, controller.byuwur.co, code.byuwur.co, csv.byuwur.co, diff.byuwur.co, json.byuwur.co, log.byuwur.co, mdedit.byuwur.co, md.byuwur.co, xml.byuwur.co, yaml.byuwur.co, fgc.byuwur.co and spa.byuwur.co. The site works with either choice.
+Accept analytics or Reject analytics in the notice. Ignoring it leaves only basic usage counts active. The choice applies to the eligible public pages on byuwur.co, www.byuwur.co, stream.byuwur.co, controller.byuwur.co, code.byuwur.co, csv.byuwur.co, diff.byuwur.co, json.byuwur.co, log.byuwur.co, mdedit.byuwur.co, md.byuwur.co, xml.byuwur.co, yaml.byuwur.co, fgc.byuwur.co and spa.byuwur.co. The site works with either choice.
 
 Open **Privacy settings** and choose **Reject analytics** to withdraw. This stops this site's adapter and clears its GA cookies. Other open tabs check the shared choice on focus and before events. Background tabs can take longer to observe a change.
 

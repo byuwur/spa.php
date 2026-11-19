@@ -8,6 +8,12 @@ Andrés Trujillo Mateus, creador independiente en Colombia, opera este sitio com
 
 La demostración solicita fragmentos y ejemplos al servidor. El kit de interfaz simula localmente la selección de archivos y el progreso de carga. Google Translate, reCAPTCHA, jsDelivr y los servidores de ejemplos de GitHub reciben solicitudes independientemente de la elección de analítica. El alojamiento recibe solicitudes y direcciones de red para entregar las páginas. No puedo consultar los registros de acceso de los visitantes en el panel de alojamiento y desconozco su plazo de conservación. El aviso usa MD.view a través de jsDelivr.
 
+## Recuento básico de uso
+
+`usage_count` representa una vista de página o una acción predefinida en este proyecto. Antes de que elijas, el navegador envía a byuwur.co etiquetas predefinidas de la acción, el tipo de página y el recurso sin cookies, identificador del navegador ni URL de referencia. El servidor comunica estas etiquetas y el proyecto a Google Analytics con un identificador propio del servicio. Incluye el código de país si el alojamiento lo facilita; de lo contrario, indica que se desconoce. El contador no envía tu dirección IP, región, ciudad, coordenadas, contenido ni identificadores personales a Google. El alojamiento recibe tu dirección de red para entregar la solicitud y puede conservar registros técnicos.
+
+Cada acción cuenta una vez, aunque la misma persona la repita. Si aceptas la analítica, el recuento continúa y se activa la medición del navegador descrita abajo. Si la rechazas, ambas mediciones se detienen mientras tu elección esté vigente.
+
 ## Analítica opcional
 
 Con tu aceptación, Google Analytics 4 mide visitas y clics predefinidos para conocer el uso y el interés recurrente. Recibe direcciones de página y títulos predefinidos, una referencia limitada al origen o una ruta interna reconocida, identificadores del proyecto y del recurso, datos de conexión como la dirección IP e identificadores seudónimos del navegador y de la sesión. Puede ofrecer estadísticas por país. Se excluyen el texto introducido, los correos, nombres de archivos y URL generadas. La implementación mantiene desactivadas las funciones de publicidad personalizada, Google signals y recopilación de datos proporcionados por el usuario. Google puede tratar datos fuera de Colombia. [Información de Google para sitios asociados](https://policies.google.com/technologies/partner-sites?hl=es).
@@ -30,7 +36,7 @@ La propiedad conserva los datos detallados de eventos y usuarios durante 14 mese
 
 ## Elegir o retirar el consentimiento
 
-Puedes aceptar o rechazar la analítica. Si ignoras el aviso, permanece desactivada. La elección abarca las páginas públicas habilitadas en byuwur.co, www.byuwur.co, stream.byuwur.co, controller.byuwur.co, code.byuwur.co, csv.byuwur.co, diff.byuwur.co, json.byuwur.co, log.byuwur.co, mdedit.byuwur.co, md.byuwur.co, xml.byuwur.co, yaml.byuwur.co, fgc.byuwur.co, spa.byuwur.co. El sitio funciona con ambas opciones.
+Puedes aceptar o rechazar la analítica. Si ignoras el aviso, solo funciona el recuento básico. La elección abarca las páginas públicas habilitadas en byuwur.co, www.byuwur.co, stream.byuwur.co, controller.byuwur.co, code.byuwur.co, csv.byuwur.co, diff.byuwur.co, json.byuwur.co, log.byuwur.co, mdedit.byuwur.co, md.byuwur.co, xml.byuwur.co, yaml.byuwur.co, fgc.byuwur.co, spa.byuwur.co. El sitio funciona con ambas opciones.
 
 Abre **Privacidad** y selecciona **Rechazar analítica** para retirar tu autorización. Se detiene la medición y se eliminan las cookies de GA de esta implementación. Otras pestañas comprueban la elección al recuperar el foco y antes de medir una acción. Las pestañas en segundo plano pueden tardar en actualizarse.
 
