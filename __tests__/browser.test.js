@@ -16,6 +16,127 @@ after(async () => {
   await browser?.close();
 });
 
+// =============
+// BROWSER TESTS
+// =============
+test("privacy links and buttons reopen one panel without changing consent or the current route", async (t) => {
+  const page = await browser.newPage();
+  t.after(() => page.close());
+  const url = "https://privacy.test/page";
+  await page.route(url, (route) =>
+    route.fulfill({
+      contentType: "text/html",
+      body: '<a href="#cookie-controls">Cookies</a><button data-target="#privacy-controls">Preferences</button>'
+    })
+  );
+  await page.goto(url + "#privacy-controls");
+  await page.addScriptTag({ path: path.join(__dirname, "../_privacy.js") });
+  await page.evaluate(() => {
+    window.choices = [];
+    const controls = byCommon.initPrivacyControls({
+      onChoice(value) {
+        choices.push(value);
+        controls.update(true, value);
+      }
+    });
+    controls.update(true, "no");
+    byCommon.initPrivacyControls();
+  });
+  const panel = page.locator("#privacy-controls");
+  assert.equal(await panel.count(), 1);
+  assert.ok(await panel.isVisible());
+  await panel.getByRole("button", { name: "Close" }).click();
+  await page.evaluate(() => history.replaceState(null, "", "#existing-route"));
+  await page.getByRole("link", { name: "Cookies" }).click();
+  assert.ok(await panel.isVisible());
+  assert.equal(new URL(page.url()).hash, "#existing-route");
+  await page.keyboard.press("Escape");
+  assert.equal(await page.evaluate(() => document.activeElement.textContent), "Cookies");
+  await page.getByRole("button", { name: "Preferences" }).click();
+  await panel.getByRole("button", { name: "Accept", exact: true }).click();
+  assert.deepEqual(await page.evaluate(() => choices), ["yes"]);
+  assert.equal(await panel.isVisible(), false);
+  await page.evaluate(() => {
+    const slot = document.createElement("div");
+    slot.dataset.privacyInline = "on-load";
+    document.body.prepend(slot);
+    byCommon.initPrivacyControls().update(true, "yes");
+  });
+  assert.ok(await page.locator("[data-privacy-inline] #privacy-controls").isVisible());
+  assert.equal(await panel.evaluate((el) => getComputedStyle(el).position), "static");
+  await page.evaluate(() => byCommon.initPrivacyControls().update(false, "yes"));
+  assert.ok(await panel.isVisible());
+  assert.ok(await panel.locator("[data-close]").isVisible());
+  await panel.locator("[data-close]").click();
+  await page.evaluate(() => byCommon.initPrivacyControls().update(true, "yes"));
+  assert.equal(await panel.isVisible(), false);
+  await page.getByRole("button", { name: "Preferences" }).click();
+  assert.ok(await panel.isVisible());
+  await panel.getByRole("button", { name: "Reject", exact: true }).click();
+  assert.equal(await panel.isVisible(), false);
+  await page.evaluate(() => {
+    const slot = document.querySelector("[data-privacy-inline]");
+    slot.replaceWith(slot.cloneNode(false));
+    byCommon.initPrivacyControls().update(true, "no");
+  });
+  assert.ok(await panel.isVisible());
+  assert.equal(await panel.getByRole("status").textContent(), "You have rejected analytics.");
+  assert.deepEqual(await page.evaluate(() => choices), ["yes", "no"]);
+});
+
+test("closing the themed banner persists across hosts without recording consent", async (t) => {
+  const context = await browser.newContext();
+  t.after(() => context.close());
+  await context.route("https://*.example.test/**", (route) =>
+    route.fulfill({
+      contentType: "text/html",
+      body: '<html lang="en" data-bs-theme="light"><body><a href="#privacy-controls">Manage privacy</a></body></html>'
+    })
+  );
+  const page = await context.newPage();
+  async function mount(host) {
+    await page.goto("https://" + host + ".example.test/");
+    await page.addScriptTag({ path: path.join(__dirname, "../_privacy.js") });
+    await page.evaluate(() => {
+      window.choices = [];
+      const controls = byCommon.initPrivacyControls({
+        policyURL: "/privacy",
+        cookiesURL: "/cookies",
+        dismissalDomain: "example.test",
+        onChoice: (value) => choices.push(value)
+      });
+      controls.update();
+    });
+  }
+
+  await mount("viewer");
+  const panel = page.locator("#privacy-controls");
+  assert.equal(await panel.locator("strong").innerText(), "Your privacy");
+  assert.equal(await panel.locator("[data-status]").isVisible(), false);
+  assert.doesNotMatch(await panel.innerText(), /No choice saved|Preview only/);
+  assert.ok(await panel.locator("[data-links]").evaluate((el) => el.getBoundingClientRect().top >= el.previousElementSibling.getBoundingClientRect().bottom));
+  const background = () => panel.evaluate((el) => getComputedStyle(el).backgroundColor);
+  assert.equal(await background(), "rgb(255, 255, 255)");
+  await page.evaluate(() => {
+    document.documentElement.dataset.bsTheme = "dark";
+  });
+  assert.equal(await background(), "rgb(17, 17, 17)");
+  const colors = await panel.locator("[data-close], [data-choice]").evaluateAll((buttons) => buttons.map((button) => getComputedStyle(button).backgroundColor));
+  assert.equal(new Set(colors).size, 3);
+
+  await panel.locator("[data-close]").click();
+  assert.deepEqual(await page.evaluate(() => choices), []);
+  await mount("viewer");
+  assert.equal(await panel.isVisible(), false);
+  await mount("editor");
+  assert.equal(await panel.isVisible(), false);
+  await page.getByRole("link", { name: "Manage privacy" }).click();
+  assert.ok(await panel.isVisible());
+  assert.equal(await panel.count(), 1);
+  await panel.locator('[data-choice="no"]').click();
+  assert.deepEqual(await page.evaluate(() => choices), ["no"]);
+});
+
 test("local URL helpers work without jQuery or SPA initialization", { timeout: 30000 }, async (t) => {
   const page = await browser.newPage();
   page.setDefaultTimeout(5000);

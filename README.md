@@ -130,7 +130,11 @@ Error pages replace the document; Back reloads a clean runtime, even while error
 
 Navigation calls `byCommon.init()` for new content. Call it yourself on standalone pages. Use `byCommon.INIT_WARNINGS` or `{ showWarn: true }` for diagnostics. `initSelect2Keyboard()` enables keyboard selection; `initBootstrap({ tooltipsOnly: true, root, refreshTooltips: true })` refreshes scoped tooltips. Single-select arrows commit the highlighted item and keep the list open; multi-selects require confirmation. Modal cleanup disposes controls owned by the closing element.
 
+Load `_privacy.js` in the website shell. After the body is ready, call `const controls = byCommon.initPrivacyControls({ policyURL, cookiesURL, message, onChoice })`. The host applies `"yes"` or `"no"` in `onChoice` and calls `controls.update(true, savedChoice)` to reflect its stored preference. Call `controls.update(false)` on excluded routes. Omitting `onChoice` previews the UI in the current tab. Close dismisses the banner for 180 days without changing consent. Use `data-privacy-inline="on-load"` on a page fragment to show the banner once per visit even with a saved choice. Accept, Reject and Close dismiss it for that visit. The banner follows the host theme or system appearance. A fixed-theme host can pass an explicit `theme` of `light` or `dark`. By default dismissal is stored on the origin. Hosts can pass `dismissalDomain` to share dismissal through a secure first-party domain cookie. Open the banner with `byCommon.openPrivacyControls()`, `<a href="#privacy-controls">Privacy settings</a>`, or `<button type="button" data-target="#cookie-controls">Cookie settings</button>`. Both fragments also work in direct links.
+
 `byCommon.accessibilityText("plus" | "minus")` changes the root font in 0.25rem steps from 0.5rem to 3rem. Call it without arguments to reset to 1rem. Data, escaping, CSRF and WebSocket transport run natively. UI and form helpers use jQuery, and modals need Bootstrap.
+
+Place `<div data-privacy-inline></div>` on the privacy page to display the same controls in the page flow, including the current choice. Other pages show the compact cookie banner until the visitor chooses or dismisses it. Link to the privacy page or `#cookie-controls` from your site's navigation so visitors can change their choice later.
 
 ### Compressed URL data
 

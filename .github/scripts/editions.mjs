@@ -19,7 +19,7 @@ import { config, root } from "./release.mjs";
  */
 export async function buildEditions(files, staging) {
   const php = config.repository.endsWith("/spa.php");
-  const core = ["_load.js", "_functions.js", "_fonts.js", "_transitions.js", "_common.js", ...(!php ? ["_lang.js", "_router.js"] : []), "_spa.js"];
+  const core = ["_load.js", "_functions.js", "_fonts.js", "_transitions.js", "_common.js", "_privacy.js", ...(!php ? ["_lang.js", "_router.js"] : []), "_spa.js"];
   const libraries = [
     "jquery.min.js",
     "jquery-ui.min.js",

@@ -227,6 +227,7 @@
    * @returns {void}
    */
   function initCookieConsent({ showWarn = true } = {}) {
+    if (document.body?.hasAttribute("data-privacy-controls")) return;
     if (typeof cookieconsent === "undefined" && !window.cookieconsent) {
       if (showWarn) console.warn("Can't load CookieConsent if script ain't present.");
       return;

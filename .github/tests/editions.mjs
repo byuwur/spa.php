@@ -150,6 +150,7 @@ for (const variant of ["bundled", "complete"])
       assert.equal(await page.locator("#edition-content").textContent(), "Next");
       assert.equal(await page.evaluate(() => window.editionRuns), 2);
       assert.equal(await page.evaluate(() => typeof byLoad === "function" && typeof escape_html === "function" && bySPA.initialized && byCommon.initialized), true);
+      assert.equal(await page.evaluate(() => typeof byCommon.initPrivacyControls), "function");
       if (variant === "complete") {
         assert.equal(await page.evaluate(() => Boolean($.fn.select2 && $.fn.draggable && window.bootstrap && window.gsap && window.MorphSVGPlugin)), true);
         assert.equal(await page.locator('style[data-source$="complete styles"]').count(), 1);
