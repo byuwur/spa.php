@@ -6,18 +6,24 @@
  * Copyright (c) 2026 Andrés Trujillo [Mateus] byUwUr
  */
 
-// --- LANGUAGE ---
+// ==========
+// LANGUAGE
+// ==========
 // An explicit query wins over the saved cookie, then the browser language.
 $lang = $_GET["lang"] ?? $_COOKIE["lang"] ?? substr($_SERVER["HTTP_ACCEPT_LANGUAGE"] ?? "es", 0, 2);
 $APP_LANG = in_array($lang, ["es", "en", "ja"], true) ? $lang : "es";
 setcookie("lang", $APP_LANG, time() + 31536000, "/", "", false, false);
 
-// --- THEME ---
+// ==========
+// THEME
+// ==========
 $theme = $_GET["theme"] ?? $_COOKIE["theme"] ?? "dark";
 $APP_THEME = in_array($theme, ["dark", "light"], true) ? $theme : "dark";
 setcookie("theme", $APP_THEME, time() + 31536000, "/", "", false, false);
 
-// --- VARIABLES ---
+// ==========
+// VARIABLES
+// ==========
 $titles = [
   0 => "SPA.PHP | byUwUr"
 ];

@@ -6,7 +6,15 @@ const { chromium, firefox, webkit } = require("playwright");
 const engine = process.env.BROWSER_ENGINE || "chromium";
 assert.ok(["chromium", "firefox", "webkit"].includes(engine), "Unsupported BROWSER_ENGINE");
 const browserType = { chromium, firefox, webkit }[engine];
-const launchOptions = { timeout: 10000, ...(engine === "chromium" ? { channel: process.env.BROWSER_CHANNEL || process.env.PLAYWRIGHT_CHANNEL, executablePath: process.env.CHROMIUM_EXECUTABLE_PATH } : {}) };
+const launchOptions = {
+  timeout: 10000,
+  ...(engine === "chromium"
+    ? {
+        channel: process.env.BROWSER_CHANNEL || process.env.PLAYWRIGHT_CHANNEL,
+        executablePath: process.env.CHROMIUM_EXECUTABLE_PATH
+      }
+    : {})
+};
 const { source, reference } = require("./parity-source");
 let browser;
 before(async () => {
@@ -186,7 +194,17 @@ test("local HTML and CSRF utilities work without jQuery or SPA initialization", 
     const fallback = get_csrf_token();
     meta.remove();
     sessionStorage.removeItem("CSRF_TOKEN");
-    return { escaped, preferred, fallback, missing: get_csrf_token(), payload, explicit, readOnly, sameArray, standalone: typeof jQuery === "undefined" && typeof bySPA === "undefined" };
+    return {
+      escaped,
+      preferred,
+      fallback,
+      missing: get_csrf_token(),
+      payload,
+      explicit,
+      readOnly,
+      sameArray,
+      standalone: typeof jQuery === "undefined" && typeof bySPA === "undefined"
+    };
   });
   assert.deepEqual(result, {
     escaped: ['&lt;img src=x onerror="alert(1)"&gt;&amp;', "", "", "0", "false", "Caf\u00e9 \u{1f600}"],
@@ -230,7 +248,11 @@ async function initializePage(page, preferences = {}) {
   }, preferences);
   let bootstrap;
   if (!reference) {
-    bootstrap = process.env.SPA_TEST_BOOTSTRAP ? Buffer.from(process.env.SPA_TEST_BOOTSTRAP, "base64").toString("utf8") : execFileSync(process.env.PHP_BINARY || "php", [path.join(__dirname, "render_init.php")], { encoding: "utf8" });
+    bootstrap = process.env.SPA_TEST_BOOTSTRAP
+      ? Buffer.from(process.env.SPA_TEST_BOOTSTRAP, "base64").toString("utf8")
+      : execFileSync(process.env.PHP_BINARY || "php", [path.join(__dirname, "render_init.php")], {
+          encoding: "utf8"
+        });
   }
   const scripts = reference ? [source("_init.js")] : [...bootstrap.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((script) => script[1]);
   for (const content of scripts) await page.addScriptTag({ content });
@@ -295,7 +317,10 @@ test("shared: navigation has one terminal outcome, including stale work and erro
           events.length = 0;
           window.errorFails = errorFails;
           await bySPA.load(url);
-          return { events: window.events.map((event) => event.type), errors: requests.filter((request) => /_error\.(php|html)/.test(request.url)).length };
+          return {
+            events: window.events.map((event) => event.type),
+            errors: requests.filter((request) => /_error\.(php|html)/.test(request.url)).length
+          };
         },
         { url, errorFails }
       );
@@ -378,7 +403,14 @@ test("local lifecycle listeners hand navigation ownership to their recovery rout
         const pendingHTML = document.getElementById("spa-content")?.innerHTML;
         finishRecovery();
         await recovery;
-        return { events: events.map((event) => event.type), requests: requests.map((request) => request.url), pendingHTML, probes, html: document.getElementById("spa-content")?.innerHTML, url: bySPA.URL };
+        return {
+          events: events.map((event) => event.type),
+          requests: requests.map((request) => request.url),
+          pendingHTML,
+          probes,
+          html: document.getElementById("spa-content")?.innerHTML,
+          url: bySPA.URL
+        };
       }, stage);
       assert.equal(result.pendingHTML, "");
       assert.equal(result.probes, 0);
@@ -395,7 +427,15 @@ test("duplicate runtime scripts preserve active navigation and bind handlers onc
   const page = await application(t);
 
   await page.evaluate(() => {
-    window.savedRuntime = { load: bySPA.load, common: byCommon.init, memory: byStorage.memory, navigation: bySPA.NAVIGATION_ID, history: bySPA.HISTORY_INDEX, requests: requests.length, events: events.length };
+    window.savedRuntime = {
+      load: bySPA.load,
+      common: byCommon.init,
+      memory: byStorage.memory,
+      navigation: bySPA.NAVIGATION_ID,
+      history: bySPA.HISTORY_INDEX,
+      requests: requests.length,
+      events: events.length
+    };
   });
   for (const file of ["_common.js", "_spa.js"]) await page.addScriptTag({ content: source(file) });
   assert.equal(await page.evaluate(() => bySPA.initialized === true && byCommon.initialized === true), true);
@@ -424,7 +464,12 @@ test("duplicate runtime scripts preserve active navigation and bind handlers onc
 
 test("navigation waits for external and inline fragment scripts before announcing load", { timeout: 30000 }, async (t) => {
   const page = await application(t);
-  await page.route("**/release-dependency.js", (route) => route.fulfill({ contentType: "text/javascript", body: "window.releaseOrder.push('external'); window.releaseDependency = 42;" }));
+  await page.route("**/release-dependency.js", (route) =>
+    route.fulfill({
+      contentType: "text/javascript",
+      body: "window.releaseOrder.push('external'); window.releaseDependency = 42;"
+    })
+  );
   const result = await page.evaluate(async () => {
     window.releaseOrder = [];
     document.addEventListener("bySPA:load", () => releaseOrder.push("loaded"), { once: true });

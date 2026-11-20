@@ -4,6 +4,9 @@ const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
 
+// =============
+// TEST FIXTURES
+// =============
 function loadCommon(window = { byCommon: {} }) {
   const warnings = [];
   const errors = [];
@@ -47,6 +50,9 @@ function loadCommon(window = { byCommon: {} }) {
   return { byCommon: window.byCommon, warnings, errors, styles };
 }
 
+// ============
+// COMMON TESTS
+// ============
 test("jQuery modules stop before publishing APIs or reading application state when the dependency is missing", () => {
   const modules = { "_common.js": ["byCommon"], "_spa.js": ["bySPA"] };
   for (const [file, namespaces] of Object.entries(modules)) {

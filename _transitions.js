@@ -32,6 +32,9 @@
   // Keep the normal height separate from the animated height.
   const watched = new WeakMap();
 
+  // =================
+  // ANIMATION TARGETS
+  // =================
   /**
    * Check whether an element or its parent is excluded.
    * @private
@@ -68,6 +71,9 @@
     return Number.parseFloat(getComputedStyle(element).height) || 0;
   }
 
+  // ===============
+  // MOTION SETTINGS
+  // ===============
   /**
    * Read and validate transition options.
    * @private
@@ -90,6 +96,9 @@
     return { duration, easing };
   }
 
+  // ==================
+  // ELEMENT ANIMATIONS
+  // ==================
   /**
    * Animate a container and optionally its direct children.
    * @private
@@ -168,6 +177,9 @@
     return animation;
   }
 
+  // ==============
+  // TRANSITION API
+  // ==============
   /**
    * Run a synchronous update once per matched container, then ease its height and opacity.
    * Updates still run with motion disabled or excluded. This helper neither clones nodes nor awaits promises.
@@ -262,8 +274,17 @@
           })
         : null;
     for (const element of targets) {
-      watched.set(element, { height: height(element), nextOptions: null, effects: new Map(), request: () => request(element) });
-      observer.observe(element, { childList: true, characterData: true, subtree: options.children ?? false });
+      watched.set(element, {
+        height: height(element),
+        nextOptions: null,
+        effects: new Map(),
+        request: () => request(element)
+      });
+      observer.observe(element, {
+        childList: true,
+        characterData: true,
+        subtree: options.children ?? false
+      });
       resize?.observe(element);
     }
     return {

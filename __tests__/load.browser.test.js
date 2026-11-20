@@ -8,10 +8,21 @@ const { chromium, firefox, webkit } = require("playwright");
 const engine = process.env.BROWSER_ENGINE || "chromium";
 assert.ok(["chromium", "firefox", "webkit"].includes(engine), "Unsupported BROWSER_ENGINE");
 const browserType = { chromium, firefox, webkit }[engine];
-const launchOptions = { timeout: 10000, ...(engine === "chromium" ? { channel: process.env.BROWSER_CHANNEL || process.env.PLAYWRIGHT_CHANNEL, executablePath: process.env.CHROMIUM_EXECUTABLE_PATH } : {}) };
+const launchOptions = {
+  timeout: 10000,
+  ...(engine === "chromium"
+    ? {
+        channel: process.env.BROWSER_CHANNEL || process.env.PLAYWRIGHT_CHANNEL,
+        executablePath: process.env.CHROMIUM_EXECUTABLE_PATH
+      }
+    : {})
+};
 
 const loader = path.join(__dirname, "../_load.js");
 
+// ==========
+// LOAD TESTS
+// ==========
 test("loader waits for parsing, preserves script/CSS order and UTF-8, and shares duplicate requests", { timeout: 30000 }, async () => {
   const browser = await browserType.launch(launchOptions);
   try {
@@ -24,7 +35,10 @@ test("loader waits for parsing, preserves script/CSS order and UTF-8, and shares
       if (url.pathname === "/_load.js") return route.fulfill({ path: loader, contentType: "text/javascript" });
       if (url.pathname === "/lib/one.js") {
         await new Promise((resolve) => setTimeout(resolve, 30));
-        return route.fulfill({ contentType: "text/javascript", body: 'window.order = ["one"]; window.accent = "Hágale pues - 日本語 🎮"; window.parsed = !!document.getElementById("parsed");' });
+        return route.fulfill({
+          contentType: "text/javascript",
+          body: 'window.order = ["one"]; window.accent = "Hágale pues - 日本語 🎮"; window.parsed = !!document.getElementById("parsed");'
+        });
       }
       if (url.pathname === "/lib/two.js") return route.fulfill({ contentType: "text/javascript", body: 'window.order.push("two");' });
       if (url.pathname === "/lib/base.css") return route.fulfill({ contentType: "text/css", body: ".probe { color: #ff0000; }" });
@@ -63,11 +77,23 @@ test("loader rejects required failures, permits retry, and continues after optio
     await page.route("**/*", async (route) => {
       const url = new URL(route.request().url());
       requests.push(url.pathname);
-      if (url.pathname === "/retry.js") return route.fulfill({ status: ++attempts === 1 ? 404 : 200, contentType: "text/javascript", body: "window.retried = true;" });
+      if (url.pathname === "/retry.js")
+        return route.fulfill({
+          status: ++attempts === 1 ? 404 : 200,
+          contentType: "text/javascript",
+          body: "window.retried = true;"
+        });
       if (url.pathname === "/missing.css") return route.fulfill({ status: 404, body: "missing" });
-      if (url.pathname === "/after.js") return route.fulfill({ contentType: "text/javascript", body: "window.attribute = document.currentScript.dataset.test;" });
+      if (url.pathname === "/after.js")
+        return route.fulfill({
+          contentType: "text/javascript",
+          body: "window.attribute = document.currentScript.dataset.test;"
+        });
       if (url.pathname === "/_load.js") return route.fulfill({ path: loader, contentType: "text/javascript" });
-      return route.fulfill({ contentType: "text/html", body: '<!doctype html><meta charset="UTF-8"><script src="/_load.js"></script>' });
+      return route.fulfill({
+        contentType: "text/html",
+        body: '<!doctype html><meta charset="UTF-8"><script src="/_load.js"></script>'
+      });
     });
     await page.goto("https://load.test/");
     assert.match(await page.evaluate(() => byLoad(["/retry.js", "/after.js"]).catch((error) => error.message)), /retry\.js/);

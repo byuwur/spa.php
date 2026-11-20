@@ -5,6 +5,9 @@ const path = require("node:path");
 const vm = require("node:vm");
 const source = fs.readFileSync(path.join(__dirname, "..", "_fonts.js"), "utf8");
 
+// =============
+// TEST FIXTURES
+// =============
 function loadFonts(namespace = {}) {
   const links = [],
     timers = new Map(),
@@ -49,6 +52,9 @@ function loadFonts(namespace = {}) {
   };
 }
 
+// ===========
+// FONTS TESTS
+// ===========
 test("font namespace preserves host properties and works without jQuery or eager downloads", () => {
   const namespace = { hostFont: "Arial" };
   const { fonts, links } = loadFonts(namespace);

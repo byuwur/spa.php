@@ -19,14 +19,14 @@ Current helper vectors cover public globals, JSON/WebSocket behavior, compressed
 
 ## Recorded differences and follow-up
 
-- A. Shared files: `_fonts.js`, `_functions.js`, `_common.js`, and `_common.css` stay synchronized. Current vectors cover query parsing and core helper behavior; browser checks cover native HTML-text and CSRF utilities without jQuery.
+- A. Shared files: `_load.js`, `_transitions.js`, `_transitions.css`, `_fonts.js`, `_fonts.css`, `_functions.js`, `_privacy.js`, `_common.js`, and `_common.css` stay synchronized. Current vectors cover query parsing and core helper behavior; browser checks cover native HTML-text and CSRF utilities without jQuery.
 - B. Shared behavioral contracts with host-specific implementations: `_spa.js` and storage in `_init.php` / `_init.js`. Local browser checks cover current navigation ownership, script ordering, and lifecycle recovery; the immutable comparison baseline remains unchanged.
 - C. Host-specific: `_router.php` / `_router.js`, PHP/static transport, history, route modes, error handoff, and bootstrap configuration; no source-byte parity is required.
 - D. Copied-initializer responsibility: application-owned `_init.php` / `_init.js` copies must be reviewed separately when the framework or parity baseline changes.
 - PHP uses POST fragments, path history and PHP error candidates. Static SPA uses GET fragments, hash/path modes and an optional `ERROR_PATH` before HTML fallback candidates. Bounded fallback and success-only load events are shared requirements, not equal request URLs or source text.
 - Static SPA accepts `#/` routing, explicit `_self` targets, and configured route paths outside its mount. PHP preserves native handling for hashes/any target and routes ordinary same-origin paths, including root-relative virtual routes. Both preserve external URLs, sibling-document fragments, and modified/download/named-target clicks.
 - PHP can reject an initial route server-side before a browser lifecycle starts. Static bootstrap has its own route-error handoff. Both runtimes stop stale navigation after synchronous lifecycle listeners and require a clean reload when leaving full-document error pages, including while their scripts are loading.
-- stream.fgc F16 remains a separate consumer follow-up: review its actual pinned framework revision, reconcile its copied `_init.js` storage/bootstrap behavior, preserve application configuration, and run its integration tests before recording an upgrade. No consumer repository was modified here.
+- stream.FGC F16 remains a separate consumer follow-up: review its actual pinned framework revision, reconcile its copied `_init.js` storage/bootstrap behavior, preserve application configuration, and run its integration tests before recording an upgrade. No consumer repository was modified here.
 
 Passing these selected vectors does not establish full runtime equivalence or automatically reconcile application copies.
 

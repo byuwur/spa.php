@@ -26,7 +26,9 @@ require_once "{$TO_HOME}/../_router.php";
 // Include auth management
 //require_once "{$TO_HOME}/_auth.php";
 
-// --- PHP ---
+// ==================
+// DEMO CONFIGURATION
+// ==================
 require_once "{$TO_HOME}/common.example.php";
 //enable_progressive_rendering();
 ?>

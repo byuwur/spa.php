@@ -6,7 +6,13 @@
  * Copyright (c) 2026 Andrés Trujillo [Mateus] byUwUr
  */
 
-// --- functions ---
+// ==========
+// FUNCTIONS
+// ==========
+
+// ================
+// FILESYSTEM PATHS
+// ================
 
 /**
  * Replaces "\\" directory separators to "/"
@@ -30,6 +36,10 @@ function is_trusted_proxy(): bool
   $trusted = array_filter(array_map("trim", explode(",", $_ENV["TRUSTED_PROXIES"] ?? "")));
   return in_array($_SERVER["REMOTE_ADDR"] ?? "", $trusted, true);
 }
+
+// =====================
+// PUBLIC URL AND SCHEME
+// =====================
 
 /**
  * Returns the externally visible request scheme.

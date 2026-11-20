@@ -129,9 +129,7 @@
           </div>
           <div class="row py-3 border-bottom">
             <dt class="col-sm-3 small fw-normal text-body-secondary">Body</dt>
-            <dd class="col-sm-9 mb-0">
-              Good interfaces give content room to breathe. Use <strong>weight</strong>, <em>emphasis</em>, and <mark>highlights</mark> with purpose.
-            </dd>
+            <dd class="col-sm-9 mb-0">Good interfaces give content room to breathe. Use <strong>weight</strong>, <em>emphasis</em>, and <mark>highlights</mark> with purpose.</dd>
           </div>
           <div class="row py-3 border-bottom">
             <dt class="col-sm-3 small fw-normal text-body-secondary">Small / muted</dt>
@@ -228,10 +226,9 @@
             <h3 class="h6 mb-4">The essentials</h3>
             <label for="kit-name" class="form-label">Name</label><input id="kit-name" class="form-control mb-3" placeholder="Alex Morgan" autocomplete="off" />
             <label for="kit-email" class="form-label">Email address</label>
-            <div class="input-group mb-3">
-              <span class="input-group-text">@</span><input id="kit-email" type="email" class="form-control" placeholder="alex@example.com" autocomplete="off" />
-            </div>
-            <label for="kit-select" class="form-label">Choose a category</label><select id="kit-select" class="form-select mb-3">
+            <div class="input-group mb-3"><span class="input-group-text">@</span><input id="kit-email" type="email" class="form-control" placeholder="alex@example.com" autocomplete="off" /></div>
+            <label for="kit-select" class="form-label">Choose a category</label
+            ><select id="kit-select" class="form-select mb-3">
               <option>Design</option>
               <option>Development</option>
               <option>Photography</option>
@@ -246,8 +243,8 @@
             <div id="kit-valid-help" class="valid-feedback mb-3">Looks good!</div>
             <label for="kit-invalid" class="form-label">Invalid input</label><input id="kit-invalid" class="form-control is-invalid" value="not-an-email" aria-invalid="true" aria-describedby="kit-invalid-help" />
             <div id="kit-invalid-help" class="invalid-feedback mb-3">Please enter a valid email address.</div>
-            <label for="kit-disabled" class="form-label">Disabled</label><input id="kit-disabled" class="form-control mb-3" value="Not available" disabled="" />
-            <label for="kit-readonly" class="form-label">Read only</label><input id="kit-readonly" class="form-control" value="You can read and select this text" readonly="" />
+            <label for="kit-disabled" class="form-label">Disabled</label><input id="kit-disabled" class="form-control mb-3" value="Not available" disabled="" /> <label for="kit-readonly" class="form-label">Read only</label
+            ><input id="kit-readonly" class="form-control" value="You can read and select this text" readonly="" />
           </div>
         </div>
         <div class="col-lg-6">
@@ -255,46 +252,26 @@
             <h3 class="h6 mb-4">Checks, radios &amp; switches</h3>
             <div class="row g-3">
               <div class="col-sm-6">
-                <div class="form-check">
-                  <input id="kit-check" type="checkbox" class="form-check-input" checked="" /><label for="kit-check" class="form-check-label">Selected</label>
-                </div>
-                <div class="form-check">
-                  <input id="kit-check-off" type="checkbox" class="form-check-input" /><label for="kit-check-off" class="form-check-label">Unselected</label>
-                </div>
-                <div class="form-check">
-                  <input id="kit-check-disabled" type="checkbox" class="form-check-input" disabled="" /><label for="kit-check-disabled" class="form-check-label">Disabled</label>
-                </div>
+                <div class="form-check"><input id="kit-check" type="checkbox" class="form-check-input" checked="" /><label for="kit-check" class="form-check-label">Selected</label></div>
+                <div class="form-check"><input id="kit-check-off" type="checkbox" class="form-check-input" /><label for="kit-check-off" class="form-check-label">Unselected</label></div>
+                <div class="form-check"><input id="kit-check-disabled" type="checkbox" class="form-check-input" disabled="" /><label for="kit-check-disabled" class="form-check-label">Disabled</label></div>
               </div>
               <div class="col-sm-6">
-                <div class="form-check">
-                  <input id="kit-radio-one" name="kit-radio" type="radio" class="form-check-input" checked="" /><label
-                    for="kit-radio-one"
-                    class="form-check-label">First option</label>
-                </div>
-                <div class="form-check">
-                  <input id="kit-radio-two" name="kit-radio" type="radio" class="form-check-input" /><label for="kit-radio-two" class="form-check-label">Second option</label>
-                </div>
+                <div class="form-check"><input id="kit-radio-one" name="kit-radio" type="radio" class="form-check-input" checked="" /><label for="kit-radio-one" class="form-check-label">First option</label></div>
+                <div class="form-check"><input id="kit-radio-two" name="kit-radio" type="radio" class="form-check-input" /><label for="kit-radio-two" class="form-check-label">Second option</label></div>
               </div>
             </div>
             <hr />
             <div class="row g-3">
               <div class="col-sm-6">
                 <div class="small text-body-secondary mb-2">Standard</div>
-                <div class="form-check form-switch">
-                  <input id="kit-switch" type="checkbox" role="switch" class="form-check-input" checked="" /><label for="kit-switch" class="form-check-label">Notifications</label>
-                </div>
-                <div class="form-check form-switch">
-                  <input id="kit-switch-off" type="checkbox" role="switch" class="form-check-input" /><label for="kit-switch-off" class="form-check-label">Weekly digest</label>
-                </div>
+                <div class="form-check form-switch"><input id="kit-switch" type="checkbox" role="switch" class="form-check-input" checked="" /><label for="kit-switch" class="form-check-label">Notifications</label></div>
+                <div class="form-check form-switch"><input id="kit-switch-off" type="checkbox" role="switch" class="form-check-input" /><label for="kit-switch-off" class="form-check-label">Weekly digest</label></div>
               </div>
               <div class="col-sm-6">
                 <div class="small text-body-secondary mb-2">Thick</div>
-                <div class="form-check form-switch form-switch-lg">
-                  <input id="kit-switch-lg" type="checkbox" role="switch" class="form-check-input" checked="" /><label for="kit-switch-lg" class="form-check-label">Notifications</label>
-                </div>
-                <div class="form-check form-switch form-switch-lg">
-                  <input id="kit-switch-lg-off" type="checkbox" role="switch" class="form-check-input" /><label for="kit-switch-lg-off" class="form-check-label">Weekly digest</label>
-                </div>
+                <div class="form-check form-switch form-switch-lg"><input id="kit-switch-lg" type="checkbox" role="switch" class="form-check-input" checked="" /><label for="kit-switch-lg" class="form-check-label">Notifications</label></div>
+                <div class="form-check form-switch form-switch-lg"><input id="kit-switch-lg-off" type="checkbox" role="switch" class="form-check-input" /><label for="kit-switch-lg-off" class="form-check-label">Weekly digest</label></div>
               </div>
             </div>
           </div>
@@ -304,8 +281,8 @@
             <h3 class="h6 mb-4">Range, date &amp; file</h3>
             <label for="kit-range" class="form-label">Volume</label><input id="kit-range" type="range" class="form-range mb-0" min="0" max="100" value="40" />
             <div class="d-flex justify-content-between small text-body-secondary mb-3" aria-hidden="true"><span>0</span><span>100</span></div>
-            <label for="kit-date" class="form-label">Date</label><input id="kit-date" type="date" class="form-control mb-3" value="2026-09-30" />
-            <label for="kit-file" class="form-label">Choose a file</label><input id="kit-file" type="file" class="form-control" aria-describedby="kit-file-help" />
+            <label for="kit-date" class="form-label">Date</label><input id="kit-date" type="date" class="form-control mb-3" value="2026-09-30" /> <label for="kit-file" class="form-label">Choose a file</label
+            ><input id="kit-file" type="file" class="form-control" aria-describedby="kit-file-help" />
             <div id="kit-file-help" class="form-text">Local selection only. No file is uploaded.</div>
           </div>
         </div>
@@ -381,25 +358,13 @@
       <div class="p-4 bg-body border rounded mb-3">
         <h3 class="h6 mb-4">Tabs</h3>
         <div class="nav nav-tabs" role="tablist" aria-label="Sample tabs">
-          <button id="kit-tab-preview" type="button" class="nav-link active" data-bs-toggle="tab" data-bs-target="#kit-preview" role="tab" aria-controls="kit-preview" aria-selected="true">
-            Preview</button><button
-            id="kit-tab-details"
-            type="button"
-            class="nav-link"
-            data-bs-toggle="tab"
-            data-bs-target="#kit-details"
-            role="tab"
-            aria-controls="kit-details"
-            aria-selected="false">
-            Details</button><button type="button" class="nav-link" role="tab" aria-selected="false" disabled="">Disabled</button>
+          <button id="kit-tab-preview" type="button" class="nav-link active" data-bs-toggle="tab" data-bs-target="#kit-preview" role="tab" aria-controls="kit-preview" aria-selected="true">Preview</button
+          ><button id="kit-tab-details" type="button" class="nav-link" data-bs-toggle="tab" data-bs-target="#kit-details" role="tab" aria-controls="kit-details" aria-selected="false">Details</button
+          ><button type="button" class="nav-link" role="tab" aria-selected="false" disabled="">Disabled</button>
         </div>
         <div class="tab-content pt-4">
-          <div id="kit-preview" class="tab-pane fade show active" role="tabpanel" aria-labelledby="kit-tab-preview" tabindex="0">
-            A place for the main view. Switch tabs to see another content state.
-          </div>
-          <div id="kit-details" class="tab-pane fade" role="tabpanel" aria-labelledby="kit-tab-details" tabindex="0">
-            The details view uses the same space, with a different perspective.
-          </div>
+          <div id="kit-preview" class="tab-pane fade show active" role="tabpanel" aria-labelledby="kit-tab-preview" tabindex="0">A place for the main view. Switch tabs to see another content state.</div>
+          <div id="kit-details" class="tab-pane fade" role="tabpanel" aria-labelledby="kit-tab-details" tabindex="0">The details view uses the same space, with a different perspective.</div>
         </div>
       </div>
       <div class="row g-3">
@@ -428,12 +393,8 @@
           <div class="p-4 bg-body border rounded mb-3">
             <h3 class="h6 mb-4">List group</h3>
             <ul class="list-group">
-              <li class="list-group-item active d-flex justify-content-between align-items-center">
-                Inbox <span class="badge text-bg-light rounded-pill">12</span>
-              </li>
-              <li class="list-group-item d-flex justify-content-between align-items-center">
-                Drafts <span class="badge text-bg-secondary rounded-pill">3</span>
-              </li>
+              <li class="list-group-item active d-flex justify-content-between align-items-center">Inbox <span class="badge text-bg-light rounded-pill">12</span></li>
+              <li class="list-group-item d-flex justify-content-between align-items-center">Drafts <span class="badge text-bg-secondary rounded-pill">3</span></li>
               <li class="list-group-item disabled">Archive unavailable</li>
             </ul>
           </div>
@@ -497,15 +458,10 @@
       <div class="p-4 bg-body border rounded mb-3">
         <h3 class="h6 mb-4">Modal, tooltips &amp; popovers</h3>
         <div class="d-flex flex-wrap align-items-center gap-3">
-          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kit-modal">Open sample modal</button><button type="button" class="btn btn-outline-secondary" data-bs-toggle="tooltip" data-bs-placement="top"
-            title="A little extra context.">
-            Tooltip above</button><button
-            type="button"
-            class="btn btn-outline-secondary"
-            data-bs-toggle="tooltip"
-            data-bs-placement="bottom"
-            title="Details, right where you need them.">
-            Tooltip below</button><button
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#kit-modal">Open sample modal</button
+          ><button type="button" class="btn btn-outline-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="A little extra context.">Tooltip above</button
+          ><button type="button" class="btn btn-outline-secondary" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Details, right where you need them.">Tooltip below</button
+          ><button
             type="button"
             class="btn btn-outline-secondary"
             data-bs-toggle="popover"
@@ -522,9 +478,7 @@
         <div id="kit-accordion" class="accordion">
           <div class="accordion-item">
             <h4 class="accordion-header">
-              <button type="button" class="accordion-button" data-bs-toggle="collapse" data-bs-target="#kit-answer-one" aria-expanded="true" aria-controls="kit-answer-one">
-                What is in this collection?
-              </button>
+              <button type="button" class="accordion-button" data-bs-toggle="collapse" data-bs-target="#kit-answer-one" aria-expanded="true" aria-controls="kit-answer-one">What is in this collection?</button>
             </h4>
             <div id="kit-answer-one" class="accordion-collapse collapse show" data-bs-parent="#kit-accordion">
               <div class="accordion-body">The visual building blocks used across our SPAs, collected on a single page.</div>
@@ -532,9 +486,7 @@
           </div>
           <div class="accordion-item">
             <h4 class="accordion-header">
-              <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#kit-answer-two" aria-expanded="false" aria-controls="kit-answer-two">
-                Can I try the components?
-              </button>
+              <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#kit-answer-two" aria-expanded="false" aria-controls="kit-answer-two">Can I try the components?</button>
             </h4>
             <div id="kit-answer-two" class="accordion-collapse collapse" data-bs-parent="#kit-accordion">
               <div class="accordion-body">Yes. Open a menu, change a tab, or adjust a control. The examples do not submit data or save changes.</div>
@@ -662,9 +614,7 @@
       <div class="modal-body">
         <p class="mb-0">A simple dialog for a message that deserves its own space. This is a visual example; both buttons just close it.</p>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button><button type="button" class="btn btn-primary" data-bs-dismiss="modal">Got it</button>
-      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button><button type="button" class="btn btn-primary" data-bs-dismiss="modal">Got it</button></div>
     </div>
   </div>
 </div>
@@ -693,22 +643,31 @@
     const range = document.getElementById("kit-range");
     if (range) {
       const tooltip = new bootstrap.Tooltip(range, {
-        title: () => range.value, trigger: "hover focus", placement: "top", animation: false, container: range.parentElement,
-        popperConfig: config => ({
+        title: () => range.value,
+        trigger: "hover focus",
+        placement: "top",
+        animation: false,
+        container: range.parentElement,
+        popperConfig: (config) => ({
           ...config,
-          modifiers: [...config.modifiers, {
-            name: "rangeThumb", enabled: true, phase: "beforeRead",
-            fn: ({ state }) => {
-              const min = Number(range.min || 0);
-              const max = Number(range.max || 100);
-              let fraction = max > min ? (Number(range.value) - min) / (max - min) : 0;
-              if (getComputedStyle(range).direction === "rtl") fraction = 1 - fraction;
-              // Bootstrap's range thumb is 1rem; its center stops half a thumb from each edge.
-              const thumb = parseFloat(getComputedStyle(document.documentElement).fontSize);
-              state.rects.reference.x += thumb / 2 + fraction * (state.rects.reference.width - thumb);
-              state.rects.reference.width = 0;
+          modifiers: [
+            ...config.modifiers,
+            {
+              name: "rangeThumb",
+              enabled: true,
+              phase: "beforeRead",
+              fn: ({ state }) => {
+                const min = Number(range.min || 0);
+                const max = Number(range.max || 100);
+                let fraction = max > min ? (Number(range.value) - min) / (max - min) : 0;
+                if (getComputedStyle(range).direction === "rtl") fraction = 1 - fraction;
+                // Bootstrap's range thumb is 1rem; its center stops half a thumb from each edge.
+                const thumb = parseFloat(getComputedStyle(document.documentElement).fontSize);
+                state.rects.reference.x += thumb / 2 + fraction * (state.rects.reference.width - thumb);
+                state.rects.reference.width = 0;
+              }
             }
-          }]
+          ]
         })
       });
       const update = () => {
@@ -718,21 +677,31 @@
         tooltip.update();
       };
       range.addEventListener("input", update);
-      disposers.push(() => { range.removeEventListener("input", update); tooltip.dispose(); });
+      disposers.push(() => {
+        range.removeEventListener("input", update);
+        tooltip.dispose();
+      });
     }
 
     const libraries = document.getElementById("libraries-demo");
     if (!libraries) return;
 
     const picker = Pickr.create({
-      el: "#demo-color", useAsButton: true, position: "bottom-start", theme: "classic", default: "#660000", defaultRepresentation: "HEX",
+      el: "#demo-color",
+      useAsButton: true,
+      position: "bottom-start",
+      theme: "classic",
+      default: "#660000",
+      defaultRepresentation: "HEX",
       components: { preview: true, opacity: true, hue: true, interaction: { input: true, save: true } }
     });
     const pickerSurface = picker.getRoot().app;
     pickerSurface.setAttribute("data-demo-surface", "");
-    byCommon.toggleTheme(pickerSurface, { theme: document.getElementById("ui-kit").getAttribute("data-bs-theme") });
-    picker.on("init", instance => instance.setColor(instance.options.default));
-    picker.on("change", color => {
+    byCommon.toggleTheme(pickerSurface, {
+      theme: document.getElementById("ui-kit").getAttribute("data-bs-theme")
+    });
+    picker.on("init", (instance) => instance.setColor(instance.options.default));
+    picker.on("change", (color) => {
       const value = color.toHEXA().toString();
       document.getElementById("demo-color-value").textContent = value;
       document.getElementById("demo-color-dot").setAttribute("fill", value);
@@ -740,14 +709,21 @@
     picker.on("save", () => picker.hide());
     disposers.push(() => picker.destroyAndRemove());
 
-    const select = $("#demo-select").select2({ width: "100%", placeholder: "Choose your tools", dropdownParent: $("#libraries-demo") });
+    const select = $("#demo-select").select2({
+      width: "100%",
+      placeholder: "Choose your tools",
+      dropdownParent: $("#libraries-demo")
+    });
     disposers.push(() => select.select2("destroy"));
 
     const previewTimers = new Map();
     const dropzone = new Dropzone("#demo-dropzone", {
       url: `${bySPA.HOME_PATH}/preview-only`,
-      autoProcessQueue: false, autoQueue: false, addRemoveLinks: true,
-      maxFiles: 4, maxFilesize: 5,
+      autoProcessQueue: false,
+      autoQueue: false,
+      addRemoveLinks: true,
+      maxFiles: 4,
+      maxFilesize: 5,
       dictDefaultMessage: "Drop files here or click to preview",
       accept(file, done) {
         done();
@@ -759,7 +735,7 @@
             this.emit("processing", file);
           }
           progress += 10;
-          this.emit("uploadprogress", file, progress, file.size * progress / 100);
+          this.emit("uploadprogress", file, progress, (file.size * progress) / 100);
           if (progress === 100) {
             clearInterval(timer);
             previewTimers.delete(file);
@@ -771,18 +747,19 @@
         previewTimers.set(file, timer);
       }
     });
-    dropzone.on("removedfile", file => {
+    dropzone.on("removedfile", (file) => {
       clearInterval(previewTimers.get(file));
       previewTimers.delete(file);
     });
     disposers.push(() => {
-      previewTimers.forEach(timer => clearInterval(timer));
+      previewTimers.forEach((timer) => clearInterval(timer));
       previewTimers.clear();
       dropzone.destroy();
     });
 
     const swiper = new Swiper("#demo-swiper", {
-      slidesPerView: 1, spaceBetween: 16,
+      slidesPerView: 1,
+      spaceBetween: 16,
       navigation: { nextEl: "#demo-slide-next", prevEl: "#demo-slide-prev" },
       pagination: { el: "#demo-pagination", clickable: true },
       a11y: { enabled: true }

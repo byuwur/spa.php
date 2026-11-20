@@ -6,7 +6,9 @@
  * Copyright (c) 2026 Andrés Trujillo [Mateus] byUwUr
  */
 
-// --- API functions ---
+// =============
+// API FUNCTIONS
+// =============
 
 /**
  * Safely encodes PHP values for inline JavaScript.
@@ -51,6 +53,10 @@ function api_respond(int $status, bool $error, string $message, array $data = []
   echo $body;
   exit;
 }
+
+// =============
+// HTTP REQUESTS
+// =============
 
 /** 
  * Makes an HTTP POST request to a given URL with optional GET and POST parameters.
@@ -160,6 +166,10 @@ function remote_file_exists(string $url, bool $clog_error = false): bool
   return $http_code >= 200 && $http_code <= 299;
 }
 
+// ===================
+// RUNTIME ENVIRONMENT
+// ===================
+
 /**
  * Checks if a given TCP port is currently in use on localhost.
  * @param int $port The port number to check (e.g. 8080 or 6969).
@@ -219,6 +229,10 @@ function php_where(): string
   // Fallback
   return 'php';
 }
+
+// ================
+// INPUT VALIDATION
+// ================
 
 /** 
  * Validates a value against a specified type and sanitizes it accordingly, returning NULL if the value is invalid.
@@ -358,6 +372,10 @@ function common_keys(array $array): array
     $common = array_intersect($common, array_keys($item));
   return array_values($common);
 }
+
+// ================
+// DATABASE QUERIES
+// ================
 
 /**
  * Builds a SQL query string based on the specified method, columns, table, fields, conditions, and other parameters.
@@ -961,7 +979,9 @@ function execute_sql_query($mysqli, string|stdClass $query, string|array $param_
   return $return;
 }
 
-// --- COMMON & MISC functions ---
+// =======================
+// COMMON & MISC FUNCTIONS
+// =======================
 
 /**
  * Normalizes a string by removing non-alphanumeric characters, double spaces and converting to lowercase.
@@ -1090,6 +1110,10 @@ function suppress_errors(): void
   error_reporting(0);
   ini_set("display_errors", 0);
 }
+
+// ===========
+// HTML OUTPUT
+// ===========
 
 /** 
  * Escapes HTML characters in a string to prevent XSS attacks.

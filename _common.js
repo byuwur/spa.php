@@ -14,14 +14,18 @@
  * @returns {unknown}
  */
 (function (global) {
-  // --- INITIALIZATION ---
+  // ==============
+  // INITIALIZATION
+  // ==============
   global.byCommon = global.byCommon || {};
   const byCommon = global.byCommon;
   if (byCommon?.initialized) return;
   if (typeof jQuery === "undefined" && !global.jQuery) return console.error("Init _common.js FAILED. No jQuery found.");
   const $ = global.jQuery;
 
-  // --- DEFAULTS ---
+  // ==========
+  // DEFAULTS
+  // ==========
   // Common selectors
   byCommon.SIDEBAR_ID = "#bywr-sidebar";
   byCommon.SIDEBAR_TOGGLE_ID = "#bywr-sidebar-toggle";
@@ -86,7 +90,9 @@
     dark: { weight: 5, saturation: 25, lightness: 25 }
   };
 
-  // --- HELPERS ---
+  // ==========
+  // HELPERS
+  // ==========
   /**
    * Initializes the <Sidebar /> component in #spa-nav.
    * @param {Object} [options={}] Options that configure this operation.
@@ -287,7 +293,9 @@
     }
   }
 
-  // --- CONTROLS ---
+  // ==========
+  // CONTROLS
+  // ==========
   /**
    * Show or hide the accessibility controls.
    * @returns {jQuery} Accessibility controls with the hide class toggled.
@@ -305,12 +313,12 @@
       case "plus":
       case "mas":
       case "+":
-        byCommon.fontSize = Math.max(0.5, Math.min(3, byCommon.fontSize + 0.25));
+        byCommon.fontSize = Math.max(0.5, Math.min(3, byCommon.fontSize + 0.125));
         break;
       case "minus":
       case "menos":
       case "-":
-        byCommon.fontSize = Math.max(0.5, Math.min(3, byCommon.fontSize - 0.25));
+        byCommon.fontSize = Math.max(0.5, Math.min(3, byCommon.fontSize - 0.125));
         break;
       default:
         byCommon.fontSize = 1;
@@ -412,10 +420,12 @@
     return next;
   };
 
-  // --- PUBLIC API ---
   // ==========
-  // ==== SELECT2 KEYBOARD ====
+  // PUBLIC API
   // ==========
+  // ================
+  // SELECT2 KEYBOARD
+  // ================
 
   const select2KeyboardWidgets = new WeakSet();
 
@@ -450,9 +460,9 @@
       });
   };
 
-  // ==========
-  // ==== BOOTSTRAP LIFECYCLE ====
-  // ==========
+  // ===================
+  // BOOTSTRAP LIFECYCLE
+  // ===================
 
   /**
    * Initializes Bootstrap components, or only tooltips within a DOM subtree.
@@ -717,6 +727,8 @@
     });
   };
 
-  // --- STARTUP ---
+  // ==========
+  // STARTUP
+  // ==========
   byCommon.initialized = true;
 })(typeof window !== "undefined" ? window : this);

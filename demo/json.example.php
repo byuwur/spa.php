@@ -7,7 +7,9 @@ require_once "{$TO_HOME}/../_common.php";
 //require_once "{$TO_HOME}/_routes.php";
 //require_once "{$TO_HOME}/../_router.php";
 //require_once "{$TO_HOME}/../_auth.php";
-// --- PHP ---
+// ==================
+// DEMO CONFIGURATION
+// ==================
 require_once "{$TO_HOME}/common.example.php";
 //enable_progressive_rendering();
 ?>

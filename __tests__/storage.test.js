@@ -5,9 +5,18 @@ const vm = require("node:vm");
 const path = require("node:path");
 const { source, reference } = require("./parity-source");
 
+// =============
+// TEST FIXTURES
+// =============
 function initialize(storage, app = "app", copy = "root") {
   const html = reference ? null : execFileSync(process.env.PHP_BINARY || "php", [path.join(__dirname, "render_init.php"), copy, `https://example.test/${app}`], { encoding: "utf8" });
-  const context = { localStorage: storage, location: new URL(`https://example.test/${app}/`), document: { baseURI: `https://example.test/${app}/` }, URL, console };
+  const context = {
+    localStorage: storage,
+    location: new URL(`https://example.test/${app}/`),
+    document: { baseURI: `https://example.test/${app}/` },
+    URL,
+    console
+  };
   context.window = context;
   vm.createContext(context);
   const scripts = reference ? [source("_init.js")] : [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((script) => script[1]);
@@ -80,6 +89,9 @@ for (const copy of reference ? ["static"] : ["root", "demo"]) {
   });
 }
 
+// =============
+// STORAGE TESTS
+// =============
 test("duplicate emitted storage setup preserves memory fallback and its namespace", { skip: !!reference }, () => {
   for (const copy of ["root", "demo"]) {
     const html = execFileSync(process.env.PHP_BINARY || "php", [path.join(__dirname, "render_init.php"), copy, "https://example.test/app"], { encoding: "utf8" });

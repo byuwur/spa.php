@@ -8,11 +8,24 @@ const { source } = require("./parity-source");
 
 // Isolate standalone helpers; overrides supply only the dependencies a contract needs.
 function loadHelpers(overrides = {}) {
-  const context = { Blob, Response, Uint8Array, TextDecoder, CompressionStream, DecompressionStream, atob, btoa, ...overrides };
+  const context = {
+    Blob,
+    Response,
+    Uint8Array,
+    TextDecoder,
+    CompressionStream,
+    DecompressionStream,
+    atob,
+    btoa,
+    ...overrides
+  };
   vm.runInNewContext(fs.readFileSync(path.join(__dirname, "..", "_functions.js"), "utf8"), context);
   return context;
 }
 
+// ============
+// PARITY TESTS
+// ============
 test("standalone helpers preserve existing public globals", () => {
   const context = {};
   vm.runInNewContext(fs.readFileSync(path.join(__dirname, "..", "_functions.js"), "utf8"), context);
@@ -99,7 +112,12 @@ test("WebSocket controllers avoid duplicate connections and cancel queued reconn
       timers.delete(timer);
     }
   });
-  const controller = init_websocket({ host: "localhost", port: 1234, path: "socket", elementId: "#socket" });
+  const controller = init_websocket({
+    host: "localhost",
+    port: 1234,
+    path: "socket",
+    elementId: "#socket"
+  });
   controller.connect();
   assert.equal(sockets.length, 1, "a connecting transport is reused");
   sockets[0].readyState = WebSocket.OPEN;
@@ -170,7 +188,11 @@ function queryContract(code) {
     ["", "#/known?q=a%3Fb", "a?b"],
     ["?q=document", "#/known?q=hash", "document"]
   ]) {
-    const context = { window: { location: new URL(`https://example.test/app/${search}${hash}`) }, URL, URLSearchParams };
+    const context = {
+      window: { location: new URL(`https://example.test/app/${search}${hash}`) },
+      URL,
+      URLSearchParams
+    };
     vm.createContext(context);
     vm.runInContext(code, context);
     assert.equal(context.get_url_param("q"), expected);

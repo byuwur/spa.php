@@ -6,7 +6,15 @@ const { chromium, firefox, webkit } = require("playwright");
 const engine = process.env.BROWSER_ENGINE || "chromium";
 assert.ok(["chromium", "firefox", "webkit"].includes(engine), "Unsupported BROWSER_ENGINE");
 const browserType = { chromium, firefox, webkit }[engine];
-const launchOptions = { timeout: 10000, ...(engine === "chromium" ? { channel: process.env.BROWSER_CHANNEL || process.env.PLAYWRIGHT_CHANNEL, executablePath: process.env.CHROMIUM_EXECUTABLE_PATH } : {}) };
+const launchOptions = {
+  timeout: 10000,
+  ...(engine === "chromium"
+    ? {
+        channel: process.env.BROWSER_CHANNEL || process.env.PLAYWRIGHT_CHANNEL,
+        executablePath: process.env.CHROMIUM_EXECUTABLE_PATH
+      }
+    : {})
+};
 
 const root = path.join(__dirname, "..");
 let browser;
@@ -17,6 +25,9 @@ test.after(async () => {
   await browser?.close();
 });
 
+// =============
+// TEST FIXTURES
+// =============
 /**
  * Open a page with local SPA transition assets and close it after the test.
  * @param {import("node:test").TestContext} t Test owning the page.
@@ -30,9 +41,16 @@ async function pageFor(t, common = false) {
   await page.route("https://motion.test/**", async (route) => {
     const file = new URL(route.request().url()).pathname.slice(1);
     if (["_transitions.css", "_transitions.js", "_common.css", "_fonts.css"].includes(file)) {
-      return route.fulfill({ path: path.join(root, file), contentType: file.endsWith("css") ? "text/css" : "text/javascript" });
+      return route.fulfill({
+        path: path.join(root, file),
+        contentType: file.endsWith("css") ? "text/css" : "text/javascript"
+      });
     }
-    if (file.startsWith("css/webfonts/")) return route.fulfill({ path: path.join(root, file), contentType: "application/octet-stream" });
+    if (file.startsWith("css/webfonts/"))
+      return route.fulfill({
+        path: path.join(root, file),
+        contentType: "application/octet-stream"
+      });
     return route.fulfill({
       contentType: "text/html; charset=UTF-8",
       body: '<!doctype html><html><head><meta charset="UTF-8"><style>#panel { width: 16rem; line-height: 20px; overflow: auto; } #panel p { margin: 0; } #plain { height: 20px; }</style></head><body><div id="panel"><p>First line</p><button id="keep">Keep this node</button></div><div id="plain">Plain</div><div class="byCODEdocument"><span id="embedded">Code</span></div></body></html>'
@@ -44,6 +62,9 @@ async function pageFor(t, common = false) {
   return page;
 }
 
+// =================
+// TRANSITIONS TESTS
+// =================
 test("explicit content changes preserve nodes, use host timing, and restore overflow", { timeout: 30000 }, async (t) => {
   const page = await pageFor(t);
   const result = await page.evaluate(async () => {
@@ -70,7 +91,16 @@ test("explicit content changes preserve nodes, use host timing, and restore over
       overflow: document.getElementById("panel").style.overflow
     };
   });
-  assert.deepEqual(result, { count: 1, duration: 80, easing: "ease", clipped: true, grows: true, sameNode: true, clicks: 1, overflow: "" });
+  assert.deepEqual(result, {
+    count: 1,
+    duration: 80,
+    easing: "ease",
+    clipped: true,
+    grows: true,
+    sameNode: true,
+    clicks: 1,
+    overflow: ""
+  });
 });
 
 test("watchers coalesce changes, share explicit updates, and disconnect without touching replacements", { timeout: 30000 }, async (t) => {
