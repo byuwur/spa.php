@@ -33,6 +33,7 @@ require_once "{$TO_HOME}/common.example.php";
 
 <head>
   <meta charset="UTF-8" />
+  <meta name="referrer" content="origin" />
   <title><?= escape_html($LANG["title.default"]) ?></title>
   <meta property="og:title" content="<?= escape_html($LANG["title.default"]) ?>" />
   <meta property="og:type" content="website" />
@@ -90,14 +91,11 @@ require_once "{$TO_HOME}/common.example.php";
   <script src="<?= "{$HOME_PATH}/../js/dropzone.min.js" ?>" defer></script>
   <script src="<?= "{$HOME_PATH}/../js/typed.min.js" ?>" defer></script>
   <script src="<?= "{$HOME_PATH}/../js/particles-ui.min.js" ?>" defer></script>
-  <script src="<?= "{$HOME_PATH}/../js/cookies.min.js" ?>" defer></script>
   <script src="<?= "{$HOME_PATH}/../_functions.js" ?>" defer></script>
   <script src="<?= "{$HOME_PATH}/../_fonts.js" ?>" defer></script>
   <script src="<?= "{$HOME_PATH}/../_common.js" ?>" defer></script>
   <script src="<?= "{$HOME_PATH}/../_transitions.js" ?>" defer></script>
   <script src="<?= "{$HOME_PATH}/../_spa.js" ?>" defer></script>
-  <script src="https://www.google.com/recaptcha/api.js" defer></script>
-  <script src="https://translate.google.com/translate_a/element.js?cb=byCommon.initTranslate" defer></script>
   <!-- Add your overrides below -->
 </head>
 
@@ -212,7 +210,6 @@ require_once "{$TO_HOME}/common.example.php";
     <source src="<?= "{$HOME_PATH}/img/bg.mp4" ?>" type="video/mp4" />
   </video>
   <div id="particles"></div>
-  <div id="g-translate"></div>
   <nav id="spa-nav"></nav>
   <main id="spa-content"></main>
   <footer id="spa-foot"></footer>

@@ -29,7 +29,6 @@ $ROUTE_ERROR = "error";
 $ROUTE_LOGIN = "login";
 $ROUTE_LOGOUT = "logout";
 $ROUTE_DEMO = "demo";
-$ROUTE_COOKIES = "cookies";
 
 // Default components to include on each route
 $COMPONENTS_EMPTY = ["COMPONENT" => ["nav#spa-nav" => "", "footer#spa-foot" => ""]];
