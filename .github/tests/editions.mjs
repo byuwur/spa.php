@@ -140,7 +140,7 @@ for (const variant of ["bundled", "complete"])
       }
       browser = await chromium.launch({
         channel: process.env.BROWSER_CHANNEL || process.env.PLAYWRIGHT_CHANNEL,
-        timeout: 10000
+        timeout: 30000
       });
       const page = await browser.newPage();
       page.setDefaultTimeout(10000);

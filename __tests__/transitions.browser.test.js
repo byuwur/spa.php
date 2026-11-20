@@ -7,7 +7,7 @@ const engine = process.env.BROWSER_ENGINE || "chromium";
 assert.ok(["chromium", "firefox", "webkit"].includes(engine), "Unsupported BROWSER_ENGINE");
 const browserType = { chromium, firefox, webkit }[engine];
 const launchOptions = {
-  timeout: 10000,
+  timeout: 30000,
   ...(engine === "chromium"
     ? {
         channel: process.env.BROWSER_CHANNEL || process.env.PLAYWRIGHT_CHANNEL,

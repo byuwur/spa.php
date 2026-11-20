@@ -9,7 +9,7 @@ const engine = process.env.BROWSER_ENGINE || "chromium";
 assert.ok(["chromium", "firefox", "webkit"].includes(engine), "Unsupported BROWSER_ENGINE");
 const browserType = { chromium, firefox, webkit }[engine];
 const launchOptions = {
-  timeout: 10000,
+  timeout: 30000,
   ...(engine === "chromium"
     ? {
         channel: process.env.BROWSER_CHANNEL || process.env.PLAYWRIGHT_CHANNEL,
@@ -19,12 +19,18 @@ const launchOptions = {
 };
 
 const loader = path.join(__dirname, "../_load.js");
+let browser;
+test.before(async () => {
+  browser = await browserType.launch(launchOptions);
+});
+test.after(async () => {
+  await browser?.close();
+});
 
 // ===== LOAD TESTS =====
 test("loader waits for parsing, preserves script/CSS order and UTF-8, and shares duplicate requests", { timeout: 30000 }, async () => {
-  const browser = await browserType.launch(launchOptions);
+  const page = await browser.newPage();
   try {
-    const page = await browser.newPage();
     page.setDefaultTimeout(5000);
     const requests = [];
     await page.route("**/*", async (route) => {
@@ -61,14 +67,13 @@ test("loader waits for parsing, preserves script/CSS order and UTF-8, and shares
     await page.evaluate(() => byLoad(["https://load.test/lib/two.js"]));
     assert.deepEqual(await page.evaluate(() => order), ["one", "two"], "Repeated loader imports retain the request registry");
   } finally {
-    await browser.close();
+    await page.close();
   }
 });
 
 test("loader rejects required failures, permits retry, and continues after optional failures", { timeout: 30000 }, async () => {
-  const browser = await browserType.launch(launchOptions);
+  const page = await browser.newPage();
   try {
-    const page = await browser.newPage();
     page.setDefaultTimeout(5000);
     let attempts = 0;
     const requests = [];
@@ -115,27 +120,28 @@ test("loader rejects required failures, permits retry, and continues after optio
     assert.match(await page.evaluate(() => byLoad(["/unknown.json"]).catch((error) => error.message)), /Unsupported dependency/);
     assert.match(await page.evaluate(() => byLoad([{ path: "/module.js", attributes: { type: "module" } }]).catch((error) => error.message)), /classic scripts/);
   } finally {
-    await browser.close();
+    await page.close();
   }
 });
 
-test("loader supports downloaded files and calls made after DOMContentLoaded", { timeout: 30000 }, async () => {
+test("loader supports downloaded files and calls made after DOMContentLoaded", { timeout: 30000 }, async (t) => {
   const directory = await fs.mkdtemp(path.join(os.tmpdir(), "spa-load-"));
-  const browser = await browserType.launch(launchOptions);
+  t.after(async () => {
+    assert.equal(path.dirname(directory), os.tmpdir());
+    await fs.rm(directory, { recursive: true, force: true });
+  });
+  const page = await browser.newPage();
   try {
     await fs.copyFile(loader, path.join(directory, "_load.js"));
     await fs.writeFile(path.join(directory, "one.js"), 'window.localText = "Hágale pues";');
     await fs.writeFile(path.join(directory, "base.css"), "body { --loaded: yes; }");
     await fs.writeFile(path.join(directory, "index.html"), '<!doctype html><meta charset="UTF-8"><script src="./_load.js" defer></script><body>Local</body>');
-    const page = await browser.newPage();
     page.setDefaultTimeout(5000);
     await page.goto(pathToFileURL(path.join(directory, "index.html")).href);
     await page.evaluate(() => byLoad(["./base.css", "./one.js"]));
     assert.equal(await page.evaluate(() => localText), "Hágale pues");
     assert.equal(await page.locator("body").evaluate((node) => getComputedStyle(node).getPropertyValue("--loaded").trim()), "yes");
   } finally {
-    await browser.close();
-    assert.equal(path.dirname(directory), os.tmpdir());
-    await fs.rm(directory, { recursive: true, force: true });
+    await page.close();
   }
 });

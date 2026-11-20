@@ -80,7 +80,7 @@ for (const archive of manifest.packages.filter((archive) => ["regular", "minifie
       delete environment.NODE_TEST_CONTEXT;
       // Internal-function fixtures rewrite readable source. Browser tests exercise actual minified navigation/scripts.
       const suites = config.tests.filter((name) => archive.variant === "regular" || !config.sourceTests.includes(name));
-      const output = execFileSync(process.execPath, ["--test", "--test-reporter=tap", ...suites.map((name) => path.join(extracted, "__tests__", name))], {
+      const output = execFileSync(process.execPath, ["--test", "--test-concurrency=1", "--test-reporter=tap", ...suites.map((name) => path.join(extracted, "__tests__", name))], {
         cwd: extracted,
         env: environment,
         timeout: 90000,

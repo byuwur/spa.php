@@ -6,7 +6,7 @@
   },
   "scripts": {
     "release:build": "node scripts/build.mjs",
-    "release:test": "node --test tests/release.mjs tests/editions.mjs tests/publish-release.mjs tests/cleanup.mjs"
+    "release:test": "node --test --test-concurrency=1 tests/release.mjs tests/editions.mjs tests/publish-release.mjs tests/cleanup.mjs"
   },
   "devDependencies": {
     "esbuild": "0.28.2",
