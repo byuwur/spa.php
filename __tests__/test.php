@@ -1,8 +1,9 @@
 <?php
 require_once "../_init.php";
 require_once "{$TO_HOME}/_functions.php";
-echo date("Y") . PHP_EOL;
-echo "<script>console.log(Math.floor(Date.now()/1000));</script>" . time() . PHP_EOL;
+?>
+<?= date("Y") . PHP_EOL ?><script>console.log(Math.floor(Date.now()/1000));</script><?= time() . PHP_EOL ?>
+<?php
 $test = validate_value("0");
 echo $test != "0" ? "true" : "false" . PHP_EOL;
 $ARRAY = ["id" => "override"];

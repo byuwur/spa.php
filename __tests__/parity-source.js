@@ -7,7 +7,7 @@ const reference = process.env.SPA_JS_TREE;
 
 function source(file) {
   if (!reference) return fs.readFileSync(path.join(__dirname, "..", file), "utf8");
-  const tree = path.resolve(reference).replace(/\\/g, "/");
+  const tree = path.resolve(reference).replaceAll("\\", "/");
   // Read the reviewed objects, never the checkout's moving HEAD or working files.
   return execFileSync("git", ["-c", `safe.directory=${tree}`, "-C", tree, "show", `${SPA_JS_REVISION}:${file}`], { encoding: "utf8" });
 }

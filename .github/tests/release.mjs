@@ -68,7 +68,7 @@ for (const archive of manifest.packages.filter((archive) => ["regular", "minifie
         const source = path.join(root, "..", companion);
         const target = path.join(temporary, companion);
         await fs.mkdir(target, { recursive: true });
-        for (const file of await fs.readdir(source)) if (/\.(js|css)$/.test(file)) await fs.copyFile(path.join(source, file), path.join(target, file));
+        for (const file of await fs.readdir(source)) if (file.endsWith(".js") || file.endsWith(".css")) await fs.copyFile(path.join(source, file), path.join(target, file));
       }
       const environment = {
         ...process.env,

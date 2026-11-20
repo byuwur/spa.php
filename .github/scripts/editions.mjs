@@ -169,7 +169,7 @@ export async function buildEditions(files, staging) {
       const normalized = php ? url.replace(/^<\?=\s*"\{\$HOME_PATH\}\/\.\.\//, "../").replace(/"\s*\?>$/, "") : url;
       if (core.some((name) => normalized.endsWith(`/${name}`))) return "";
       if (complete && libraries.some((name) => normalized.endsWith(`/${name}`))) return "";
-      if (!php && /\.\/_init\.js$|\.\/_routes\.js$/.test(url)) {
+      if (!php && (url.endsWith("./_init.js") || url.endsWith("./_routes.js"))) {
         moved.push(tag);
         return "";
       }

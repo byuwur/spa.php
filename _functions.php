@@ -21,7 +21,9 @@ function route_metadata_values(array $metadata): array
     "twitter:image" => $metadata["image"] ?? null,
   ];
   return array_filter(array_replace($values, $metadata), static function ($value, $key) {
-    return is_string($value) && preg_match('/^(?:title|canonical|description|robots|(?:og|twitter):[a-z0-9_:-]+)$/D', $key);
+    $pageField = in_array($key, ["title", "canonical", "description", "robots"], true);
+    $socialField = preg_match('/^(og|twitter):[a-z0-9_:-]+$/D', $key);
+    return is_string($value) && ($pageField || $socialField);
   }, ARRAY_FILTER_USE_BOTH);
 }
 
@@ -1077,7 +1079,11 @@ function change_location(string $location, int $status = 307): void
  */
 function console_log(string $message): void
 {
-  echo "<script>console.log(" . js_encode($message) . ");</script>";
+?>
+  <script>
+    console.log(<?= js_encode($message) ?>);
+  </script>
+<?php
 }
 
 /** 
@@ -1087,7 +1093,11 @@ function console_log(string $message): void
  */
 function console_warn(string $message): void
 {
-  echo "<script>console.warn(" . js_encode($message) . ");</script>";
+?>
+  <script>
+    console.warn(<?= js_encode($message) ?>);
+  </script>
+<?php
 }
 
 /** 
@@ -1097,7 +1107,11 @@ function console_warn(string $message): void
  */
 function console_error(string $message): void
 {
-  echo "<script>console.error(" . js_encode($message) . ");</script>";
+?>
+  <script>
+    console.error(<?= js_encode($message) ?>);
+  </script>
+<?php
 }
 
 /** 
@@ -1228,41 +1242,41 @@ function random_string($length): string
  */
 function show_modal_back($state = "success", $title = "INFO.", $message = "Message.", $hideCancelBtn = false, $redirect = "javascript:destroy_modal_back();"): void
 {
-  $cancel_script = $hideCancelBtn ? '$("#modal_back_back").addClass("d-none");' : '$("#modal_back_back").removeClass("d-none");';
-  echo /* HTML */ <<<HTML
-    <div id="modal_back" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel">
-      <div id="modal_back_container" class="modal-dialog modal-dialog-scrollable">
-        <div class="modal-content">
-          <div id="modal_back_title" class="modal-header m-0 fs-5 alert alert-{$state}">{$title}</div>
-          <div id="modal_back_body" class="modal-body text-dark">{$message}</div>
-          <div class="modal-footer">
-            <a id="modal_back_back" class="btn btn-dark" href="javascript:destroy_modal_back();" onclick="javascript:destroy_modal_back();">CANCEL</a>
-            <a id="modal_back_ok" class="btn btn-success" href="{$redirect}">OK</a>
-          </div>
+?>
+  <div id="modal_back" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel">
+    <div id="modal_back_container" class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+        <div id="modal_back_title" class="modal-header m-0 fs-5 alert alert-<?= $state ?>"><?= $title ?></div>
+        <div id="modal_back_body" class="modal-body text-dark"><?= $message ?></div>
+        <div class="modal-footer">
+          <a id="modal_back_back" class="btn btn-dark" href="javascript:destroy_modal_back();" onclick="javascript:destroy_modal_back();">CANCEL</a>
+          <a id="modal_back_ok" class="btn btn-success" href="<?= $redirect ?>">OK</a>
         </div>
       </div>
     </div>
-    <script>
-      "use strict";
-      function destroy_modal_back() {
-        // Capture this node so delayed cleanup cannot remove a replacement with the same ID.
-        const modal = \$("#modal_back");
-        modal.modal("hide");
-        setTimeout(() => {
-          if (!modal[0] || !modal[0].isConnected) return;
-          if (window.byFont && typeof window.byFont.destroy === "function") window.byFont.destroy(modal[0]);
-          modal.remove();
-        }, 999);
-      }
-      \$(() => {
-        {$cancel_script}
-        window.innerWidth < 992
-          ? \$("#modal_back_container").addClass("modal-dialog-centered")
-          : \$("#modal_back_container").removeClass("modal-dialog-centered");
-        \$("#modal_back").modal("show");
-      });
-    </script>
-  HTML;
+  </div>
+  <script>
+    "use strict";
+
+    function destroy_modal_back() {
+      // Capture this node so delayed cleanup cannot remove a replacement with the same ID.
+      const modal = $("#modal_back");
+      modal.modal("hide");
+      setTimeout(() => {
+        if (!modal[0] || !modal[0].isConnected) return;
+        if (window.byFont && typeof window.byFont.destroy === "function") window.byFont.destroy(modal[0]);
+        modal.remove();
+      }, 999);
+    }
+    $(() => {
+      $("#modal_back_back").toggleClass("d-none", <?= js_encode((bool) $hideCancelBtn) ?>);
+      window.innerWidth < 992 ?
+        $("#modal_back_container").addClass("modal-dialog-centered") :
+        $("#modal_back_container").removeClass("modal-dialog-centered");
+      $("#modal_back").modal("show");
+    });
+  </script>
+<?php
 }
 
 /**

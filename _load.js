@@ -50,8 +50,8 @@
       const { path, attributes = {}, optional = false } = typeof entry === "string" ? { path: entry } : entry || {};
       if (typeof path !== "string" || !path.trim()) throw new TypeError("Each dependency needs a non-empty path.");
       const url = new URL(host && path.startsWith("/") ? `${host.replace(/\/$/, "")}${path}` : path, document.baseURI);
-      const stylesheet = /\.css$/i.test(url.pathname) || /^data:text\/css[;,]/i.test(url.href);
-      const javascript = /\.js$/i.test(url.pathname) || /^data:(?:text|application)\/javascript[;,]/i.test(url.href);
+      const stylesheet = url.pathname.toLowerCase().endsWith(".css") || /^data:text\/css[;,]/i.test(url.href);
+      const javascript = url.pathname.toLowerCase().endsWith(".js") || /^data:(?:text|application)\/javascript[;,]/i.test(url.href);
       if (!stylesheet && !javascript) throw new TypeError(`Unsupported dependency: ${url.href}`);
       if (attributes.type && attributes.type !== "text/javascript" && attributes.type !== "text/css") throw new TypeError("byLoad supports classic scripts and stylesheets.");
       if (!requests.has(url.href)) {

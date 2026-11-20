@@ -37,7 +37,9 @@ function apply_route_metadata(metadata) {
     ...metadata
   };
   for (const [key, value] of Object.entries(values)) {
-    if (typeof value !== "string" || !/^(?:title|canonical|description|robots|(?:og|twitter):[a-z0-9_:-]+)$/.test(key)) continue;
+    const pageField = ["title", "canonical", "description", "robots"].includes(key);
+    const socialField = /^(og|twitter):[a-z0-9_:-]+$/.test(key);
+    if (typeof value !== "string" || !(pageField || socialField)) continue;
     const tag = key === "title" ? "title" : key === "canonical" ? "link" : "meta";
     const attribute = tag === "link" ? "rel" : key.startsWith("og:") ? "property" : "name";
     const selector = tag === "title" ? "title" : `${tag}[${attribute}="${key}"]`;
@@ -127,7 +129,7 @@ function escape_html(value) {
  * @return string Converted path
  */
 function std_dir_separator(path) {
-  return String(path || "").replace(/\\/g, "/");
+  return String(path || "").replaceAll("\\", "/");
 }
 
 /**
@@ -165,7 +167,7 @@ async function compress_url_data(value) {
   const bytes = new Uint8Array(await new Response(stream).arrayBuffer());
   let binary = "";
   for (const byte of bytes) binary += String.fromCharCode(byte);
-  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  return btoa(binary).replaceAll("+", "-").replaceAll("/", "_").replace(/=+$/, "");
 }
 
 /**
@@ -179,7 +181,7 @@ async function compress_url_data(value) {
 async function decompress_url_data(value, maxBytes = 1048576) {
   if (typeof value !== "string" || !/^[A-Za-z0-9_-]+$/.test(value) || value.length % 4 === 1) throw new TypeError("Expected an unpadded Base64url token.");
   if (!Number.isSafeInteger(maxBytes) || maxBytes < 1) throw new RangeError("maxBytes must be a positive safe integer.");
-  const binary = atob(value.replace(/-/g, "+").replace(/_/g, "/"));
+  const binary = atob(value.replaceAll("-", "+").replaceAll("_", "/"));
   const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
   const reader = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw")).getReader();
   const chunks = [];
@@ -567,7 +569,7 @@ function init_websocket(options) {
 
   const logToEl = (label, data = "") => {
     if (!logging) return;
-    const now = new Date().toISOString().replace("T", "_").replace(/:/g, "-").split(".")[0];
+    const now = new Date().toISOString().replace("T", "_").replaceAll(":", "-").split(".")[0];
     const $pre = $(/* HTML */ `<pre></pre>`).text(`${label}: [${now}]\n${data}`);
     $(elId).append($pre);
   };

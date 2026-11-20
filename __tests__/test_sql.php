@@ -23,8 +23,8 @@ function sql_test_assert(bool $condition, string $message, ?string $passed = nul
   $assertions++;
   if (!$condition)
     throw new RuntimeException($message);
-  echo "[PASS] " . ($passed ?? $message) . PHP_EOL;
-  echo "<br>";
+  ?>
+[PASS] <?= ($passed ?? $message) . PHP_EOL ?><br><?php
 }
 
 /**
