@@ -9,11 +9,16 @@ import { fileURLToPath } from "node:url";
 
 const root = fileURLToPath(new URL("../../", import.meta.url));
 test("failed builds clean their private stage and preserve existing output", { timeout: 30000 }, async () => {
+  // =========================
+  // TEMPORARY RELEASE FIXTURE
+  // =========================
   const temporary = await fs.mkdtemp(path.join(os.tmpdir(), "release-cleanup-"));
   const modules = path.join(temporary, ".github/node_modules");
   let linked = false;
   try {
-    await fs.cp(path.join(root, ".github/scripts"), path.join(temporary, ".github/scripts"), { recursive: true });
+    await fs.cp(path.join(root, ".github/scripts"), path.join(temporary, ".github/scripts"), {
+      recursive: true
+    });
     let config;
     try {
       config = JSON.parse(await fs.readFile(path.join(root, ".github/release.json"), "utf8"));
@@ -23,7 +28,13 @@ test("failed builds clean their private stage and preserve existing output", { t
     const stream = !config;
     const kind = config?.kind || "stream";
     if (config) {
-      config = { ...config, runtime: ["fixture.js", "fixture.css"], files: ["README.md", "LICENSE.md"], directories: ["templates"], notes: [] };
+      config = {
+        ...config,
+        runtime: ["fixture.js", "fixture.css"],
+        files: ["README.md", "LICENSE.md"],
+        directories: ["templates"],
+        notes: []
+      };
       await fs.writeFile(path.join(temporary, ".github/release.json"), JSON.stringify(config));
     }
     await fs.writeFile(path.join(temporary, ".gitignore"), ".github/node_modules/\ndist/\n");
@@ -40,6 +51,9 @@ test("failed builds clean their private stage and preserve existing output", { t
       await fs.writeFile(path.join(temporary, "fixture/fixture.html"), '<html data-tool="fixture"><template id="overlay-markup"></template></html>');
     }
     const git = (...args) => execFileSync("git", ["-c", "user.name=Release cleanup tests", "-c", "user.email=release-tests@example.invalid", "-c", "commit.gpgsign=false", ...args], { cwd: temporary, stdio: "pipe" });
+    // ================
+    // REPOSITORY SETUP
+    // ================
     git("init", "--quiet", "--initial-branch=main");
     git("add", ".");
     git("commit", "--quiet", "-m", "Cleanup fixture");
@@ -50,7 +64,11 @@ test("failed builds clean their private stage and preserve existing output", { t
     const output = path.join(temporary, "dist/assets");
     await fs.mkdir(output, { recursive: true });
     if (stream) {
-      const manifest = JSON.stringify({ generator: "stream.html release builder", repository: "byuwur/stream.html", assets: [] });
+      const manifest = JSON.stringify({
+        generator: "stream.html release builder",
+        repository: "byuwur/stream.html",
+        assets: []
+      });
       await fs.writeFile(path.join(temporary, "dist/manifest.json"), manifest);
       await fs.writeFile(path.join(output, "manifest.json"), manifest);
       await fs.writeFile(path.join(output, "SHA256SUMS"), "Previous completed output\n");
@@ -60,7 +78,15 @@ test("failed builds clean their private stage and preserve existing output", { t
     delete environment.NODE_TEST_CONTEXT;
     const command = kind === "history" ? ".github/scripts/release.mjs" : ".github/scripts/build.mjs";
     const args = [command, "--tag", "v0.0.0-cleanup", ...(["easy", "spa"].includes(kind) ? ["--offline"] : [])];
-    const result = spawnSync(process.execPath, args, { cwd: temporary, env: environment, encoding: "utf8", timeout: 20000 });
+    // =========================
+    // BUILD FAILURE AND CLEANUP
+    // =========================
+    const result = spawnSync(process.execPath, args, {
+      cwd: temporary,
+      env: environment,
+      encoding: "utf8",
+      timeout: 20000
+    });
     assert.notEqual(result.status, 0, "The deliberately invalid fixture must fail");
     const diagnostic = `${result.stdout}${result.stderr}`;
     assert.match(diagnostic, kind === "spa" ? /buildEditions/ : stream ? /resources|fixture/i : /finishBuild/);

@@ -15,6 +15,9 @@ import { parseArgs } from "node:util";
 import { buildEditions } from "./editions.mjs";
 import { config, dist, finishBuild, git, releaseChangelog, root, sha256, validateTag } from "./release.mjs";
 
+// ==================
+// ASSET MINIFICATION
+// ==================
 /**
  * Prefer jsDelivr's generated minification of the exact committed source; edited files stay local.
  * @param {string} file Repository-relative authored JS/CSS filename.
@@ -28,7 +31,11 @@ export async function minified(file, source, commit, { offline = false, request 
   const url = `https://cdn.jsdelivr.net/gh/${config.repository}@${commit}/${file.replace(/\.(js|css)$/, ".min.$1")}`;
   if (!offline) {
     try {
-      const committed = execFileSync("git", ["show", `${commit}:${file}`], { cwd: root, stdio: ["ignore", "pipe", "ignore"], maxBuffer: 20 * 1024 * 1024 });
+      const committed = execFileSync("git", ["show", `${commit}:${file}`], {
+        cwd: root,
+        stdio: ["ignore", "pipe", "ignore"],
+        maxBuffer: 20 * 1024 * 1024
+      });
       if (committed.toString().replaceAll("\r\n", "\n") === source.toString().replaceAll("\r\n", "\n")) {
         const response = await request(url, { signal: AbortSignal.timeout(5000), redirect: "error" });
         if (response.ok && !response.headers.get("content-type")?.includes("text/html")) {
@@ -51,10 +58,20 @@ export async function minified(file, source, commit, { offline = false, request 
       // CDN failures, unpublished commits, and mismatched local sources use the local compiler.
     }
   }
-  const result = await transform(source.toString(), { loader, minify: true, legalComments: "inline", target: "es2020", charset: "utf8", logLevel: "silent" });
+  const result = await transform(source.toString(), {
+    loader,
+    minify: true,
+    legalComments: "inline",
+    target: "es2020",
+    charset: "utf8",
+    logLevel: "silent"
+  });
   return { bytes: Buffer.from(result.code), provider: "esbuild", url: null };
 }
 
+// =============
+// RELEASE BUILD
+// =============
 /**
  * Build regular/minified runtime ZIPs from explicit tracked paths.
  * @param {string} tag Valid release or preview version.
@@ -64,7 +81,15 @@ export async function minified(file, source, commit, { offline = false, request 
 export async function buildRelease(tag, options = {}) {
   validateTag(tag);
   const changelog = releaseChangelog(tag);
-  const manifest = { generator: `${config.repository} release builder`, repository: config.repository, tag, changelog, minification: [], assets: [], packages: [] };
+  const manifest = {
+    generator: `${config.repository} release builder`,
+    repository: config.repository,
+    tag,
+    changelog,
+    minification: [],
+    assets: [],
+    packages: []
+  };
   const tracked = git("ls-files", "-z").split("\0").filter(Boolean);
   const selected = [...new Set([...config.files, ...tracked.filter((file) => config.directories.some((directory) => file.startsWith(`${directory}/`)) || /^_[^/]+\.(js|css|php|html)$/.test(file))])];
   assert.ok(selected.length > 2, "No runtime files found");
@@ -83,18 +108,35 @@ export async function buildRelease(tag, options = {}) {
     const name = config.kind === "easy" ? file.replace(/\.(js|css)$/, ".min.$1") : file;
     delete compressed[file];
     compressed[name] = result.bytes;
-    manifest.minification.push({ source: file, file: name, provider: result.provider, url: result.url, sha256: sha256(result.bytes) });
+    manifest.minification.push({
+      source: file,
+      file: name,
+      provider: result.provider,
+      url: result.url,
+      sha256: sha256(result.bytes)
+    });
   }
   await fs.mkdir(dist, { recursive: true });
   const staging = await fs.mkdtemp(path.join(dist, ".release-"));
   try {
+    // =================
+    // ARCHIVE PACKAGING
+    // =================
     /** @param {string} variant Package name. @param {Object} entries Relative filenames and bytes. @param {string} description Download explanation. @returns {Promise<void>} */
     async function archive(variant, entries, description) {
       const file = `${config.repository.split("/")[1]}${variant === "regular" ? "" : `.${variant}`}.zip`;
       const body = Buffer.from(zipSync(Object.fromEntries(Object.entries(entries).map(([name, bytes]) => [name, [new Uint8Array(bytes), { mtime: new Date(1980, 0, 1) }]])), { level: 9 }));
       await fs.writeFile(path.join(staging, file), body);
       manifest.assets.push({ file, bytes: body.length, sha256: sha256(body), description });
-      manifest.packages.push({ file, variant, files: Object.entries(entries).map(([name, bytes]) => ({ file: name, bytes: bytes.length, sha256: sha256(bytes) })) });
+      manifest.packages.push({
+        file,
+        variant,
+        files: Object.entries(entries).map(([name, bytes]) => ({
+          file: name,
+          bytes: bytes.length,
+          sha256: sha256(bytes)
+        }))
+      });
     }
     await archive("regular", regular, "Original files");
     await archive("minified", compressed, "Minified files");
@@ -102,7 +144,13 @@ export async function buildRelease(tag, options = {}) {
     manifest.editions = editions.inventory;
     for (const asset of editions.assets) {
       await fs.writeFile(path.join(staging, asset.file), asset.body);
-      manifest.assets.push({ file: asset.file, bytes: asset.body.length, sha256: sha256(asset.body), description: asset.description, format: asset.format });
+      manifest.assets.push({
+        file: asset.file,
+        bytes: asset.body.length,
+        sha256: sha256(asset.body),
+        description: asset.description,
+        format: asset.format
+      });
     }
     await archive("bundled", editions.bundled, "Core bundles with a separate demo/");
     await archive("complete", editions.complete, "[EXPERIMENTAL] Complete framework with a separate demo/");
@@ -113,6 +161,9 @@ export async function buildRelease(tag, options = {}) {
   }
 }
 
+// ============
+// COMMAND LINE
+// ============
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
   const { values } = parseArgs({ options: { tag: { type: "string" }, offline: { type: "boolean" } } });
   await buildRelease(values.tag || process.env.RELEASE_TAG || "v0.0.0-local", values);

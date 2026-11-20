@@ -6,14 +6,27 @@ import { dist, publishRelease, sha256 } from "../scripts/release.mjs";
 
 const directory = path.join(dist, "assets");
 const manifest = JSON.parse(await fs.readFile(path.join(directory, "manifest.json"), "utf8"));
-const environment = { GITHUB_REPOSITORY: manifest.repository, GITHUB_REF_TYPE: "tag", GITHUB_REF_NAME: manifest.tag, GITHUB_SHA: manifest.changelog.commit, GH_TOKEN: "mock-token" };
+const environment = {
+  GITHUB_REPOSITORY: manifest.repository,
+  GITHUB_REF_TYPE: "tag",
+  GITHUB_REF_NAME: manifest.tag,
+  GITHUB_SHA: manifest.changelog.commit,
+  GH_TOKEN: "mock-token"
+};
 
+// =============
+// TEST FIXTURES
+// =============
 function github({ failUpload = 0, published = false, foreign = false, starter = false } = {}) {
   let release = published ? { id: 1, draft: false } : null;
   const assets = [];
   const calls = [];
   let uploads = 0;
-  const json = (value, status = 200) => new Response(JSON.stringify(value), { status, headers: { "content-type": "application/json" } });
+  const json = (value, status = 200) =>
+    new Response(JSON.stringify(value), {
+      status,
+      headers: { "content-type": "application/json" }
+    });
   return {
     calls,
     assets,
@@ -43,10 +56,22 @@ function github({ failUpload = 0, published = false, foreign = false, starter = 
       if (method === "POST" && url.startsWith("https://uploads.github.com/")) {
         uploads++;
         if (uploads === failUpload) {
-          if (starter) assets.push({ id: 1000, name: new URL(url).searchParams.get("name"), size: 0, state: "starter" });
+          if (starter)
+            assets.push({
+              id: 1000,
+              name: new URL(url).searchParams.get("name"),
+              size: 0,
+              state: "starter"
+            });
           return json({ message: "Simulated interrupted upload" }, 503);
         }
-        const asset = { id: uploads, name: new URL(url).searchParams.get("name"), size: options.body.length, digest: `sha256:${sha256(options.body)}`, state: "uploaded" };
+        const asset = {
+          id: uploads,
+          name: new URL(url).searchParams.get("name"),
+          size: options.body.length,
+          digest: `sha256:${sha256(options.body)}`,
+          state: "uploaded"
+        };
         assets.push(asset);
         return json(asset, 201);
       }
@@ -59,6 +84,9 @@ function github({ failUpload = 0, published = false, foreign = false, starter = 
   };
 }
 
+// =====================
+// PUBLISH RELEASE TESTS
+// =====================
 test("a failed upload stays private, and a rerun resumes matching assets without replacement", async () => {
   const remote = github({ failUpload: 3, starter: true });
   await assert.rejects(publishRelease({ request: remote.request, environment, directory }), /release remains a draft/);
@@ -87,7 +115,13 @@ test("foreign drafts, conflicting assets, and non-tag invocations cannot be publ
   conflict.assets[0].digest = `sha256:${"0".repeat(64)}`;
   await assert.rejects(publishRelease({ request: conflict.request, environment, directory }), /Conflicting draft asset/);
   const untouched = github();
-  await assert.rejects(publishRelease({ request: untouched.request, environment: { ...environment, GITHUB_REF_TYPE: "branch" }, directory }));
+  await assert.rejects(
+    publishRelease({
+      request: untouched.request,
+      environment: { ...environment, GITHUB_REF_TYPE: "branch" },
+      directory
+    })
+  );
   assert.deepEqual(untouched.calls, []);
 });
 
@@ -95,7 +129,14 @@ test("changed source identity and unexpected or corrupted artifacts stop before 
   const temporary = await fs.mkdtemp(path.join((await import("node:os")).tmpdir(), "release-provenance-"));
   try {
     const remote = github();
-    await assert.rejects(publishRelease({ request: remote.request, environment: { ...environment, GITHUB_SHA: "0".repeat(40) }, directory }), /exact tagged commit/);
+    await assert.rejects(
+      publishRelease({
+        request: remote.request,
+        environment: { ...environment, GITHUB_SHA: "0".repeat(40) },
+        directory
+      }),
+      /exact tagged commit/
+    );
     await fs.cp(directory, temporary, { recursive: true });
     await fs.writeFile(path.join(temporary, "unexpected.txt"), "unrelated");
     await assert.rejects(publishRelease({ request: remote.request, environment, directory: temporary }), /unexpected files/);

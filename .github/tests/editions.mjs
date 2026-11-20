@@ -1,4 +1,5 @@
 /** @file Test the reusable bundle/complete editions through real applications in separate demo/ folders. */
+import { unzipSync } from "fflate";
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import * as fs from "node:fs/promises";
@@ -7,12 +8,14 @@ import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { chromium } from "playwright";
-import { unzipSync } from "fflate";
 import { config, dist, sha256 } from "../scripts/release.mjs";
 
 const manifest = JSON.parse(await fs.readFile(path.join(dist, "assets/manifest.json"), "utf8"));
 const php = config.repository.endsWith("/spa.php");
 
+// ================
+// EDITION ARCHIVES
+// ================
 for (const variant of ["bundled", "complete"])
   test(`${variant} framework works in a separate application`, { timeout: 60000 }, async () => {
     const temporary = await fs.mkdtemp(path.join(os.tmpdir(), "spa-edition-test-"));
@@ -75,6 +78,9 @@ for (const variant of ["bundled", "complete"])
       </body>`
       );
       const extension = php ? "php" : "html";
+      // ==========
+      // DEMO PAGES
+      // ==========
       for (const [name, label] of [
         ["page", "Ready"],
         ["next", "Next"]
@@ -96,7 +102,16 @@ for (const variant of ["bundled", "complete"])
         }
         try {
           const body = await fs.readFile(target);
-          const type = { ".js": "text/javascript", ".css": "text/css", ".json": "application/json", ".woff2": "font/woff2", ".ttf": "font/ttf", ".png": "image/png", ".svg": "image/svg+xml" }[path.extname(target)] || "text/html";
+          const type =
+            {
+              ".js": "text/javascript",
+              ".css": "text/css",
+              ".json": "application/json",
+              ".woff2": "font/woff2",
+              ".ttf": "font/ttf",
+              ".png": "image/png",
+              ".svg": "image/svg+xml"
+            }[path.extname(target)] || "text/html";
           response.writeHead(200, { "content-type": type }).end(body);
         } catch {
           response.writeHead(404).end();
@@ -127,7 +142,10 @@ for (const variant of ["bundled", "complete"])
         }
         assert.ok(ready, phpOutput);
       }
-      browser = await chromium.launch({ channel: process.env.BROWSER_CHANNEL || process.env.PLAYWRIGHT_CHANNEL, timeout: 10000 });
+      browser = await chromium.launch({
+        channel: process.env.BROWSER_CHANNEL || process.env.PLAYWRIGHT_CHANNEL,
+        timeout: 10000
+      });
       const page = await browser.newPage();
       page.setDefaultTimeout(10000);
       const errors = [],

@@ -12,6 +12,9 @@ import { config, dist, git, releaseNotes, root, sha256, validateTag } from "../s
 const directory = path.join(dist, "assets");
 const manifest = JSON.parse(await fs.readFile(path.join(directory, "manifest.json"), "utf8"));
 
+// =======================
+// RELEASE ARTIFACTS TESTS
+// =======================
 test("checksums cover the complete inventory and the exact source commit", async () => {
   assert.equal(manifest.changelog.commit, git("rev-parse", "HEAD"));
   for (const archive of manifest.packages) assert.equal(archive.file, `${config.repository.split("/")[1]}${archive.variant === "regular" ? "" : `.${archive.variant}`}.zip`);
@@ -34,7 +37,14 @@ test("CDN preference, unavailable-CDN fallback, and local edits preserve source 
     return new Response("/*! CDN fixture */ var releaseFixture=1;", { headers: { "content-type": "application/javascript" } });
   };
   assert.equal((await minified(file, source, commit, { request })).provider, "jsdelivr");
-  assert.equal((await minified(file, source, commit, { request: async () => new Response("unavailable", { status: 404 }) })).provider, "esbuild");
+  assert.equal(
+    (
+      await minified(file, source, commit, {
+        request: async () => new Response("unavailable", { status: 404 })
+      })
+    ).provider,
+    "esbuild"
+  );
   assert.equal((await minified(file, Buffer.concat([source, Buffer.from("\n// local edit")]), commit, { request: () => assert.fail("Edited source must never request CDN bytes") })).provider, "esbuild");
 });
 
@@ -62,7 +72,12 @@ for (const archive of manifest.packages.filter((archive) => ["regular", "minifie
         await fs.mkdir(target, { recursive: true });
         for (const file of await fs.readdir(source)) if (/\.(js|css)$/.test(file)) await fs.copyFile(path.join(source, file), path.join(target, file));
       }
-      const environment = { ...process.env, SPA_JS_TREE: "", SPA_PHP_TREE: "", NODE_PATH: path.join(root, ".github/node_modules") };
+      const environment = {
+        ...process.env,
+        SPA_JS_TREE: "",
+        SPA_PHP_TREE: "",
+        NODE_PATH: path.join(root, ".github/node_modules")
+      };
       // Start an independent runner; inheriting NODE_TEST_CONTEXT uses the parent's internal protocol.
       delete environment.NODE_TEST_CONTEXT;
       // Internal-function fixtures rewrite readable source. Browser tests exercise actual minified navigation/scripts.
@@ -89,7 +104,14 @@ for (const archive of manifest.packages.filter((archive) => ["regular", "minifie
   });
 
 test("release notes link short hashes, escape subjects, and display the actual tag", () => {
-  const notes = releaseNotes({ ...manifest, changelog: { previousTag: "v1.0", ref: "v1.1", commits: [{ sha: "a".repeat(40), subject: "[Fix] Keep <markup> and *literal* text" }] } });
+  const notes = releaseNotes({
+    ...manifest,
+    changelog: {
+      previousTag: "v1.0",
+      ref: "v1.1",
+      commits: [{ sha: "a".repeat(40), subject: "[Fix] Keep <markup> and *literal* text" }]
+    }
+  });
   assert.ok(notes.includes(`- ([aaaaaaa](https://github.com/${config.repository}/commit/${"a".repeat(40)})) \\[Fix\\] Keep \\<markup\\> and \\*literal\\* text`));
   assert.ok(notes.includes("/compare/v1.0...v1.1"));
   for (const tag of ["v1.0", "v1.0.1", "v1.0.1-rc.1"]) assert.equal(validateTag(tag), tag);

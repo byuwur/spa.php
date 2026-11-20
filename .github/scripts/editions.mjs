@@ -3,14 +3,17 @@
  * Complete JavaScript embeds all shipped browser libraries, CSS, fonts, and CSS images.
  * Application initializers, routes, pages, translations, media, credentials, and services remain application-owned.
  */
+import { build, transform } from "esbuild";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import * as fs from "node:fs/promises";
 import path from "node:path";
-import { build, transform } from "esbuild";
 import { format } from "prettier";
 import { config, root } from "./release.mjs";
 
+// =============
+// EDITION BUILD
+// =============
 /**
  * Produce bundle and complete edition files without changing the authored runtime.
  * @param {Object<string, Buffer>} files Minified framework/package files indexed by repository-relative path.
@@ -53,6 +56,9 @@ export async function buildEditions(files, staging) {
     "Update the complete stylesheet order when bundled libraries change"
   );
 
+  // ===============================
+  // SCRIPT AND STYLESHEET PACKAGING
+  // ===============================
   /** @param {string[]} entries Ordered classic scripts. @param {Object} [sources=files] Input bytes, including the complete PHP error adapter. @returns {Buffer} Concatenated minified bytes with source/license boundaries and global exports intact. */
   function scripts(entries, sources = files) {
     return Buffer.from(
@@ -90,7 +96,11 @@ export async function buildEditions(files, staging) {
             });
             builder.onLoad({ filter: /\.(?:css|woff2?|ttf|eot|svg|png|jpe?g|gif|webp)$/ }, (args) => {
               const relative = path.relative(root, args.path).split(path.sep).join("/");
-              return { contents: files[relative], loader: relative.endsWith(".css") ? "css" : "dataurl", resolveDir: path.dirname(args.path) };
+              return {
+                contents: files[relative],
+                loader: relative.endsWith(".css") ? "css" : "dataurl",
+                resolveDir: path.dirname(args.path)
+              };
             });
           }
         }
@@ -107,7 +117,17 @@ export async function buildEditions(files, staging) {
     const adapted = source
       .replace(original, "const paths = [bySPA.ERROR_PATH, `${bySPA.HOME_PATH}/_error.php`, `${bySPA.HOME_PATH}/spa.php/_error.php`, `${bySPA.HOME_PATH}/../_error.php`].filter(Boolean);")
       .replace("`${path}?probe=1`", '`${path}${path.includes("?") ? "&" : "?"}probe=1`');
-    completeSources["_spa.js"] = Buffer.from((await transform(adapted, { loader: "js", minify: true, legalComments: "inline", charset: "utf8", target: "es2020" })).code);
+    completeSources["_spa.js"] = Buffer.from(
+      (
+        await transform(adapted, {
+          loader: "js",
+          minify: true,
+          legalComments: "inline",
+          charset: "utf8",
+          target: "es2020"
+        })
+      ).code
+    );
   }
   const bundleScript = scripts(core);
   const bundleStyle = await stylesheet(["_common.css"], false);
@@ -131,6 +151,9 @@ export async function buildEditions(files, staging) {
     { file: "spa.complete.js", body: completeScript, description: "[EXPERIMENTAL] Complete browser framework", format: "complete-script" }
   ];
 
+  // ==============
+  // DEMO PACKAGING
+  // ==============
   /**
    * Rewrite only the release demo's imports; the framework continues to use native bootstrap/navigation.
    * @param {string} source Authored demo file.
@@ -195,7 +218,10 @@ export async function buildEditions(files, staging) {
   for (const file of Object.keys(complete).filter((file) => /\.(?:html|php)$/.test(file))) complete[file] = Buffer.from(await demo(complete[file].toString(), true, file));
   complete["spa.complete.js"] = completeScript;
   if (php) {
-    const archiveFiles = { ...Object.fromEntries(Object.entries(files).filter(([file]) => !file.startsWith("demo/"))), "spa.complete.js": completeScript };
+    const archiveFiles = {
+      ...Object.fromEntries(Object.entries(files).filter(([file]) => !file.startsWith("demo/"))),
+      "spa.complete.js": completeScript
+    };
     // Keep error pages and cURL's certificate bytes available inside the reusable PHP file.
     let functions = archiveFiles["_functions.php"].toString();
     functions = functions.replace('$error_file, "{$TO_HOME}/_error.php"', '$error_file, byspa_framework_path() . "/_error.php", "{$TO_HOME}/_error.php"');
@@ -216,7 +242,12 @@ export async function buildEditions(files, staging) {
       // Serve the browser bundle from the same PHP file; the reusable framework remains one physical file.
       for (const file of Object.keys(complete).filter((file) => file.startsWith("demo/") && file.endsWith(".php")))
         complete[file] = Buffer.from(complete[file].toString().replaceAll("../spa.complete.js", "../spa.complete.php?asset=spa.complete.js"));
-      assets.push({ file: "spa.complete.php", body, description: "[EXPERIMENTAL] Complete PHP framework", format: "complete-php" });
+      assets.push({
+        file: "spa.complete.php",
+        body,
+        description: "[EXPERIMENTAL] Complete PHP framework",
+        format: "complete-php"
+      });
     } finally {
       assert.equal(path.dirname(archiveDirectory), staging);
       await fs.rm(archiveDirectory, { recursive: true, force: true });
