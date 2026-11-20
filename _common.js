@@ -269,10 +269,10 @@
       particlesJS(PARTICLES_CONTAINER_ID, {
         particles: {
           number: { value: 32, density: { enable: false, value_area: 0 } },
-          shape: { type: "polygon", stroke: { width: 0, color: "#777777" }, polygon: { nb_sides: 3 } },
+          shape: { type: "polygon", stroke: { width: 0, color: "#777" }, polygon: { nb_sides: 3 } },
           opacity: { value: 0.25 },
           size: { value: 2 },
-          line_linked: { enable: true, distance: 192, color: "#777777", opacity: 0.5, width: 1 },
+          line_linked: { enable: true, distance: 192, color: "#777", opacity: 0.5, width: 1 },
           move: { enable: true, speed: 1, direction: "right", random: false, straight: false, out_mode: "out", bounce: false, attract: { enable: false } }
         },
         interactivity: {
@@ -316,7 +316,7 @@
         byCommon.fontSize = 1;
         break;
     }
-    $("html").css("font-size", `${byCommon.fontSize}rem`);
+    $("html").css("font-size", `${16 * byCommon.fontSize}px`);
   };
 
   /**

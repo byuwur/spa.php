@@ -68,26 +68,26 @@
       .by-privacy-panel {
         color-scheme: light dark;
         --panel-bg: light-dark(#fff, #111);
-        --panel-ink: light-dark(#212529, #e4e6e8);
-        --panel-edge: light-dark(#b5b9bd, #53565a);
+        --panel-ink: light-dark(#222, #eee);
+        --panel-edge: light-dark(#bbb, #666);
         position: fixed;
-        right: .75rem;
-        bottom: .75rem;
-        z-index: 2147483645;
+        right: 1rem;
+        bottom: 3rem;
+        z-index: 100001;
         box-sizing: border-box;
-        width: min(28rem, calc(100% - 1.5rem));
-        max-height: calc(100dvh - 1.5rem);
+        width: min(32rem, calc(100% - 2rem));
+        max-height: calc(100dvh - 3rem);
         overflow: auto;
-        padding: .8rem .95rem;
+        padding: 1rem;
         background: var(--panel-bg);
         color: var(--panel-ink);
-        border: 1px solid var(--panel-edge);
-        border-top: 2px solid light-dark(#972c35, #8b262d);
+        border: 0.0625rem solid var(--panel-edge);
+        border-top: 0.125rem solid light-dark(#922, #822);
         border-radius: 0;
-        box-shadow: 0 .2rem .75rem #0002;
+        box-shadow: 0 0.25rem 0.75rem #0003;
         font: inherit;
-        font-size: .875rem;
-        line-height: 1.4;
+        font-size: 0.875rem;
+        line-height: 1.5;
         text-align: start;
       }
       .by-privacy-panel[data-theme="dark"] { color-scheme: dark; }
@@ -96,32 +96,32 @@
       [data-bs-theme="light"] .by-privacy-panel { color-scheme: light; }
       :root:has(#themesheet[href$=".dark.css"]) .by-privacy-panel { color-scheme: dark; }
       :root:has(#themesheet[href$=".light.css"]) .by-privacy-panel { color-scheme: light; }
-      .by-privacy-panel header, .by-privacy-actions { display: flex; align-items: center; gap: .45rem; }
+      .by-privacy-panel header, .by-privacy-actions { display: flex; align-items: center; gap: 0.5rem; }
       .by-privacy-panel header { justify-content: space-between; }
       .by-privacy-panel strong { font-size: 1rem; }
-      .by-privacy-panel p { margin: .35rem 0 0; }
-      .by-privacy-panel [data-links] { margin-top: .2rem; }
-      .by-privacy-panel a { color: light-dark(#174e99, #91bfff); text-decoration: underline; }
-      .by-privacy-actions { flex-wrap: wrap; margin-top: .65rem; }
+      .by-privacy-panel p { margin: 0.25rem 0 0; }
+      .by-privacy-panel [data-links] { margin-top: 0.25rem; }
+      .by-privacy-panel a { color: light-dark(#13e, #9bf); text-decoration: underline; }
+      .by-privacy-actions { flex-wrap: wrap; margin-top: 0.75rem; }
       .by-privacy-panel button {
         --ink: var(--panel-ink);
-        --fill: light-dark(#f5f5f5, #202020);
+        --fill: light-dark(#eee, #222);
         --edge: var(--panel-edge);
         color: var(--ink);
         background: var(--fill);
-        border: 1px solid var(--edge);
+        border: 0.0625rem solid var(--edge);
         border-radius: 0;
-        padding: .28rem .6rem;
+        padding: 0.25rem 0.625rem;
         font: inherit;
-        font-size: .8125rem;
-        line-height: 1.4;
+        font-size: 0.875rem;
+        line-height: 1.5;
         cursor: pointer;
       }
-      .by-privacy-panel [data-choice="yes"] { --ink: light-dark(#14532d, #b8efca); --fill: light-dark(#e3f3e7, #173623); --edge: light-dark(#619072, #528561); }
-      .by-privacy-panel [data-choice="no"] { --ink: light-dark(#85232f, #ffc4ca); --fill: light-dark(#fae6e8, #401f25); --edge: light-dark(#ac7178, #a4646d); }
-      .by-privacy-panel [data-close] { --ink: light-dark(#444a50, #e2e4e7); --fill: light-dark(#eceef0, #303236); padding: .15rem .4rem; }
+      .by-privacy-panel [data-choice="yes"] { --ink: light-dark(#153, #bec); --fill: light-dark(#dee, #132); --edge: light-dark(#687, #586); }
+      .by-privacy-panel [data-choice="no"] { --ink: light-dark(#823, #fcc); --fill: light-dark(#fee, #422); --edge: light-dark(#a77, #a66); }
+      .by-privacy-panel [data-close] { --ink: light-dark(#445, #dde); --fill: light-dark(#eee, #333); padding: 0.125rem 0.375rem; }
       .by-privacy-panel button:hover, .by-privacy-panel button[aria-pressed=true] { border-color: currentColor; }
-      .by-privacy-panel :focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+      .by-privacy-panel :focus-visible { outline: 0.125rem solid currentColor; outline-offset: 0.125rem; }
       [data-privacy-inline] > .by-privacy-panel { position:static; width:100%; max-height:none; margin:0 0 1.25rem; box-shadow:none; }
       .by-privacy-panel[hidden],.by-privacy-panel [hidden] { display:none!important; }`;
     const link = panel.querySelector("[data-policy]");

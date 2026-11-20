@@ -327,7 +327,7 @@ function e(string $value): string
     }
     #action-link-wrap .btn:focus-visible {
       outline: 0.125rem solid #fff;
-      outline-offset: 0.1875rem;
+      outline-offset: 0.25rem;
     }
     #poly1,
     #poly2,
