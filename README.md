@@ -210,7 +210,7 @@ node --test __tests__/common.test.js __tests__/fragment_scripts.test.js __tests_
 node --test __tests__/browser.test.js __tests__/load.browser.test.js __tests__/transitions.browser.test.js
 ```
 
-Set `NODE_PATH` to your installed Playwright modules. [CI](.github/workflows/ci.yml) runs Chromium automatically. Select **extended** for Firefox, WebKit and cross-project parity. PHP lint, Composer, SQL, authentication, proxy and HTTP/API checks also run.
+Set `NODE_PATH` to your installed Playwright modules. [CI](.github/workflows/ci.yml) runs Chromium, Firefox and WebKit by default. Select **extended** to also check cross-project parity. PHP lint, Composer, SQL, authentication, proxy and HTTP/API checks also run.
 
 ### Local preview
 
