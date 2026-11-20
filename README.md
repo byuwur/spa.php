@@ -218,6 +218,7 @@ For upgrades, review changes, reconcile application-owned `_init.php`/`_routes.p
 ### Checks
 
 ```sh
+php __tests__/test_functions.php
 node --test __tests__/common.test.js __tests__/fragment_scripts.test.js __tests__/routing.test.js __tests__/storage.test.js __tests__/fonts.test.js
 node --test __tests__/browser.test.js __tests__/load.browser.test.js __tests__/transitions.browser.test.js
 ```

@@ -53,6 +53,7 @@ jobs:
       - name: Test PHP contracts
         run: |
           git ls-files -z -- '*.php' | xargs -0 -r -n1 php -l
+          php __tests__/test_functions.php
           (cd __tests__ && php test_sql.php)
           php __tests__/test_proxy.php
           php __tests__/test_auth.php

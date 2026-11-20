@@ -37,6 +37,8 @@ jobs:
           node-version: "22"
       - name: Lint tracked PHP sources
         run: git ls-files -z -- '*.php' | xargs -0 -r -n1 php -l
+      - name: Test PHP functions
+        run: php __tests__/test_functions.php
       - name: Test SQL safety
         working-directory: __tests__
         run: php test_sql.php
