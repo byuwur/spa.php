@@ -182,9 +182,7 @@ function e(string $value): string
     </div>
   </div>
   <style>
-    /* ================
-     * ELEMENT DEFAULTS
-     * ================ */
+    /* ===== ELEMENT DEFAULTS ===== */
     * {
       min-width: 0;
       box-sizing: border-box;
@@ -258,9 +256,7 @@ function e(string $value): string
       min-height: 100vh;
       min-height: 100svh;
     }
-    /* ===================
-     * ANIMATED BACKGROUND
-     * =================== */
+    /* ===== ANIMATED BACKGROUND ===== */
     #cubes,
     #message-box {
       color: #fff;
@@ -273,9 +269,7 @@ function e(string $value): string
     #cubes {
       left: 5%;
     }
-    /* =============
-     * ERROR MESSAGE
-     * ============= */
+    /* ===== ERROR MESSAGE ===== */
     #message-box {
       display: flex;
       flex-direction: column;

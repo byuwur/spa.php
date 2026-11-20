@@ -11,9 +11,7 @@ import path from "node:path";
 import { format } from "prettier";
 import { config, root } from "./release.mjs";
 
-// =============
-// EDITION BUILD
-// =============
+// ===== EDITION BUILD =====
 /**
  * Produce bundle and complete edition files without changing the authored runtime.
  * @param {Object<string, Buffer>} files Minified framework/package files indexed by repository-relative path.
@@ -56,9 +54,7 @@ export async function buildEditions(files, staging) {
     "Update the complete stylesheet order when bundled libraries change"
   );
 
-  // ===============================
-  // SCRIPT AND STYLESHEET PACKAGING
-  // ===============================
+  // ===== SCRIPT AND STYLESHEET PACKAGING =====
   /** @param {string[]} entries Ordered classic scripts. @param {Object} [sources=files] Input bytes, including the complete PHP error adapter. @returns {Buffer} Concatenated minified bytes with source/license boundaries and global exports intact. */
   function scripts(entries, sources = files) {
     return Buffer.from(
@@ -151,9 +147,7 @@ export async function buildEditions(files, staging) {
     { file: "spa.complete.js", body: completeScript, description: "[EXPERIMENTAL] Complete browser framework", format: "complete-script" }
   ];
 
-  // ==============
-  // DEMO PACKAGING
-  // ==============
+  // ===== DEMO PACKAGING =====
   /**
    * Rewrite only the release demo's imports; the framework continues to use native bootstrap/navigation.
    * @param {string} source Authored demo file.

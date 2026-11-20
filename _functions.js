@@ -6,9 +6,7 @@
  * Copyright (c) 2026 Andrés Trujillo [Mateus] byUwUr
  */
 
-// ==========
-// JSON
-// ==========
+// ===== JSON =====
 
 /**
  * Checks whether a value is valid JSON.
@@ -51,9 +49,7 @@ function print_json(json) {
   return JSON.stringify(check_json(json) ? JSON.parse(json) : json, null, 2);
 }
 
-// ================
-// VALUES AND PATHS
-// ================
+// ===== VALUES AND PATHS =====
 
 /**
  * Checks truthy values for non-array objects; falsy inputs pass through unchanged.
@@ -105,9 +101,7 @@ function exit_json(json) {
   throw new Error("exit_json: Script terminated after sending JSON response.");
 }
 
-// ===============
-// URL COMPRESSION
-// ===============
+// ===== URL COMPRESSION =====
 
 /**
  * Compresses UTF-8 text to unpadded Base64url using native raw DEFLATE.
@@ -159,9 +153,7 @@ async function decompress_url_data(value, maxBytes = 1048576) {
   return new TextDecoder("UTF-8", { fatal: true, ignoreBOM: true }).decode(await new Blob(chunks).arrayBuffer());
 }
 
-// ============================
-// COOKIES AND QUERY PARAMETERS
-// ============================
+// ===== COOKIES AND QUERY PARAMETERS =====
 
 /**
  * Creates or updates a path-wide cookie, encoding its value and setting its lifetime in seconds.
@@ -199,9 +191,7 @@ function get_url_param(name) {
   return new URLSearchParams(hash.slice(hash.indexOf("?") + 1)).get(name);
 }
 
-// ==========
-// EVENTS
-// ==========
+// ===== EVENTS =====
 
 /**
  * Runs func after calls have stopped for wait milliseconds, using the last call's receiver and arguments.
@@ -217,9 +207,7 @@ function debounce(func, wait = 250) {
   };
 }
 
-// ==========
-// MODALS
-// ==========
+// ===== MODALS =====
 
 /**
  * Hides and removes the front modal from the DOM after a short delay.
@@ -280,9 +268,7 @@ function show_modal_front($modalId, $state = "success", $title = "INFO.", $messa
   $(`#${$modalId}`).modal("show");
 }
 
-// ==========
-// REQUESTS
-// ==========
+// ===== REQUESTS =====
 
 /**
  * Returns the CSRF token provided by the consuming application.
@@ -488,9 +474,7 @@ function element_make_http_request(options) {
     });
 }
 
-// ==========
-// WEBSOCKETS
-// ==========
+// ===== WEBSOCKETS =====
 
 /**
  * Creates one WebSocket controller with bounded reconnect attempts and optional DOM logging.

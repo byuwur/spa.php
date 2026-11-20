@@ -4,9 +4,7 @@
   const common = (window.byCommon ||= {});
   if (common.initPrivacyControls) return;
 
-  // ==============================
-  // CONTROL LINKS AND TRANSLATIONS
-  // ==============================
+  // ===== CONTROL LINKS AND TRANSLATIONS =====
   const aliases = ["#privacy-controls", "#cookie-controls"];
   const initialHash = location.hash;
   const translations = {
@@ -50,9 +48,7 @@
   let controls;
   common.openPrivacyControls = (trigger) => controls?.open(trigger);
 
-  // =============
-  // PRIVACY PANEL
-  // =============
+  // ===== PRIVACY PANEL =====
   // Hosts own consent and measurement. Omitting onChoice enables a tab-local preview.
   common.initPrivacyControls = ({ policyURL, cookiesURL, message, onChoice, dismissalDomain, theme } = {}) => {
     if (controls) return controls;
@@ -180,9 +176,7 @@
         // Dismiss for this document when storage is unavailable.
       }
     }
-    // ===========
-    // PANEL STATE
-    // ===========
+    // ===== PANEL STATE =====
     function open(trigger) {
       if (!active) return;
       const modalElement = document.querySelector(".modal.show");
@@ -205,9 +199,7 @@
       panel.hidden = true;
       if (opener?.isConnected && !panel.contains(opener)) opener.focus();
     }
-    // ===============
-    // CONSENT DISPLAY
-    // ===============
+    // ===== CONSENT DISPLAY =====
     function update(enabled = true, saved = preview) {
       const lang = document.documentElement.lang.split("-")[0];
       const words = translations[lang] || translations.en;

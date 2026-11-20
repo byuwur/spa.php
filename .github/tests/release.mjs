@@ -12,9 +12,7 @@ import { config, dist, git, releaseNotes, root, sha256, validateTag } from "../s
 const directory = path.join(dist, "assets");
 const manifest = JSON.parse(await fs.readFile(path.join(directory, "manifest.json"), "utf8"));
 
-// =======================
-// RELEASE ARTIFACTS TESTS
-// =======================
+// ===== RELEASE ARTIFACTS TESTS =====
 test("checksums cover the complete inventory and the exact source commit", async () => {
   assert.equal(manifest.changelog.commit, git("rev-parse", "HEAD"));
   for (const archive of manifest.packages) assert.equal(archive.file, `${config.repository.split("/")[1]}${archive.variant === "regular" ? "" : `.${archive.variant}`}.zip`);

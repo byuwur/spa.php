@@ -13,9 +13,7 @@ import { config, dist, sha256 } from "../scripts/release.mjs";
 const manifest = JSON.parse(await fs.readFile(path.join(dist, "assets/manifest.json"), "utf8"));
 const php = config.repository.endsWith("/spa.php");
 
-// ================
-// EDITION ARCHIVES
-// ================
+// ===== EDITION ARCHIVES =====
 for (const variant of ["bundled", "complete"])
   test(`${variant} framework works in a separate application`, { timeout: 60000 }, async () => {
     const temporary = await fs.mkdtemp(path.join(os.tmpdir(), "spa-edition-test-"));
@@ -78,9 +76,7 @@ for (const variant of ["bundled", "complete"])
       </body>`
       );
       const extension = php ? "php" : "html";
-      // ==========
-      // DEMO PAGES
-      // ==========
+      // ===== DEMO PAGES =====
       for (const [name, label] of [
         ["page", "Ready"],
         ["next", "Next"]

@@ -23,9 +23,7 @@ function loadHelpers(overrides = {}) {
   return context;
 }
 
-// ============
-// PARITY TESTS
-// ============
+// ===== PARITY TESTS =====
 test("standalone helpers preserve existing public globals", () => {
   const context = {};
   vm.runInNewContext(fs.readFileSync(path.join(__dirname, "..", "_functions.js"), "utf8"), context);

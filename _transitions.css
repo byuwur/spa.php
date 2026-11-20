@@ -1,6 +1,4 @@
-/* ===============
- * MOTION SETTINGS
- * =============== */
+/* ===== MOTION SETTINGS ===== */
 :root {
   --transition-duration: 0.3s;
 }
@@ -62,9 +60,7 @@
     filter var(--transition-duration) ease !important;
 }
 
-/* ==============
- * REDUCED MOTION
- * ============== */
+/* ===== REDUCED MOTION ===== */
 .no-motion * {
   -webkit-transition: none !important;
   -o-transition: none !important;
@@ -73,9 +69,7 @@
   transition: none !important;
 }
 
-/* =====================
- * COMPONENT TRANSITIONS
- * ===================== */
+/* ===== COMPONENT TRANSITIONS ===== */
 /* Tooltip positioning stays immediate while page motion is enabled. */
 :is(.tooltip, .popover),
 :is(.tooltip, .popover) *,

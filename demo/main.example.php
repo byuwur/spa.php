@@ -8,10 +8,9 @@ require_once "{$TO_HOME}/../_common.php";
 require_once "{$TO_HOME}/_routes.php";
 //require_once "{$TO_HOME}/../_router.php";
 //require_once "{$TO_HOME}/../_auth.php";
-// ==================
-// DEMO CONFIGURATION
-// ==================
+// ===== DEMO CONFIGURATION =====
 require_once "{$TO_HOME}/common.example.php";
+// === PHP ===
 //enable_progressive_rendering();
 ?>
 <div class="spa-demo-home video-foreground app-container d-flex">

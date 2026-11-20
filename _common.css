@@ -1,9 +1,7 @@
 @import url("./_fonts.css");
 @import url("./_transitions.css");
 
-/* ===================================
- * BASE TYPOGRAPHY AND THEME VARIABLES
- * =================================== */
+/* ===== BASE TYPOGRAPHY AND THEME VARIABLES ===== */
 html {
   font-size: 1rem;
 }
@@ -47,9 +45,7 @@ body {
   --bywr-red-dark-clear: #3003;
   --bywr-red-dark-opaque: #300b;
 }
-/* ==========
- * SELECTION
- * ========== */
+/* ===== SELECTION ===== */
 ::selection {
   background-color: #45f;
   color: #fff;
@@ -62,9 +58,7 @@ body {
   background-color: #45f;
   color: #fff;
 }
-/* ===========
- * PLACEHOLDER
- * =========== */
+/* ===== PLACEHOLDER ===== */
 ::-ms-input-placeholder {
   color: #444;
   font-weight: 300;
@@ -77,9 +71,7 @@ body {
   color: #444;
   font-weight: 300;
 }
-/* ==========
- * SCROLLBAR
- * ========== */
+/* ===== SCROLLBAR ===== */
 ::-webkit-scrollbar {
   background: #fff;
   border-radius: 0.5rem;
@@ -96,9 +88,7 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #444;
 }
-/* ============
- * GENERAL BODY
- * ============ */
+/* ===== GENERAL BODY ===== */
 html,
 body {
   position: relative;
@@ -111,9 +101,7 @@ body {
   text-overflow: ellipsis !important;
   white-space: normal !important;
 }
-/* ================
- * GENERAL ELEMENTS
- * ================ */
+/* ===== GENERAL ELEMENTS ===== */
 ol,
 ul {
   margin: 0;
@@ -235,9 +223,7 @@ td,
 th {
   border-radius: 0rem;
 }
-/* ==========
- * MISC
- * ========== */
+/* ===== MISC ===== */
 .tooltip {
   -webkit-filter: drop-shadow(0 0 0.125rem #bbb) !important;
   -moz-filter: drop-shadow(0 0 0.125rem #bbb) !important;
@@ -245,9 +231,7 @@ th {
   -o-filter: drop-shadow(0 0 0.125rem #bbb) !important;
   filter: drop-shadow(0 0 0.125rem #bbb) !important;
 }
-/* ===========================
- * BACKGROUND COLORS AND TEXTS
- * =========================== */
+/* ===== BACKGROUND COLORS AND TEXTS ===== */
 .bg-primary {
   background: var(--primary-color) !important;
 }
@@ -450,9 +434,7 @@ th {
   visibility: hidden;
   opacity: 0;
 }
-/* ============
- * THEME TOGGLE
- * ============ */
+/* ===== THEME TOGGLE ===== */
 .theme-toggle {
   position: relative;
   flex-shrink: 0;
@@ -490,9 +472,7 @@ th {
   outline: 0.125rem solid currentColor;
   outline-offset: 0.2rem;
 }
-/* ==========
- * BUTTONS
- * ========== */
+/* ===== BUTTONS ===== */
 .btn {
   padding: 0.25rem 0.5rem;
   white-space: nowrap !important;
@@ -767,9 +747,7 @@ label:has(input[type="checkbox"]:disabled, input[role="switch"]:disabled) {
 [data-bs-theme="dark"] .select2-container--default.select2-container--focus .select2-selection {
   border-color: var(--primary-foreground);
 }
-/* ==========
- * INPUTS
- * ========== */
+/* ===== INPUTS ===== */
 :disabled,
 :disabled * {
   -webkit-filter: grayscale(50%) !important;
@@ -816,9 +794,7 @@ label:has(input[type="checkbox"]:disabled, input[role="switch"]:disabled) {
   width: 1.5rem !important;
   margin: 0 0.5rem !important;
 }
-/* ==========
- * DROPZONE
- * ========== */
+/* ===== DROPZONE ===== */
 .dropzone .dz-preview {
   width: 10rem;
   margin-bottom: 3rem;
@@ -934,9 +910,7 @@ label:has(input[type="checkbox"]:disabled, input[role="switch"]:disabled) {
   width: 100%;
   margin-top: 0.5rem;
 }
-/* ==========
- * NAVBAR
- * ========== */
+/* ===== NAVBAR ===== */
 @media (hover: hover) and (pointer: fine) {
   .dropdown:hover > .dropdown-menu,
   .dropup:hover > .dropdown-menu {
@@ -975,9 +949,7 @@ label:has(input[type="checkbox"]:disabled, input[role="switch"]:disabled) {
   margin: 0;
   transform: none !important;
 }
-/* ======================
- * BACKGROUNDS AND IMAGES
- * ====================== */
+/* ===== BACKGROUNDS AND IMAGES ===== */
 .has-background-cover {
   position: relative;
   background-size: cover;
@@ -1073,9 +1045,7 @@ label:has(input[type="checkbox"]:disabled, input[role="switch"]:disabled) {
 .overlay-tertiary {
   background: var(--tertiary-color);
 }
-/* ==========
- * FX
- * ========== */
+/* ===== FX ===== */
 .blurred {
   -webkit-filter: blur(0.5rem);
   filter: blur(0.5rem);
@@ -1106,9 +1076,7 @@ label:has(input[type="checkbox"]:disabled, input[role="switch"]:disabled) {
   -webkit-backdrop-filter: blur(0) !important;
   backdrop-filter: blur(0) !important;
 }
-/* ==========
- * ICONS
- * ========== */
+/* ===== ICONS ===== */
 .fab-container {
   position: fixed;
   bottom: 1rem;
@@ -1136,9 +1104,7 @@ label:has(input[type="checkbox"]:disabled, input[role="switch"]:disabled) {
   align-items: center;
   justify-content: center;
 }
-/* ==========
- * CAROUSELS
- * ========== */
+/* ===== CAROUSELS ===== */
 .swiper {
   --swiper-navigation-color: #fff;
   --swiper-pagination-color: #fff;
@@ -1254,9 +1220,7 @@ label:has(input[type="checkbox"]:disabled, input[role="switch"]:disabled) {
 .swiper-button-next:hover {
   --swiper-navigation-background: color-mix(in srgb, var(--secondary-color) 75%, transparent);
 }
-/* ==========
- * SPA
- * ========== */
+/* ===== SPA ===== */
 #spa-nav,
 #spa-foot,
 #spa-content {
@@ -1284,9 +1248,7 @@ label:has(input[type="checkbox"]:disabled, input[role="switch"]:disabled) {
   height: 100%;
   z-index: 9;
 }
-/* ==========
- * LOADER
- * ========== */
+/* ===== LOADER ===== */
 #spa-loader {
   position: fixed;
   display: flex;
@@ -1386,9 +1348,7 @@ label:has(input[type="checkbox"]:disabled, input[role="switch"]:disabled) {
     transform: rotate(-720deg);
   }
 }
-/* ==========
- * TRANSLATE
- * ========== */
+/* ===== TRANSLATE ===== */
 #g-translate {
   position: fixed;
   bottom: 0;
@@ -1397,9 +1357,7 @@ label:has(input[type="checkbox"]:disabled, input[role="switch"]:disabled) {
   padding: 0 0.25rem;
   z-index: 99;
 }
-/* ==========
- * VIDEO.JS
- * ========== */
+/* ===== VIDEO.JS ===== */
 .video-js > * {
   color: #fff !important;
   font-size: 0.75rem !important;
@@ -1437,9 +1395,7 @@ label:has(input[type="checkbox"]:disabled, input[role="switch"]:disabled) {
 .vjs-modal-dialog {
   height: 75% !important;
 }
-/* ==========
- * PARTICLES
- * ========== */
+/* ===== PARTICLES ===== */
 #particles {
   position: fixed;
   width: 100%;
@@ -1460,9 +1416,7 @@ label:has(input[type="checkbox"]:disabled, input[role="switch"]:disabled) {
     stroke-dashoffset: -8.5rem;
   }
 }
-/* ==========
- * BGV
- * ========== */
+/* ===== BGV ===== */
 .side-video {
   position: fixed;
   opacity: 0.125;
@@ -1510,9 +1464,7 @@ label:has(input[type="checkbox"]:disabled, input[role="switch"]:disabled) {
 .video-foreground {
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(32, 0, 0, 0.25) 100%);
 }
-/* ==========
- * ACCORDIONS
- * ========== */
+/* ===== ACCORDIONS ===== */
 .bywr-accordion .accordion-item {
   background: var(--transparent);
   border: 0;
@@ -1546,9 +1498,7 @@ label:has(input[type="checkbox"]:disabled, input[role="switch"]:disabled) {
 .p-2o5 {
   padding: 0.75rem !important;
 }
-/* ==========
- * SIDEBAR
- * ========== */
+/* ===== SIDEBAR ===== */
 .bywr-sidebar {
   position: fixed;
   display: flex;
@@ -1657,9 +1607,7 @@ label:has(input[type="checkbox"]:disabled, input[role="switch"]:disabled) {
     display: none;
   }
 }
-/* =====================
- * APP CONTAINER CONTENT
- * ===================== */
+/* ===== APP CONTAINER CONTENT ===== */
 .app-content {
   position: relative;
   background: linear-gradient(to bottom, #fefefe 0%, #fff 100%);
@@ -1716,9 +1664,7 @@ label:has(input[type="checkbox"]:disabled, input[role="switch"]:disabled) {
   right: 5%;
   background: linear-gradient(to right, #ddd 0%, #fff 100%);
 }
-/* ============
- * LANG BUTTONS
- * ============ */
+/* ===== LANG BUTTONS ===== */
 .a-lang {
   background: var(--dark-color);
   color: var(--light-color);
@@ -1732,9 +1678,7 @@ label:has(input[type="checkbox"]:disabled, input[role="switch"]:disabled) {
   height: 0.75rem;
   margin-bottom: 0.25rem;
 }
-/* =============
- * ACCESSIBILITY
- * ============= */
+/* ===== ACCESSIBILITY ===== */
 #bywr-accessibility {
   position: fixed;
   top: 12.5vh;
@@ -1821,9 +1765,7 @@ label:has(input[type="checkbox"]:disabled, input[role="switch"]:disabled) {
   text-decoration: underline !important;
   border: 0.125rem solid white !important;
 }
-/* ==================
- * MARGIN AND PADDING
- * ================== */
+/* ===== MARGIN AND PADDING ===== */
 .m--1 {
   margin: -0.25rem !important;
 }

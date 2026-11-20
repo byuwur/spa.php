@@ -6,9 +6,7 @@
  * Copyright (c) 2026 Andrés Trujillo [Mateus] byUwUr
  */
 
-// =============
-// API FUNCTIONS
-// =============
+// ===== API FUNCTIONS =====
 
 /**
  * Safely encodes PHP values for inline JavaScript.
@@ -54,9 +52,7 @@ function api_respond(int $status, bool $error, string $message, array $data = []
   exit;
 }
 
-// =============
-// HTTP REQUESTS
-// =============
+// ===== HTTP REQUESTS =====
 
 /** 
  * Makes an HTTP POST request to a given URL with optional GET and POST parameters.
@@ -166,9 +162,7 @@ function remote_file_exists(string $url, bool $clog_error = false): bool
   return $http_code >= 200 && $http_code <= 299;
 }
 
-// ===================
-// RUNTIME ENVIRONMENT
-// ===================
+// ===== RUNTIME ENVIRONMENT =====
 
 /**
  * Checks if a given TCP port is currently in use on localhost.
@@ -230,9 +224,7 @@ function php_where(): string
   return 'php';
 }
 
-// ================
-// INPUT VALIDATION
-// ================
+// ===== INPUT VALIDATION =====
 
 /** 
  * Validates a value against a specified type and sanitizes it accordingly, returning NULL if the value is invalid.
@@ -373,9 +365,7 @@ function common_keys(array $array): array
   return array_values($common);
 }
 
-// ================
-// DATABASE QUERIES
-// ================
+// ===== DATABASE QUERIES =====
 
 /**
  * Builds a SQL query string based on the specified method, columns, table, fields, conditions, and other parameters.
@@ -979,9 +969,7 @@ function execute_sql_query($mysqli, string|stdClass $query, string|array $param_
   return $return;
 }
 
-// =======================
-// COMMON & MISC FUNCTIONS
-// =======================
+// ===== COMMON & MISC FUNCTIONS =====
 
 /**
  * Normalizes a string by removing non-alphanumeric characters, double spaces and converting to lowercase.
@@ -1111,9 +1099,7 @@ function suppress_errors(): void
   ini_set("display_errors", 0);
 }
 
-// ===========
-// HTML OUTPUT
-// ===========
+// ===== HTML OUTPUT =====
 
 /** 
  * Escapes HTML characters in a string to prevent XSS attacks.

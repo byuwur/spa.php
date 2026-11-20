@@ -25,9 +25,7 @@ test.after(async () => {
   await browser?.close();
 });
 
-// =============
-// TEST FIXTURES
-// =============
+// ===== TEST FIXTURES =====
 /**
  * Open a page with local SPA transition assets and close it after the test.
  * @param {import("node:test").TestContext} t Test owning the page.
@@ -62,9 +60,7 @@ async function pageFor(t, common = false) {
   return page;
 }
 
-// =================
-// TRANSITIONS TESTS
-// =================
+// ===== TRANSITIONS TESTS =====
 test("explicit content changes preserve nodes, use host timing, and restore overflow", { timeout: 30000 }, async (t) => {
   const page = await pageFor(t);
   const result = await page.evaluate(async () => {

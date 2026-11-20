@@ -32,9 +32,7 @@
   // Keep the normal height separate from the animated height.
   const watched = new WeakMap();
 
-  // =================
-  // ANIMATION TARGETS
-  // =================
+  // ===== ANIMATION TARGETS =====
   /**
    * Check whether an element or its parent is excluded.
    * @private
@@ -71,9 +69,7 @@
     return Number.parseFloat(getComputedStyle(element).height) || 0;
   }
 
-  // ===============
-  // MOTION SETTINGS
-  // ===============
+  // ===== MOTION SETTINGS =====
   /**
    * Read and validate transition options.
    * @private
@@ -96,9 +92,7 @@
     return { duration, easing };
   }
 
-  // ==================
-  // ELEMENT ANIMATIONS
-  // ==================
+  // ===== ELEMENT ANIMATIONS =====
   /**
    * Animate a container and optionally its direct children.
    * @private
@@ -177,9 +171,7 @@
     return animation;
   }
 
-  // ==============
-  // TRANSITION API
-  // ==============
+  // ===== TRANSITION API =====
   /**
    * Run a synchronous update once per matched container, then ease its height and opacity.
    * Updates still run with motion disabled or excluded. This helper neither clones nodes nor awaits promises.

@@ -15,15 +15,11 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # =============
-  # SOURCE CHECKS
-  # =============
+  # ===== SOURCE CHECKS =====
   source_checks:
     uses: ./.github/workflows/ci.yml
 
-  # =======================
-  # BUILD RELEASE ARTIFACTS
-  # =======================
+  # ===== BUILD RELEASE ARTIFACTS =====
   build:
     needs: source_checks
     runs-on: ubuntu-24.04
@@ -75,9 +71,7 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
-  # ===================
-  # PUBLISH THE RELEASE
-  # ===================
+  # ===== PUBLISH THE RELEASE =====
   publish:
     if: github.event_name == 'push' && github.ref_type == 'tag'
     needs: [source_checks, build]

@@ -5,9 +5,7 @@ const vm = require("node:vm");
 const path = require("node:path");
 const { source, reference } = require("./parity-source");
 
-// =============
-// TEST FIXTURES
-// =============
+// ===== TEST FIXTURES =====
 function initialize(storage, app = "app", copy = "root") {
   const html = reference ? null : execFileSync(process.env.PHP_BINARY || "php", [path.join(__dirname, "render_init.php"), copy, `https://example.test/${app}`], { encoding: "utf8" });
   const context = {
@@ -89,9 +87,7 @@ for (const copy of reference ? ["static"] : ["root", "demo"]) {
   });
 }
 
-// =============
-// STORAGE TESTS
-// =============
+// ===== STORAGE TESTS =====
 test("duplicate emitted storage setup preserves memory fallback and its namespace", { skip: !!reference }, () => {
   for (const copy of ["root", "demo"]) {
     const html = execFileSync(process.env.PHP_BINARY || "php", [path.join(__dirname, "render_init.php"), copy, "https://example.test/app"], { encoding: "utf8" });

@@ -21,17 +21,13 @@
 (function (global) {
   if (typeof global.byLoad === "function") return;
 
-  // ======================
-  // PENDING ASSET REQUESTS
-  // ======================
+  // ===== PENDING ASSET REQUESTS =====
   // Reuse loaded assets; remove failed requests so they can be retried.
   const requests = new Map();
   // Dynamic scripts do not delay DOMContentLoaded, even when their defer property is set.
   const ready = document.readyState === "loading" ? new Promise((resolve) => document.addEventListener("DOMContentLoaded", resolve, { once: true })) : null;
 
-  // =============
-  // ASSET LOADING
-  // =============
+  // ===== ASSET LOADING =====
   /**
    * Insert CSS and classic scripts into the head sequentially, awaiting each element's load event.
    * Required failures reject and stop this batch without removing earlier successful assets.

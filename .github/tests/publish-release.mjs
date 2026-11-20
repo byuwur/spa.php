@@ -14,9 +14,7 @@ const environment = {
   GH_TOKEN: "mock-token"
 };
 
-// =============
-// TEST FIXTURES
-// =============
+// ===== TEST FIXTURES =====
 function github({ failUpload = 0, published = false, foreign = false, starter = false } = {}) {
   let release = published ? { id: 1, draft: false } : null;
   const assets = [];
@@ -84,9 +82,7 @@ function github({ failUpload = 0, published = false, foreign = false, starter = 
   };
 }
 
-// =====================
-// PUBLISH RELEASE TESTS
-// =====================
+// ===== PUBLISH RELEASE TESTS =====
 test("a failed upload stays private, and a rerun resumes matching assets without replacement", async () => {
   const remote = github({ failUpload: 3, starter: true });
   await assert.rejects(publishRelease({ request: remote.request, environment, directory }), /release remains a draft/);

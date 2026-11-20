@@ -20,9 +20,7 @@ const launchOptions = {
 
 const loader = path.join(__dirname, "../_load.js");
 
-// ==========
-// LOAD TESTS
-// ==========
+// ===== LOAD TESTS =====
 test("loader waits for parsing, preserves script/CSS order and UTF-8, and shares duplicate requests", { timeout: 30000 }, async () => {
   const browser = await browserType.launch(launchOptions);
   try {

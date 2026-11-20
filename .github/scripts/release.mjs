@@ -21,9 +21,7 @@ export const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex"
 /** @param {...string} args Git arguments. @returns {string} Trimmed UTF-8 output from this checkout. */
 export const git = (...args) => execFileSync("git", args, { cwd: root, encoding: "utf8", maxBuffer: 32 * 1024 * 1024 }).trim();
 
-// ======================
-// RELEASE TAGS AND NOTES
-// ======================
+// ===== RELEASE TAGS AND NOTES =====
 /**
  * Accept the repositories' established two-part tags and three-part SemVer tags.
  * @param {string} tag Version beginning with v, with optional prerelease/build identifiers.
@@ -37,9 +35,7 @@ export function validateTag(tag) {
   return tag;
 }
 
-// ==========
-// CHANGELOG
-// ==========
+// ===== CHANGELOG =====
 /** @param {string} tag Release/preview tag. @param {string} [directory=root] Git checkout. @returns {Object} Previous tag, exact commit, display ref, and real commit subjects. */
 export function releaseChangelog(tag, directory = root) {
   /**
@@ -87,9 +83,7 @@ export function releaseNotes(manifest) {
   return `${lines.join("\n")}\n`;
 }
 
-// ==================
-// ARTIFACT CHECKSUMS
-// ==================
+// ===== ARTIFACT CHECKSUMS =====
 /**
  * Write notes, provenance and complete checksums, then replace only a known build directory.
  * @param {string} staging Temporary directory under dist created by the caller.
@@ -161,9 +155,7 @@ export async function checkRelease() {
   console.log(`Validated ${tag} at ${commit} on ${config.branch}`);
 }
 
-// ===================
-// RELEASE PUBLICATION
-// ===================
+// ===== RELEASE PUBLICATION =====
 /** @param {Object} [options={}] Injectable request, environment, and tested directory. @returns {Promise<void>} Publishes only an intact tested inventory into its matching draft. */
 export async function publishRelease({ request = fetch, environment = process.env, directory = path.join(dist, "assets") } = {}) {
   assert.equal(environment.GITHUB_REPOSITORY, config.repository);
@@ -291,9 +283,7 @@ export async function publishRelease({ request = fetch, environment = process.en
   console.log(`Published ${config.repository} ${tag} with ${files.length} verified assets`);
 }
 
-// ============
-// COMMAND LINE
-// ============
+// ===== COMMAND LINE =====
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
   const { values } = parseArgs({
     options: { tag: { type: "string" }, check: { type: "boolean" }, publish: { type: "boolean" } }

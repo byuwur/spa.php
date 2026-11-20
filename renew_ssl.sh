@@ -11,9 +11,7 @@ echo "[RENEW] SSL certificate for Lightsail LAMP with Certbot:"
 echo "=== SCRIPT START ==="
 echo ""
 
-# ============================
-# DOMAIN AND WILDCARD SETTINGS
-# ============================
+# ===== DOMAIN AND WILDCARD SETTINGS =====
 # Source .bashrc to load any existing DOMAIN/WILDCARD variables
 if [ -f "$HOME/.bashrc" ]; then
     source "$HOME/.bashrc"
@@ -39,9 +37,7 @@ sleep 1
 
 echo ""
 
-# =====================================
-# DNS CHALLENGE AND CERTIFICATE RENEWAL
-# =====================================
+# ===== DNS CHALLENGE AND CERTIFICATE RENEWAL =====
 sudo systemctl stop apache2
 sudo systemctl stop mariadb
 
@@ -56,9 +52,7 @@ sudo certbot -d "$DOMAIN" -d "$WILDCARD" --manual --preferred-challenges dns cer
 echo ""
 echo "Change SSL config:"
 
-# ================================
-# APACHE CERTIFICATE CONFIGURATION
-# ================================
+# ===== APACHE CERTIFICATE CONFIGURATION =====
 sudo sed \
 -i -e "s|SSLCertificateFile /etc/ssl/certs/ssl-cert-snakeoil.pem|SSLCertificateFile /etc/letsencrypt/live/$DOMAIN/fullchain.pem|g" \
 -i -e "s|SSLCertificateKeyFile /etc/ssl/private/ssl-cert-snakeoil.key|SSLCertificateKeyFile /etc/letsencrypt/live/$DOMAIN/privkey.pem|g" \

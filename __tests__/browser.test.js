@@ -24,9 +24,7 @@ after(async () => {
   await browser?.close();
 });
 
-// =============
-// BROWSER TESTS
-// =============
+// ===== BROWSER TESTS =====
 test("privacy links and buttons reopen one panel without changing consent or the current route", async (t) => {
   const page = await browser.newPage();
   t.after(() => page.close());

@@ -4,9 +4,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
 
-// =============
-// TEST FIXTURES
-// =============
+// ===== TEST FIXTURES =====
 class FakeScript {
   constructor(document, attributes = [], textContent = "") {
     this.document = document;
@@ -216,9 +214,7 @@ function createHarness(plans = {}) {
   };
 }
 
-// ======================
-// FRAGMENT_SCRIPTS TESTS
-// ======================
+// ===== FRAGMENT_SCRIPTS TESTS =====
 test("cold and cached external dependencies execute before dependent inline scripts", async () => {
   for (const delay of [25, 0]) {
     const harness = createHarness({ "viewer.js": { delay, label: "viewer" } });

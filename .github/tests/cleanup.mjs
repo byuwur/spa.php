@@ -9,9 +9,7 @@ import { fileURLToPath } from "node:url";
 
 const root = fileURLToPath(new URL("../../", import.meta.url));
 test("failed builds clean their private stage and preserve existing output", { timeout: 30000 }, async () => {
-  // =========================
-  // TEMPORARY RELEASE FIXTURE
-  // =========================
+  // ===== TEMPORARY RELEASE FIXTURE =====
   const temporary = await fs.mkdtemp(path.join(os.tmpdir(), "release-cleanup-"));
   const modules = path.join(temporary, ".github/node_modules");
   let linked = false;
@@ -51,9 +49,7 @@ test("failed builds clean their private stage and preserve existing output", { t
       await fs.writeFile(path.join(temporary, "fixture/fixture.html"), '<html data-tool="fixture"><template id="overlay-markup"></template></html>');
     }
     const git = (...args) => execFileSync("git", ["-c", "user.name=Release cleanup tests", "-c", "user.email=release-tests@example.invalid", "-c", "commit.gpgsign=false", ...args], { cwd: temporary, stdio: "pipe" });
-    // ================
-    // REPOSITORY SETUP
-    // ================
+    // ===== REPOSITORY SETUP =====
     git("init", "--quiet", "--initial-branch=main");
     git("add", ".");
     git("commit", "--quiet", "-m", "Cleanup fixture");
@@ -78,9 +74,7 @@ test("failed builds clean their private stage and preserve existing output", { t
     delete environment.NODE_TEST_CONTEXT;
     const command = kind === "history" ? ".github/scripts/release.mjs" : ".github/scripts/build.mjs";
     const args = [command, "--tag", "v0.0.0-cleanup", ...(["easy", "spa"].includes(kind) ? ["--offline"] : [])];
-    // =========================
-    // BUILD FAILURE AND CLEANUP
-    // =========================
+    // ===== BUILD FAILURE AND CLEANUP =====
     const result = spawnSync(process.execPath, args, {
       cwd: temporary,
       env: environment,
