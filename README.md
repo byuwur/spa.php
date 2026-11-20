@@ -164,9 +164,9 @@ Requires native `CompressionStream`/`DecompressionStream` support for `deflate-r
 Load [\_load.js](_load.js) before calling `byLoad()`. It loads CSS and classic scripts in array order. Await required assets before initializing the app.
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/byuwur/spa.js@v20.16/_load.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/byuwur/spa.js@v20.17/_load.min.js"></script>
 <script>
-  const host = "https://cdn.jsdelivr.net/gh/byuwur/spa.js@v20.16";
+  const host = "https://cdn.jsdelivr.net/gh/byuwur/spa.js@v20.17";
   byLoad(["/css/bootstrap.min.css", "/js/jquery.min.js"], { host, defer: false }).catch(console.error);
 </script>
 ```
