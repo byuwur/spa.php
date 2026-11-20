@@ -6,6 +6,50 @@
  * Copyright (c) 2026 Andrés Trujillo [Mateus] byUwUr
  */
 
+// ===== ROUTE METADATA =====
+
+/** Expand route fields into a single value for each supported HTML head tag. */
+function route_metadata_values(array $metadata): array
+{
+  $values = [
+    "og:title" => $metadata["title"] ?? null,
+    "twitter:title" => $metadata["title"] ?? null,
+    "og:description" => $metadata["description"] ?? null,
+    "twitter:description" => $metadata["description"] ?? null,
+    "og:url" => $metadata["canonical"] ?? null,
+    "og:image" => $metadata["image"] ?? null,
+    "twitter:image" => $metadata["image"] ?? null,
+  ];
+  return array_filter(array_replace($values, $metadata), static function ($value, $key) {
+    return is_string($value) && preg_match('/^(?:title|canonical|description|robots|(?:og|twitter):[a-z0-9_:-]+)$/D', $key);
+  }, ARRAY_FILTER_USE_BOTH);
+}
+
+/** Render route metadata in the initial head, preserving shell defaults for client navigation. */
+function render_route_metadata(array $metadata, array $defaults = []): string
+{
+  $route = route_metadata_values($metadata);
+  $defaults = route_metadata_values($defaults);
+  $tags = [];
+  foreach (array_replace($defaults, $route) as $key => $value) {
+    $value = htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8");
+    $marker = "";
+    if (isset($route[$key])) {
+      $marker = " data-spa-metadata";
+      if (isset($defaults[$key])) {
+        $marker .= ' data-spa-default="' . htmlspecialchars($defaults[$key], ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8") . '"';
+      }
+    }
+    if ($key === "title") $tags[] = "<title{$marker}>{$value}</title>";
+    elseif ($key === "canonical") $tags[] = "<link rel=\"canonical\" href=\"{$value}\"{$marker} />";
+    else {
+      $attribute = str_starts_with($key, "og:") ? "property" : "name";
+      $tags[] = "<meta {$attribute}=\"{$key}\" content=\"{$value}\"{$marker} />";
+    }
+  }
+  return implode("\n", $tags);
+}
+
 // ===== API FUNCTIONS =====
 
 /**

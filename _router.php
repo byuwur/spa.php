@@ -32,7 +32,7 @@ foreach ($routes as $route_path => $route) {
   foreach (["URI", "FILE"] as $field)
     if (isset($route[$field]) && !is_string($route[$field]))
       error_crash(500, "Route \"{$route_path}\" field {$field} must be a string.");
-  foreach (["GET", "POST", "COMPONENT"] as $field)
+  foreach (["GET", "POST", "COMPONENT", "METADATA"] as $field)
     if (isset($route[$field]) && !is_array($route[$field]))
       error_crash(500, "Route \"{$route_path}\" field {$field} must be an array.");
 }
@@ -61,6 +61,7 @@ if (isset($routes[$uri]["FILE"])) {
   exit;
 }
 // Programmed route data is authoritative over /$/ values and ordinary query data.
+$routeMetadata = $routes[$uri]["METADATA"] ?? ($routes[$uri]["URI"] === "" ? ($routes["/"]["METADATA"] ?? []) : []);
 // $route["GET"] >>> /$/ >>> ?query
 $_GET = [...$_GET, ...$routes[$uri]["GET"] ?? []];
 $_POST = [...$_POST, ...$routes[$uri]["POST"] ?? []];

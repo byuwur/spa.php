@@ -28,6 +28,7 @@ test("standalone helpers preserve existing public globals", () => {
   const context = {};
   vm.runInNewContext(fs.readFileSync(path.join(__dirname, "..", "_functions.js"), "utf8"), context);
   const entries = [
+    "apply_route_metadata",
     "check_json",
     "parse_json",
     "print_json",

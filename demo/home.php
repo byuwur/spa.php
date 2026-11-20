@@ -35,29 +35,25 @@ require_once "{$TO_HOME}/common.example.php";
 <head>
   <meta charset="UTF-8" />
   <meta name="referrer" content="origin" />
-  <title><?= escape_html($LANG["title.default"]) ?></title>
-  <meta property="og:title" content="<?= escape_html($LANG["title.default"]) ?>" />
-  <meta property="og:type" content="website" />
-  <meta property="og:image" content="https://byuwur.github.io/img/logo.png" />
-  <meta property="og:image:alt" content="SPA.php | byUwUr" />
-  <meta property="og:url" content="<?= escape_html($LANG["meta.url"]) ?>" />
-  <meta property="og:site_name" content="SPA.php | byUwUr" />
-  <meta property="og:description" content="<?= escape_html($LANG["meta.description"]) ?>" />
-  <meta property="og:locale" content="<?= escape_html($LANG["meta.locale"]) ?>" />
+  <?= render_route_metadata($routeMetadata, [
+    "title" => $LANG["title.default"],
+    "description" => $LANG["meta.description"],
+    "canonical" => $LANG["meta.url"],
+    "image" => "https://byuwur.github.io/img/logo.png",
+    "og:type" => "website",
+    "og:image:alt" => "SPA.php | byUwUr",
+    "og:site_name" => "SPA.php | byUwUr",
+    "og:locale" => $LANG["meta.locale"],
+    "twitter:card" => "summary",
+    "twitter:creator" => "@byUwUr",
+    "twitter:image:alt" => "SPA.php | byUwUr",
+    "robots" => "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+  ]) ?>
   <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no" />
-  <meta name="description" content="<?= escape_html($LANG["meta.description"]) ?>" />
   <meta name="author" content="Andrés Trujillo Mateus" />
   <meta name="keywords" content="<?= escape_html($LANG["meta.keywords"]) ?>" />
   <meta name="copyright" content="[Mateus] byUwUr" />
-  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:creator" content="@byUwUr" />
-  <meta name="twitter:title" content="<?= escape_html($LANG["title.default"]) ?>" />
-  <meta name="twitter:description" content="<?= escape_html($LANG["meta.description"]) ?>" />
-  <meta name="twitter:image" content="https://byuwur.github.io/img/logo.png" />
-  <meta name="twitter:image:alt" content="SPA.php | byUwUr" />
   <meta name="theme-color" content="#300" />
-  <link rel="canonical" href="<?= escape_html($LANG["meta.url"]) ?>" />
   <!-- <link rel="alternate" hreflang="es" href="https://byuwur.co/spa.php/demo/es" /> -->
   <link rel="alternate" hreflang="es" href="https://spa.byuwur.co/demo/es" />
   <!-- <link rel="alternate" hreflang="en" href="https://byuwur.co/spa.php/demo/en" /> -->

@@ -301,6 +301,48 @@ async function initializePage(page, preferences = {}) {
   return page;
 }
 
+test("route metadata overrides shell defaults and releases them on the next navigation", { skip: Boolean(reference) }, async (t) => {
+  const page = await application(t);
+  const snapshot = await page.evaluate(async () => {
+    const canonical = document.createElement("link");
+    canonical.rel = "canonical";
+    canonical.href = "https://example.test/";
+    document.head.append(canonical);
+    document.title = "Shell";
+    const title = 'Kit <&> "preview"';
+    bySPA.ROUTES["/kit"] = {
+      URI: "/known",
+      METADATA: { title, description: "Route description", canonical: "https://example.test/kit", "og:title": "Shared kit" }
+    };
+    await bySPA.load("/kit");
+    const kit = {
+      title: document.title,
+      canonical: canonical.href,
+      count: document.querySelectorAll('link[rel="canonical"]').length,
+      og: document.querySelector('meta[property="og:title"]').content,
+      twitter: document.querySelector('meta[name="twitter:title"]').content
+    };
+    await bySPA.load("/known");
+    const slow = $.Deferred();
+    const ajax = $.ajax;
+    $.ajax = (request) => (request.url.includes("/late-fragment") ? slow.promise() : ajax(request));
+    bySPA.ROUTES["/late"] = { URI: "/late-fragment", METADATA: { title: "Late" } };
+    const superseded = bySPA.load("/late");
+    await bySPA.load("/known");
+    slow.resolve("<p>Late fragment</p>");
+    await superseded;
+    $.ajax = () => $.Deferred().reject({ status: 500 }, "error", "test").promise();
+    await bySPA.load("/kit");
+    return { kit, title: document.title, canonical: canonical.href, extra: !!document.querySelector('meta[property="og:title"]') };
+  });
+  assert.deepEqual(snapshot, {
+    kit: { title: 'Kit <&> "preview"', canonical: "https://example.test/kit", count: 1, og: "Shared kit", twitter: 'Kit <&> "preview"' },
+    title: "Shell",
+    canonical: "https://example.test/",
+    extra: false
+  });
+});
+
 test("shared: navigation has one terminal outcome, including stale work and error-page failure", { timeout: 30000 }, async (t) => {
   for (const [url, expected, errorFails] of [
     ["/next", "bySPA:load", false],

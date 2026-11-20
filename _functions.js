@@ -6,6 +6,56 @@
  * Copyright (c) 2026 Andrés Trujillo [Mateus] byUwUr
  */
 
+// ===== ROUTE METADATA =====
+
+/** Apply a route's head values, or restore the shell before the next route takes ownership. */
+function apply_route_metadata(metadata) {
+  const head = document.head;
+  if (!metadata) {
+    for (const node of head.querySelectorAll("[data-spa-metadata]")) {
+      const original = node.getAttribute("data-spa-default");
+      if (original === null) {
+        node.remove();
+        continue;
+      }
+      if (node.localName === "title") node.textContent = original;
+      else node.setAttribute(node.localName === "link" ? "href" : "content", original);
+      node.removeAttribute("data-spa-default");
+      node.removeAttribute("data-spa-metadata");
+    }
+    return;
+  }
+
+  const values = {
+    "og:title": metadata.title,
+    "twitter:title": metadata.title,
+    "og:description": metadata.description,
+    "twitter:description": metadata.description,
+    "og:url": metadata.canonical,
+    "og:image": metadata.image,
+    "twitter:image": metadata.image,
+    ...metadata
+  };
+  for (const [key, value] of Object.entries(values)) {
+    if (typeof value !== "string" || !/^(?:title|canonical|description|robots|(?:og|twitter):[a-z0-9_:-]+)$/.test(key)) continue;
+    const tag = key === "title" ? "title" : key === "canonical" ? "link" : "meta";
+    const attribute = tag === "link" ? "rel" : key.startsWith("og:") ? "property" : "name";
+    const selector = tag === "title" ? "title" : `${tag}[${attribute}="${key}"]`;
+    const content = tag === "link" ? "href" : "content";
+    let node = head.querySelector(selector);
+    if (!node) {
+      node = document.createElement(tag);
+      if (tag !== "title") node.setAttribute(attribute, key);
+      head.append(node);
+    } else if (!node.hasAttribute("data-spa-metadata")) {
+      node.setAttribute("data-spa-default", tag === "title" ? node.textContent : (node.getAttribute(content) ?? ""));
+    }
+    node.setAttribute("data-spa-metadata", "");
+    if (tag === "title") node.textContent = value;
+    else node.setAttribute(content, value);
+  }
+}
+
 // ===== JSON =====
 
 /**

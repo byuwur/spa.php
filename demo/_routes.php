@@ -52,7 +52,11 @@ $routes = [
   "/{$ROUTE_VIDEO}" => ["URI" => "/video.example.php", "GET" => [], ...$ROOT_COMPONENTS],
   "/{$ROUTE_JSON}" => ["URI" => "/json.example.php", "GET" => [], ...$ROOT_COMPONENTS],
   "/{$ROUTE_MD}" => ["URI" => "/md.example.php", "GET" => [], ...$ROOT_COMPONENTS],
-  "/{$ROUTE_KIT}" => ["URI" => "/kit.example.html", "GET" => [], ...$ROOT_COMPONENTS],
+  "/{$ROUTE_KIT}" => ["URI" => "/kit.example.html", ...$ROOT_COMPONENTS, "METADATA" => [
+    "title" => "UI Kit | SPA.php",
+    "description" => "Explore the controls, layouts and themes included with SPA.php.",
+    "canonical" => "https://spa.byuwur.co/demo/kit",
+  ]],
   //"/{$ROUTE_WEBSOCKET}" => ["URI" => "/websocket.example.php", "GET" => [], ...$ROOT_COMPONENTS],
   "/{$ROUTE_PDF}" => ["FILE" => "/img/pdf/sample.pdf"],
 ];

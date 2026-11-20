@@ -217,7 +217,9 @@
       uri = bySPA.ROUTES[get.uri]?.URI ? bySPA.ROUTES[get.uri]?.URI : bySPA.ROUTES["/"]?.URI;
     } else get.uri = path;
     setRouteState({ path, url, get, post });
-    return { path, url, uri, file: route?.FILE, get, post, component: route?.COMPONENT };
+    const contentRoute = bySPA.ROUTES[get.uri]?.URI ? bySPA.ROUTES[get.uri] : bySPA.ROUTES["/"];
+    const metadata = route.METADATA ?? (route.URI === "" ? contentRoute?.METADATA : undefined);
+    return { path, url, uri, file: route?.FILE, get, post, component: route?.COMPONENT, metadata };
   }
 
   /**
@@ -227,6 +229,8 @@
    */
   function afterLoad(routing) {
     if (typeof byCommon !== "undefined" && typeof byCommon.init === "function") byCommon.init();
+    if (routing.navigationId !== bySPA.NAVIGATION_ID) return;
+    if (routing.metadata) apply_route_metadata(routing.metadata);
     document.dispatchEvent(new CustomEvent("bySPA:load", { detail: routing }));
   }
 
@@ -476,6 +480,8 @@
     if (bySPA.APP_ENV === "DEV") console.log(`loadSPA("${url}", ${parse_json(mode)})`);
     $("#spa-loader").fadeIn(1);
     const routing = routeURL(`${url}`);
+    apply_route_metadata();
+    if (routing?.metadata && !routing.file) apply_route_metadata(routing.metadata);
     // If routing fails, return early
     if (!routing) {
       const error = `Route "${url}" does not exist.`;
@@ -533,6 +539,7 @@
       })
       .catch(function (xhr, status, error) {
         if (navigationId !== bySPA.NAVIGATION_ID) return null;
+        apply_route_metadata();
         console.error(`Error (SPA): ${xhr?.status} ${status} ${error}`, bySPA.APP_ENV == "DEV" ? xhr : "");
         document.dispatchEvent(
           new CustomEvent("bySPA:error", {
