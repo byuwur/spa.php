@@ -109,11 +109,27 @@ Validate preconditions early. Prefer guard clauses, explicit branches, visible f
 
 Express each decision in the simplest terms that preserve the intended behavior. Choose names and data structures that make it clear why a branch runs. When several branches would have to interpret the same input, resolve its meaning once where you read it. For example, `const { toolbar = true } = options` makes the default visible and lets the rendering code say `if (toolbar)`.
 
+Declare fixed entries and ordered steps explicitly when their names, values, or sequence matter to the reader. For example, list each SPA route with its public path and destination so someone can find or change one entry directly. A few repeated lines are worthwhile when they make the result clear. Use loops to process collections or apply the same operation to each item.
+
 Follow the language and surrounding code for casing, prefixes, constants, and parameter conventions. Semantic consistency matters more than identical spelling across languages. Names should communicate the relevant action, responsibility, ownership, state, units, or context.
 
 Rename when a name misleads, hides an important distinction, or makes related contracts difficult to recognize. Preserve established public names unless the benefit justifies migration. Avoid mass cosmetic renaming and prefixes that add no useful information.
 
 In authored JavaScript, use `const` unless reassignment is needed, then `let`; avoid `var`. Prefer string interpolation when composing values into strings. Keep static data explicit: string arrays are easier to review than whitespace-packed strings split into sets. Build a lookup set once when membership checks justify it. Leave bundled third-party code unchanged.
+
+Keep a literal or simple expression at its point of use when it reads clearly there. Repeating a short literal twice is fine. Introduce a variable when its name explains the value, a computation should run once, or its uses need a shared source of truth.
+
+Use native interpolation when inserting values into a string. Reserve formatting functions such as `sprintf()` for work the format actually does, such as zero-padding a number, setting decimal precision, or filling a translated format supplied at runtime. A value already in scope can go directly in the literal.
+
+### Embedded HTML
+
+Write each fixed HTML fragment as one string across as many lines as it needs. Avoid arrays of markup lines followed by `join` or `implode`. Use double quotes around HTML attribute values in every host language. Choose a string delimiter that lets those quotes appear directly when the language permits. Escape dynamic values for their destination before interpolating them.
+
+Use `/* HTML */` only when the literal contains a complete HTML fragment. Close comments, attribute quotes, and paired tags within that string, in nesting order. Void elements such as `<img>` are complete on their own. Leave parser tokens such as `<!--`, lone opening or closing tags, split markup, and jQuery constructors such as ``$(`<div>`)`` unannotated. Never add a closing tag just to satisfy the highlighter.
+
+- **JavaScript.** For complete markup, place `/* HTML */` immediately before the opening backtick and interpolate with `${...}`. If an inline script generates a script element, keep `const endScript = "</" + "script>";` and interpolate `${endScript}` in a plain template literal. Interpolate the entire script element directly into any surrounding annotated HTML, as in ``${`<script src="json.js">${endScript}`}``. This keeps the script in place and gives the editor a complete HTML fragment.
+- **PHP.** Place the annotation immediately before complete markup. For a partial heredoc, use a neutral delimiter such as `FRAGMENT` because `HTML` itself activates highlighting. Use single quotes for static markup, as in `/* HTML */ '<a href="/work">Mateus\'s work</a>'`. Inside a single-quoted PHP string, escape apostrophes that belong to the content. Use a double-quoted string or heredoc when inserting variables. For example, given the rendered `$metadata`, write `$head->loadHTML(/* HTML */ "<html><head>{$metadata}</head></html>");`. Use a local variable for a value that needs calculation or escaping. Skip `%s` wrappers and `strtr()` placeholder maps for direct interpolation.
+- **Other languages.** Use the native multiline string syntax and apply the same completeness rule to the editor's HTML annotation.
 
 ## 8. Keep APIs small and contracts precise
 
@@ -183,7 +199,7 @@ New implementations must include key comments immediately above non-obvious logi
 
 Avoid narrating obvious syntax, decorative verbosity, and comments that compensate for misleading names. A short explanation of why an unusual branch exists is more valuable than a paragraph describing each statement. Inaccurate comments are worse than absent ones. Keep wording plain and direct: `HTML element to measure.` is enough when no further detail is needed. Do not add generic filler or make simple behavior sound complicated.
 
-Use single-line section headings at meaningful responsibility changes. Write `// ===== SECTION =====` in PHP, JavaScript and Go, `/* ===== SECTION ===== */` in CSS, and the equivalent native comment in other languages. Use uppercase, descriptive titles and align the order in sibling implementations. Keep `// === PHP ===` immediately after PHP bootstrap imports when application code follows. Use `//` for other single-line JavaScript comments. Retain necessary multiline file/license/documentation blocks and tool directives. The `/* HTML */` annotation is an explicit exception: place it immediately before the HTML string literal, preferably on the same line, so formatting and embedded HTML highlighting keep working.
+Use single-line section headings at meaningful responsibility changes. Write `// ===== SECTION =====` in PHP, JavaScript and Go, `/* ===== SECTION ===== */` in CSS, and the equivalent native comment in other languages. Use uppercase, descriptive titles and align the order in sibling implementations. Keep `// === PHP ===` immediately after PHP bootstrap imports when application code follows. Use `//` for other single-line JavaScript comments. Retain necessary multiline file/license/documentation blocks and tool directives. The `/* HTML */` annotation is an explicit exception: place it directly before a complete literal as described in [Embedded HTML](#embedded-html).
 
 Document every library function and method definition, including private helpers, and document longer functions and methods wherever they appear. Put the documentation immediately above the definition using JSDoc, PHPDoc, GoDoc, or the language's equivalent. For other short functions and ordinary inline callbacks, add explanation only where the behavior or contract needs it.
 
