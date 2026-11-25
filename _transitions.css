@@ -70,6 +70,11 @@
 }
 
 /* ===== COMPONENT TRANSITIONS ===== */
+/* jQuery drives the loader opacity on each animation frame. */
+#spa-loader {
+  transition: none !important;
+}
+
 /* Tooltip positioning stays immediate while page motion is enabled. */
 :is(.tooltip, .popover),
 :is(.tooltip, .popover) *,

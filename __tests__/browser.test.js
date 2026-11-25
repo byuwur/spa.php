@@ -301,6 +301,32 @@ async function initializePage(page, preferences = {}) {
   return page;
 }
 
+test("the loader paints the configured fade and resets immediately for the next route", { skip: Boolean(reference) }, async (t) => {
+  const page = await application(t);
+  await page.addStyleTag({ content: source("_transitions.css") });
+  await page.evaluate(async () => {
+    byCommon.GLOBAL_TRANSITION_DURATION = 600;
+    await bySPA.load("/next");
+  });
+  const sample = await page.waitForFunction(() => {
+    const loader = document.getElementById("spa-loader");
+    const opacity = parseFloat(loader.style.opacity);
+    if (opacity > 0.05 && opacity < 0.5) return [opacity, Number(getComputedStyle(loader).opacity)];
+  });
+  const [opacity, rendered] = await sample.jsonValue();
+  assert.ok(Math.abs(rendered - opacity) < 0.01, `Painted opacity ${rendered} should match ${opacity}`);
+  const { restored, display } = await page.evaluate(async () => {
+    const loader = document.getElementById("spa-loader");
+    const next = bySPA.load("/slow");
+    const restored = Number(getComputedStyle(loader).opacity);
+    document.documentElement.classList.add("no-motion");
+    await next;
+    return { restored, display: getComputedStyle(loader).display };
+  });
+  assert.equal(restored, 1);
+  assert.equal(display, "none");
+});
+
 test("route metadata overrides shell defaults and releases them on the next navigation", { skip: Boolean(reference) }, async (t) => {
   const page = await application(t);
   const snapshot = await page.evaluate(async () => {
