@@ -272,7 +272,7 @@ test("missing and broken application scripts are non-fatal", async () => {
   const harness = createHarness({ "missing.js": { fail: true } });
   const result = await harness.bySPA.__setHTMLForTest(
     harness.target,
-    /* HTML */ `<script src="missing.js"></script>
+    `<script src="missing.js"></script>
       <script>
         throw new Error("application error");
       </script>
@@ -345,4 +345,40 @@ test("the final ordered script cannot report success after navigation ownership 
   const pending = harness.bySPA.__setHTMLForTest(harness.target, /* HTML */ `<script src="last.js"></script>`, 1);
   harness.bySPA.NAVIGATION_ID = 2;
   assert.equal(await pending, null);
+});
+
+test("sample viewers render only successful responses into the requesting fragment", async () => {
+  for (const kind of ["md", "json"]) {
+    const file = path.join(__dirname, "../demo", `${kind}.example.php`);
+    const [, script] = fs.readFileSync(file, "utf8").match(/<script>([\s\S]*?)<\/script>/);
+    for (const outcome of ["success", "http-error", "navigation"]) {
+      const original = { isConnected: true };
+      let current = original;
+      const renders = [];
+      const warnings = [];
+      let respond;
+      const pending = new Promise((resolve) => {
+        respond = resolve;
+      });
+      const show = (...args) => renders.push(args);
+
+      vm.runInNewContext(script, {
+        $: (ready) => ready(),
+        document: { getElementById: () => current },
+        fetch: () => pending,
+        console: { warn: (...args) => warnings.push(args) },
+        byMDviewer: show,
+        byJSONviewer: show
+      });
+      if (outcome === "navigation") {
+        original.isConnected = false;
+        current = { isConnected: true };
+      }
+      respond({ ok: outcome !== "http-error", status: outcome === "http-error" ? 404 : 200, text: async () => "sample", json: async () => "sample" });
+      await new Promise((resolve) => setImmediate(resolve));
+      assert.equal(renders.length, outcome === "success" ? 1 : 0, `${kind} ${outcome}`);
+      if (renders.length) assert.deepEqual(renders[0].slice(0, 2), [original, "sample"]);
+      assert.equal(warnings.length, outcome === "http-error" ? 1 : 0);
+    }
+  }
 });

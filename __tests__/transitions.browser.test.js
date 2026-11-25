@@ -51,7 +51,33 @@ async function pageFor(t, common = false) {
       });
     return route.fulfill({
       contentType: "text/html; charset=UTF-8",
-      body: '<!doctype html><html><head><meta charset="UTF-8"><style>#panel { width: 16rem; line-height: 20px; overflow: auto; } #panel p { margin: 0; } #plain { height: 20px; }</style></head><body><div id="panel"><p>First line</p><button id="keep">Keep this node</button></div><div id="plain">Plain</div><div class="byCODEdocument"><span id="embedded">Code</span></div></body></html>'
+      body: /* HTML */ `<!doctype html>
+        <html>
+          <head>
+            <meta charset="UTF-8" />
+            <style>
+              #panel {
+                width: 16rem;
+                line-height: 20px;
+                overflow: auto;
+              }
+              #panel p {
+                margin: 0;
+              }
+              #plain {
+                height: 20px;
+              }
+            </style>
+          </head>
+          <body>
+            <div id="panel">
+              <p>First line</p>
+              <button id="keep">Keep this node</button>
+            </div>
+            <div id="plain">Plain</div>
+            <div class="byCODEdocument"><span id="embedded">Code</span></div>
+          </body>
+        </html>`
     });
   });
   await page.goto("https://motion.test/");

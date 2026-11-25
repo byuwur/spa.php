@@ -48,11 +48,25 @@ test("loader waits for parsing, preserves script/CSS order and UTF-8, and shares
       if (url.pathname === "/lib/base.css") return route.fulfill({ contentType: "text/css", body: ".probe { color: #ff0000; }" });
       return route.fulfill({
         contentType: "text/html",
-        body: `<!doctype html><head><meta charset="UTF-8"><script src="/_load.js"></script>
-          <script id="anchor">
-            window.onload = () => { window.hostLoaded = true; };
-            window.loaded = byLoad(["/base.css?theme=dark", "/one.js?v=1#test", "/two.js"], { host: "https://load.test/lib", before: document.getElementById("anchor") });
-          </script><style>.probe { color: #00ff00; }</style></head><body><p id="parsed" class="probe">Ready</p></body>`
+        body: /* HTML */ `<!doctype html>
+          <head>
+            <meta charset="UTF-8" />
+            <script src="/_load.js"></script>
+            <script id="anchor">
+              window.onload = () => {
+                window.hostLoaded = true;
+              };
+              window.loaded = byLoad(["/base.css?theme=dark", "/one.js?v=1#test", "/two.js"], { host: "https://load.test/lib", before: document.getElementById("anchor") });
+            </script>
+            <style>
+              .probe {
+                color: #00ff00;
+              }
+            </style>
+          </head>
+          <body>
+            <p id="parsed" class="probe">Ready</p>
+          </body>`
       });
     });
     await page.goto("https://load.test/app/index.html");
@@ -95,7 +109,8 @@ test("loader rejects required failures, permits retry, and continues after optio
       if (url.pathname === "/_load.js") return route.fulfill({ path: loader, contentType: "text/javascript" });
       return route.fulfill({
         contentType: "text/html",
-        body: '<!doctype html><meta charset="UTF-8"><script src="/_load.js"></script>'
+        body: /* HTML */ `<!doctype html><meta charset="UTF-8" />
+          <script src="/_load.js"></script>`
       });
     });
     await page.goto("https://load.test/");
@@ -135,7 +150,14 @@ test("loader supports downloaded files and calls made after DOMContentLoaded", {
     await fs.copyFile(loader, path.join(directory, "_load.js"));
     await fs.writeFile(path.join(directory, "one.js"), 'window.localText = "Hágale pues";');
     await fs.writeFile(path.join(directory, "base.css"), "body { --loaded: yes; }");
-    await fs.writeFile(path.join(directory, "index.html"), '<!doctype html><meta charset="UTF-8"><script src="./_load.js" defer></script><body>Local</body>');
+    await fs.writeFile(
+      path.join(directory, "index.html"),
+      /* HTML */ `<!doctype html><meta charset="UTF-8" />
+        <script src="./_load.js" defer></script>
+        <body>
+          Local
+        </body>`
+    );
     page.setDefaultTimeout(5000);
     await page.goto(pathToFileURL(path.join(directory, "index.html")).href);
     await page.evaluate(() => byLoad(["./base.css", "./one.js"]));
