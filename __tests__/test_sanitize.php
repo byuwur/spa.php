@@ -22,7 +22,7 @@ if (isset($_POST["data"]) && is_array($_POST["data"]))
       $curated[$key] = validate_value($value);
     $post[] = $curated;
   }
-print_r("=\$data=<br>");
+print_r(/* HTML */ '=$data=<br>');
 print_json($get);
-print_r("<br>=\$data=<br>");
+print_r(/* HTML */ '<br>=$data=<br>');
 print_json($post);

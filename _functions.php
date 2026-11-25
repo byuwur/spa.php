@@ -42,11 +42,11 @@ function render_route_metadata(array $metadata, array $defaults = []): string
         $marker .= ' data-spa-default="' . htmlspecialchars($defaults[$key], ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8") . '"';
       }
     }
-    if ($key === "title") $tags[] = "<title{$marker}>{$value}</title>";
-    elseif ($key === "canonical") $tags[] = "<link rel=\"canonical\" href=\"{$value}\"{$marker} />";
+    if ($key === "title") $tags[] = /* HTML */ "<title{$marker}>{$value}</title>";
+    elseif ($key === "canonical") $tags[] = /* HTML */ "<link rel=\"canonical\" href=\"{$value}\"{$marker} />";
     else {
       $attribute = str_starts_with($key, "og:") ? "property" : "name";
-      $tags[] = "<meta {$attribute}=\"{$key}\" content=\"{$value}\"{$marker} />";
+      $tags[] = /* HTML */ "<meta {$attribute}=\"{$key}\" content=\"{$value}\"{$marker} />";
     }
   }
   return implode("\n", $tags);

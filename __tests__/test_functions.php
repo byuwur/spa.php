@@ -71,7 +71,8 @@ expect_same(false, array_key_exists("twitter:card", $values), "Social fields req
 expect_same(false, array_key_exists("unsupported", $values), "Unknown metadata is omitted");
 
 $head = new DOMDocument();
-$head->loadHTML("<html><head>" . render_route_metadata($route, ["title" => "Home & work", "robots" => "index"]) . "</head></html>");
+$metadata = render_route_metadata($route, ["title" => "Home & work", "robots" => "index"]);
+$head->loadHTML(/* HTML */"<html><head>{$metadata}</head></html>");
 $title = $head->getElementsByTagName("title")->item(0);
 expect_same($route["title"], $title->textContent, "Escaped title renders as text");
 expect_same("Home & work", $title->getAttribute("data-spa-default"), "Shell title can be restored on navigation");
@@ -111,7 +112,9 @@ $encoded = js_encode($message);
 expect_same(false, str_contains($encoded, "<"), "An inline JSON string cannot close its script");
 expect_same($message, json_decode($encoded, true, 512, JSON_THROW_ON_ERROR), "Inline JSON preserves the original message");
 expect_same("null", js_encode("\xFF"), "Invalid UTF-8 has a valid JavaScript fallback");
-expect_same("&lt;b&gt; &amp; &quot;x&quot;<br />\ny", escape_html("<b> &amp; \"x\"\ny", true), "Multiline escaping preserves existing entities");
+expect_same(/* HTML */'&lt;b&gt; &amp; &quot;x&quot;<br />
+y', escape_html('<b> &amp; "x"
+y', true), "Multiline escaping preserves existing entities");
 expect_same(true, check_json("null"), "JSON null is valid");
 expect_same(false, check_json("{"), "Incomplete JSON is invalid");
 ob_start();

@@ -69,7 +69,7 @@ try {
     $body = file_get_contents("http://127.0.0.1:{$port}/{$diagnostic}", false, $context);
     $headers = strtolower(implode("\n", $http_response_header));
     http_assert(str_contains($headers, "content-type: text/plain") && str_contains($headers, "x-content-type-options: nosniff"), "Diagnostics declare inert text before output.");
-    http_assert(str_contains($body, "<b>inert</b>"), "Local diagnostics preserve input as text.");
+    http_assert(str_contains($body, /* HTML */ '<b>inert</b>'), "Local diagnostics preserve input as text.");
   }
   [$truncated, $truncated_output] = captured_request(fn() => make_http_request("{$base}?truncated=1", [], ["mutation" => "once"]));
   http_assert($truncated === false && $truncated_output === "", "Partial POST responses preserve the quiet false failure result.");
