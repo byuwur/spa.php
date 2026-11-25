@@ -29,7 +29,7 @@
   byCommon.APP_CONTAINER_SELECTOR = ".app-container";
 
   // These properties can be previously initialized to be overriden
-  byCommon.GLOBAL_TRANSITION_DURATION = byCommon.GLOBAL_TRANSITION_DURATION || 999;
+  byCommon.GLOBAL_TRANSITION_DURATION = byCommon.GLOBAL_TRANSITION_DURATION || 250; // ms
   byCommon.COOKIE_CONSENT_READY = byCommon.COOKIE_CONSENT_READY || false;
   byCommon.SECTION_TOP_OVERHEAD = byCommon.SECTION_TOP_OVERHEAD || 0;
   byCommon.INIT_WARNINGS = byCommon.INIT_WARNINGS ?? false;
