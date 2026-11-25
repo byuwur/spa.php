@@ -30,17 +30,18 @@ require_once "{$TO_HOME}/common.example.php";
    * SPA routes execute in the same document, so top-level const/let bindings
    * remain declared and cause redeclaration errors when a fragment loads again.
    */
-  $(() => {
-    const renderFetched = async (url, options = {}) => {
-      try {
-        const response = await fetch(url);
-        if (!response.ok) console.warn("Something went wrong", response.statusText);
-        byMDviewer(document.getElementById("byMDrenderer"), await response.text(), options);
-      } catch (error) {
-        console.warn("Something went wrong", error);
-      }
-    };
-    renderFetched("https://raw.githubusercontent.com/byuwur/md.view/main/test.md");
+  $(async () => {
+    const container = document.getElementById("byMDrenderer");
+    if (!container) return;
+    try {
+      const response = await fetch("https://raw.githubusercontent.com/byuwur/md.view/main/test.md");
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const source = await response.text();
+      // A navigation can replace the fragment while its sample is downloading.
+      if (container.isConnected) byMDviewer(container, source);
+    } catch (error) {
+      if (container.isConnected) console.warn("Could not load the MD sample", error);
+    }
   });
 </script>
 <?php

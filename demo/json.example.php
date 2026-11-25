@@ -25,20 +25,21 @@ require_once "{$TO_HOME}/common.example.php";
    * SPA routes execute in the same document, so top-level const/let bindings
    * remain declared and cause redeclaration errors when a fragment loads again.
    */
-  $(() => {
-    const renderFetched = async (url, options = {}) => {
-      try {
-        const response = await fetch(url);
-        if (!response.ok) console.warn("Something went wrong", response.statusText);
-        byJSONviewer(document.getElementById("byJSONrenderer"), await response.json(), options);
-      } catch (error) {
-        console.warn("Something went wrong", error);
-      }
-    };
-    renderFetched("https://raw.githubusercontent.com/byuwur/json.view/main/test.json", {
-      chunkSize: 1,
-      chunkLatency: 10
-    });
+  $(async () => {
+    const container = document.getElementById("byJSONrenderer");
+    if (!container) return;
+    try {
+      const response = await fetch("https://raw.githubusercontent.com/byuwur/json.view/main/test.json");
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const source = await response.json();
+      // A navigation can replace the fragment while its sample is downloading.
+      if (container.isConnected) byJSONviewer(container, source, {
+        chunkSize: 1,
+        chunkLatency: 10
+      });
+    } catch (error) {
+      if (container.isConnected) console.warn("Could not load the JSON sample", error);
+    }
   });
 </script>
 <?php
