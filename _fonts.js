@@ -392,17 +392,15 @@
 
   /**
    * Cache successful and failed stylesheet requests to avoid retries while browsing or offline.
-   * @param {string} value Family name or CSS stack.
+   * @param {string|undefined} name Canonical catalog name.
    * @returns {Promise<boolean>|undefined} Cached load result, or undefined for families outside the catalog.
    */
-  function load(value) {
-    const name = googleFamily(value);
+  function load(name) {
     if (!name) return;
-    const url = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(name).replace(/%20/g, "+")}:wght@${catalog[name]}&display=swap`;
-    if (requests.has(url)) return requests.get(url);
+    if (requests.has(name)) return requests.get(name);
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = url;
+    link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(name).replace(/%20/g, "+")}:wght@${catalog[name]}&display=swap`;
     link.dataset.fontFamily = name;
     // A failed or timed-out family stays cached to avoid repeated requests while offline.
     const request = new Promise(function (resolve) {
@@ -416,7 +414,7 @@
         resolve(false);
       };
     });
-    requests.set(url, request);
+    requests.set(name, request);
     document.head.append(link);
     return request;
   }
@@ -457,7 +455,7 @@
    * @returns {string}
    */
   byFont.family = function (value, fallback = "system-ui, sans-serif") {
-    load(value);
+    load(googleFamily(value));
     return byFont.stack(value, fallback);
   };
 
@@ -477,7 +475,7 @@
       timer = setTimeout(() => resolve(false), 3000);
     });
     try {
-      if (!(await Promise.race([load(value), expiry]))) return false;
+      if (!(await Promise.race([load(name), expiry]))) return false;
       const fonts = await Promise.race([document.fonts.load(`${weight} 16px "${name}"`, text), expiry]);
       return fonts?.length > 0;
     } catch {
@@ -508,7 +506,7 @@
     const initial = field.value;
     const maxLength = Number(field.getAttribute("maxlength")) || 240;
     const select = field.tagName === "SELECT" ? field : document.createElement("select");
-    const existing = field.tagName === "SELECT" ? [...field.options].filter((option) => !byFont.families.includes(option.value)).map((option) => [option.value, option.text]) : [];
+    const existing = field.tagName === "SELECT" ? [...field.options].filter((option) => !Object.hasOwn(catalog, option.value)).map((option) => [option.value, option.text]) : [];
     if ($(select).data("select2")) $(select).select2("close").select2("destroy");
     if (select !== field) {
       for (const { name, value } of field.attributes) {
@@ -524,7 +522,7 @@
     const installed = document.createElement("optgroup");
     installed.label = "Installed and system fonts";
     const choices = new Map([["", "Default font"], ...systemFonts.map((name) => [name, name]), ...existing]);
-    if (!byFont.families.includes(initial) && !choices.has(initial)) choices.set(initial, initial);
+    if (!Object.hasOwn(catalog, initial) && !choices.has(initial)) choices.set(initial, initial);
     for (const [value, title] of choices) installed.append(new Option(title, value, value === initial, value === initial));
     const google = document.createElement("optgroup");
     google.label = "Google Fonts";
