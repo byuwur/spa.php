@@ -8,7 +8,7 @@ $LANG = [
   "route.page" => "pagina",
   "route.video" => "video",
 
-  "loader.loading" => "<strong>Cargando...</strong><br><br>¿Sigue cargando? <a href='javascript:location.reload();'>Intenta recargar.</a>",
+  "loader.loading" => /* HTML */ '<strong>Cargando...</strong><br><br>¿Sigue cargando? <a href="javascript:location.reload();">Intenta recargar.</a>',
 
   "nav.home" => "Inicio",
   "nav.page" => "Página",

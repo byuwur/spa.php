@@ -8,7 +8,7 @@ $LANG = [
   "route.page" => "ja/page",
   "route.video" => "video",
 
-  "loader.loading" => "<strong>読み込み中...</strong><br><br>読み込みが終わらない場合は、<a href='javascript:location.reload();'>再読み込みしてください。</a>",
+  "loader.loading" => /* HTML */ '<strong>読み込み中...</strong><br><br>読み込みが終わらない場合は、<a href="javascript:location.reload();">再読み込みしてください。</a>',
 
   "nav.home" => "ホーム",
   "nav.page" => "ページ",
