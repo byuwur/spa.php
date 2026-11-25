@@ -107,6 +107,8 @@ Keep helpers near their consumers until broader reuse is real. Avoid utility mod
 
 Validate preconditions early. Prefer guard clauses, explicit branches, visible failure paths, and understandable state transitions. Use concise expressions when their meaning is immediate; expand them when they conceal mutation, ordering, or failure behavior.
 
+Express each decision in the simplest terms that preserve the intended behavior. Choose names and data structures that make it clear why a branch runs. When several branches would have to interpret the same input, resolve its meaning once where you read it. For example, `const { toolbar = true } = options` makes the default visible and lets the rendering code say `if (toolbar)`.
+
 Follow the language and surrounding code for casing, prefixes, constants, and parameter conventions. Semantic consistency matters more than identical spelling across languages. Names should communicate the relevant action, responsibility, ownership, state, units, or context.
 
 Rename when a name misleads, hides an important distinction, or makes related contracts difficult to recognize. Preserve established public names unless the benefit justifies migration. Avoid mass cosmetic renaming and prefixes that add no useful information.
