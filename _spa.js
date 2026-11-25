@@ -204,7 +204,7 @@
     // Parse the URI into path and parameters
     const { path, params, query, url } = bySPA.parseURL(uri);
     // Check if the path exists in the defined routes
-    if (!Object.keys(bySPA.ROUTES).includes(path)) return null;
+    if (!Object.prototype.propertyIsEnumerable.call(bySPA.ROUTES, path)) return null;
     const route = bySPA.ROUTES[path] ?? {};
     // Application configuration is authoritative: route > /$/ params > query.
     const get = { ...query, ...params, ...(route?.GET ?? {}) };
