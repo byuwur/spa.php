@@ -53,27 +53,32 @@ for (const variant of ["bundled", "complete"])
         require ${framework}_router.php";
       ?>`;
       } else {
-        bootstrap = `<script src="./_init.js"></script>
-      <script>
-        bySPA.ROUTES = ${routes};
-        byStorage.setItem("ROUTES", JSON.stringify(bySPA.ROUTES));
-      </script>`;
+        bootstrap = /* HTML */ `<script src="./_init.js"></script>
+          <script>
+            bySPA.ROUTES = ${routes};
+            byStorage.setItem("ROUTES", JSON.stringify(bySPA.ROUTES));
+          </script>`;
       }
       await fs.writeFile(
         path.join(temporary, "demo", `release-test.${php ? "php" : "html"}`),
-        `<!doctype html>
-      ${php ? bootstrap : ""}
-      <head>
-        <meta charset="UTF-8" />
-        ${variant === "bundled" ? '<link rel="stylesheet" href="../spa.bundle.css" />\n<script src="../js/jquery.min.js"></script>' : ""}
-        ${!php ? bootstrap : ""}
-        <script src="${script}" defer></script>
-      </head>
-      <body>
-        <div id="spa-loader"></div>
-        <main id="spa-content"></main>
-        <div id="particles"></div>
-      </body>`
+        /* HTML */ `<!doctype html>
+          ${php ? bootstrap : ""}
+          <head>
+            <meta charset="UTF-8" />
+            ${
+              variant === "bundled"
+                ? /* HTML */ `<link rel="stylesheet" href="../spa.bundle.css" />
+                    <script src="../js/jquery.min.js"></script>`
+                : ""
+            }
+            ${!php ? bootstrap : ""}
+            <script src="${script}" defer></script>
+          </head>
+          <body>
+            <div id="spa-loader"></div>
+            <main id="spa-content"></main>
+            <div id="particles"></div>
+          </body>`
       );
       const extension = php ? "php" : "html";
       // ===== DEMO PAGES =====
@@ -83,10 +88,10 @@ for (const variant of ["bundled", "complete"])
       ])
         await fs.writeFile(
           path.join(temporary, "demo", `release-${name}.${extension}`),
-          `<p id="edition-content">${label}</p>
-      <script>
-        window.editionRuns = (window.editionRuns || 0) + 1;
-      </script>`
+          /* HTML */ `<p id="edition-content">${label}</p>
+            <script>
+              window.editionRuns = (window.editionRuns || 0) + 1;
+            </script>`
         );
 
       server = http.createServer(async (request, response) => {

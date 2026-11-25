@@ -184,7 +184,7 @@ export async function publishRelease({ request = fetch, environment = process.en
     assert.ok(bodies.has(file), `Unknown checksum file: ${file}`);
     assert.equal(sha256(bodies.get(file)), hash, `Checksum mismatch: ${file}`);
   }
-  const marker = `<!-- ${config.repository} release builder ${tag} ${environment.GITHUB_SHA} ${sha256(rawManifest)} -->`;
+  const marker = /* HTML */ `<!-- ${config.repository} release builder ${tag} ${environment.GITHUB_SHA} ${sha256(rawManifest)} -->`;
   const body = `${bodies.get("RELEASE_NOTES.md").toString()}\n${marker}\n`;
   const base = `https://api.github.com/repos/${config.repository}`;
   const headers = {

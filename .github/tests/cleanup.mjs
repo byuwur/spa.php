@@ -46,7 +46,12 @@ test("failed builds clean their private stage and preserve existing output", { t
       const source = await fs.readFile(path.join(root, "resource.js"), "utf8");
       await fs.writeFile(path.join(temporary, "resource.js"), source.match(/byStream\.SPA_VERSION = "[^"]+";/)[0]);
       await fs.mkdir(path.join(temporary, "fixture"));
-      await fs.writeFile(path.join(temporary, "fixture/fixture.html"), '<html data-tool="fixture"><template id="overlay-markup"></template></html>');
+      await fs.writeFile(
+        path.join(temporary, "fixture/fixture.html"),
+        /* HTML */ `<html data-tool="fixture">
+          <template id="overlay-markup"></template>
+        </html>`
+      );
     }
     const git = (...args) => execFileSync("git", ["-c", "user.name=Release cleanup tests", "-c", "user.email=release-tests@example.invalid", "-c", "commit.gpgsign=false", ...args], { cwd: temporary, stdio: "pipe" });
     // ===== REPOSITORY SETUP =====

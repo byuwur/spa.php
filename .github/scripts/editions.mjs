@@ -180,8 +180,11 @@ export async function buildEditions(files, staging) {
       return tag;
     });
     if ((!php && file === "demo/index.html") || (php && file === "demo/home.php")) {
-      const framework = complete ? '<script src="../spa.complete.js" defer></script>' : '<link rel="stylesheet" href="../spa.bundle.css" />\n<script src="../spa.bundle.js" defer></script>';
-      source = source.replace("</head>", `${moved.join("\n")}\n${framework}\n</head>`);
+      const framework = complete
+        ? /* HTML */ `<script src="../spa.complete.js" defer></script>`
+        : /* HTML */ `<link rel="stylesheet" href="../spa.bundle.css" />
+            <script src="../spa.bundle.js" defer></script>`;
+      source = source.replace(`</head>`, `${moved.join("\n")}\n${framework}\n</head>`);
       if (complete) {
         // Live Google services stay application opt-ins instead of becoming framework dependencies.
         source = source.replace(/<script\b[^>]*src="https:\/\/(?:www\.google\.com|translate\.google\.com)[^"]*"[^>]*>\s*<\/script>/gi, "");
